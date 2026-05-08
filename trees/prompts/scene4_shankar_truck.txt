@@ -1,0 +1,67 @@
+Generate a bright, cheerful, fun comic-strip illustration with 10 panels in 2 rows of 5. Happy colorful comic book art — think animated movie poster energy. White background between panels.
+
+**Title bar:** "Scene 4: Shankar's Truck (BFS)" on the left, "The Ritual" on the right.
+
+**Characters:**
+- **Shankar Dada:** Indian man, late 40s, confident swagger, thick gold watch, rolled-up sleeves, commanding presence. He's the BOSS — doesn't enter bubbles. He stands OUTSIDE on the ground, working with a flatbed truck, a standing CHALKBOARD, and a big brass BELL. Big mustache, big personality. Expressive — big grins, dramatic gestures.
+
+**Props:**
+- **Flatbed Truck:** Open-back truck. Bubbles sit on it. This is the QUEUE. Children always land HERE, never on the ground.
+- **Chalkboard:** A standing chalkboard next to the work area. Shankar writes a NUMBER on it — the count of bubbles to process this round. Each time he finishes one, the number ticks DOWN. This is the for-loop counter.
+- **Brass Bell:** A big shiny bell on a post. Shankar RINGS it when the chalkboard hits 0 — LEVEL COMPLETE. Then he counts the truck again and starts a new round.
+
+**The Bubble (same as other scenes):**
+Large transparent glass sphere, narrow neck at the top. At the BOTTOM of the sphere, two glass tubes branch DOWNWARD in a Y-shape — a lavender tube exits the bottom-left going down, a red tube exits the bottom-right going down. The tubes NEVER come from the top or sides — they ALWAYS exit from the bottom going downward.
+
+**Panel 1 — "Root Falls on the Truck"**
+Wide side view, full scene visible. The flatbed truck is parked on the LEFT. The chalkboard stands in the CENTER, blank. The brass bell is on the RIGHT. A single big ROOT bubble drops DOWN from above onto the truck bed with a THUD, bouncing slightly. Shankar stands in front of the truck, arms wide, gold watch catching the light, grinning at the bubble that just arrived. Everything is set up and ready.
+Text: "Root bubble lands on the truck. Game begins."
+
+**Panel 2 — "Counts the Truck — Writes 1"**
+Close-up of Shankar's hand and the chalkboard. His hand grips a piece of chalk, writing a big bold "1" on the chalkboard — chalk dust puffing off the surface. Behind the chalkboard, the truck is visible with the one root bubble sitting on it. Shankar's face peeks around the chalkboard edge, one eye visible, smirking — he knows exactly how many. His gold watch visible on the writing hand.
+Text: "Counts the truck: 1 bubble. Writes 1 on the board."
+
+**Panel 3 — "Pulls and Cracks"**
+Low angle from the ground looking UP at Shankar. He towers over us. He has PULLED the root bubble off the truck and holds it in front of him. He CRACKS the bubble open with both hands — glass splitting apart dramatically, shards flying outward. Inside: the vitals screen glows with a number. His face shows power and satisfaction — gritted grin, mustache bristling. The lavender and red tubes dangle from the cracked bottom of the bubble. Behind him, the chalkboard is visible with "1" on it.
+Text: "Pulls it off. CRACKS it open! Reads the screen."
+
+**Panel 4 — "Yanks Tubes — Children Fly to Truck"**
+Bird's eye view looking straight DOWN from above. Shankar is in the center, tiny below us. The cracked parent bubble shell lies at his feet. His LEFT arm reaches down yanking the lavender tube — a child bubble arcs through the air toward the truck on the LEFT side. His RIGHT arm yanks the red tube — another child bubble arcs toward the truck on the RIGHT side. Both children LAND on the truck bed. Motion trails show the arcs. The truck, chalkboard, and bell are all visible from above in their positions.
+Text: "Yanks lavender tube — child on truck! Yanks red tube — child on truck!"
+
+**Panel 5 — "Chalkboard Hits 0 — RINGS THE BELL!"**
+Dynamic diagonal composition. TWO actions happening. LEFT side: Shankar's hand at the chalkboard, crossing out "1" and writing "0" in bold. RIGHT side: his OTHER hand SWINGING the brass bell — the bell tilts with motion blur, golden sound waves radiating outward in rings. His face is between both actions, huge grin, eyes bright. Behind him the truck holds 2 child bubbles glowing softly. The cracked root shell sits on the ground.
+Text: "1 → 0! DING! Level 1 complete! Truck has 2 new bubbles."
+
+**Panel 6 — "Counts Again — Writes 2"**
+Over Shankar's shoulder, looking at the chalkboard and truck beyond it. His hand ERASES the old marks and writes a fresh big "2" on the chalkboard. Beyond the chalkboard, the truck is visible with TWO child bubbles sitting on the bed, glowing lavender and red from their parent's tubes. Shankar's head is tilted, counting with a pointed finger — one, two. His gold watch gleams.
+Text: "Counts the truck: 2 bubbles. Writes 2. New round."
+
+**Panel 7 — "First Crack — Countdown Ticks"**
+Tilted dutch angle, dynamic action. Shankar has PULLED the first child bubble off the truck and CRACKED it open — glass flying, vitals screen revealed. He yanks its tubes — grandchild bubbles arc toward the truck in the background. INSET in the corner: the chalkboard shows "2" being crossed out, "1" written below. The truck still has the SECOND child bubble waiting. Shankar's expression is focused intensity — working fast, gold watch blurred with motion.
+Text: "Cracks first bubble. Yanks tubes. Kids on truck. Board: 2 → 1."
+
+**Panel 8 — "Second Crack — Bell Again!"**
+Split panel, two moments side by side. LEFT HALF: Shankar cracking the second child bubble, glass splitting, yanking tubes, grandchildren flying to truck. The chalkboard shows "1" crossed out, "0" written. RIGHT HALF: Shankar RINGING the bell with a triumphant swing — sound waves blast outward. His expression is pure joy — arms spread wide, mustache curled upward in a massive grin. Gold watch glinting.
+Text: "Cracks second. Board: 1 → 0. DING! Level 2 complete!"
+
+**Panel 9 — "The Last Bell — Truck Empty"**
+Top-down view looking DOWN at the full scene. Shankar stands at the chalkboard, writing "0" directly — there's nothing on the truck to count. The truck bed is COMPLETELY EMPTY, gleaming clean. The bell sits silent. Shankar's arms are spread in a wide "that's all folks" gesture, looking up at us. Around him on the ground: neat rows of cracked bubble shells — one shell (Level 0), then two shells (Level 1), then more shells (Level 2). Each row is a completed level.
+Text: "Counts the truck: 0. Nothing to pull. We're done!"
+
+**Panel 10 — "Scene 4 Complete"**
+Wide establishing shot, full scene. Shankar stands proudly in the CENTER, arms crossed, gold watch prominent, confident boss pose, big mustache grin. To his LEFT: the empty flatbed truck, parked and done. To his RIGHT: the chalkboard showing tally marks for each level completed. Behind him: the brass bell gleams. At his feet: organized rows of cracked bubble shells — Level 0 closest, Level 1 next, Level 2 behind, each row wider than the last, showing the tree spreading out level by level.
+Text: "Count the truck. Pull that many. Crack. Yank. Ring the bell. Repeat. BFS."
+
+**Style:**
+- BRIGHT, HAPPY, COLORFUL — Pixar energy. Not dark or moody.
+- White background between panels.
+- Every panel has a genuinely different composition — wide side view, close-up hand, low ground angle looking up, bird's eye looking down, dynamic diagonal, over-shoulder, tilted dutch angle, split panel, top-down, wide establishing. No two panels framed the same way.
+- Shankar is EXPRESSIVE — big grins, dramatic gestures, boss energy, animated body language.
+- Colors vivid — lavender tubes glow purple, red tubes glow red, truck is sturdy blue flatbed, chalkboard is dark green with white chalk, bell is shiny brass gold, bubbles are transparent glass.
+- Panel borders with rounded corners.
+- Text short — placed at bottom of each panel in a clean text box.
+- NO RETURN panels in this scene — no climbing out of bubbles, no green/red panel washes. Shankar works from OUTSIDE. All panels have neutral/white background.
+- The lavender tube and red tube ALWAYS exit from the BOTTOM of the bubble — lavender bottom-left, red bottom-right, branching DOWNWARD. Consistent in every panel.
+- TRUCK vs GROUND never mix — children ALWAYS land on the truck, never on the ground where Shankar is working.
+- The CHALKBOARD countdown and BELL ring are the key visual anchors — they make the for-loop and level-completion tangible.

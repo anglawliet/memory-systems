@@ -1,0 +1,65 @@
+Generate a bright, cheerful, fun comic-strip illustration with 10 panels in 2 rows of 5. Happy colorful comic book art — think animated movie poster energy. White background between panels.
+
+**Title bar:** "Scene 3: Lingam's Badge (Top-Down DFS)" on the left, "The Ritual" on the right.
+
+**Characters:**
+- **Circuit:** Indian man, late 20s, black t-shirt, multiple layered gold chains, dark sunglasses, styled black hair. Expressive, animated body language — big grins, exaggerated reactions. He wears a small rectangular metal badge on a chain around his neck alongside his gold chains. The badge has glowing numbers on it that change.
+- **Lingam Mavayya:** Older Indian man, late 50s, thick mustache, small rectangular READING GLASSES with thin gold frames perched on his nose. Crisp white shirt. Strict college professor — peers over his glasses judgmentally. Stands ABOVE the bubble, never enters. Wears a larger version of the same badge on a chain around his neck.
+
+**The Bubble (CRITICAL — same in every panel):**
+Large transparent glass sphere, narrow neck at the top. At the BOTTOM of the sphere, two glass tubes branch DOWNWARD in a Y-shape — a lavender tube exits the bottom-left going down, a red tube exits the bottom-right going down. Each tube connects to a child bubble hanging below. The tubes NEVER come from the top or sides — they ALWAYS exit from the bottom of the bubble going downward. Parent bubble on top, children hanging below on tube branches.
+
+**RETURN vs WORK panels (CRITICAL visual difference):**
+RETURN panels have the ENTIRE PANEL BACKGROUND flooded with color — bright green wash for returning True, bright red wash for returning False. Not a subtle tint — strong, obvious, impossible to miss. Circuit is LEAVING the bubble with one foot in the neck climbing out, orb ABOVE the bubble shooting upward with motion trail. WORK panels have neutral/white background, no color wash, Circuit stays inside working.
+
+**Panel 1 — WORK PANEL — "The Fall — It's Dark"**
+Looking straight DOWN through the neck from above. Lingam's face fills the top of the frame, reading glasses glinting, peering down with a stern raised eyebrow. His large badge dangles over the neck opening, "-∞, ∞" glowing golden, casting a beam of light downward. Way down inside the dark sphere, Circuit is tiny, crouching, squinting into blackness, one hand shielding his eyes from the badge light above. His own badge is mid-zap — electric arcs connecting from the light beam, "-∞, ∞" burning onto his badge. The tubes at the bottom are invisible in the darkness.
+Text: "Falls in. Dark. Lingam's badge shines down. Circuit's badge updates: -∞, ∞"
+
+**Panel 2 — RETURN PANEL — "Blank Screen — RETURN TRUE!"**
+Wide shot from the side, full bubble visible. ENTIRE PANEL FLOODED WITH BRIGHT GREEN. Circuit finds the screen on the wall — it's completely BLANK. No number displayed. He's HAPPY — cups his hands and SHOUTS "TRUE!" upward. He's CLIMBING OUT — one foot on the neck rim, body twisting upward, gold chains swinging with momentum. A big green "True" orb is ABOVE the bubble, shooting upward with a sparkling motion trail. The tubes at the bottom sit unused.
+Text: "Blank screen! Nothing to violate. RETURN TRUE!"
+
+**Panel 3 — WORK PANEL — "Vitals Screen Glows!"**
+Over Circuit's shoulder, looking at the wall. We see his back — black t-shirt, gold chains draped over his shoulders, one arm extended holding his glowing badge up like a flashlight. The badge light reveals the screen on the wall — it GLOWS brightly, casting warm light across the bubble. His other hand reaches out toward the screen. The bubble brightens. The lavender and red tubes at the bottom become visible in the background below.
+Text: "Screen glows! Vitals found. Badge lights up the bubble."
+
+**Panel 4 — RETURN PANEL — "Badge VIOLATED — RETURN FALSE!"**
+Tilted dutch angle, everything diagonal, amplifying chaos. ENTIRE PANEL FLOODED WITH BRIGHT RED. DIFFERENT bubble. Screen shows "15". Badge says "-∞, 10". Circuit's face is full PANIC — eyes popping, mouth open, sunglasses flying off mid-air. A HUGE red X between badge and screen. He's SCRAMBLING toward the neck at a wild angle — arms flailing, gold chains whipping outward. A red "False" orb ABOVE the bubble rockets upward trailing red sparks. The tubes at the bottom completely ignored.
+Text: "15 < 10? NO! RETURN FALSE! Doesn't even peek tubes!"
+
+**Panel 5 — WORK PANEL — "Badge Check — Vitals Obey!"**
+Low angle from the floor of the bubble looking UP at Circuit. Heroic framing — he looks larger than life. LEFT hand holds his badge high, "-∞, ∞" glowing, filling the left side of the frame. RIGHT hand points across at the screen on the wall, filling the right side. His face centered between them, confident smirk, sunglasses gleaming. A big green CHECKMARK pops up between badge and screen. The lavender and red tubes visible at the bottom edges of the frame.
+Text: "Vitals obey the badge? YES! Continue."
+
+**Panel 6 — WORK PANEL — "Peek Left Tube"**
+Top-down view looking straight DOWN into the bubble from above. The circular sphere fills the frame. Circuit is a figure crouched at the bottom-left, holding his badge DOWN into the lavender tube opening. Badge reads "-∞, 10". A purple glow beam travels DOWN through the lavender tube toward the child bubble hanging below. A green "True" orb bounces back UP through the tube into his waiting hand. The Y-shape of both tubes visible from this angle — red tube at the bottom-right untouched.
+Text: "Badge tightens: hi = 10. Glows down left tube. True comes back up!"
+
+**Panel 7 — WORK PANEL — "Peek Right Tube"**
+Close-up of Circuit's hands and arms. Left hand holds the first green "True" orb. Right hand catches a second green "True" orb rising UP from the red tube below. Gold chains dangle between his arms, catching the green glow. His grinning face partially visible at the top — wide smile, bottom of sunglasses. Both orbs illuminate his chains from below.
+Text: "Badge tightens: lo = 10. Glows down right tube. True comes back up!"
+
+**Panel 8 — RETURN PANEL — "Both True — RETURN TRUE!"**
+Dynamic diagonal composition with speed lines. ENTIRE PANEL FLOODED WITH BRIGHT GREEN. Circuit's body angled upward toward the neck, one foot on the rim. Arms raised high, SMASHING the two green "True" orbs together — a golden starburst at the impact. They fuse into one golden "True" orb ABOVE the bubble, rocketing upward with a golden trail. Hair blown back, gold chains flying outward, huge triumphant grin. Speed lines radiate from the burst. Tubes visible at the bottom of the bubble.
+Text: "Both True! RETURN TRUE! Sends up through the neck!"
+
+**Panel 9 — RETURN PANEL — "What If One Was False?"**
+Straight-on medium shot, perfectly symmetrical. ENTIRE PANEL FLOODED WITH BRIGHT RED. Circuit centered. Left hand holds green "True" orb — green light on the left side of his face and body. Right hand holds red "False" orb — red light on the right side. Split lighting down the center of his face. Expression disappointed — drooped mouth, furrowed brows. The red orb is CONSUMING the green — red tendrils wrapping around it. A red "False" orb shoots upward above the bubble. Circuit stepping up to leave, shoulders slumped.
+Text: "True AND False = False. One failure = RETURN FALSE!"
+
+**Panel 10 — "Scene 3 Complete"**
+Wide establishing shot, full vertical composition. Top: Lingam above the bubble, arms crossed, peering over his reading glasses with a satisfied nod, big badge visible. A golden "True" orb floats past his face. Middle: Circuit inside the bubble, two-finger salute upward, cocky smile, badge and chains on his chest. Bottom: lavender tube branches DOWNWARD to bottom-left and red tube DOWNWARD to bottom-right, connecting to smaller child bubbles hanging below. Complete tree structure visible top to bottom.
+Text: "Badge from ABOVE. Check screen BEFORE peeking. Both must obey."
+
+**Style:**
+- BRIGHT, HAPPY, COLORFUL — Pixar energy. Not dark or moody.
+- White background between panels.
+- Every panel has a genuinely different composition — bird's eye, wide side view, over-shoulder, dutch angle, low floor angle, top-down, hands close-up, dynamic diagonal, symmetrical medium, wide establishing. No two panels framed the same way.
+- Circuit is EXPRESSIVE — big smiles, exaggerated panic, animated body language.
+- Colors vivid — lavender tubes glow purple, red tubes glow red, badges glow warm gold, True orbs bright green, False orbs bright red.
+- Panel borders with rounded corners.
+- Text short — placed at bottom of each panel in a clean text box.
+- RETURN panels (2, 4, 8, 9) have their ENTIRE BACKGROUND flooded with strong color — bright green wash for True, bright red wash for False. The color fills the whole panel so it jumps out immediately. Circuit is always leaving the bubble in these panels.
+- WORK panels (1, 3, 5, 6, 7, 10) have neutral/white background. Circuit stays inside working. No color wash.
+- The lavender tube and red tube ALWAYS exit from the BOTTOM of the bubble — lavender bottom-left, red bottom-right, branching DOWNWARD. In EVERY panel this is consistent. The tubes NEVER come from the top or sides. Circuit crouches DOWN to reach them. Tubes go DOWN to child bubbles BELOW.

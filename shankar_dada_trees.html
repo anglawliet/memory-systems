@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shankar Dada Tree System</title>
+<style>
+:root{--bg:#1a1916;--card:#252320;--card2:#2d2a26;--gold:#d4a843;--gold2:#fbbf24;--amber:#f59e0b;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;--red:#ef4444;--lav:#b4a7d6;--text:#e8e2d6;--muted:#9b9484;--border:#3d3930}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;padding:0 0 80px}
+.hdr{background:linear-gradient(135deg,#2d1f0e,#1a1916);border-bottom:3px solid var(--gold);padding:40px 20px;text-align:center}
+.hdr h1{font-size:2em;color:var(--gold2)}.hdr p{color:var(--muted)}
+.wrap{max-width:920px;margin:0 auto;padding:20px}
+.nav{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0;position:sticky;top:0;background:var(--bg);padding:12px 0;z-index:100;border-bottom:1px solid var(--border)}
+.nav button{background:var(--card);color:var(--muted);border:1px solid var(--border);padding:8px 16px;border-radius:6px;cursor:pointer;font-size:.85em;transition:.2s}
+.nav button:hover,.nav button.on{background:var(--gold);color:#1a1916;border-color:var(--gold)}
+.sec{display:none}.sec.vis{display:block}
+h2{color:var(--gold2);font-size:1.4em;margin:32px 0 12px;border-bottom:2px solid var(--border);padding-bottom:8px}
+h3{color:var(--amber);margin:20px 0 8px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin:16px 0}
+.map-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:2px solid var(--border);border-radius:10px;overflow:hidden;margin:16px 0}
+.map-row{display:contents}
+.map-cell{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.map-cell:nth-child(odd){background:var(--card);border-right:1px solid var(--border)}
+.map-cell:nth-child(even){background:var(--card2)}
+.map-cell .icon{font-size:1.5em;flex-shrink:0;width:36px;text-align:center}
+.map-cell .lbl{font-weight:700;color:var(--gold2);font-size:.9em}
+.map-cell .sub{color:var(--muted);font-size:.8em}
+.map-cell code{background:#0d0d0b;padding:2px 6px;border-radius:3px;font-family:'Fira Code',monospace;font-size:.8em;color:var(--amber)}
+.flow-step{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:20px;margin:0 auto;max-width:600px;text-align:center;position:relative}
+.flow-step.q-step{border-color:var(--gold)}
+.flow-arrow{text-align:center;font-size:2em;color:var(--muted);margin:4px 0;line-height:1}
+.flow-branch{display:flex;gap:16px;margin:8px auto;max-width:650px}
+.flow-step.s1{border-color:var(--green);background:#14532d20}.flow-step.s2{border-color:var(--purple);background:#581c8720}
+.flow-step.s3{border-color:var(--red);background:#7f1d1d20}.flow-step.s4{border-color:var(--blue);background:#1e3a5f20}
+.flow-step .tag{display:inline-block;padding:2px 10px;border-radius:4px;font-size:.8em;font-weight:700}
+.t1{background:#166534;color:#bbf7d0}.t2{background:#581c87;color:#e9d5ff}.t3{background:#991b1b;color:#fecaca}.t4{background:#1e40af;color:#bfdbfe}
+.deriv{background:var(--card);border:1px solid var(--border);border-radius:10px;margin:16px 0;overflow:hidden}
+.deriv-h{padding:14px 20px;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+.deriv-h:hover{background:var(--card2)}
+.deriv-h h3{margin:0;display:flex;align-items:center;gap:10px;font-size:1em}
+.deriv-n{background:var(--gold);color:#1a1916;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8em;font-weight:800;flex-shrink:0}
+.deriv-a{color:var(--muted);transition:.3s}.deriv.open .deriv-a{transform:rotate(90deg)}
+.deriv-b{display:none;padding:0 20px 16px;border-top:1px solid var(--border)}.deriv.open .deriv-b{display:block}
+.sbox{background:var(--card2);border-radius:8px;padding:12px 16px;margin:10px 0}
+.sl{font-size:.7em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.sl-q{color:var(--gold2)}.sl-s{color:var(--green)}.sl-c{color:var(--blue)}.sl-r{color:var(--purple)}
+pre{background:#0d0d0b;border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;font-size:.85em;line-height:1.6;margin:10px 0}
+code{font-family:'Fira Code','Courier New',monospace}
+.cm{color:#6b9955}.kw{color:#c586c0}.fn{color:#dcdcaa}
+.hi{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);border-radius:6px;padding:12px 16px;margin:12px 0}
+.tag-e{background:#166534;color:#bbf7d0;padding:2px 8px;border-radius:3px;font-size:.75em;font-weight:700;margin-left:6px}
+.tag-m{background:#92400e;color:#fef3c7;padding:2px 8px;border-radius:3px;font-size:.75em;font-weight:700;margin-left:6px}
+.tag-h{background:#991b1b;color:#fecaca;padding:2px 8px;border-radius:3px;font-size:.75em;font-weight:700;margin-left:6px}
+.quiz{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin:14px 0;cursor:pointer}
+.quiz .ans{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}.quiz.show .ans{display:block}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+th{background:var(--card2);color:var(--gold);text-align:left;padding:10px 12px;border:1px solid var(--border)}
+td{padding:10px 12px;border:1px solid var(--border)}
+.ritual-step{display:grid;grid-template-columns:auto 1fr 1fr;gap:0}
+.ritual-step>div{padding:10px 14px;border-bottom:1px solid #ffffff10}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+<h1>Shankar Dada MBBS &mdash; Tree System</h1>
+<p>All 15 NeetCode Tree Problems &mdash; Bubble Room Edition</p>
+</div>
+
+<div class="wrap">
+<div class="nav">
+<button class="on" onclick="go('hospital')">The Bubble Tree</button>
+<button onclick="go('flowchart')">Flowchart</button>
+<button onclick="go('scenes')">4 Scenes</button>
+<button onclick="go('problems')">15 Problems</button>
+<button onclick="go('quiz')">Quiz</button>
+</div>
+
+<!-- ==================== TAB 1: THE BUBBLE TREE ==================== -->
+<div class="sec vis" id="sec-hospital">
+
+<h2>The Bubble Tree</h2>
+<p>Every binary tree is a network of floating bubble rooms connected by tubes. Walk through it below &mdash; once you see it, you'll never forget it.</p>
+
+<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px">
+<h3 style="margin-top:0;color:var(--gold2)">The Bubble Tree &mdash; What Everything Means</h3>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+
+<!-- BUBBLE explanation -->
+<div style="background:rgba(251,191,36,.06);border:1px solid var(--gold);border-radius:8px;padding:16px">
+<div style="font-size:1.1em;font-weight:700;color:var(--gold2);margin-bottom:8px">Bubble Room = Node</div>
+<div style="font-size:.95em;color:var(--text)">
+Each bubble is a floating room. When Circuit <strong>falls into</strong> a bubble, he looks at the wall. If there are <strong>vitals written</strong> on the wall (a number), it's a real room. If the wall is blank &mdash; <strong>no vitals</strong> &mdash; it's a dead-end.<br><br>
+<strong>In code:</strong> A bubble = <code>node</code>. Vitals on wall = <code>node.val</code>. No vitals = <code>None</code>.
+</div>
+</div>
+
+<!-- TUBE explanation -->
+<div style="background:rgba(180,167,214,.1);border:1px solid var(--lav);border-radius:8px;padding:16px">
+<div style="font-size:1.1em;font-weight:700;color:var(--lav);margin-bottom:8px">Tubes = Left/Right Connections</div>
+<div style="font-size:.95em;color:var(--text)">
+Each bubble has at most <strong>2 doors</strong> with tubes trailing out:<br>
+<span style="color:var(--lav);font-weight:700">Lavender door + tube</span> = Left (L for Lavender, L for Left)<br>
+<span style="color:var(--red);font-weight:700">Red door + tube</span> = Right (R for Red, R for Right)<br><br>
+Each tube connects to a child bubble below.<br><br>
+<strong>In code:</strong> Lavender = <code>node.left</code>, Red = <code>node.right</code>.
+</div>
+</div>
+
+<!-- VITALS explanation -->
+<div style="background:rgba(34,197,94,.06);border:1px solid var(--green);border-radius:8px;padding:16px">
+<div style="font-size:1.1em;font-weight:700;color:var(--green);margin-bottom:8px">Vitals = Node Value</div>
+<div style="font-size:.95em;color:var(--text)">
+The number written on the bubble wall. Could be 10, 5, -3, anything. Circuit reads it the moment he falls in.<br><br>
+<strong>No vitals</strong> = the bubble is empty, a dead-end. Circuit doesn't even enter &mdash; he climbs back out immediately.<br><br>
+<strong>In code:</strong> Vitals = <code>node.val</code>. No vitals = <code>if not node: return ...</code>
+</div>
+</div>
+
+<!-- LEAF explanation -->
+<div style="background:rgba(34,197,94,.06);border:1px solid #6b9484;border-radius:8px;padding:16px">
+<div style="font-size:1.1em;font-weight:700;color:var(--green);margin-bottom:8px">Leaf = Bubble with No Doors</div>
+<div style="font-size:.95em;color:var(--text)">
+A leaf bubble has vitals on the wall but <strong>no doors at all</strong> &mdash; no lavender door, no red door. It's the bottom of the tree. Circuit reads the vitals and climbs back out.<br><br>
+<strong>In code:</strong> <code>not node.left and not node.right</code>
+</div>
+</div>
+</div>
+
+<!-- CORRIDOR explanation -->
+<div style="background:rgba(168,85,247,.08);border:2px solid var(--purple);border-radius:10px;padding:20px;margin-bottom:16px">
+<div style="font-size:1.15em;font-weight:700;color:var(--purple);margin-bottom:10px">Corridor = Path Between Two Bubbles (the tricky one!)</div>
+<div style="font-size:.95em;color:var(--text);margin-bottom:14px">
+<strong>The key rule:</strong> There are <strong>NO direct connections</strong> between sibling bubbles. You can't go from Bubble 3 to Bubble 7 directly &mdash; they're separate floating rooms!
+</div>
+<div style="font-size:.95em;color:var(--text);margin-bottom:14px">
+To get from one bubble to another, you must <strong>climb UP through the tube</strong> to their shared parent bubble, then <strong>slide DOWN the other tube</strong>. This <strong>U-shaped path</strong> through a parent is called a <strong>corridor</strong>.
+</div>
+
+<!-- Corridor SVG diagram -->
+<svg viewBox="0 0 500 200" width="500" style="display:block;margin:0 auto">
+<defs><marker id="arrowPurple" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6Z" fill="#a855f7"/></marker></defs>
+<!-- Bubble 5 (parent) -->
+<ellipse cx="250" cy="50" rx="55" ry="30" fill="#2d2a26" stroke="var(--gold)" stroke-width="2"/>
+<text x="250" y="55" text-anchor="middle" fill="var(--gold2)" font-size="16" font-weight="700" font-family="system-ui">Bubble 5</text>
+<!-- Bubble 3 (left child) -->
+<ellipse cx="110" cy="155" rx="55" ry="30" fill="#2d2a26" stroke="var(--lav)" stroke-width="2"/>
+<text x="110" y="160" text-anchor="middle" fill="var(--lav)" font-size="16" font-weight="700" font-family="system-ui">Bubble 3</text>
+<!-- Bubble 7 (right child) -->
+<ellipse cx="390" cy="155" rx="55" ry="30" fill="#2d2a26" stroke="var(--red)" stroke-width="2"/>
+<text x="390" y="160" text-anchor="middle" fill="var(--red)" font-size="16" font-weight="700" font-family="system-ui">Bubble 7</text>
+<!-- The corridor path highlighted in purple -->
+<path d="M110,125 L110,100 Q110,70 160,60 L200,52" stroke="#a855f7" stroke-width="4" fill="none"/>
+<path d="M300,52 L340,60 Q390,70 390,100 L390,125" stroke="#a855f7" stroke-width="4" fill="none"/>
+<!-- Tube labels -->
+<text x="155" y="90" fill="var(--lav)" font-size="11" font-weight="700" font-family="system-ui">Lavender tube</text>
+<text x="330" y="90" fill="var(--red)" font-size="11" font-weight="700" font-family="system-ui">Red tube</text>
+<!-- NO DIRECT PATH -->
+<line x1="165" y1="155" x2="335" y2="155" stroke="#ef4444" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="250" y="195" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="700" font-family="system-ui">NO DIRECT CONNECTION between siblings!</text>
+</svg>
+
+<div style="font-size:.95em;color:var(--text);margin-top:12px">
+<strong>Example:</strong> To go from Bubble 3 to Bubble 7: climb UP lavender tube to Bubble 5, then slide DOWN red tube to Bubble 7. That's <strong>2 tubes</strong> = corridor length 2.<br><br>
+<strong>In code:</strong> <code>left_depth + right_depth</code> through a node = the corridor passing through that bubble. This is exactly what <strong>diameter</strong> and <strong>max path sum</strong> calculate!
+</div>
+</div>
+</div>
+
+<!-- THE BUBBLE TREE DIAGRAM -->
+<h3>The Full Bubble Tree</h3>
+<svg viewBox="0 0 700 480" width="700" height="480">
+<defs>
+<marker id="arrowGreen" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6Z" fill="#22c55e"/></marker>
+<marker id="arrowRed" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6Z" fill="#ef4444"/></marker>
+</defs>
+
+<!-- Tubes (edges) -->
+<line x1="320" y1="95" x2="195" y2="185" stroke="var(--lav)" stroke-width="3" stroke-dasharray="8 4"/>
+<line x1="380" y1="95" x2="505" y2="185" stroke="var(--red)" stroke-width="3" stroke-dasharray="8 4"/>
+<line x1="165" y1="255" x2="105" y2="345" stroke="var(--lav)" stroke-width="3" stroke-dasharray="8 4"/>
+<line x1="225" y1="255" x2="285" y2="345" stroke="var(--red)" stroke-width="3" stroke-dasharray="8 4"/>
+<line x1="540" y1="255" x2="610" y2="345" stroke="var(--red)" stroke-width="3" stroke-dasharray="8 4"/>
+<!-- Null tube (Bubble 15 left = null) -->
+<line x1="480" y1="255" x2="430" y2="320" stroke="#44403c" stroke-width="2" stroke-dasharray="4 4" opacity=".4"/>
+
+<!-- Tube labels -->
+<text fill="var(--lav)" font-size="11" font-weight="700" font-family="system-ui" x="230" y="140" transform="rotate(-25,230,140)">Lavender</text>
+<text fill="var(--red)" font-size="11" font-weight="700" font-family="system-ui" x="430" y="140" transform="rotate(25,430,140)">Red</text>
+
+<!-- Dead-end marker -->
+<text fill="#6b5f50" font-size="12" font-weight="700" font-family="system-ui" text-anchor="middle" x="420" y="340">No vitals</text>
+<text fill="#6b5f5080" font-size="10" font-family="system-ui" text-anchor="middle" x="420" y="355">(None / dead-end)</text>
+
+<!-- BUBBLE 10 (ROOT) -->
+<ellipse cx="350" cy="70" rx="55" ry="35" fill="#2d2a26" stroke="var(--gold2)" stroke-width="3"/>
+<text x="350" y="65" text-anchor="middle" fill="var(--gold2)" font-size="28" font-weight="800" font-family="system-ui">10</text>
+<text x="350" y="90" text-anchor="middle" fill="var(--muted)" font-size="11" font-family="system-ui">ROOT</text>
+
+<!-- BUBBLE 5 -->
+<ellipse cx="190" cy="225" rx="50" ry="32" fill="#2d2a26" stroke="var(--gold)" stroke-width="2"/>
+<text x="190" y="222" text-anchor="middle" fill="var(--gold2)" font-size="24" font-weight="800" font-family="system-ui">5</text>
+<text x="190" y="248" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="system-ui">Bubble</text>
+
+<!-- BUBBLE 15 -->
+<ellipse cx="510" cy="225" rx="50" ry="32" fill="#2d2a26" stroke="var(--gold)" stroke-width="2"/>
+<text x="510" y="222" text-anchor="middle" fill="var(--gold2)" font-size="24" font-weight="800" font-family="system-ui">15</text>
+<text x="510" y="248" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="system-ui">Bubble</text>
+
+<!-- BUBBLE 3 (LEAF) -->
+<ellipse cx="100" cy="375" rx="45" ry="28" fill="#2d2a26" stroke="#6b9484" stroke-width="2"/>
+<text x="100" y="372" text-anchor="middle" fill="var(--green)" font-size="22" font-weight="800" font-family="system-ui">3</text>
+<text x="100" y="395" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="system-ui">LEAF</text>
+
+<!-- BUBBLE 7 (LEAF) -->
+<ellipse cx="280" cy="375" rx="45" ry="28" fill="#2d2a26" stroke="#6b9484" stroke-width="2"/>
+<text x="280" y="372" text-anchor="middle" fill="var(--green)" font-size="22" font-weight="800" font-family="system-ui">7</text>
+<text x="280" y="395" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="system-ui">LEAF</text>
+
+<!-- BUBBLE 20 (LEAF) -->
+<ellipse cx="610" cy="375" rx="45" ry="28" fill="#2d2a26" stroke="#6b9484" stroke-width="2"/>
+<text x="610" y="372" text-anchor="middle" fill="var(--green)" font-size="22" font-weight="800" font-family="system-ui">20</text>
+<text x="610" y="395" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="system-ui">LEAF</text>
+
+<!-- Shankar at root -->
+<text x="350" y="25" text-anchor="middle" font-size="28">&#x1F468;&#x200D;&#x2695;&#xFE0F;</text>
+<text fill="var(--gold2)" font-size="11" font-weight="700" font-family="system-ui" text-anchor="middle" x="350" y="18">Shankar Dada</text>
+
+<!-- Legend -->
+<rect x="40" y="430" width="620" height="45" rx="8" fill="var(--card)" stroke="var(--border)"/>
+<line x1="60" y1="453" x2="90" y2="453" stroke="var(--lav)" stroke-width="3" stroke-dasharray="8 4"/>
+<text fill="var(--text)" font-size="11" font-family="system-ui" x="95" y="457">= Lavender tube (node.left)</text>
+<line x1="270" y1="453" x2="300" y2="453" stroke="var(--red)" stroke-width="3" stroke-dasharray="8 4"/>
+<text fill="var(--text)" font-size="11" font-family="system-ui" x="305" y="457">= Red tube (node.right)</text>
+<ellipse cx="480" cy="453" rx="16" ry="10" fill="none" stroke="#6b9484" stroke-width="2"/>
+<text fill="var(--text)" font-size="11" font-family="system-ui" x="502" y="457">= Leaf (no doors)</text>
+</svg>
+
+<!-- AIRTIGHT MAPPING -->
+<h2>Quick Reference: Bubble Tree = Binary Tree</h2>
+
+<div class="map-grid">
+<div class="map-row">
+<div class="map-cell"><span class="icon">&#x1FAE7;</span><div><div class="lbl">Bubble Room</div><div class="sub">A floating room Circuit can fall into</div></div></div>
+<div class="map-cell"><span class="icon">&#x2B55;</span><div><div class="lbl">Node</div><code>node</code></div></div>
+</div>
+<div class="map-row">
+<div class="map-cell"><span class="icon">&#x1FA7A;</span><div><div class="lbl">Vitals (number on wall)</div><div class="sub">The number Circuit reads: 10, 5, 15...</div></div></div>
+<div class="map-cell"><span class="icon">&#x1F522;</span><div><div class="lbl">Node Value</div><code>node.val</code></div></div>
+</div>
+<div class="map-row">
+<div class="map-cell"><span class="icon" style="color:var(--lav)">&#x1F6AA;</span><div><div class="lbl">Lavender Door + Tube</div><div class="sub">L for Lavender, L for Left &mdash; always first</div></div></div>
+<div class="map-cell"><span class="icon" style="color:var(--lav)">&larr;</span><div><div class="lbl">Left Child</div><code>node.left</code></div></div>
+</div>
+<div class="map-row">
+<div class="map-cell"><span class="icon" style="color:var(--red)">&#x1F6AA;</span><div><div class="lbl">Red Door + Tube</div><div class="sub">R for Red, R for Right</div></div></div>
+<div class="map-cell"><span class="icon" style="color:var(--red)">&rarr;</span><div><div class="lbl">Right Child</div><code>node.right</code></div></div>
+</div>
+<div class="map-row">
+<div class="map-cell"><span class="icon" style="opacity:.4">&#x1F6AB;</span><div><div class="lbl">No Vitals (dead-end)</div><div class="sub">Blank wall &mdash; Circuit climbs back out</div></div></div>
+<div class="map-cell"><span class="icon" style="opacity:.4">&empty;</span><div><div class="lbl">None / Base Case</div><code>if not node: return ...</code></div></div>
+</div>
+<div class="map-row">
+<div class="map-cell"><span class="icon" style="color:var(--green)">&#x1F33F;</span><div><div class="lbl">Leaf (no doors at all)</div><div class="sub">Bubble with vitals but zero doors</div></div></div>
+<div class="map-cell"><span class="icon" style="color:var(--green)">&#x1F343;</span><div><div class="lbl">Leaf Node</div><code>not node.left and not node.right</code></div></div>
+</div>
+<div class="map-row">
+<div class="map-cell"><span class="icon" style="color:var(--purple)">&harr;</span><div><div class="lbl">Corridor</div><div class="sub">UP one tube, through a bubble, DOWN the other tube</div></div></div>
+<div class="map-cell"><span class="icon" style="color:var(--purple)">&#x1F6E4;</span><div><div class="lbl">Path Through Node</div><code>left_depth + right_depth</code></div></div>
+</div>
+</div>
+
+<h3>The Characters</h3>
+<div class="map-grid">
+<div class="map-row">
+<div class="map-cell"><span class="icon">&#x1F468;&#x200D;&#x2695;&#xFE0F;</span><div><div class="lbl">Shankar (the boss)</div><div class="sub">Sits at top, gives orders, receives final answer</div></div></div>
+<div class="map-cell"><span class="icon">&#x1F4DE;</span><div><div class="lbl">The Caller / main()</div><code>result = dfs(root)</code></div></div>
+</div>
+<div class="map-row">
+<div class="map-cell"><span class="icon">&#x1F3C3;</span><div><div class="lbl">Circuit (the scout)</div><div class="sub">Falls into bubbles, peeks through doors, gets answers. He IS the recursion.</div></div></div>
+<div class="map-cell"><span class="icon">&#x1F504;</span><div><div class="lbl">The Recursive Function</div><code>def dfs(node):</code></div></div>
+</div>
+<div class="map-row">
+<div class="map-cell"><span class="icon">&#x1F454;</span><div><div class="lbl">Lingam Mavayya + Badge</div><div class="sub">Shines his badge from above. Circuit's badge glows with constraints.</div></div></div>
+<div class="map-cell"><span class="icon">&#x1F4CB;</span><div><div class="lbl">Top-Down Parameter</div><code>def dfs(node, lo, hi):</code></div></div>
+</div>
+<div class="map-row">
+<div class="map-cell"><span class="icon">&#x1F4D3;</span><div><div class="lbl">Circuit's Diary</div><div class="sub">Private notebook &mdash; tracks the best thing he's seen</div></div></div>
+<div class="map-cell"><span class="icon">&#x1F310;</span><div><div class="lbl">Nonlocal Variable</div><code>nonlocal best</code></div></div>
+</div>
+<div class="map-row">
+<div class="map-cell"><span class="icon">&#x1F69B;</span><div><div class="lbl">Shankar's Flatbed Truck</div><div class="sub">BFS queue. Bubbles fall on it, get tipped onto floor.</div></div></div>
+<div class="map-cell"><span class="icon">&#x1F4E6;</span><div><div class="lbl">Queue (deque)</div><code>deque([root])</code></div></div>
+</div>
+</div>
+
+</div>
+
+<!-- ==================== TAB 2: FLOWCHART ==================== -->
+<div class="sec" id="sec-flowchart">
+
+<h2>The Decision Flowchart</h2>
+<p>Two questions max. That's all you need to pick the right scene for ANY tree problem.</p>
+
+<!-- STEP 1 -->
+<div class="flow-step" style="border-color:var(--gold2);background:rgba(251,191,36,.05)">
+<div style="font-size:.7em;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">START</div>
+<strong style="color:var(--gold2);font-size:1.1em">Read the tree problem</strong>
+</div>
+
+<div class="flow-arrow">&darr;</div>
+
+<!-- Q0: Level by level? -->
+<div class="flow-step q-step">
+<div style="font-size:.7em;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Quick Check</div>
+<strong>Does the problem want me to process ONE FULL LEVEL at a time?</strong>
+<div style="background:rgba(251,191,36,.08);border-radius:6px;padding:10px;margin-top:8px;font-size:.88em">
+<div style="color:var(--gold2);font-weight:700;margin-bottom:4px">How to spot it:</div>
+<div style="color:var(--text)">The problem says things like: <em>"return values level by level"</em>, <em>"what do you see from the right side?"</em>, <em>"average of each level"</em>.<br>
+<strong>Key signal:</strong> The answer is organized <strong>level-by-level</strong>.</div>
+</div>
+</div>
+
+<div class="flow-branch">
+<div class="flow-step s4" style="flex:.6">
+<strong style="color:var(--blue)">YES &rarr;</strong>
+<div><span class="tag t4">Scene 4</span></div>
+<div style="margin-top:6px"><strong style="color:var(--blue);font-size:1.1em">SHANKAR'S TRUCK</strong></div>
+<div style="font-size:.85em;color:var(--muted);margin-top:4px">BFS. Tip the truck. Crack bubbles. Yank tubes.</div>
+</div>
+<div style="display:flex;align-items:center;color:var(--muted);font-weight:700">NO &darr;</div>
+</div>
+
+<div class="flow-arrow">&darr;</div>
+
+<!-- Q1: Info from above? -->
+<div class="flow-step q-step">
+<div style="font-size:.7em;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">The Core Question</div>
+<strong style="font-size:1.05em">Imagine Circuit inside ONE bubble. Can he figure out the answer just by peeking through his doors (checking bubbles BELOW)?</strong>
+<div style="background:rgba(251,191,36,.08);border-radius:6px;padding:10px;margin-top:8px;font-size:.88em">
+<div style="color:var(--green);font-weight:700;margin-bottom:6px">YES &mdash; he only needs info from BELOW (children)</div>
+<div style="color:var(--text);margin-bottom:8px">
+<em>"What's the height?"</em> &rarr; Circuit peeks through doors, counts depth. Done.<br>
+<em>"Is it balanced?"</em> &rarr; Circuit peeks both sides, compares depth. Done.<br>
+<em>"Invert the tree"</em> &rarr; Circuit swaps lavender and red doors. No info from above needed.
+</div>
+<div style="color:var(--red);font-weight:700;margin-bottom:6px">NO &mdash; he needs a RULE or NUMBER passed DOWN from above</div>
+<div style="color:var(--text)">
+<em>"Is this a valid BST?"</em> &rarr; Bubble has vitals 5. Is that valid? <strong>Circuit can't tell!</strong> He needs to know "you must be between 3 and 10" &mdash; that comes from the badge ABOVE.<br>
+<em>"Path sum equals target?"</em> &rarr; Circuit needs to know <strong>how much budget is left</strong> after the bubbles above used some.<br>
+<em>"Count good nodes"</em> &rarr; Is this node "good"? Only if its vitals &ge; the <strong>biggest value on the badge</strong> from above.
+</div>
+</div>
+</div>
+
+<div class="flow-branch">
+<div style="flex:1;text-align:center">
+<div style="color:var(--green);font-weight:700;margin-bottom:8px">YES &mdash; I only need info from below</div>
+<div class="flow-arrow">&darr;</div>
+<!-- Q2: Root or anywhere? -->
+<div class="flow-step q-step" style="margin:0 auto">
+<div style="font-size:.7em;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Second Question</div>
+<strong>Where does Circuit DELIVER the final answer?</strong>
+<div style="background:rgba(251,191,36,.08);border-radius:6px;padding:8px;margin-top:6px;font-size:.85em">
+<div style="color:var(--text)"><strong style="color:var(--green)">AT ROOT:</strong> The answer climbs up to Shankar at the top. <em>"height of tree"</em>, <em>"is it balanced"</em> &mdash; Shankar gets the final number.<br>
+<strong style="color:var(--purple)">ANY BUBBLE:</strong> The best answer could be at ANY bubble, not necessarily the top. <em>"longest corridor"</em>, <em>"max path sum"</em> &mdash; the best corridor might be deep inside.</div>
+</div>
+</div>
+<div class="flow-branch" style="margin-top:8px">
+<div class="flow-step s1">
+<strong style="color:var(--green)">AT ROOT</strong>
+<div style="margin:6px 0"><span class="tag t1">Scene 1</span></div>
+<div><strong style="color:var(--green);font-size:1.05em">CIRCUIT REPORTS UP</strong></div>
+<div style="font-size:.85em;color:var(--muted);margin-top:4px">Info flows UP. Peek through doors, combine, tell above.</div>
+</div>
+<div class="flow-step s2">
+<strong style="color:var(--purple)">ANY BUBBLE</strong>
+<div style="margin:6px 0"><span class="tag t2">Scene 2</span></div>
+<div><strong style="color:var(--purple);font-size:1.05em">CIRCUIT + DIARY</strong></div>
+<div style="font-size:.85em;color:var(--muted);margin-top:4px">Report goes UP, but answer is in the diary.</div>
+</div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:0">
+<div style="color:var(--red);font-weight:700;margin-bottom:8px">NO &mdash; I need info from above</div>
+<div class="flow-arrow" style="color:var(--red)">&darr;</div>
+<div class="flow-step s3" style="margin:0">
+<div><span class="tag t3">Scene 3</span></div>
+<div style="margin-top:6px"><strong style="color:var(--red);font-size:1.05em">LINGAM'S BADGE</strong></div>
+<div style="font-size:.85em;color:var(--muted);margin-top:4px">Badge glows with constraints flowing DOWN, tightening at each level.</div>
+</div>
+</div>
+</div>
+
+<div class="hi" style="margin-top:30px">
+<strong>Why this covers EVERY tree problem:</strong> Info in a tree can only flow 4 directions &mdash; UP (Scene 1), DOWN (Scene 3), SIDEWAYS through a bubble (Scene 2), or LEVEL by level (Scene 4). There is no 5th direction.
+</div>
+</div>
+
+<!-- ==================== TAB 3: 4 SCENES ==================== -->
+<div class="sec" id="sec-scenes">
+
+<h2>The 4 Scenes</h2>
+<p>Each scene is a ritual Circuit (or Shankar) performs. Close your eyes, replay the scene, and the code writes itself.</p>
+
+<!-- ============ SCENE 1 ============ -->
+<div style="background:var(--card);border:2px solid var(--green);border-radius:12px;padding:20px;margin-bottom:24px">
+
+<div style="color:var(--green);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 1: Circuit Reports UP</div>
+<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">Bottom-Up DFS &mdash; info flows UP from children to parent</div>
+
+<!-- THE RITUAL -->
+<div style="background:rgba(34,197,94,.08);border:2px solid var(--green);border-radius:10px;padding:18px;margin-bottom:16px">
+<div style="color:var(--green);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL (same in every bubble)</div>
+<div style="font-size:.95em;color:var(--text);line-height:1.9">
+<strong style="color:var(--green);font-size:1.05em">&#10102;</strong> Circuit <strong>falls into a bubble</strong>. No vitals on the wall? Dead-end &mdash; tell above a default (0, True, None), <strong>climb back out</strong>.<br>
+<strong style="color:var(--green);font-size:1.05em">&#10103;</strong> Opens <strong style="color:var(--lav)">lavender door</strong>, peeks through &rarr; gets an answer (left)<br>
+<strong style="color:var(--green);font-size:1.05em">&#10104;</strong> Opens <strong style="color:var(--red)">red door</strong>, peeks through &rarr; gets an answer (right)<br>
+<strong style="color:var(--green);font-size:1.05em">&#10105;</strong> <strong>Combine</strong> left + right + my vitals into one answer.<br>
+<strong style="color:var(--green);font-size:1.05em">&#10106;</strong> <strong>Tell above</strong> that answer.
+</div>
+<div style="margin-top:10px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:6px;font-size:.88em;color:var(--muted)">
+<strong style="color:var(--green)">No diary.</strong> The final answer is what the root bubble tells Shankar.
+</div>
+</div>
+
+<!-- RITUAL → CODE mapping -->
+<div style="color:var(--gold2);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">RITUAL &rarr; CODE</div>
+
+<div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
+<div class="ritual-step">
+<div style="background:#16a34a25;font-weight:700;color:var(--green);display:flex;align-items:center;justify-content:center">&#10102;</div>
+<div style="background:#16a34a12;font-size:.9em">
+<strong>Falls in.</strong> No vitals? Dead-end &mdash; tell above default, climb back out.
+</div>
+<div style="background:#16a34a08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>if not node: return 0</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#16a34a25;font-weight:700;color:var(--green);display:flex;align-items:center;justify-content:center">&#10103;</div>
+<div style="background:#16a34a12;font-size:.9em">
+<strong>Lavender door.</strong> Opens it, peeks through &rarr; gets an answer back.
+</div>
+<div style="background:#16a34a08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>L = dfs(node.left)</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#16a34a25;font-weight:700;color:var(--green);display:flex;align-items:center;justify-content:center">&#10104;</div>
+<div style="background:#16a34a12;font-size:.9em">
+<strong>Red door.</strong> Opens it, peeks through &rarr; gets another answer.
+</div>
+<div style="background:#16a34a08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>R = dfs(node.right)</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#16a34a25;font-weight:700;color:var(--green);display:flex;align-items:center;justify-content:center">&#10105;&#10106;</div>
+<div style="background:#16a34a12;font-size:.9em">
+<strong>Combine and tell above.</strong> Two answers in his head. Combines them with his vitals. Climbs back out.
+</div>
+<div style="background:#16a34a08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>return 1 + max(L, R)</code></div>
+</div>
+</div>
+
+<!-- Code Anatomy -->
+<div style="background:rgba(34,197,94,.06);border:1px solid var(--green);border-radius:10px;padding:18px;margin-top:14px">
+<div style="color:var(--green);font-weight:700;font-size:1.05em;margin-bottom:10px">Code Anatomy &mdash; WHY this exact order?</div>
+<pre style="background:#0d1117;border-radius:8px;padding:14px;font-size:.88em;overflow-x:auto;line-height:1.7"><code><span style="color:#6b7280">Line 1:</span> <span style="color:#ff7b72">def</span> <span style="color:#d2a8ff">dfs</span>(node):
+<span style="color:#6b7280">Line 2:</span>     <span style="color:#ff7b72">if not</span> node: <span style="color:#ff7b72">return</span> BASE     <span style="color:#fbbf24">&larr; FIRST! Falls in, no vitals &rarr; climb back out immediately</span>
+<span style="color:#6b7280">Line 3:</span>     L = dfs(node.left)              <span style="color:#fbbf24">&larr; Peeks through lavender door, gets answer</span>
+<span style="color:#6b7280">Line 4:</span>     R = dfs(node.right)             <span style="color:#fbbf24">&larr; Peeks through red door, gets answer</span>
+<span style="color:#6b7280">Line 5:</span>     <span style="color:#ff7b72">return</span> COMBINE(L, R)            <span style="color:#fbbf24">&larr; LAST! Has BOTH answers &rarr; combine and tell above</span></code></pre>
+
+<div style="margin-top:14px;display:grid;gap:8px">
+<div style="background:rgba(0,0,0,.2);border-radius:6px;padding:10px;font-size:.9em">
+<strong style="color:var(--green)">Base case is ALWAYS first</strong> &mdash; Circuit falls in, checks the wall FIRST. No vitals? Climb back out. <span style="color:var(--red)">If you put it after Line 3, you'd crash &mdash; <code>None.left</code> = <code>AttributeError</code>!</span>
+</div>
+<div style="background:rgba(0,0,0,.2);border-radius:6px;padding:10px;font-size:.9em">
+<strong style="color:var(--green)">Peek through doors BEFORE combining</strong> &mdash; Circuit can't combine answers he doesn't have yet. <span style="color:var(--red)">If you return before peeking, you never visit any children!</span>
+</div>
+<div style="background:rgba(0,0,0,.2);border-radius:6px;padding:10px;font-size:.9em">
+<strong style="color:var(--green)">Return is ALWAYS last</strong> &mdash; Bottom-up. Collect from below FIRST, then combine and tell above. Circuit can't climb out until he's done peeking.
+</div>
+</div>
+</div>
+
+<!-- Common Mistakes -->
+<div style="background:rgba(239,68,68,.06);border:1px solid var(--red);border-radius:10px;padding:18px;margin-top:12px">
+<div style="color:var(--red);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
+<div style="display:grid;gap:12px">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; base case returns wrong value</div>
+<pre style="font-size:.82em;margin:0"><code>if not node: return -1  # ???
+if not node: return 1   # ???</code></pre>
+</div>
+<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; think: what does an empty bubble report?</div>
+<pre style="font-size:.82em;margin:0"><code># Height: no vitals = 0 depth
+if not node: return 0
+
+# "Is it balanced?": empty = yes
+if not node: return True</code></pre>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; doing work before peeking</div>
+<pre style="font-size:.82em;margin:0"><code>def dfs(node):
+    if not node: return 0
+    result = 1 + ???  # combine WHAT?
+    L = dfs(node.left) # too late!</code></pre>
+</div>
+<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; peek first, THEN combine</div>
+<pre style="font-size:.82em;margin:0"><code>def dfs(node):
+    if not node: return 0
+    L = dfs(node.left)   # peek
+    R = dfs(node.right)  # peek
+    return 1 + max(L, R) # THEN combine</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============ SCENE 2 ============ -->
+<div style="background:var(--card);border:2px solid var(--purple);border-radius:12px;padding:20px;margin-bottom:24px">
+
+<div style="color:var(--purple);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 2: Circuit + Diary</div>
+<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">Bottom-Up DFS + Global Tracker &mdash; report goes UP, answer is in the diary</div>
+
+<!-- THE RITUAL -->
+<div style="background:rgba(168,85,247,.08);border:2px solid var(--purple);border-radius:10px;padding:18px;margin-bottom:16px">
+<div style="color:var(--purple);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL</div>
+<div style="font-size:.95em;color:var(--text);line-height:1.9">
+<strong style="color:var(--purple);font-size:1.05em">&#10102;</strong> Circuit <strong>falls into a bubble</strong>. No vitals on the wall? Dead-end &mdash; tell above 0, <strong>climb back out</strong>.<br>
+<strong style="color:var(--purple);font-size:1.05em">&#10103;</strong> Opens <strong style="color:var(--lav)">lavender door</strong>, peeks through &rarr; gets an answer (left)<br>
+<strong style="color:var(--purple);font-size:1.05em">&#10104;</strong> Opens <strong style="color:var(--red)">red door</strong>, peeks through &rarr; gets an answer (right)<br>
+<strong style="color:var(--purple);font-size:1.05em">&#10105;</strong> <strong>Diary:</strong> combine left + right + something about me (corridor through me). Beat the diary? Overwrite.<br>
+<strong style="color:var(--purple);font-size:1.05em">&#10106;</strong> <strong>Tell above:</strong> me + the better side (above can only use one tube)
+</div>
+<div style="margin-top:10px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:6px;font-size:.88em;color:var(--muted)">
+<strong style="color:var(--purple)">Answer is in the diary, NOT what root tells.</strong>
+</div>
+</div>
+
+<!-- WHY diary != report -->
+<div style="background:rgba(168,85,247,.12);border-radius:8px;padding:14px;margin-bottom:16px">
+<div style="color:var(--purple);font-weight:700;margin-bottom:6px">The diary vs the report &mdash; why two different numbers?</div>
+<div style="font-size:.9em;color:var(--text)">
+Standing in Bubble 5, Circuit has two things to do:<br><br>
+<strong>&#x1F4D3; Diary</strong> = <code>L + R</code> &mdash; "How long is the corridor passing THROUGH me?" Uses both tubes.<br>
+<strong>&#x1F4E4; Tell above</strong> = <code>1 + max(L, R)</code> &mdash; "How deep can you reach through me?" Uses only the deeper side.<br><br>
+They're different because the bubble above connects to me through <strong>one tube</strong>. It can only extend the path in one direction. The corridor (both sides) is a separate measurement that goes in the diary.
+</div>
+</div>
+
+<!-- RITUAL → CODE -->
+<div style="color:var(--gold2);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">RITUAL &rarr; CODE</div>
+
+<div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
+<div class="ritual-step">
+<div style="background:#7c3aed25;font-weight:700;color:var(--purple);display:flex;align-items:center;justify-content:center">&#9450;</div>
+<div style="background:#7c3aed12;font-size:.9em"><strong>Shankar hands Circuit the diary</strong> before sending him.</div>
+<div style="background:#7c3aed08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>best = 0</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#7c3aed25;font-weight:700;color:var(--purple);display:flex;align-items:center;justify-content:center">&#10102;</div>
+<div style="background:#7c3aed12;font-size:.9em"><strong>Falls in.</strong> No vitals? Dead-end. Climb back out. <strong>Don't write in diary.</strong></div>
+<div style="background:#7c3aed08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>if not node: return 0</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#7c3aed25;font-weight:700;color:var(--purple);display:flex;align-items:center;justify-content:center">&#10103;&#10104;</div>
+<div style="background:#7c3aed12;font-size:.9em"><strong>Lavender door. Red door.</strong> Peeks through both, gets two answers.</div>
+<div style="background:#7c3aed08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>L = dfs(node.left)</code><br><code>R = dfs(node.right)</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#7c3aed25;font-weight:700;color:var(--purple);display:flex;align-items:center;justify-content:center">&#10105;</div>
+<div style="background:#7c3aed12;font-size:.9em"><strong>Diary:</strong> corridor through this bubble = L + R. Better than diary? Overwrite.</div>
+<div style="background:#7c3aed08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>best = max(best, L + R)</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#7c3aed25;font-weight:700;color:var(--purple);display:flex;align-items:center;justify-content:center">&#10106;</div>
+<div style="background:#7c3aed12;font-size:.9em"><strong>Tell above:</strong> deeper single side + 1. Corridor stays in diary.</div>
+<div style="background:#7c3aed08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>return 1 + max(L, R)</code></div>
+</div>
+</div>
+
+<div style="margin-top:12px;padding:8px 12px;background:rgba(168,85,247,.08);border-radius:6px;font-size:.85em;color:var(--muted)">
+<strong style="color:var(--purple)">Scene 2 = Scene 1 + one extra moment.</strong> Between "peek through both doors" (&#10103;&#10104;) and "tell above" (&#10106;), Circuit pauses to write in the diary (&#10105;). Everything else is identical.
+</div>
+
+<!-- Common Mistakes -->
+<div style="background:rgba(239,68,68,.06);border:1px solid var(--red);border-radius:10px;padding:18px;margin-top:12px">
+<div style="color:var(--red);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
+<div style="display:grid;gap:12px">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; returning corridor instead of depth</div>
+<pre style="font-size:.82em;margin:0"><code>best = max(best, L + R)
+return 1 + L + R  # NO! Above can't
+                   # use both your tubes</code></pre>
+</div>
+<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; diary gets L+R, report gets max(L,R)</div>
+<pre style="font-size:.82em;margin:0"><code>best = max(best, L + R)    # diary: corridor
+return 1 + max(L, R)       # report: depth
+# Two DIFFERENT numbers!</code></pre>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; forgot nonlocal</div>
+<pre style="font-size:.82em;margin:0"><code>best = 0
+def dfs(node):
+    # no nonlocal!
+    best = max(best, L + R)
+    # UnboundLocalError!</code></pre>
+</div>
+<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; declare nonlocal first</div>
+<pre style="font-size:.82em;margin:0"><code>best = 0
+def dfs(node):
+    nonlocal best
+    ...
+    best = max(best, L + R)  # OK</code></pre>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; diary starts at 0 for Max Path Sum</div>
+<pre style="font-size:.82em;margin:0"><code># Values can be NEGATIVE!
+best = 0  # What if all values are -5?
+          # Answer should be -5, not 0!</code></pre>
+</div>
+<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; use -infinity when values can be negative</div>
+<pre style="font-size:.82em;margin:0"><code># Diameter: lengths always >= 0
+best = 0              # OK
+
+# Max Path Sum: values can be negative
+best = float('-inf')  # must start at -inf</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============ SCENE 3 ============ -->
+<div style="background:var(--card);border:2px solid var(--red);border-radius:12px;padding:20px;margin-bottom:24px">
+
+<div style="color:var(--red);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 3: Lingam Mavayya's Badge</div>
+<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">Top-Down DFS &mdash; constraints flow DOWN, tightening at each level</div>
+
+<!-- THE RITUAL -->
+<div style="background:rgba(239,68,68,.08);border:2px solid var(--red);border-radius:10px;padding:18px;margin-bottom:16px">
+<div style="color:var(--red);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL</div>
+<div style="font-size:.95em;color:var(--text);line-height:1.9">
+<strong style="color:var(--red);font-size:1.05em">&#10102;</strong> Circuit <strong>falls into a bubble</strong>. Lingam shines his badge from above &mdash; Circuit's <strong>badge glows</strong> and updates with the constraint.<br>
+<strong style="color:var(--red);font-size:1.05em">&#10103;</strong> No vitals on the wall? Dead-end &mdash; return True, <strong>climb back out</strong>.<br>
+<strong style="color:var(--red);font-size:1.05em">&#10104;</strong> Check: do my vitals <strong>OBEY</strong> what's on the badge? No? <strong>Return False.</strong><br>
+<strong style="color:var(--red);font-size:1.05em">&#10105;</strong> Opens <strong style="color:var(--lav)">lavender door</strong>, glows the badge with updated values, peeks through &rarr; gets True/False<br>
+<strong style="color:var(--red);font-size:1.05em">&#10106;</strong> Opens <strong style="color:var(--red)">red door</strong>, glows the badge with updated values, peeks through &rarr; gets True/False<br>
+<strong style="color:var(--red);font-size:1.05em">&#10107;</strong> <strong>Tell above:</strong> lavender AND red (both must obey)
+</div>
+<div style="margin-top:10px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:6px;font-size:.88em;color:var(--muted)">
+<strong style="color:var(--red)">Work FIRST, then peek.</strong> Lingam checks this bubble BEFORE going deeper. Opposite of Scene 1.
+</div>
+</div>
+
+<!-- KEY INSIGHT -->
+<div style="background:rgba(239,68,68,.12);border-radius:8px;padding:14px;margin-bottom:16px">
+<div style="color:var(--red);font-weight:700;margin-bottom:6px">Badge vs Diary &mdash; completely different things</div>
+<div style="font-size:.9em;color:var(--text)">
+<strong>Badge</strong> (Scene 3) = constraint passed DOWN from above. Lingam shines it, Circuit's badge updates. It <strong>tightens</strong> at each level.<br>
+<strong>Diary</strong> (Scene 2) = global tracker written by Circuit. It tracks the best answer seen across ALL bubbles.<br><br>
+Badge = instructions IN. Diary = answers OUT. Never mix them.
+</div>
+</div>
+
+<!-- RITUAL → CODE -->
+<div style="color:var(--gold2);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">RITUAL &rarr; CODE (Validate BST example)</div>
+
+<div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
+<div class="ritual-step">
+<div style="background:#dc262625;font-weight:700;color:var(--red);display:flex;align-items:center;justify-content:center">&#10102;</div>
+<div style="background:#dc262612;font-size:.9em"><strong>Falls in with badge.</strong> Lingam shines badge = (lo, hi) constraint.</div>
+<div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>def dfs(node, lo, hi):</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#dc262625;font-weight:700;color:var(--red);display:flex;align-items:center;justify-content:center">&#10103;</div>
+<div style="background:#dc262612;font-size:.9em"><strong>No vitals?</strong> No patient to violate anything. Return True, climb out.</div>
+<div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>if not node: return True</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#dc262625;font-weight:700;color:var(--red);display:flex;align-items:center;justify-content:center">&#10104;</div>
+<div style="background:#dc262612;font-size:.9em"><strong>Check badge.</strong> Do my vitals obey? No? Return False immediately.</div>
+<div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>if not (lo &lt; val &lt; hi): return False</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#dc262625;font-weight:700;color:var(--red);display:flex;align-items:center;justify-content:center">&#10105;&#10106;</div>
+<div style="background:#dc262612;font-size:.9em"><strong>Glow badge with tighter values.</strong> Lavender: new ceiling = my vitals. Red: new floor = my vitals.</div>
+<div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>return dfs(L, lo, val)</code><br><code>&nbsp;&nbsp; and dfs(R, val, hi)</code></div>
+</div>
+</div>
+
+<!-- Common Mistakes -->
+<div style="background:rgba(239,68,68,.06);border:1px solid #b91c1c;border-radius:10px;padding:18px;margin-top:12px">
+<div style="color:var(--red);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
+<div style="display:grid;gap:12px">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; checking AFTER peeking through doors</div>
+<pre style="font-size:.82em;margin:0"><code>left = dfs(node.left, lo, node.val)
+right = dfs(node.right, node.val, hi)
+if not (lo < node.val < hi):  # too late!
+    return False</code></pre>
+</div>
+<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; check badge BEFORE peeking deeper</div>
+<pre style="font-size:.82em;margin:0"><code>if not (lo < node.val < hi):
+    return False          # stop HERE!
+return dfs(node.left, lo, node.val) \
+   and dfs(node.right, node.val, hi)</code></pre>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; not tightening badge values</div>
+<pre style="font-size:.82em;margin:0"><code>dfs(node.left, lo, hi)   # same badge!
+dfs(node.right, lo, hi)  # never tightens!</code></pre>
+</div>
+<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; glow badge with tighter values</div>
+<pre style="font-size:.82em;margin:0"><code># Lavender: new ceiling = my vitals
+dfs(node.left, lo, node.val)
+# Red: new floor = my vitals
+dfs(node.right, node.val, hi)</code></pre>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; forgot initial badge values</div>
+<pre style="font-size:.82em;margin:0"><code>dfs(root, 0, 100)  # What if val is -5?</code></pre>
+</div>
+<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; start with no restrictions</div>
+<pre style="font-size:.82em;margin:0"><code>dfs(root, float('-inf'), float('inf'))</code></pre>
+</div>
+</div>
+</div>
+
+<div style="margin-top:10px;padding:8px;background:rgba(251,191,36,.1);border-radius:6px;font-size:.88em">
+<strong style="color:var(--gold2)">Scene 3 order:</strong> base case &rarr; <strong>CHECK badge</strong> &rarr; glow badge with tighter values &rarr; peek through doors. Check is BETWEEN base case and peeking.
+</div>
+</div>
+</div>
+
+<!-- ============ SCENE 4 ============ -->
+<div style="background:var(--card);border:2px solid var(--blue);border-radius:12px;padding:20px;margin-bottom:24px">
+
+<div style="color:var(--blue);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 4: Shankar Dada's Rounds</div>
+<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">BFS &mdash; Shankar cracks bubbles, yanks tubes, loads the truck</div>
+
+<!-- THE RITUAL -->
+<div style="background:rgba(59,130,246,.08);border:2px solid var(--blue);border-radius:10px;padding:18px;margin-bottom:16px">
+<div style="color:var(--blue);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL</div>
+<div style="font-size:.95em;color:var(--text);line-height:1.9">
+<strong style="color:var(--blue);font-size:1.05em">&#10102;</strong> Root bubble <strong>falls onto the truck</strong>.<br>
+<strong style="color:var(--blue);font-size:1.05em">&#10103;</strong> Shankar <strong>tips the truck</strong> &mdash; all bubbles tumble onto the <strong>floor</strong>.<br>
+<strong style="color:var(--blue);font-size:1.05em">&#10104;</strong> He walks to each bubble on the floor <strong>one by one</strong>. <strong>Cracks it open</strong>, reads vitals, does the work. <strong style="color:var(--lav)">Yanks lavender tube</strong> &mdash; child bubble lands on the <strong>truck</strong>. <strong style="color:var(--red)">Yanks red tube</strong> &mdash; child bubble lands on the <strong>truck</strong>.<br>
+<strong style="color:var(--blue);font-size:1.05em">&#10105;</strong> Floor empty. <strong>Level done.</strong> Record result.<br>
+<strong style="color:var(--blue);font-size:1.05em">&#10106;</strong> <strong>Tips the truck again.</strong> Repeats from &#10104;. Stops when he tips the truck and nothing falls out.
+</div>
+<div style="margin-top:10px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:6px;font-size:.88em;color:var(--muted)">
+<strong style="color:var(--blue)">No Circuit. No recursion.</strong> Shankar does this himself. Truck = queue. Floor = current level. Children always land on the truck (next level), never on the floor (current level).
+</div>
+</div>
+
+<!-- KEY INSIGHT -->
+<div style="background:rgba(59,130,246,.12);border-radius:8px;padding:14px;margin-bottom:16px">
+<div style="color:var(--blue);font-weight:700;margin-bottom:6px">Why truck + floor = level separation</div>
+<div style="font-size:.9em;color:var(--text)">
+<strong>Floor</strong> = current level being processed.<br>
+<strong>Truck</strong> = next level accumulating.<br>
+They never mix. Children always land on the truck, never on the floor.<br>
+<strong>Tipping the truck</strong> = <code>for _ in range(len(queue))</code> = start a new level.
+</div>
+</div>
+
+<!-- RITUAL → CODE -->
+<div style="color:var(--gold2);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">RITUAL &rarr; CODE</div>
+
+<div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
+<div class="ritual-step">
+<div style="background:#2563eb25;font-weight:700;color:var(--blue);display:flex;align-items:center;justify-content:center">&#10102;</div>
+<div style="background:#2563eb12;font-size:.9em"><strong>Root bubble falls onto the truck.</strong></div>
+<div style="background:#2563eb08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>q = deque([root])</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#2563eb25;font-weight:700;color:var(--blue);display:flex;align-items:center;justify-content:center">&#10103;</div>
+<div style="background:#2563eb12;font-size:.9em"><strong>Tips the truck.</strong> Count what tumbles onto the floor. That's this level.</div>
+<div style="background:#2563eb08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>while q:<br>&nbsp; sz = len(q)</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#2563eb25;font-weight:700;color:var(--blue);display:flex;align-items:center;justify-content:center">&#10104;</div>
+<div style="background:#2563eb12;font-size:.9em"><strong>Each bubble on the floor:</strong> crack open, read vitals. Yank lavender tube &rarr; child lands on truck. Yank red tube &rarr; same.</div>
+<div style="background:#2563eb08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center;flex-wrap:wrap"><code>for _ in range(sz):</code><br><code>&nbsp; n = q.popleft()</code><br><code>&nbsp; level.append(n.val)</code><br><code>&nbsp; if n.left: q.append(n.left)</code><br><code>&nbsp; if n.right: q.append(n.right)</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#2563eb25;font-weight:700;color:var(--blue);display:flex;align-items:center;justify-content:center">&#10105;&#10106;</div>
+<div style="background:#2563eb12;font-size:.9em"><strong>Floor empty. Level done.</strong> Record result. Tips the truck again.</div>
+<div style="background:#2563eb08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>result.append(level)</code></div>
+</div>
+</div>
+
+<!-- Common Mistakes -->
+<div style="background:rgba(239,68,68,.06);border:1px solid var(--red);border-radius:10px;padding:18px;margin-top:12px">
+<div style="color:var(--red);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
+<div style="display:grid;gap:12px">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; no snapshot, levels mix</div>
+<pre style="font-size:.82em;margin:0"><code>for _ in range(len(q)):  # len(q) changes
+    node = q.popleft()   # as you add
+    q.append(node.left)  # children!</code></pre>
+</div>
+<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; tip the truck FIRST (snapshot)</div>
+<pre style="font-size:.82em;margin:0"><code>sz = len(q)       # tip truck = freeze count
+for _ in range(sz):  # exactly this many
+    node = q.popleft()
+    ...</code></pre>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; adding None to truck</div>
+<pre style="font-size:.82em;margin:0"><code>q.append(node.left)  # What if None?
+q.append(node.right) # Crash on next pop!</code></pre>
+</div>
+<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; only yank if tube exists</div>
+<pre style="font-size:.82em;margin:0"><code>if node.left:  q.append(node.left)
+if node.right: q.append(node.right)
+# Only real bubbles go on the truck</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- QUICK COMPARISON -->
+<div style="background:rgba(251,191,36,.08);border:1px solid var(--gold);border-radius:8px;padding:14px;margin-bottom:20px">
+<div style="color:var(--gold2);font-weight:700;margin-bottom:8px">Replay the scenes &mdash; spot the difference</div>
+<div style="font-size:.9em;color:var(--text)">
+<strong style="color:var(--green)">Scene 1:</strong> Circuit falls in, peeks through both doors, combines answers, tells above. Work at the END (bottom-up).<br>
+<strong style="color:var(--purple)">Scene 2:</strong> Same, but Circuit pauses to scribble in diary before telling above.<br>
+<strong style="color:var(--red)">Scene 3:</strong> Circuit checks his badge the MOMENT he falls in. Fails? Climbs out. Work at the START (top-down).<br>
+<strong style="color:var(--blue)">Scene 4:</strong> No Circuit. Shankar with a truck. Tip, crack, yank, repeat.
+</div>
+</div>
+
+</div>
+
+<!-- ==================== TAB 4: 15 PROBLEMS ==================== -->
+<div class="sec" id="sec-problems">
+<h2>All 15 NeetCode Tree Problems</h2>
+<p>Each derived from scratch using the flowchart + the ritual for that scene.</p>
+
+<!-- SCENE 1 PROBLEMS -->
+<h3 style="color:var(--green)"><span class="tag t1">Scene 1</span> Circuit Reports UP (8 problems)</h3>
+
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">1</span>#226 Invert Binary Tree<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">Flowchart</div>Level-by-level? No. Info from above? No &mdash; swapping doesn't need badge. Answer at root? Yes. <strong>&rarr; <span class="tag t1">Scene 1</span></strong></div>
+<div class="sbox"><div class="sl sl-s">The Ritual</div>
+&#10102; Falls in. No vitals? Return None &mdash; nothing to invert.<br>
+&#10103; Peeks through lavender door &rarr; gets the (already inverted) left subtree.<br>
+&#10104; Peeks through red door &rarr; gets the (already inverted) right subtree.<br>
+&#10105; <strong>Swap the two doors</strong> &mdash; lavender becomes red, red becomes lavender.<br>
+&#10106; Tell above: the swapped bubble.
+</div>
+<div class="sbox"><div class="sl sl-r">What changes from the template?</div>
+<strong>Base case:</strong> return None (not 0 &mdash; we return nodes, not numbers).<br>
+<strong>Combine:</strong> Instead of math, we literally swap <code>node.left, node.right = node.right, node.left</code>.<br>
+<strong>Note:</strong> You can swap BEFORE or AFTER peeking &mdash; both work. Swapping first, then recursing into the (now-swapped) children is fine.
+</div>
+<pre><code><span class="kw">def</span> <span class="fn">invertTree</span>(root):
+    <span class="kw">if not</span> root: <span class="kw">return</span> None
+    root.left, root.right = root.right, root.left
+    invertTree(root.left)
+    invertTree(root.right)
+    <span class="kw">return</span> root</code></pre>
+</div></div>
+
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">2</span>#104 Maximum Depth<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">Flowchart</div>Info from above? No. Answer at root? Yes &mdash; total depth. <strong>&rarr; <span class="tag t1">Scene 1</span></strong></div>
+<div class="sbox"><div class="sl sl-s">The Ritual</div>
+&#10102; No vitals? Dead-end &mdash; tell above <strong>0</strong> (zero depth).<br>
+&#10103; Lavender door &rarr; gets depth of left side.<br>
+&#10104; Red door &rarr; gets depth of right side.<br>
+&#10105; Tell above: <code>1 + max(left, right)</code>. <em>"Deeper side + 1 for me."</em>
+</div>
+<div class="sbox"><div class="sl sl-r">What changes from the template?</div>
+<strong>Base case:</strong> 0 (dead-end has zero depth).<br>
+<strong>Combine:</strong> <code>1 + max(L, R)</code> &mdash; pick the deeper side, add 1 for the current bubble.
+</div>
+<pre><code><span class="kw">def</span> <span class="fn">maxDepth</span>(root):
+    <span class="kw">if not</span> root: <span class="kw">return</span> 0
+    <span class="kw">return</span> 1 + max(maxDepth(root.left), maxDepth(root.right))</code></pre>
+</div></div>
+
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">3</span>#110 Balanced Binary Tree<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">Flowchart</div>Info from above? No. Answer at root? Yes. <strong>&rarr; <span class="tag t1">Scene 1</span></strong></div>
+<div class="sbox"><div class="sl sl-s">The Ritual</div>
+&#10102; No vitals? Tell above <strong>(True, 0)</strong> &mdash; empty is balanced with height 0.<br>
+&#10103;&#10104; Peek both doors &rarr; each returns a PAIR: (is_balanced?, height).<br>
+&#10105; I'm balanced if: BOTH sides are balanced AND their heights differ by at most 1.<br>
+&#10106; Tell above: (my_balanced?, 1 + max(left_h, right_h))
+</div>
+<div class="sbox"><div class="sl sl-r">What changes from the template?</div>
+<strong>Key insight:</strong> Circuit needs to report TWO things &mdash; balanced? AND height. So the return value is a <strong>tuple (bool, int)</strong>, not just a number. This is common in Scene 1 when you need to carry multiple pieces of info upward.
+</div>
+<pre><code><span class="kw">def</span> <span class="fn">isBalanced</span>(root):
+    <span class="kw">def</span> <span class="fn">dfs</span>(node):
+        <span class="kw">if not</span> node: <span class="kw">return</span> (True, 0)
+        lb, lh = dfs(node.left)
+        rb, rh = dfs(node.right)
+        balanced = lb <span class="kw">and</span> rb <span class="kw">and</span> abs(lh - rh) <= 1
+        <span class="kw">return</span> (balanced, 1 + max(lh, rh))
+    <span class="kw">return</span> dfs(root)[0]</code></pre>
+</div></div>
+
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">4</span>#100 Same Tree<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">Flowchart</div><strong>&rarr; <span class="tag t1">Scene 1</span></strong> &mdash; two Circuits in two bubble trees, comparing bubble by bubble.</div>
+<div class="sbox"><div class="sl sl-s">The Ritual</div>
+&#10102; <strong>Both</strong> no vitals? Identical dead-ends &rarr; True.<br>
+&#10102; <strong>One</strong> has vitals, other doesn't? Structure differs &rarr; False.<br>
+&#10103;&#10104; Peek lavender doors of both trees. Peek red doors of both trees.<br>
+&#10105; Same if: <code>my vitals match AND left same AND right same</code>.
+</div>
+<div class="sbox"><div class="sl sl-r">What changes from the template?</div>
+<strong>Two inputs:</strong> <code>dfs(p, q)</code> instead of <code>dfs(node)</code> &mdash; Circuit walks two trees simultaneously.<br>
+<strong>Base case has 3 branches:</strong> both None &rarr; True, one None &rarr; False, both exist &rarr; check values and recurse.
+</div>
+<pre><code><span class="kw">def</span> <span class="fn">isSameTree</span>(p, q):
+    <span class="kw">if not</span> p <span class="kw">and not</span> q: <span class="kw">return</span> True
+    <span class="kw">if not</span> p <span class="kw">or not</span> q: <span class="kw">return</span> False
+    <span class="kw">return</span> p.val == q.val <span class="kw">and</span> isSameTree(p.left, q.left) <span class="kw">and</span> isSameTree(p.right, q.right)</code></pre>
+</div></div>
+
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">5</span>#572 Subtree of Another Tree<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">Flowchart</div><strong>&rarr; <span class="tag t1">Scene 1</span></strong> &mdash; Circuit visits every bubble in the main tree, holding a &ldquo;photo&rdquo; of the subtree. At each bubble, he asks: "Does the tree starting HERE match the photo?"</div>
+<div class="sbox"><div class="sl sl-s">The Ritual</div>
+&#10102; No vitals in main tree? Can't match &rarr; False.<br>
+&#10103; Check: does <code>isSameTree(root, sub)</code> match from here? Yes &rarr; True, done!<br>
+&#10104; No match? Peek lavender door OR red door &mdash; maybe the subtree is deeper inside.
+</div>
+<div class="sbox"><div class="sl sl-r">What changes from the template?</div>
+<strong>Uses isSameTree as a helper.</strong> Two-layer recursion: outer recursion walks the main tree (isSubtree), inner recursion compares at each position (isSameTree).<br>
+<strong>Combine with OR:</strong> Subtree could be on left side OR right side &mdash; either match is enough.
+</div>
+<pre><code><span class="kw">def</span> <span class="fn">isSubtree</span>(root, sub):
+    <span class="kw">if not</span> root: <span class="kw">return</span> False
+    <span class="kw">if</span> isSameTree(root, sub): <span class="kw">return</span> True
+    <span class="kw">return</span> isSubtree(root.left, sub) <span class="kw">or</span> isSubtree(root.right, sub)</code></pre>
+</div></div>
+
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">6</span>#230 Kth Smallest in BST<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">Flowchart</div><strong>&rarr; <span class="tag t1">Scene 1</span></strong> (in-order variant)</div>
+<div class="sbox"><div class="sl sl-s">The Ritual</div>
+<strong>Key BST trick:</strong> In a BST, if Circuit always goes through the lavender door first, then reads vitals, then goes through the red door &mdash; he visits bubbles in <strong>sorted order</strong> (smallest to largest). This is called <strong>in-order traversal</strong>.<br><br>
+So: just do in-order traversal, count down from K. When count hits 0, that's the Kth smallest.
+</div>
+<div class="sbox"><div class="sl sl-r">What changes from the template?</div>
+<strong>Uses a stack instead of recursion</strong> &mdash; same idea, but iterative so we can stop early at the Kth element without visiting the entire tree.<br>
+<strong>Inner while loop:</strong> keeps going left (lavender) until dead-end. Then pops, reads vitals (that's the next smallest), goes right (red).
+</div>
+<pre><code><span class="kw">def</span> <span class="fn">kthSmallest</span>(root, k):
+    stk, n = [], root
+    <span class="kw">while</span> stk <span class="kw">or</span> n:
+        <span class="kw">while</span> n:                 <span class="cm"># keep going lavender (left)</span>
+            stk.append(n)
+            n = n.left
+        n = stk.pop()           <span class="cm"># pop = next smallest</span>
+        k -= 1
+        <span class="kw">if</span> k == 0: <span class="kw">return</span> n.val  <span class="cm"># found Kth!</span>
+        n = n.right              <span class="cm"># now try red (right)</span></code></pre>
+</div></div>
+
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">7</span>#105 Construct from Preorder+Inorder<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">Flowchart</div><strong>&rarr; <span class="tag t1">Scene 1</span></strong> (build mode &mdash; Circuit builds bubbles instead of visiting them)</div>
+<div class="sbox"><div class="sl sl-s">The Ritual</div>
+<strong>Key insight:</strong><br>
+&bull; <strong>Preorder</strong> = the order Circuit first enters each bubble (root first). So <code>preorder[0]</code> is always the root.<br>
+&bull; <strong>Inorder</strong> = everything LEFT of root in inorder is the left subtree, everything RIGHT is the right subtree.<br><br>
+&#10102; Take the next value from preorder &rarr; that's the current bubble's vitals.<br>
+&#10103; Find that value in inorder &rarr; everything to its left = lavender subtree, everything to its right = red subtree.<br>
+&#10104; Recursively build lavender side, then red side.<br>
+&#10105; Return the constructed bubble.
+</div>
+<div class="sbox"><div class="sl sl-r">What changes from the template?</div>
+<strong>Base case:</strong> <code>lo > hi</code> &rarr; no elements left &rarr; return None.<br>
+<strong>Return:</strong> a newly created TreeNode (building, not traversing).<br>
+<strong>Index map:</strong> <code>idx = {v:i for i,v in enumerate(inorder)}</code> lets you instantly find where a value sits in inorder.
+</div>
+<pre><code><span class="kw">def</span> <span class="fn">buildTree</span>(pre, ino):
+    idx = {v: i <span class="kw">for</span> i, v <span class="kw">in</span> enumerate(ino)}
+    pi = [0]                         <span class="cm"># pointer into preorder</span>
+    <span class="kw">def</span> <span class="fn">build</span>(lo, hi):
+        <span class="kw">if</span> lo > hi: <span class="kw">return</span> None
+        v = pre[pi[0]]; pi[0] += 1   <span class="cm"># next root from preorder</span>
+        n = TreeNode(v)
+        m = idx[v]                    <span class="cm"># find split in inorder</span>
+        n.left = build(lo, m - 1)     <span class="cm"># left of split = lavender</span>
+        n.right = build(m + 1, hi)    <span class="cm"># right of split = red</span>
+        <span class="kw">return</span> n
+    <span class="kw">return</span> build(0, len(ino) - 1)</code></pre>
+</div></div>
+
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">8</span>#297 Serialize / Deserialize<span class="tag-h">Hard</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">Flowchart</div><strong>&rarr; <span class="tag t1">Scene 1</span></strong> &mdash; two separate Scene 1 passes: one to serialize (read tree &rarr; string), one to deserialize (string &rarr; build tree).</div>
+<div class="sbox"><div class="sl sl-s">Serialize (tree &rarr; string)</div>
+Circuit does a preorder walk. At each bubble:<br>
+&#10102; No vitals? Append "N" (marks dead-end) and return.<br>
+&#10103; Has vitals? Append the value, then peek lavender, then red.<br>
+Join everything with commas &rarr; <code>"10,5,3,N,N,7,N,N,15,N,20,N,N"</code>
+</div>
+<div class="sbox"><div class="sl sl-s">Deserialize (string &rarr; tree)</div>
+Read tokens one by one from the string:<br>
+&#10102; Token is "N"? Return None (dead-end).<br>
+&#10103; Token is a number? Create a bubble with those vitals. Recursively build lavender child, then red child.<br>
+The preorder ensures tokens come in the right order.
+</div>
+<pre><code><span class="kw">class</span> Codec:
+    <span class="kw">def</span> <span class="fn">serialize</span>(self, root):
+        r = []
+        <span class="kw">def</span> <span class="fn">dfs</span>(n):
+            <span class="kw">if not</span> n:
+                r.append(<span class="cm">"N"</span>); <span class="kw">return</span>
+            r.append(str(n.val))
+            dfs(n.left); dfs(n.right)
+        dfs(root)
+        <span class="kw">return</span> <span class="cm">","</span>.join(r)
+
+    <span class="kw">def</span> <span class="fn">deserialize</span>(self, data):
+        it = iter(data.split(<span class="cm">","</span>))
+        <span class="kw">def</span> <span class="fn">build</span>():
+            v = next(it)
+            <span class="kw">if</span> v == <span class="cm">"N"</span>: <span class="kw">return</span> None
+            n = TreeNode(int(v))
+            n.left = build()
+            n.right = build()
+            <span class="kw">return</span> n
+        <span class="kw">return</span> build()</code></pre>
+</div></div>
+
+<!-- SCENE 2 PROBLEMS -->
+<h3 style="color:var(--purple)"><span class="tag t2">Scene 2</span> Circuit + Diary (2 problems)</h3>
+
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">9</span>#543 Diameter<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">Flowchart</div>Info from above? No. Answer at root? <strong>NO</strong> &mdash; the longest path could pass through ANY bubble, not necessarily the root. <strong>&rarr; <span class="tag t2">Scene 2</span></strong></div>
+<div class="sbox"><div class="sl sl-s">The Ritual</div>
+&#10102; No vitals? Dead-end &mdash; tell above <strong>0</strong>.<br>
+&#10103; Lavender door &rarr; gets depth of left side.<br>
+&#10104; Red door &rarr; gets depth of right side.<br>
+&#10105; <strong>Diary:</strong> <code>left + right</code> = path through me using both tubes. Beat diary? Overwrite.<br>
+&#10106; <strong>Tell above:</strong> <code>1 + max(left, right)</code> = my depth (one tube only &mdash; above can only reach me through one tube).
+</div>
+<div class="sbox"><div class="sl sl-r">What changes from the template?</div>
+<strong>Diary:</strong> <code>left + right</code> (both sides combined = path through this bubble).<br>
+<strong>Tell above:</strong> <code>1 + max(left, right)</code> (same as max depth! above can only use one arm).<br>
+<strong>Diary starts at 0</strong> &mdash; diameter is always &ge; 0 (it counts edges, not values).<br>
+<strong>Final answer:</strong> <code>return diary</code>, NOT the root's return value.
+</div>
+<pre><code><span class="kw">def</span> <span class="fn">diameterOfBinaryTree</span>(root):
+    diary = 0
+    <span class="kw">def</span> <span class="fn">dfs</span>(node):
+        <span class="kw">nonlocal</span> diary
+        <span class="kw">if not</span> node: <span class="kw">return</span> 0
+        left = dfs(node.left)
+        right = dfs(node.right)
+        diary = max(diary, left + right)   <span class="cm"># path through me</span>
+        <span class="kw">return</span> 1 + max(left, right)        <span class="cm"># my depth</span>
+    dfs(root)
+    <span class="kw">return</span> diary</code></pre>
+</div></div>
+
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">10</span>#124 Max Path Sum<span class="tag-h">Hard</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">Flowchart</div>"Does NOT need to pass through root" &rarr; answer at ANY bubble &rarr; <strong><span class="tag t2">Scene 2</span></strong>. Exact same pattern as diameter, but with vitals sum instead of edge count.</div>
+<div class="sbox"><div class="sl sl-s">The Ritual</div>
+&#10102; No vitals? Dead-end &mdash; tell above <strong>0</strong>.<br>
+&#10103;&#10104; Peek both doors &rarr; get best sum from each side. <strong>If negative, treat as 0</strong> (don't use that tube &mdash; a negative arm makes the sum worse).<br>
+&#10105; <strong>Diary:</strong> <code>max(left,0) + my vitals + max(right,0)</code> = best path through me using both tubes.<br>
+&#10106; <strong>Tell above:</strong> <code>my vitals + max(left, right, 0)</code> = best straight line through me (one tube only).
+</div>
+<div class="sbox"><div class="sl sl-r">What changes from diameter?</div>
+<strong>Uses vitals (node.val)</strong> in the calculation, not just edge count.<br>
+<strong>max(left, 0):</strong> If a side returns negative, pretend it's a dead-end. A negative arm makes the path worse.<br>
+<strong>Diary starts at -infinity</strong> &mdash; values can be negative! If all vitals are -5, the answer is -5, not 0.<br>
+<strong>Tell above uses val:</strong> <code>node.val + max(l, r)</code> instead of <code>1 + max(l, r)</code>.
+</div>
+<div class="hi"><strong>Tell above vs Diary (Max Path Sum):</strong><br>
+<strong>Tell above</strong> = <code>val + max(L, R, 0)</code> &mdash; straight line, one direction. Above can only reach me through one tube.<br>
+<strong>Diary</strong> = <code>max(L,0) + val + max(R,0)</code> &mdash; U-shaped path through me using both tubes.</div>
+<pre><code><span class="kw">def</span> <span class="fn">maxPathSum</span>(root):
+    diary = float(<span class="cm">'-inf'</span>)
+    <span class="kw">def</span> <span class="fn">dfs</span>(n):
+        <span class="kw">nonlocal</span> diary
+        <span class="kw">if not</span> n: <span class="kw">return</span> 0
+        l = max(0, dfs(n.left))               <span class="cm"># ignore negative</span>
+        r = max(0, dfs(n.right))              <span class="cm"># ignore negative</span>
+        diary = max(diary, l + n.val + r)     <span class="cm"># path through me</span>
+        <span class="kw">return</span> n.val + max(l, r)              <span class="cm"># straight line up</span>
+    dfs(root)
+    <span class="kw">return</span> diary</code></pre>
+</div></div>
+
+<!-- SCENE 3 PROBLEMS -->
+<h3 style="color:var(--red)"><span class="tag t3">Scene 3</span> Lingam's Badge (3 problems)</h3>
+
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">11</span>#98 Validate BST<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">Flowchart</div>Can Circuit tell if this bubble is valid just by looking below? <strong>NO</strong> &mdash; bubble with vitals 5 could be valid or invalid depending on its ancestors. Needs a range from above. <strong>&rarr; <span class="tag t3">Scene 3</span></strong></div>
+<div class="sbox"><div class="sl sl-s">The Ritual</div>
+&#10102; Badge glows with <strong>(lo, hi)</strong> &mdash; the allowed range for this bubble's vitals.<br>
+&#10103; No vitals? Dead-end &mdash; can't violate anything &rarr; return True.<br>
+&#10104; <strong>Check badge:</strong> are my vitals strictly between lo and hi? No? <strong>Return False</strong> immediately.<br>
+&#10105; Glow badge with tighter values through lavender door: new range = <code>(lo, my_vitals)</code> &mdash; everything left must be smaller than me.<br>
+&#10106; Glow badge through red door: new range = <code>(my_vitals, hi)</code> &mdash; everything right must be bigger than me.<br>
+&#10107; Tell above: lavender AND red (both sides must obey).
+</div>
+<div class="sbox"><div class="sl sl-r">What changes from the template?</div>
+<strong>Badge = (lo, hi):</strong> starts at <code>(-inf, +inf)</code> at root &mdash; any value is valid at the top.<br>
+<strong>Tightening:</strong> going LEFT, the ceiling tightens to my vitals. Going RIGHT, the floor tightens to my vitals.<br>
+<strong>Strict inequality:</strong> <code>lo < val < hi</code>, not <code>&le;</code>. BST has no duplicates.
+</div>
+<pre><code><span class="kw">def</span> <span class="fn">isValidBST</span>(root):
+    <span class="kw">def</span> <span class="fn">dfs</span>(n, lo, hi):
+        <span class="kw">if not</span> n: <span class="kw">return</span> True
+        <span class="kw">if not</span> (lo < n.val < hi): <span class="kw">return</span> False
+        <span class="kw">return</span> dfs(n.left, lo, n.val) <span class="kw">and</span> dfs(n.right, n.val, hi)
+    <span class="kw">return</span> dfs(root, float(<span class="cm">'-inf'</span>), float(<span class="cm">'inf'</span>))</code></pre>
+</div></div>
+
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">12</span>#1448 Count Good Nodes<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">Flowchart</div>A node is "good" if its value &ge; all ancestors. Circuit can't know this alone &mdash; he needs the <strong>max value seen so far</strong> from above. <strong>&rarr; <span class="tag t3">Scene 3</span></strong></div>
+<div class="sbox"><div class="sl sl-s">The Ritual</div>
+&#10102; Badge glows with <strong>max value seen so far</strong> on the path from root to here.<br>
+&#10103; No vitals? Dead-end &rarr; return 0 (no nodes to count).<br>
+&#10104; <strong>Check badge:</strong> my vitals &ge; badge? I'm a good node! Count = 1. Otherwise count = 0.<br>
+&#10105; Update badge: <code>max(badge, my_vitals)</code> &mdash; badge only grows, never shrinks.<br>
+&#10106; Glow updated badge through both doors. Return <code>count + left_good + right_good</code>.
+</div>
+<div class="sbox"><div class="sl sl-r">What changes from the template?</div>
+<strong>Badge = single number</strong> (max_so_far), not a range like BST validation.<br>
+<strong>Hybrid pattern:</strong> This is Scene 3 (badge flows down) BUT also has Scene 1 flavor (counts flow up). The badge is the constraint, but the return value is a count that bubbles up.<br>
+<strong>Initial badge:</strong> <code>root.val</code> (root is always "good" since it has no ancestors).
+</div>
+<pre><code><span class="kw">def</span> <span class="fn">goodNodes</span>(root):
+    <span class="kw">def</span> <span class="fn">dfs</span>(n, mx):
+        <span class="kw">if not</span> n: <span class="kw">return</span> 0
+        good = 1 <span class="kw">if</span> n.val >= mx <span class="kw">else</span> 0
+        mx = max(mx, n.val)
+        <span class="kw">return</span> good + dfs(n.left, mx) + dfs(n.right, mx)
+    <span class="kw">return</span> dfs(root, root.val)</code></pre>
+</div></div>
+
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">13</span>#235 LCA of BST<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">Flowchart</div>Info from above? YES &mdash; BST ordering tells Circuit which tube to take. <strong>&rarr; <span class="tag t3">Scene 3</span></strong> (simplified &mdash; see below)</div>
+<div class="sbox"><div class="sl sl-s">The Ritual</div>
+Circuit falls into the root bubble with two target values (p and q) in mind.<br><br>
+&#10102; Read my vitals. Compare p and q against them.<br>
+&#10103; <strong>Both targets &lt; my vitals?</strong> Both are on the lavender (left) side &rarr; go through lavender tube.<br>
+&#10104; <strong>Both targets &gt; my vitals?</strong> Both are on the red (right) side &rarr; go through red tube.<br>
+&#10105; <strong>They split?</strong> One is left, one is right (or one equals me) &rarr; <strong>I'm the meeting point!</strong> Return me.
+</div>
+<div class="sbox"><div class="sl sl-r">Why is this iterative (while loop) instead of recursive?</div>
+<strong>Scene 3 shortcut:</strong> In normal Scene 3, Circuit peeks through BOTH doors. But in a BST, Circuit only ever goes through <strong>ONE</strong> tube at each step &mdash; either lavender or red, never both. So there's no branching, just a straight walk down. A while loop is simpler than recursion when you only go one direction.<br><br>
+Think of it this way: Circuit doesn't need to "peek and come back" &mdash; he just keeps walking down the single correct path until p and q split apart. The moment they split, he's found the LCA.
+</div>
+<pre><code><span class="kw">def</span> <span class="fn">lowestCommonAncestor</span>(root, p, q):
+    node = root
+    <span class="kw">while</span> node:
+        <span class="kw">if</span> p.val < node.val <span class="kw">and</span> q.val < node.val:
+            node = node.left          <span class="cm"># both on lavender side</span>
+        <span class="kw">elif</span> p.val > node.val <span class="kw">and</span> q.val > node.val:
+            node = node.right         <span class="cm"># both on red side</span>
+        <span class="kw">else</span>:
+            <span class="kw">return</span> node               <span class="cm"># they split here = LCA!</span></code></pre>
+</div></div>
+
+<!-- SCENE 4 PROBLEMS -->
+<h3 style="color:var(--blue)"><span class="tag t4">Scene 4</span> Shankar's Truck (2 problems)</h3>
+
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">14</span>#102 Level Order Traversal<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">Flowchart</div>"Return values level by level" &rarr; <strong><span class="tag t4">Scene 4</span> Shankar's Truck!</strong></div>
+<div class="sbox"><div class="sl sl-s">The Ritual</div>
+&#10102; Root bubble falls onto the truck.<br>
+&#10103; Shankar tips the truck &mdash; all bubbles tumble onto the floor. Counts them: <code>sz = len(q)</code>.<br>
+&#10104; Walks to each bubble on the floor one by one. Cracks it open, reads vitals, records it. Yanks lavender tube &rarr; child lands on truck. Yanks red tube &rarr; child lands on truck.<br>
+&#10105; Floor empty = level done. Records this level's vitals as a list.<br>
+&#10106; Tips the truck again. Repeats until nothing falls out.
+</div>
+<div class="sbox"><div class="sl sl-r">What changes from the template?</div>
+<strong>This IS the template.</strong> Level order is the purest Scene 4 problem. Every other BFS problem is a tweak of this.<br>
+<strong>Result:</strong> <code>[[10], [5, 15], [3, 7, 20]]</code> &mdash; a list of lists, one per level.
+</div>
+<pre><code><span class="kw">from</span> collections <span class="kw">import</span> deque
+<span class="kw">def</span> <span class="fn">levelOrder</span>(root):
+    <span class="kw">if not</span> root: <span class="kw">return</span> []
+    res, q = [], deque([root])
+    <span class="kw">while</span> q:                              <span class="cm"># truck not empty?</span>
+        lvl = []
+        <span class="kw">for</span> _ <span class="kw">in</span> range(len(q)):           <span class="cm"># tip truck → process floor</span>
+            n = q.popleft()              <span class="cm"># crack open</span>
+            lvl.append(n.val)            <span class="cm"># read vitals</span>
+            <span class="kw">if</span> n.left: q.append(n.left)   <span class="cm"># yank lavender → truck</span>
+            <span class="kw">if</span> n.right: q.append(n.right) <span class="cm"># yank red → truck</span>
+        res.append(lvl)                  <span class="cm"># level done!</span>
+    <span class="kw">return</span> res</code></pre>
+</div></div>
+
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">15</span>#199 Right Side View<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">Flowchart</div>"What do you see from the right side?" = the last bubble on each level. Per-level question &rarr; <strong><span class="tag t4">Scene 4</span></strong></div>
+<div class="sbox"><div class="sl sl-s">The Ritual</div>
+Exact same truck ritual as Level Order, with ONE tweak:<br><br>
+&#10102;-&#10105; Same: tip truck, crack bubbles on floor one by one, yank tubes.<br>
+&#10106; <strong>Tweak:</strong> Instead of recording ALL vitals on this floor, only record the <strong>LAST one</strong>. The last bubble on each floor is the rightmost &mdash; the one visible from the right side.
+</div>
+<div class="sbox"><div class="sl sl-r">What changes from level order?</div>
+<strong>One line:</strong> <code>if i == sz - 1: res.append(n.val)</code> &mdash; only keep the last bubble per level instead of all of them.<br>
+<strong>Result:</strong> <code>[10, 15, 20]</code> &mdash; a flat list, one value per level (the rightmost).
+</div>
+<pre><code><span class="kw">def</span> <span class="fn">rightSideView</span>(root):
+    <span class="kw">if not</span> root: <span class="kw">return</span> []
+    res, q = [], deque([root])
+    <span class="kw">while</span> q:
+        <span class="kw">for</span> i <span class="kw">in</span> range(sz := len(q)):
+            n = q.popleft()
+            <span class="kw">if</span> i == sz - 1:              <span class="cm"># last on this floor!</span>
+                res.append(n.val)
+            <span class="kw">if</span> n.left: q.append(n.left)
+            <span class="kw">if</span> n.right: q.append(n.right)
+    <span class="kw">return</span> res</code></pre>
+</div></div>
+
+<!-- DISTRIBUTION -->
+<div class="hi" style="margin-top:24px">
+<strong>Distribution:</strong><br>
+<span class="tag t1">Scene 1</span> Circuit Reports UP: <strong>8 problems</strong> (#226, #104, #110, #100, #572, #230, #105, #297)<br>
+<span class="tag t2">Scene 2</span> Circuit + Diary: <strong>2 problems</strong> (#543, #124)<br>
+<span class="tag t3">Scene 3</span> Lingam's Badge: <strong>3 problems</strong> (#235, #1448, #98)<br>
+<span class="tag t4">Scene 4</span> Shankar's Truck: <strong>2 problems</strong> (#102, #199)<br><br>
+<strong>Scene 1 is the DEFAULT</strong> &mdash; 8 out of 15. If you can't clearly identify badge-from-above, corridor/diary, or level-by-level, it's Circuit.
+</div>
+
+</div>
+
+<!-- ==================== TAB 5: QUIZ ==================== -->
+<div class="sec" id="sec-quiz">
+<h2>Quiz &mdash; Which Scene?</h2>
+<p>Use the flowchart. Decide BEFORE clicking.</p>
+
+<div class="quiz" onclick="this.classList.toggle('show')"><strong>"Return true if it is a valid BST"</strong><div class="ans"><span class="tag t3">Scene 3</span> &mdash; Need (lo, hi) badge from above. Lingam's badge.</div></div>
+<div class="quiz" onclick="this.classList.toggle('show')"><strong>"Return the diameter (longest path, may not pass through root)"</strong><div class="ans"><span class="tag t2">Scene 2</span> &mdash; Answer at ANY bubble. Circuit + Diary.</div></div>
+<div class="quiz" onclick="this.classList.toggle('show')"><strong>"Return level order traversal"</strong><div class="ans"><span class="tag t4">Scene 4</span> &mdash; "Level by level" &rarr; Shankar's Truck.</div></div>
+<div class="quiz" onclick="this.classList.toggle('show')"><strong>"Invert a binary tree"</strong><div class="ans"><span class="tag t1">Scene 1</span> &mdash; Swap doors. No info from above needed.</div></div>
+<div class="quiz" onclick="this.classList.toggle('show')"><strong>"Count good nodes (value >= all ancestors)"</strong><div class="ans"><span class="tag t3">Scene 3</span> &mdash; Need max_so_far badge from above.</div></div>
+<div class="quiz" onclick="this.classList.toggle('show')"><strong>"Maximum path sum (may not pass through root)"</strong><div class="ans"><span class="tag t2">Scene 2</span> &mdash; Same corridor pattern as diameter. Diary.</div></div>
+<div class="quiz" onclick="this.classList.toggle('show')"><strong>"Construct tree from preorder + inorder"</strong><div class="ans"><span class="tag t1">Scene 1</span> &mdash; Build mode. Circuit constructs.</div></div>
+<div class="quiz" onclick="this.classList.toggle('show')"><strong>"Kth smallest in BST"</strong><div class="ans"><span class="tag t1">Scene 1</span> &mdash; In-order variant. Count to K.</div></div>
+<div class="quiz" onclick="this.classList.toggle('show')"><strong>"Right side view"</strong><div class="ans"><span class="tag t4">Scene 4</span> &mdash; Level-by-level, keep last bubble. Shankar's Truck.</div></div>
+<div class="quiz" onclick="this.classList.toggle('show')"><strong>"Is the tree balanced?"</strong><div class="ans"><span class="tag t1">Scene 1</span> &mdash; Compare heights from below. No badge needed.</div></div>
+
+<h3>Scene Summary</h3>
+<table>
+<tr><th>Scene</th><th>Character</th><th>Key Element</th><th>#</th><th>Problems</th></tr>
+<tr><td><span class="tag t1">Scene 1</span></td><td>Circuit</td><td>Peek doors, combine, tell above</td><td>8</td><td>#226, #104, #110, #100, #572, #230, #105, #297</td></tr>
+<tr><td><span class="tag t2">Scene 2</span></td><td>Circuit + Diary</td><td>Same + diary for corridor</td><td>2</td><td>#543, #124</td></tr>
+<tr><td><span class="tag t3">Scene 3</span></td><td>Lingam's Badge</td><td>Badge glows with tighter constraints</td><td>3</td><td>#235, #1448, #98</td></tr>
+<tr><td><span class="tag t4">Scene 4</span></td><td>Shankar + Truck</td><td>Tip truck, crack, yank tubes</td><td>2</td><td>#102, #199</td></tr>
+</table>
+</div>
+
+</div>
+
+<script>
+function go(id){
+document.querySelectorAll('.sec').forEach(s=>s.classList.remove('vis'));
+document.getElementById('sec-'+id).classList.add('vis');
+document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('on'));
+event.target.classList.add('on');
+window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>

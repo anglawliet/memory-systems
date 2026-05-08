@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salaar — Graph System</title>
+<style>
+:root{--bg:#1a1916;--card:#252320;--card2:#2d2a26;--gold:#d4a843;--gold2:#fbbf24;--amber:#f59e0b;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;--red:#ef4444;--crimson:#dc2626;--emerald:#059669;--violet:#7c3aed;--text:#e8e2d6;--muted:#9b9484;--border:#3d3930}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;padding:0 0 80px}
+.hdr{background:linear-gradient(135deg,#1f0e0e,#1a1916);border-bottom:3px solid var(--crimson);padding:40px 20px;text-align:center}
+.hdr h1{font-size:2em;color:var(--crimson)}.hdr p{color:var(--muted)}
+.wrap{max-width:920px;margin:0 auto;padding:20px}
+.nav{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0;position:sticky;top:0;background:var(--bg);padding:12px 0;z-index:100;border-bottom:1px solid var(--border)}
+.nav button{background:var(--card);color:var(--muted);border:1px solid var(--border);padding:8px 16px;border-radius:6px;cursor:pointer;font-size:.85em;transition:.2s}
+.nav button:hover,.nav button.on{background:var(--crimson);color:#fff;border-color:var(--crimson)}
+.sec{display:none}.sec.vis{display:block}
+h2{color:var(--crimson);font-size:1.4em;margin:32px 0 12px;border-bottom:2px solid var(--border);padding-bottom:8px}
+h3{color:var(--amber);margin:20px 0 8px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin:16px 0}
+.map-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:2px solid var(--border);border-radius:10px;overflow:hidden;margin:16px 0}
+.map-row{display:contents}
+.map-cell{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.map-cell:nth-child(odd){background:var(--card);border-right:1px solid var(--border)}
+.map-cell:nth-child(even){background:var(--card2)}
+.map-cell .icon{font-size:1.5em;flex-shrink:0;width:36px;text-align:center}
+.map-cell .lbl{font-weight:700;color:var(--gold2);font-size:.9em}
+.map-cell .sub{color:var(--muted);font-size:.8em}
+.map-cell code{background:#0d0d0b;padding:2px 6px;border-radius:3px;font-family:'Fira Code',monospace;font-size:.8em;color:var(--amber)}
+.flow-step{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:20px;margin:0 auto;max-width:600px;text-align:center;position:relative}
+.flow-step.q-step{border-color:var(--gold)}
+.flow-arrow{text-align:center;font-size:2em;color:var(--muted);margin:4px 0;line-height:1}
+.flow-branch{display:flex;gap:16px;margin:8px auto;max-width:650px}
+.flow-step.s1{border-color:var(--crimson);background:#7f1d1d15}.flow-step.s2{border-color:var(--blue);background:#1e3a5f15}
+.flow-step.s3{border-color:var(--amber);background:#92400e15}.flow-step.s4{border-color:var(--violet);background:#581c8715}
+.flow-step.s5{border-color:var(--emerald);background:#064e3b15}
+.flow-step .tag{display:inline-block;padding:2px 10px;border-radius:4px;font-size:.8em;font-weight:700}
+.t1{background:#991b1b;color:#fecaca}.t2{background:#1e40af;color:#bfdbfe}.t3{background:#92400e;color:#fef3c7}.t4{background:#581c87;color:#e9d5ff}.t5{background:#064e3b;color:#a7f3d0}
+.deriv{background:var(--card);border:1px solid var(--border);border-radius:10px;margin:16px 0;overflow:hidden}
+.deriv-h{padding:14px 20px;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+.deriv-h:hover{background:var(--card2)}
+.deriv-h h3{margin:0;display:flex;align-items:center;gap:10px;font-size:1em}
+.deriv-n{background:var(--crimson);color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8em;font-weight:800;flex-shrink:0}
+.deriv-a{color:var(--muted);transition:.3s}.deriv.open .deriv-a{transform:rotate(90deg)}
+.deriv-b{display:none;padding:0 20px 16px;border-top:1px solid var(--border)}.deriv.open .deriv-b{display:block}
+.sbox{background:var(--card2);border-radius:8px;padding:12px 16px;margin:10px 0}
+.sl{font-size:.7em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+pre{background:#0d0d0b;border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;font-size:.85em;line-height:1.6;margin:10px 0}
+code{font-family:'Fira Code','Courier New',monospace}
+.hi{background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.3);border-radius:6px;padding:12px 16px;margin:12px 0}
+.tag-e{background:#166534;color:#bbf7d0;padding:2px 8px;border-radius:3px;font-size:.75em;font-weight:700;margin-left:6px}
+.tag-m{background:#92400e;color:#fef3c7;padding:2px 8px;border-radius:3px;font-size:.75em;font-weight:700;margin-left:6px}
+.tag-h{background:#991b1b;color:#fecaca;padding:2px 8px;border-radius:3px;font-size:.75em;font-weight:700;margin-left:6px}
+.quiz{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin:14px 0;cursor:pointer}
+.quiz .ans{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}.quiz.show .ans{display:block}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+th{background:var(--card2);color:var(--gold);text-align:left;padding:10px 12px;border:1px solid var(--border)}
+td{padding:10px 12px;border:1px solid var(--border)}
+.ritual-step{display:grid;grid-template-columns:auto 1fr 1fr;gap:0}
+.ritual-step>div{padding:10px 14px;border-bottom:1px solid #ffffff10}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+<h1>Salaar &mdash; Graph System</h1>
+<p>All 18 NeetCode Graph Problems &mdash; Khansaar Edition</p>
+</div>
+
+<div class="wrap">
+<div class="nav">
+<button class="on" onclick="go('khansaar')">The Khansaar Map</button>
+<button onclick="go('flowchart')">Flowchart</button>
+<button onclick="go('scenes')">5 Scenes</button>
+<button onclick="go('problems')">18 Problems</button>
+<button onclick="go('quiz')">Quiz</button>
+</div>
+
+<!-- ==================== TAB 1: THE KHANSAAR MAP ==================== -->
+<div class="sec vis" id="sec-khansaar">
+
+<h2>The Khansaar Map</h2>
+<p>Khansaar is a vast territory of walled fortresses connected by dusty roads. Different factions control different fortresses. Every graph problem is a war in Khansaar.</p>
+
+<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px">
+<h3 style="margin-top:0;color:var(--crimson)">The Khansaar Map &mdash; What Everything Means</h3>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+
+<div style="background:rgba(220,38,38,.06);border:1px solid var(--crimson);border-radius:8px;padding:16px">
+<div style="font-size:1.1em;font-weight:700;color:var(--crimson);margin-bottom:8px">Fortress = Node</div>
+<div style="font-size:.95em;color:var(--text)">
+Each fortress is a walled compound. When Deva <strong>kicks the gate open</strong>, he looks at the wall inside. There's a <strong>number carved</strong> on the wall &mdash; that's the fortress value. If there's no gate at all &mdash; just empty desert &mdash; it's a dead-end.<br><br>
+<strong>In code:</strong> A fortress = <code>node</code>. Number on wall = <code>node.val</code> or <code>grid[r][c]</code>.
+</div>
+</div>
+
+<div style="background:rgba(220,38,38,.06);border:1px solid var(--crimson);border-radius:8px;padding:16px">
+<div style="font-size:1.1em;font-weight:700;color:var(--crimson);margin-bottom:8px">Road = Edge</div>
+<div style="font-size:.95em;color:var(--text)">
+Dusty roads connect fortresses. Some roads are <strong>one-way</strong> (directed) &mdash; Deva can only go that direction. Some roads are <strong>two-way</strong> (undirected) &mdash; Deva can travel both ways. Some roads have <strong>toll signs</strong> (weights/costs).<br><br>
+<strong>In code:</strong> Road = edge. One-way = directed edge. Toll = weight. All roads from a fortress = <code>graph[node]</code>.
+</div>
+</div>
+
+<div style="background:rgba(220,38,38,.06);border:1px solid var(--crimson);border-radius:8px;padding:16px">
+<div style="font-size:1.1em;font-weight:700;color:var(--crimson);margin-bottom:8px">War Paint = Visited</div>
+<div style="font-size:.95em;color:var(--text)">
+When Deva conquers a fortress, he <strong>slashes war paint</strong> on the gate. If he arrives at a fortress and sees war paint already there &mdash; already conquered, <strong>turn back</strong>. No fortress gets raided twice.<br><br>
+<strong>In code:</strong> War paint = <code>visited</code> set. Check: <code>if node in visited: return</code>. Mark: <code>visited.add(node)</code>.
+</div>
+</div>
+
+<div style="background:rgba(220,38,38,.06);border:1px solid var(--crimson);border-radius:8px;padding:16px">
+<div style="font-size:1.1em;font-weight:700;color:var(--crimson);margin-bottom:8px">Two Types of Khansaar</div>
+<div style="font-size:.95em;color:var(--text)">
+<strong>Road Map</strong> (adjacency list): Named fortresses with specific roads between them. Each fortress has a <strong>map scroll</strong> listing where its roads lead.<br>
+<code>graph = {A: [B, C], B: [A, D]}</code><br><br>
+<strong>Village Grid</strong> (2D matrix): A flat grid of villages. Each village connects to <strong>4 neighbors</strong> (N/S/E/W). Land = <code>'1'</code>, Water = <code>'0'</code>.
+</div>
+</div>
+</div>
+
+<h2>Quick Reference: Khansaar = Graph</h2>
+
+<div class="map-grid">
+<div class="map-row">
+<div class="map-cell"><span class="icon">&#x1F3F0;</span><div><div class="lbl">Fortress</div><div class="sub">A walled compound Deva can raid</div></div></div>
+<div class="map-cell"><span class="icon">&#x2B55;</span><div><div class="lbl">Node / Vertex</div><code>node</code> or <code>grid[r][c]</code></div></div>
+</div>
+<div class="map-row">
+<div class="map-cell"><span class="icon">&#x1F6E4;</span><div><div class="lbl">Road</div><div class="sub">Dusty path connecting two fortresses</div></div></div>
+<div class="map-cell"><span class="icon">&#x27A1;</span><div><div class="lbl">Edge</div><code>graph[node]</code> = list of neighbors</div></div>
+</div>
+<div class="map-row">
+<div class="map-cell"><span class="icon" style="color:var(--crimson)">&#x1FA78;</span><div><div class="lbl">War Paint</div><div class="sub">Slash on the gate = already conquered</div></div></div>
+<div class="map-cell"><span class="icon" style="color:var(--crimson)">&#x2714;</span><div><div class="lbl">Visited Set</div><code>visited.add(node)</code></div></div>
+</div>
+<div class="map-row">
+<div class="map-cell"><span class="icon">&#x1F4DC;</span><div><div class="lbl">Map Scroll</div><div class="sub">List of roads out of this fortress</div></div></div>
+<div class="map-cell"><span class="icon">&#x1F4CB;</span><div><div class="lbl">Adjacency List</div><code>for nei in graph[node]</code></div></div>
+</div>
+<div class="map-row">
+<div class="map-cell"><span class="icon">&#x1F30D;</span><div><div class="lbl">Village Grid</div><div class="sub">Flat grid, 4 directions (N/S/E/W)</div></div></div>
+<div class="map-cell"><span class="icon">&#x1F4CA;</span><div><div class="lbl">2D Matrix</div><code>grid[r][c]</code>, 4-directional</div></div>
+</div>
+<div class="map-row">
+<div class="map-cell"><span class="icon">&#x1F4B0;</span><div><div class="lbl">Road Toll</div><div class="sub">Cost/weight on a road</div></div></div>
+<div class="map-cell"><span class="icon">&#x2696;</span><div><div class="lbl">Edge Weight</div><code>graph[node] = [(nei, weight)]</code></div></div>
+</div>
+<div class="map-row">
+<div class="map-cell"><span class="icon">&#x1F3F3;</span><div><div class="lbl">Clan / Faction</div><div class="sub">Group of connected fortresses under one leader</div></div></div>
+<div class="map-cell"><span class="icon">&#x1F517;</span><div><div class="lbl">Connected Component</div><code>find(x) == find(y)</code></div></div>
+</div>
+</div>
+
+<h3>The Characters</h3>
+<div class="map-grid">
+<div class="map-row">
+<div class="map-cell"><span class="icon">&#x2694;</span><div><div class="lbl">Deva (the lone raider)</div><div class="sub">Charges deep into one road, dead-end, backtracks. Goes alone.</div></div></div>
+<div class="map-cell"><span class="icon">&#x1F504;</span><div><div class="lbl">DFS (Scene 1)</div><code>def dfs(node):</code></div></div>
+</div>
+<div class="map-row">
+<div class="map-cell"><span class="icon">&#x1F941;</span><div><div class="lbl">Vardha (the war drums)</div><div class="sub">Beats drums from his throne. Sound spreads in waves &mdash; ring by ring.</div></div></div>
+<div class="map-cell"><span class="icon">&#x1F4E6;</span><div><div class="lbl">BFS (Scene 2)</div><code>deque([start])</code></div></div>
+</div>
+<div class="map-row">
+<div class="map-cell"><span class="icon">&#x1F451;</span><div><div class="lbl">Rajamanaar (war planner)</div><div class="sub">Won't attack until all supply lines secured. Plans order by dependencies.</div></div></div>
+<div class="map-cell"><span class="icon">&#x1F4CB;</span><div><div class="lbl">Topological Sort (Scene 3)</div><code>in_degree[node]</code></div></div>
+</div>
+<div class="map-row">
+<div class="map-cell"><span class="icon">&#x1F91D;</span><div><div class="lbl">The Elder (blood pacts)</div><div class="sub">Merges clans through ritual. Tracks who belongs to which clan.</div></div></div>
+<div class="map-cell"><span class="icon">&#x1F332;</span><div><div class="lbl">Union-Find (Scene 4)</div><code>parent[], find(), union()</code></div></div>
+</div>
+<div class="map-row">
+<div class="map-cell"><span class="icon">&#x1F40E;</span><div><div class="lbl">Deva on horseback</div><div class="sub">Roads have tolls. Horse always gallops to the cheapest fortress next.</div></div></div>
+<div class="map-cell"><span class="icon">&#x1F4B0;</span><div><div class="lbl">Dijkstra (Scene 5)</div><code>heapq, dist[]</code></div></div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- ==================== TAB 2: FLOWCHART ==================== -->
+<div class="sec" id="sec-flowchart">
+
+<h2>The Decision Flowchart</h2>
+<p>Four questions. That's all you need to pick the right scene for ANY graph problem.</p>
+
+<div class="flow-step" style="border-color:var(--crimson);background:rgba(220,38,38,.05)">
+<div style="font-size:.7em;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">START</div>
+<strong style="color:var(--crimson);font-size:1.1em">Read the graph problem</strong>
+</div>
+
+<div class="flow-arrow">&darr;</div>
+
+<!-- Q0: Prerequisites/ordering? -->
+<div class="flow-step q-step">
+<div style="font-size:.7em;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Q0</div>
+<strong>Does the war council need to plan the ORDER of conquest?</strong>
+<div style="background:rgba(251,191,36,.08);border-radius:6px;padding:10px;margin-top:8px;font-size:.88em">
+<div style="color:var(--gold2);font-weight:700;margin-bottom:4px">How to spot it:</div>
+<div style="color:var(--text)">The problem says <em>"prerequisites"</em>, <em>"ordering"</em>, <em>"before/after"</em>, <em>"dependency"</em>, <em>"alien dictionary"</em>.<br>
+<strong>Key signal:</strong> You need to find a valid <strong>sequence</strong> where dependencies are satisfied.</div>
+</div>
+</div>
+
+<div class="flow-branch">
+<div class="flow-step s3" style="flex:.6">
+<strong style="color:var(--amber)">YES &rarr;</strong>
+<div><span class="tag t3">Scene 3</span></div>
+<div style="margin-top:6px"><strong style="color:var(--amber);font-size:1.05em">RAJAMANAAR'S BATTLE PLAN</strong></div>
+<div style="font-size:.85em;color:var(--muted);margin-top:4px">Topological Sort. Count deps, process zero-dep first.</div>
+</div>
+<div style="display:flex;align-items:center;color:var(--muted);font-weight:700">NO &darr;</div>
+</div>
+
+<div class="flow-arrow">&darr;</div>
+
+<!-- Q1: Grouping/connectivity? -->
+<div class="flow-step q-step">
+<div style="font-size:.7em;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Q1</div>
+<strong>Are clans merging or checking if they're the same clan?</strong>
+<div style="background:rgba(251,191,36,.08);border-radius:6px;padding:10px;margin-top:8px;font-size:.88em">
+<div style="color:var(--gold2);font-weight:700;margin-bottom:4px">How to spot it:</div>
+<div style="color:var(--text)">The problem says <em>"connected components"</em>, <em>"valid tree"</em>, <em>"redundant connection"</em>, <em>"union"</em>, <em>"groups"</em>.<br>
+<strong>Key signal:</strong> You need to <strong>merge sets</strong> of nodes or <strong>count groups</strong> efficiently, especially with edge-by-edge processing.</div>
+</div>
+</div>
+
+<div class="flow-branch">
+<div class="flow-step s4" style="flex:.6">
+<strong style="color:var(--violet)">YES &rarr;</strong>
+<div><span class="tag t4">Scene 4</span></div>
+<div style="margin-top:6px"><strong style="color:var(--violet);font-size:1.05em">THE BLOOD PACT</strong></div>
+<div style="font-size:.85em;color:var(--muted);margin-top:4px">Union-Find. Merge clans, track leaders.</div>
+</div>
+<div style="display:flex;align-items:center;color:var(--muted);font-weight:700">NO &darr;</div>
+</div>
+
+<div class="flow-arrow">&darr;</div>
+
+<!-- Q2: Weighted edges? -->
+<div class="flow-step q-step">
+<div style="font-size:.7em;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Q2</div>
+<strong>Do the roads between fortresses have TOLLS (weights/costs)?</strong>
+<div style="background:rgba(251,191,36,.08);border-radius:6px;padding:10px;margin-top:8px;font-size:.88em">
+<div style="color:var(--gold2);font-weight:700;margin-bottom:4px">How to spot it:</div>
+<div style="color:var(--text)">The problem says <em>"cost"</em>, <em>"time"</em>, <em>"distance"</em>, <em>"minimum cost"</em>, <em>"network delay"</em>.<br>
+<strong>Key signal:</strong> Edges have <strong>numbers attached</strong> and you need the shortest/cheapest path.</div>
+</div>
+</div>
+
+<div class="flow-branch">
+<div class="flow-step s5" style="flex:.6">
+<strong style="color:var(--emerald)">YES &rarr;</strong>
+<div><span class="tag t5">Scene 5</span></div>
+<div style="margin-top:6px"><strong style="color:var(--emerald);font-size:1.05em">DEVA'S HORSEBACK MARCH</strong></div>
+<div style="font-size:.85em;color:var(--muted);margin-top:4px">Dijkstra. Priority scroll. Always cheapest next.</div>
+</div>
+<div style="display:flex;align-items:center;color:var(--muted);font-weight:700">NO &darr;</div>
+</div>
+
+<div class="flow-arrow">&darr;</div>
+
+<!-- Q3: Level-by-level / simultaneous spread? -->
+<div class="flow-step q-step">
+<div style="font-size:.7em;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Q3</div>
+<strong>Does Vardha need to spread influence in WAVES? (shortest unweighted path or simultaneous spread)</strong>
+<div style="background:rgba(251,191,36,.08);border-radius:6px;padding:10px;margin-top:8px;font-size:.88em">
+<div style="color:var(--gold2);font-weight:700;margin-bottom:4px">How to spot it:</div>
+<div style="color:var(--text)">The problem says <em>"minimum minutes"</em>, <em>"nearest gate"</em>, <em>"spread simultaneously"</em>, <em>"multiple sources at once"</em>.<br>
+<strong>Key signal:</strong> Things happen <strong>at the same time</strong> (rotting, spreading) or you need <strong>shortest distance</strong> on an unweighted graph.</div>
+</div>
+</div>
+
+<div class="flow-branch">
+<div class="flow-step s2" style="flex:.5">
+<strong style="color:var(--blue)">YES &rarr;</strong>
+<div><span class="tag t2">Scene 2</span></div>
+<div style="margin-top:6px"><strong style="color:var(--blue);font-size:1.05em">VARDHA'S WAR DRUMS</strong></div>
+<div style="font-size:.85em;color:var(--muted);margin-top:4px">BFS. Waves spread outward ring by ring.</div>
+</div>
+<div class="flow-step s1" style="flex:.5">
+<strong style="color:var(--crimson)">NO &rarr;</strong>
+<div><span class="tag t1">Scene 1</span></div>
+<div style="margin-top:6px"><strong style="color:var(--crimson);font-size:1.05em">DEVA'S LONE RAID</strong></div>
+<div style="font-size:.85em;color:var(--muted);margin-top:4px">DFS. Charge deep, backtrack, repeat.</div>
+</div>
+</div>
+
+<div class="hi" style="margin-top:30px">
+<strong>Why this covers EVERY graph problem:</strong> You either need ordering (Topo Sort), grouping (Union-Find), weighted shortest path (Dijkstra), simultaneous spread (BFS), or plain exploration (DFS). There is no 6th type.
+</div>
+</div>
+
+<!-- ==================== TAB 3: 5 SCENES ==================== -->
+<div class="sec" id="sec-scenes">
+
+<h2>The 5 Scenes</h2>
+<p>Each scene is a ritual. Each step in the ritual maps to exactly one line of code. Memorize the ritual, you've memorized the algorithm.</p>
+
+<!-- ============ SCENE 1 ============ -->
+<div style="background:var(--card);border:2px solid var(--crimson);border-radius:12px;padding:20px;margin-bottom:24px">
+
+<div style="color:var(--crimson);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 1: Deva's Lone Raid</div>
+<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">DFS &mdash; charge deep, backtrack, repeat</div>
+
+<div style="background:rgba(220,38,38,.08);border:2px solid var(--crimson);border-radius:10px;padding:18px;margin-bottom:16px">
+<div style="color:var(--crimson);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL (Adjacency List)</div>
+<div style="font-size:.95em;color:var(--text);line-height:1.9">
+<strong style="color:var(--crimson);font-size:1.05em">&#10102;</strong> Deva arrives at a fortress gate. <strong>War paint on the wall?</strong> Already conquered &mdash; <strong>turn back</strong>.<br>
+<strong style="color:var(--crimson);font-size:1.05em">&#10103;</strong> Kicks the gate open. <strong>Slashes war paint</strong> on the wall &mdash; this fortress is MINE.<br>
+<strong style="color:var(--crimson);font-size:1.05em">&#10104;</strong> Grabs the <strong>map scroll</strong> inside &mdash; sees all roads leading out.<br>
+<strong style="color:var(--crimson);font-size:1.05em">&#10105;</strong> <strong>Charges down each road</strong> one by one &rarr; same ritual starts at the next fortress.<br>
+<strong style="color:var(--crimson);font-size:1.05em">&#10106;</strong> All roads explored. <strong>Walks back</strong> the way he came.
+</div>
+</div>
+
+<div style="color:var(--gold2);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">RITUAL &rarr; CODE (Adjacency List)</div>
+<div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
+<div class="ritual-step">
+<div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10102;</div>
+<div style="background:#dc262612;font-size:.9em"><strong>War paint?</strong> Already conquered &mdash; turn back.</div>
+<div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>if node in visited: return</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10103;</div>
+<div style="background:#dc262612;font-size:.9em"><strong>Slash war paint.</strong> This fortress is mine.</div>
+<div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>visited.add(node)</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10104;&#10105;</div>
+<div style="background:#dc262612;font-size:.9em"><strong>Map scroll</strong> &mdash; charge down each road.</div>
+<div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>for nei in graph[node]: dfs(nei)</code></div>
+</div>
+</div>
+
+<div style="background:rgba(220,38,38,.08);border:2px solid var(--crimson);border-radius:10px;padding:18px;margin:16px 0">
+<div style="color:var(--crimson);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL (Village Grid)</div>
+<div style="font-size:.95em;color:var(--text);line-height:1.9">
+<strong style="color:var(--crimson);font-size:1.05em">&#10102;</strong> Deva steps into a village. <strong>Off the map?</strong> Turn back. <strong>Water?</strong> Turn back. <strong>War paint?</strong> Turn back.<br>
+<strong style="color:var(--crimson);font-size:1.05em">&#10103;</strong> Slashes war paint on the ground.<br>
+<strong style="color:var(--crimson);font-size:1.05em">&#10104;</strong> Steps <strong>North, South, East, West</strong> &mdash; same ritual at each neighbor.
+</div>
+</div>
+
+<div style="color:var(--gold2);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">RITUAL &rarr; CODE (Grid)</div>
+<div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
+<div class="ritual-step">
+<div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10102;</div>
+<div style="background:#dc262612;font-size:.9em"><strong>Off the map? Water? War paint?</strong> Turn back.</div>
+<div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>if r&lt;0 or r&gt;=R or c&lt;0 or c&gt;=C or grid[r][c]=='0': return</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10103;</div>
+<div style="background:#dc262612;font-size:.9em"><strong>Slash war paint</strong> on the ground.</div>
+<div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>grid[r][c] = '0'  # or visited.add((r,c))</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10104;</div>
+<div style="background:#dc262612;font-size:.9em"><strong>Step N/S/E/W</strong> &mdash; same ritual each direction.</div>
+<div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>for dr,dc in [(1,0),(-1,0),(0,1),(0,-1)]: dfs(r+dr,c+dc)</code></div>
+</div>
+</div>
+
+<div style="background:rgba(220,38,38,.06);border:1px solid #b91c1c;border-radius:10px;padding:18px;margin-top:12px">
+<div style="color:var(--crimson);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; war paint AFTER charging down roads</div>
+<pre style="font-size:.82em;margin:0"><code>for nei in graph[node]:
+    dfs(nei)
+visited.add(node)  # TOO LATE!
+# Deva revisits same fortress = infinite loop</code></pre>
+</div>
+<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; war paint BEFORE charging</div>
+<pre style="font-size:.82em;margin:0"><code>visited.add(node)     # paint FIRST
+for nei in graph[node]:
+    dfs(nei)           # then charge</code></pre>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; forgetting boundary check on grid</div>
+<pre style="font-size:.82em;margin:0"><code>def dfs(r, c):
+    grid[r][c] = '0'
+    # IndexError when r or c is out of bounds!</code></pre>
+</div>
+<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; check boundaries FIRST</div>
+<pre style="font-size:.82em;margin:0"><code>def dfs(r, c):
+    if r<0 or r>=R or c<0 or c>=C:
+        return    # off the map!
+    if grid[r][c] == '0':
+        return    # water or painted</code></pre>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============ SCENE 2 ============ -->
+<div style="background:var(--card);border:2px solid var(--blue);border-radius:12px;padding:20px;margin-bottom:24px">
+
+<div style="color:var(--blue);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 2: Vardha's War Drums</div>
+<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">BFS &mdash; waves spread outward ring by ring</div>
+
+<div style="background:rgba(37,99,235,.08);border:2px solid var(--blue);border-radius:10px;padding:18px;margin-bottom:16px">
+<div style="color:var(--blue);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL</div>
+<div style="font-size:.95em;color:var(--text);line-height:1.9">
+<strong style="color:var(--blue);font-size:1.05em">&#10102;</strong> Vardha places the first fortress tokens on his <strong>war table</strong>. <strong>Paints them</strong> immediately.<br>
+<strong style="color:var(--blue);font-size:1.05em">&#10103;</strong> <strong>Flips the table</strong> &mdash; all tokens crash to the <strong>ground</strong> (current wave).<br>
+<strong style="color:var(--blue);font-size:1.05em">&#10104;</strong> Walks to each token on the ground one by one. Reads its scroll. Finds all connected <strong>unpainted</strong> fortresses. <strong>Paints them. Places their tokens on the table.</strong><br>
+<strong style="color:var(--blue);font-size:1.05em">&#10105;</strong> Ground clear. <strong>One drum beat complete.</strong> Record the wave count.<br>
+<strong style="color:var(--blue);font-size:1.05em">&#10106;</strong> <strong>Flips the table again.</strong> Repeats from &#10104;. Stops when he flips and <strong>nothing falls</strong>.
+</div>
+<div style="margin-top:10px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:6px;font-size:.88em;color:var(--muted)">
+<strong style="color:var(--blue)">War table = queue. Ground = current wave.</strong> New tokens always land on the TABLE (next wave), never on the ground (current wave). That's why waves don't mix.
+</div>
+</div>
+
+<div style="background:rgba(37,99,235,.12);border-radius:8px;padding:14px;margin-bottom:16px">
+<div style="color:var(--blue);font-weight:700;margin-bottom:6px">Multi-Source BFS &mdash; multiple drums at once</div>
+<div style="font-size:.9em;color:var(--text)">
+Sometimes Vardha doesn't start from ONE fortress &mdash; he places <strong>ALL rotten oranges</strong> or <strong>ALL gates</strong> on the war table at once. The first wave spreads from all of them simultaneously. This is <strong>multi-source BFS</strong> &mdash; same ritual, just start with more tokens.
+</div>
+</div>
+
+<div style="color:var(--gold2);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">RITUAL &rarr; CODE</div>
+<div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
+<div class="ritual-step">
+<div style="background:#2563eb25;font-weight:700;color:var(--blue);display:flex;align-items:center;justify-content:center">&#10102;</div>
+<div style="background:#2563eb12;font-size:.9em"><strong>Tokens on war table. Paint them.</strong></div>
+<div style="background:#2563eb08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>q = deque(sources); visited = set(sources)</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#2563eb25;font-weight:700;color:var(--blue);display:flex;align-items:center;justify-content:center">&#10103;</div>
+<div style="background:#2563eb12;font-size:.9em"><strong>Flip table</strong> &mdash; process current wave.</div>
+<div style="background:#2563eb08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>for _ in range(len(q)):</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#2563eb25;font-weight:700;color:var(--blue);display:flex;align-items:center;justify-content:center">&#10104;</div>
+<div style="background:#2563eb12;font-size:.9em"><strong>Pick up token, read scroll, paint &amp; place unpainted neighbors.</strong></div>
+<div style="background:#2563eb08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>node=q.popleft(); for nei: visited.add(nei); q.append(nei)</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#2563eb25;font-weight:700;color:var(--blue);display:flex;align-items:center;justify-content:center">&#10105;&#10106;</div>
+<div style="background:#2563eb12;font-size:.9em"><strong>Wave done. Repeat.</strong> Stops when nothing falls.</div>
+<div style="background:#2563eb08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>while q:  # outer loop wraps &#10103;</code></div>
+</div>
+</div>
+
+<div style="background:rgba(37,99,235,.06);border:1px solid #1d4ed8;border-radius:10px;padding:18px;margin-top:12px">
+<div style="color:var(--blue);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; painting when POPPING from table</div>
+<pre style="font-size:.82em;margin:0"><code>node = q.popleft()
+visited.add(node)  # TOO LATE!
+# Same fortress already added 3 times
+# by 3 different neighbors</code></pre>
+</div>
+<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; paint when PLACING on table</div>
+<pre style="font-size:.82em;margin:0"><code>if nei not in visited:
+    visited.add(nei)  # paint NOW
+    q.append(nei)     # then place
+# No duplicates on the table!</code></pre>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; no level tracking</div>
+<pre style="font-size:.82em;margin:0"><code>while q:
+    node = q.popleft()
+    # How many waves? No idea!
+    # Can't count levels.</code></pre>
+</div>
+<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; for loop = one drum beat</div>
+<pre style="font-size:.82em;margin:0"><code>while q:
+    for _ in range(len(q)):  # this wave
+        node = q.popleft()
+    waves += 1               # wave done!</code></pre>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============ SCENE 3 ============ -->
+<div style="background:var(--card);border:2px solid var(--amber);border-radius:12px;padding:20px;margin-bottom:24px">
+
+<div style="color:var(--amber);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 3: Rajamanaar's Battle Plan</div>
+<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">Topological Sort &mdash; plan conquest order by dependencies</div>
+
+<div style="background:rgba(245,158,11,.08);border:2px solid var(--amber);border-radius:10px;padding:18px;margin-bottom:16px">
+<div style="color:var(--amber);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL</div>
+<div style="font-size:.95em;color:var(--text);line-height:1.9">
+<strong style="color:var(--amber);font-size:1.05em">&#10102;</strong> Rajamanaar's war council counts how many <strong>supply lines</strong> each fortress depends on (in-degree).<br>
+<strong style="color:var(--amber);font-size:1.05em">&#10103;</strong> Fortresses with <strong>ZERO dependencies</strong> &rarr; ready to attack. Put them on the <strong>war table</strong>.<br>
+<strong style="color:var(--amber);font-size:1.05em">&#10104;</strong> Pick a fortress from the table. <strong>Conquer it.</strong> Cross it off the board.<br>
+<strong style="color:var(--amber);font-size:1.05em">&#10105;</strong> Every fortress that <strong>depended on</strong> the conquered one &rarr; reduce its dependency count by 1. Hits zero? <strong>Add to war table.</strong><br>
+<strong style="color:var(--amber);font-size:1.05em">&#10106;</strong> Table empty? If <strong>all fortresses conquered</strong> &rarr; valid plan. If some <strong>remain unconquered</strong> &rarr; impossible (cycle!).
+</div>
+<div style="margin-top:10px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:6px;font-size:.88em;color:var(--muted)">
+<strong style="color:var(--amber)">Why cycle = impossible:</strong> If fortress A depends on B and B depends on A, neither ever reaches zero. They sit unconquered forever. That's a deadlock.
+</div>
+</div>
+
+<div style="color:var(--gold2);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">RITUAL &rarr; CODE</div>
+<div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
+<div class="ritual-step">
+<div style="background:#d9770625;font-weight:700;color:var(--amber);display:flex;align-items:center;justify-content:center">&#10102;</div>
+<div style="background:#d9770612;font-size:.9em"><strong>Count supply lines</strong> for each fortress.</div>
+<div style="background:#d9770608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>in_deg = [0]*n; for u,v in edges: in_deg[v] += 1</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#d9770625;font-weight:700;color:var(--amber);display:flex;align-items:center;justify-content:center">&#10103;</div>
+<div style="background:#d9770612;font-size:.9em"><strong>Zero-dep fortresses</strong> go on the war table.</div>
+<div style="background:#d9770608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>q = deque(i for i in range(n) if in_deg[i]==0)</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#d9770625;font-weight:700;color:var(--amber);display:flex;align-items:center;justify-content:center">&#10104;</div>
+<div style="background:#d9770612;font-size:.9em"><strong>Conquer</strong> &mdash; cross off the board.</div>
+<div style="background:#d9770608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>node = q.popleft(); order.append(node)</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#d9770625;font-weight:700;color:var(--amber);display:flex;align-items:center;justify-content:center">&#10105;</div>
+<div style="background:#d9770612;font-size:.9em"><strong>Reduce deps.</strong> Hits zero? Add to table.</div>
+<div style="background:#d9770608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>for nei in graph[node]: in_deg[nei]-=1; if 0: q.append(nei)</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#d9770625;font-weight:700;color:var(--amber);display:flex;align-items:center;justify-content:center">&#10106;</div>
+<div style="background:#d9770612;font-size:.9em"><strong>All conquered?</strong> Valid. Some left? Cycle!</div>
+<div style="background:#d9770608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>return len(order) == n</code></div>
+</div>
+</div>
+
+<div style="background:rgba(245,158,11,.06);border:1px solid #b45309;border-radius:10px;padding:18px;margin-top:12px">
+<div style="color:var(--amber);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; building in-degree but forgetting adjacency list</div>
+<pre style="font-size:.82em;margin:0"><code>for u, v in edges:
+    in_deg[v] += 1
+    # but where is graph[u].append(v)?
+    # Can't find neighbors later!</code></pre>
+</div>
+<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; build BOTH at the same time</div>
+<pre style="font-size:.82em;margin:0"><code>for u, v in edges:
+    graph[u].append(v)
+    in_deg[v] += 1</code></pre>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; not checking for cycle</div>
+<pre style="font-size:.82em;margin:0"><code>return order  # What if len(order) < n?
+              # Some nodes were in a cycle
+              # and never reached 0!</code></pre>
+</div>
+<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; verify all conquered</div>
+<pre style="font-size:.82em;margin:0"><code>if len(order) != n:
+    return []  # cycle detected!
+return order</code></pre>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============ SCENE 4 ============ -->
+<div style="background:var(--card);border:2px solid var(--violet);border-radius:12px;padding:20px;margin-bottom:24px">
+
+<div style="color:var(--violet);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 4: The Blood Pact</div>
+<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">Union-Find &mdash; merge clans, track leaders</div>
+
+<div style="background:rgba(124,58,237,.08);border:2px solid var(--violet);border-radius:10px;padding:18px;margin-bottom:16px">
+<div style="color:var(--violet);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL</div>
+<div style="font-size:.95em;color:var(--text);line-height:1.9">
+<strong style="color:var(--violet);font-size:1.05em">&#10102;</strong> Every fortress starts as its own <strong>clan</strong>. Each fortress chief <strong>points to himself</strong> &mdash; "I am my own leader."<br>
+<strong style="color:var(--violet);font-size:1.05em">&#10103;</strong> A <strong>blood pact</strong> between two fortresses: the elder traces each fortress's chain up to find their <strong>true clan leader</strong>.<br>
+<strong style="color:var(--violet);font-size:1.05em">&#10104;</strong> Same leader already? They're the <strong>same clan</strong> &mdash; this pact is <strong>REDUNDANT</strong>. Return False.<br>
+<strong style="color:var(--violet);font-size:1.05em">&#10105;</strong> Different leaders? The <strong>weaker leader bows</strong> to the stronger. Clans merge into one.<br>
+<strong style="color:var(--violet);font-size:1.05em">&#10106;</strong> <strong>Shortcut:</strong> every fortress in the chain now points <strong>directly to the top leader</strong> (path compression). Next lookup is instant.
+</div>
+<div style="margin-top:10px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:6px;font-size:.88em;color:var(--muted)">
+<strong style="color:var(--violet)">No recursion. No queue. Just arrays.</strong> Two arrays: <code>parent[]</code> (who do I point to?) and <code>rank[]</code> (how strong is my clan?). Two functions: <code>find()</code> and <code>union()</code>. That's the entire data structure.
+</div>
+</div>
+
+<div style="color:var(--gold2);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">RITUAL &rarr; CODE</div>
+
+<pre><code><span style="color:#6b9955"># &#10102; Every fortress = own clan</span>
+parent = list(range(n))
+rank = [0] * n
+
+<span style="color:#6b9955"># &#10103;&#10106; Find true leader (with path compression shortcut)</span>
+def find(x):
+    if parent[x] != x:
+        parent[x] = find(parent[x])  <span style="color:#6b9955"># shortcut: point straight to top</span>
+    return parent[x]
+
+<span style="color:#6b9955"># &#10103;&#10104;&#10105; Blood pact</span>
+def union(x, y):
+    px, py = find(x), find(y)
+    if px == py: return False   <span style="color:#6b9955"># &#10104; same clan = redundant</span>
+    if rank[px] < rank[py]:     <span style="color:#6b9955"># &#10105; weaker bows to stronger</span>
+        px, py = py, px
+    parent[py] = px
+    if rank[px] == rank[py]:
+        rank[px] += 1
+    return True</code></pre>
+
+<div style="background:rgba(124,58,237,.06);border:1px solid #6d28d9;border-radius:10px;padding:18px;margin-top:12px">
+<div style="color:var(--violet);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; no path compression</div>
+<pre style="font-size:.82em;margin:0"><code>def find(x):
+    while parent[x] != x:
+        x = parent[x]
+    return x
+# Works but O(n) per find in worst case</code></pre>
+</div>
+<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; path compression = instant next time</div>
+<pre style="font-size:.82em;margin:0"><code>def find(x):
+    if parent[x] != x:
+        parent[x] = find(parent[x])
+    return parent[x]
+# O(α(n)) ≈ O(1) amortized</code></pre>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; union without checking find first</div>
+<pre style="font-size:.82em;margin:0"><code>parent[x] = y  # Direct assignment!
+# Destroys existing clan structure</code></pre>
+</div>
+<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; always find leaders first, then merge</div>
+<pre style="font-size:.82em;margin:0"><code>px, py = find(x), find(y)
+if px == py: return False
+parent[py] = px  # merge LEADERS</code></pre>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============ SCENE 5 ============ -->
+<div style="background:var(--card);border:2px solid var(--emerald);border-radius:12px;padding:20px;margin-bottom:24px">
+
+<div style="color:var(--emerald);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 5: Deva's Horseback March</div>
+<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">Dijkstra &mdash; priority scroll, always cheapest next</div>
+
+<div style="background:rgba(5,150,105,.08);border:2px solid var(--emerald);border-radius:10px;padding:18px;margin-bottom:16px">
+<div style="color:var(--emerald);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL</div>
+<div style="font-size:.95em;color:var(--text);line-height:1.9">
+<strong style="color:var(--emerald);font-size:1.05em">&#10102;</strong> Deva marks every fortress as <strong>"infinitely dangerous"</strong> except his starting point (cost = 0).<br>
+<strong style="color:var(--emerald);font-size:1.05em">&#10103;</strong> Mounts his horse with a <strong>priority scroll</strong> &mdash; cheapest fortress always floats to the top.<br>
+<strong style="color:var(--emerald);font-size:1.05em">&#10104;</strong> Horse gallops to the <strong>cheapest fortress</strong> on the scroll. Is the real cost <strong>higher</strong> than what Deva already recorded? <strong>Skip it</strong> &mdash; stale intel.<br>
+<strong style="color:var(--emerald);font-size:1.05em">&#10105;</strong> Reads the map scroll. For each road: calculates <strong>total cost</strong> (my cost + road toll). <strong>Cheaper than recorded?</strong> Update the record. Add to priority scroll.<br>
+<strong style="color:var(--emerald);font-size:1.05em">&#10106;</strong> Rides to the <strong>next cheapest</strong> fortress on the scroll. Repeats from &#10104;. Stops when scroll is <strong>empty</strong>.
+</div>
+<div style="margin-top:10px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:6px;font-size:.88em;color:var(--muted)">
+<strong style="color:var(--emerald)">Priority scroll = min-heap.</strong> Unlike BFS where everything costs 1, here roads have different tolls. The horse (heap) always picks the cheapest next destination. That's why Dijkstra finds the shortest <em>weighted</em> path.
+</div>
+</div>
+
+<div style="color:var(--gold2);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">RITUAL &rarr; CODE</div>
+<div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
+<div class="ritual-step">
+<div style="background:#059669 25;font-weight:700;color:var(--emerald);display:flex;align-items:center;justify-content:center">&#10102;</div>
+<div style="background:#05966912;font-size:.9em"><strong>Everything = infinity.</strong> Start = 0.</div>
+<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>dist = [float('inf')]*n; dist[start] = 0</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#05966925;font-weight:700;color:var(--emerald);display:flex;align-items:center;justify-content:center">&#10103;</div>
+<div style="background:#05966912;font-size:.9em"><strong>Mount horse</strong> with priority scroll.</div>
+<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>heap = [(0, start)]</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#05966925;font-weight:700;color:var(--emerald);display:flex;align-items:center;justify-content:center">&#10104;</div>
+<div style="background:#05966912;font-size:.9em"><strong>Gallop to cheapest.</strong> Stale intel? Skip.</div>
+<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>cost,node = heappop(heap); if cost>dist[node]: continue</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#05966925;font-weight:700;color:var(--emerald);display:flex;align-items:center;justify-content:center">&#10105;</div>
+<div style="background:#05966912;font-size:.9em"><strong>Each road: my cost + toll.</strong> Cheaper? Update &amp; add.</div>
+<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>nc=cost+w; if nc&lt;dist[nei]: dist[nei]=nc; heappush(heap,(nc,nei))</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#05966925;font-weight:700;color:var(--emerald);display:flex;align-items:center;justify-content:center">&#10106;</div>
+<div style="background:#05966912;font-size:.9em"><strong>Next cheapest.</strong> Repeat. Stop when empty.</div>
+<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>while heap:  # outer loop wraps &#10104;</code></div>
+</div>
+</div>
+
+<div style="background:rgba(5,150,105,.06);border:1px solid #047857;border-radius:10px;padding:18px;margin-top:12px">
+<div style="color:var(--emerald);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; no stale check</div>
+<pre style="font-size:.82em;margin:0"><code>cost, node = heappop(heap)
+# Process even if we already found
+# a cheaper path! Wastes time.</code></pre>
+</div>
+<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; skip stale intel</div>
+<pre style="font-size:.82em;margin:0"><code>cost, node = heappop(heap)
+if cost > dist[node]:
+    continue  # stale! already beaten</code></pre>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; using Dijkstra with negative weights</div>
+<pre style="font-size:.82em;margin:0"><code># Road toll = -5?
+# Dijkstra assumes: once a node is
+# settled, no cheaper path exists.
+# Negative edges break this!</code></pre>
+</div>
+<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; use Bellman-Ford for negative edges</div>
+<pre style="font-size:.82em;margin:0"><code># Negative edges? Use Bellman-Ford:
+for _ in range(n-1):       # n-1 rounds
+    for u,v,w in edges:     # relax ALL
+        if dist[u]+w < dist[v]:
+            dist[v] = dist[u]+w</code></pre>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+
+<!-- ==================== TAB 4: 18 PROBLEMS ==================== -->
+<div class="sec" id="sec-problems">
+
+<h2>18 Problems by Scene</h2>
+
+<!-- ============ SCENE 1 PROBLEMS ============ -->
+<h3 style="color:var(--crimson);border-bottom:1px solid var(--crimson);padding-bottom:6px">Scene 1 &mdash; Deva's Lone Raid (DFS)</h3>
+
+<!-- PROBLEM 1: Number of Islands -->
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">1</span> Number of Islands (#200) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a 2D grid of <code>'1'</code> (land) and <code>'0'</code> (water), count the number of islands. An island is surrounded by water and formed by connecting adjacent lands horizontally or vertically.</div>
+
+<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+Prerequisites? No. Grouping? Not merging. Weighted? No. Waves? No. &rarr; <span class="tag t1">Scene 1</span> Deva's Raid on a village grid.
+</div>
+
+<div class="sbox"><div class="sl" style="color:var(--crimson)">THE RITUAL</div>
+Deva walks through the village grid, cell by cell. Sees an unconquered land cell (<code>'1'</code>)? Starts a <strong>new raid</strong>. Charges through all connected land, painting each cell (<code>'1'</code> &rarr; <code>'0'</code>). Raid complete = one island found. Move to next unvisited cell. Count total raids.
+</div>
+
+<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
+<strong>Outer loop added:</strong> The template shows ONE raid. But here you need to find ALL islands, so you loop through every cell in the grid. Each time you hit an unpainted <code>'1'</code>, start a new raid and increment the count.<br>
+<strong>War paint = mutate grid:</strong> Instead of a separate visited set, just flip <code>'1'</code> to <code>'0'</code>. Simpler and faster.
+</div>
+
+<pre><code>def numIslands(grid):
+    R, C = len(grid), len(grid[0])
+    count = 0
+
+    def dfs(r, c):
+        if r < 0 or r >= R or c < 0 or c >= C or grid[r][c] == '0':
+            return                     <span style="color:#6b9955"># off map or water or painted</span>
+        grid[r][c] = '0'               <span style="color:#6b9955"># slash war paint</span>
+        for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:
+            dfs(r + dr, c + dc)        <span style="color:#6b9955"># charge N/S/E/W</span>
+
+    for r in range(R):
+        for c in range(C):
+            if grid[r][c] == '1':      <span style="color:#6b9955"># unconquered land!</span>
+                dfs(r, c)              <span style="color:#6b9955"># new raid</span>
+                count += 1             <span style="color:#6b9955"># one more island</span>
+    return count</code></pre>
+</div></div>
+
+<!-- PROBLEM 2: Max Area of Island -->
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">2</span> Max Area of Island (#695) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a 2D grid of <code>1</code> (land) and <code>0</code> (water), find the maximum area of an island.</div>
+
+<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+Same as Number of Islands but track SIZE of each raid. &rarr; <span class="tag t1">Scene 1</span></div>
+
+<div class="sbox"><div class="sl" style="color:var(--crimson)">THE RITUAL</div>
+Same raid as #200, but now Deva <strong>counts</strong> how many villages he conquers in each raid. After each raid, checks if this was his biggest raid yet. Reports the biggest.
+</div>
+
+<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
+<strong>DFS returns a count:</strong> Each call returns <code>1 + sum of all 4 directions</code>. Dead-end returns <code>0</code>. The total bubbles up as the area of the island.
+</div>
+
+<pre><code>def maxAreaOfIsland(grid):
+    R, C = len(grid), len(grid[0])
+
+    def dfs(r, c):
+        if r < 0 or r >= R or c < 0 or c >= C or grid[r][c] == 0:
+            return 0                   <span style="color:#6b9955"># off map or water = 0 villages</span>
+        grid[r][c] = 0                 <span style="color:#6b9955"># war paint</span>
+        return 1 + sum(dfs(r+dr, c+dc) <span style="color:#6b9955"># me + all 4 directions</span>
+            for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)])
+
+    return max((dfs(r, c) for r in range(R) for c in range(C)), default=0)</code></pre>
+</div></div>
+
+<!-- PROBLEM 3: Clone Graph -->
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">3</span> Clone Graph (#133) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a reference of a node in a connected undirected graph, return a deep copy (clone) of the graph.</div>
+
+<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+No prerequisites, no grouping, no weights, no waves. Just explore every node. &rarr; <span class="tag t1">Scene 1</span></div>
+
+<div class="sbox"><div class="sl" style="color:var(--crimson)">THE RITUAL</div>
+Deva walks through original Khansaar. At each fortress, he builds an <strong>exact replica</strong> in New Khansaar. Uses a <strong>mirror map</strong> (old &rarr; new) to avoid re-cloning. When wiring up roads, uses the mirror to connect cloned fortresses.
+</div>
+
+<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
+<strong>Visited set becomes a hashmap:</strong> Instead of <code>visited = set()</code>, use <code>old_to_new = {}</code>. The key is the original node, the value is its clone. This serves as BOTH visited check AND clone storage.<br>
+<strong>DFS returns the clone:</strong> Each call returns the cloned node so the parent can wire its roads.
+</div>
+
+<pre><code>def cloneGraph(node):
+    old_to_new = {}                    <span style="color:#6b9955"># mirror map: original → clone</span>
+
+    def dfs(node):
+        if node in old_to_new:         <span style="color:#6b9955"># already cloned = war paint</span>
+            return old_to_new[node]
+        clone = Node(node.val)         <span style="color:#6b9955"># build replica</span>
+        old_to_new[node] = clone       <span style="color:#6b9955"># register in mirror</span>
+        for nei in node.neighbors:     <span style="color:#6b9955"># map scroll — all roads</span>
+            clone.neighbors.append(dfs(nei))  <span style="color:#6b9955"># wire cloned roads</span>
+        return clone
+
+    return dfs(node) if node else None</code></pre>
+</div></div>
+
+<!-- PROBLEM 4: Pacific Atlantic Water Flow -->
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">4</span> Pacific Atlantic Water Flow (#417) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">PROBLEM</div>Given an m×n matrix of heights, water flows from higher to equal/lower cells. Pacific ocean touches the top and left edges. Atlantic touches the bottom and right edges. Find all cells that can reach BOTH oceans.</div>
+
+<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+No prerequisites, no grouping, no weights, no waves. Pure exploration. &rarr; <span class="tag t1">Scene 1</span></div>
+
+<div class="sbox"><div class="sl" style="color:var(--crimson)">THE RITUAL</div>
+<strong>Reverse raids from the oceans.</strong> Instead of asking "can this cell reach the ocean?" (hard), ask "can the ocean reach this cell going UPHILL?" (easier). Two raid teams: Pacific team raids from top/left border. Atlantic team raids from bottom/right border. Answer = cells conquered by <strong>BOTH</strong> teams.
+</div>
+
+<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
+<strong>DFS starts from borders, not from each cell.</strong> Two separate visited sets.<br>
+<strong>Direction reversed:</strong> Water flows downhill, but we raid UPHILL (<code>next >= current</code>).<br>
+<strong>Answer = intersection</strong> of two visited sets.
+</div>
+
+<pre><code>def pacificAtlantic(heights):
+    R, C = len(heights), len(heights[0])
+    pac, atl = set(), set()
+
+    def dfs(r, c, visit, prev_h):
+        if (r,c) in visit or r<0 or r>=R or c<0 or c>=C:
+            return
+        if heights[r][c] < prev_h:     <span style="color:#6b9955"># can't go downhill (reverse!)</span>
+            return
+        visit.add((r, c))              <span style="color:#6b9955"># war paint for this team</span>
+        for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:
+            dfs(r+dr, c+dc, visit, heights[r][c])
+
+    for c in range(C):
+        dfs(0, c, pac, 0)              <span style="color:#6b9955"># Pacific: top border</span>
+        dfs(R-1, c, atl, 0)            <span style="color:#6b9955"># Atlantic: bottom border</span>
+    for r in range(R):
+        dfs(r, 0, pac, 0)              <span style="color:#6b9955"># Pacific: left border</span>
+        dfs(r, C-1, atl, 0)            <span style="color:#6b9955"># Atlantic: right border</span>
+
+    return list(pac & atl)             <span style="color:#6b9955"># both teams reached = answer</span></code></pre>
+</div></div>
+
+<!-- PROBLEM 5: Surrounded Regions -->
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">5</span> Surrounded Regions (#130) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a 2D board with <code>'X'</code> and <code>'O'</code>, capture all regions of <code>'O'</code> that are NOT connected to the border. Captured regions are flipped to <code>'X'</code>.</div>
+
+<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+Same structure as Pacific Atlantic &mdash; border-based DFS. &rarr; <span class="tag t1">Scene 1</span></div>
+
+<div class="sbox"><div class="sl" style="color:var(--crimson)">THE RITUAL</div>
+<strong>Save the border-connected, capture everything else.</strong> Deva raids all <code>'O'</code> cells on the border &mdash; marks them SAFE (temporary mark <code>'S'</code>). Then sweeps the whole grid: anything still <code>'O'</code> &rarr; captured (<code>'X'</code>). Anything <code>'S'</code> &rarr; restore to <code>'O'</code>.
+</div>
+
+<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
+<strong>Three-pass approach:</strong> (1) DFS from border <code>'O'</code>s to mark safe. (2) Sweep: unmarked <code>'O'</code> → <code>'X'</code>. (3) Sweep: <code>'S'</code> → <code>'O'</code>.<br>
+<strong>War paint = temporary marker</strong> (<code>'S'</code>) instead of a visited set.
+</div>
+
+<pre><code>def solve(board):
+    R, C = len(board), len(board[0])
+
+    def dfs(r, c):
+        if r<0 or r>=R or c<0 or c>=C or board[r][c] != 'O':
+            return
+        board[r][c] = 'S'              <span style="color:#6b9955"># mark SAFE</span>
+        for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:
+            dfs(r + dr, c + dc)
+
+    for r in range(R):                 <span style="color:#6b9955"># raid from ALL borders</span>
+        for c in range(C):
+            if (r in (0, R-1) or c in (0, C-1)) and board[r][c] == 'O':
+                dfs(r, c)
+
+    for r in range(R):                 <span style="color:#6b9955"># sweep</span>
+        for c in range(C):
+            if board[r][c] == 'O': board[r][c] = 'X'    <span style="color:#6b9955"># captured!</span>
+            elif board[r][c] == 'S': board[r][c] = 'O'  <span style="color:#6b9955"># restore safe</span></code></pre>
+</div></div>
+
+<!-- PROBLEM 6: Reconstruct Itinerary -->
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">6</span> Reconstruct Itinerary (#332) <span class="tag-h">Hard</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a list of airline tickets <code>[from, to]</code>, reconstruct the itinerary starting from <code>"JFK"</code>. Use all tickets exactly once. If multiple valid itineraries, return the lexicographically smallest.</div>
+
+<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+It's about traversing a graph using every EDGE exactly once (Eulerian path). No weights, no grouping, no prerequisites. &rarr; <span class="tag t1">Scene 1</span> (DFS variant)</div>
+
+<div class="sbox"><div class="sl" style="color:var(--crimson)">THE RITUAL</div>
+Deva must use <strong>every road exactly once</strong>. At each fortress, he sorts roads alphabetically and <strong>pops</strong> the first one (removes it so he never takes it again). He adds the fortress to his path <strong>AFTER</strong> all roads are used (post-order). Final path is <strong>reversed</strong>.
+</div>
+
+<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
+<strong>Visit EDGES not NODES:</strong> No visited set for nodes. Instead, pop edges from sorted adjacency list.<br>
+<strong>Post-order insertion:</strong> Append to result AFTER all neighbors are visited, then reverse. This handles dead-ends correctly (Hierholzer's algorithm).<br>
+<strong>Sort adjacency lists in reverse</strong> so <code>pop()</code> gives lexicographically smallest.
+</div>
+
+<pre><code>def findItinerary(tickets):
+    graph = defaultdict(list)
+    for src, dst in sorted(tickets, reverse=True):  <span style="color:#6b9955"># reverse sort</span>
+        graph[src].append(dst)         <span style="color:#6b9955"># so pop() gives smallest</span>
+
+    route = []
+    def dfs(node):
+        while graph[node]:             <span style="color:#6b9955"># roads left?</span>
+            dfs(graph[node].pop())     <span style="color:#6b9955"># take the road (removes it)</span>
+        route.append(node)             <span style="color:#6b9955"># post-order: add AFTER all roads used</span>
+
+    dfs("JFK")
+    return route[::-1]                 <span style="color:#6b9955"># reverse = correct order</span></code></pre>
+</div></div>
+
+<!-- ============ SCENE 2 PROBLEMS ============ -->
+<h3 style="color:var(--blue);border-bottom:1px solid var(--blue);padding-bottom:6px">Scene 2 &mdash; Vardha's War Drums (BFS)</h3>
+
+<!-- PROBLEM 7: Rotting Oranges -->
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">7</span> Rotting Oranges (#994) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">PROBLEM</div>In a grid, <code>0</code> = empty, <code>1</code> = fresh orange, <code>2</code> = rotten orange. Every minute, fresh oranges adjacent to rotten ones also rot. Return the minimum minutes until no fresh orange remains, or <code>-1</code> if impossible.</div>
+
+<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+No prerequisites. No grouping. No weights. Simultaneous spread (all rotten oranges rot neighbors at the SAME time)? YES &rarr; <span class="tag t2">Scene 2</span></div>
+
+<div class="sbox"><div class="sl" style="color:var(--blue)">THE RITUAL</div>
+<strong>Multi-source BFS.</strong> ALL rotten oranges are initial drum sources &mdash; they all go on the war table at once. Each drum beat (wave) = 1 minute. After all waves, check if any fresh oranges remain. If yes, return -1.
+</div>
+
+<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
+<strong>Multiple starting sources:</strong> Scan grid, put ALL <code>2</code>s on the queue. Count fresh oranges.<br>
+<strong>Track minutes:</strong> Each complete wave = 1 minute. Only increment if the wave actually rotted something.<br>
+<strong>Final check:</strong> If <code>fresh > 0</code> after all waves, return <code>-1</code>.
+</div>
+
+<pre><code>def orangesRotting(grid):
+    R, C = len(grid), len(grid[0])
+    q = deque()
+    fresh = 0
+    for r in range(R):
+        for c in range(C):
+            if grid[r][c] == 2: q.append((r, c))    <span style="color:#6b9955"># all rotten → war table</span>
+            elif grid[r][c] == 1: fresh += 1         <span style="color:#6b9955"># count fresh</span>
+
+    minutes = 0
+    while q and fresh > 0:             <span style="color:#6b9955"># stop if no fresh left</span>
+        for _ in range(len(q)):        <span style="color:#6b9955"># flip table → one wave</span>
+            r, c = q.popleft()
+            for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:
+                nr, nc = r+dr, c+dc
+                if 0<=nr<R and 0<=nc<C and grid[nr][nc] == 1:
+                    grid[nr][nc] = 2   <span style="color:#6b9955"># rot it (paint)</span>
+                    fresh -= 1
+                    q.append((nr, nc)) <span style="color:#6b9955"># token on table</span>
+        minutes += 1                   <span style="color:#6b9955"># drum beat complete</span>
+
+    return minutes if fresh == 0 else -1</code></pre>
+</div></div>
+
+<!-- PROBLEM 8: Walls and Gates -->
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">8</span> Walls and Gates (#286) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">PROBLEM</div>In a grid: <code>-1</code> = wall, <code>0</code> = gate, <code>INF</code> = empty room. Fill each empty room with the distance to its nearest gate.</div>
+
+<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+Nearest distance from multiple sources simultaneously. &rarr; <span class="tag t2">Scene 2</span> (Multi-source BFS)</div>
+
+<div class="sbox"><div class="sl" style="color:var(--blue)">THE RITUAL</div>
+ALL gates are initial drum sources. Wave 1 reaches rooms 1 step away. Wave 2 reaches rooms 2 steps away. First time a room is reached = shortest distance (BFS guarantees this).
+</div>
+
+<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
+<strong>Sources = all gates (value 0).</strong> Visited check = <code>rooms[nr][nc] == INF</code> (only visit unvisited rooms).<br>
+<strong>Distance tracking:</strong> Set <code>rooms[nr][nc] = rooms[r][c] + 1</code> &mdash; each wave adds 1 to distance.
+</div>
+
+<pre><code>def wallsAndGates(rooms):
+    R, C = len(rooms), len(rooms[0])
+    INF = 2147483647
+    q = deque()
+    for r in range(R):
+        for c in range(C):
+            if rooms[r][c] == 0:       <span style="color:#6b9955"># gate → war table</span>
+                q.append((r, c))
+
+    while q:
+        r, c = q.popleft()
+        for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:
+            nr, nc = r+dr, c+dc
+            if 0<=nr<R and 0<=nc<C and rooms[nr][nc] == INF:
+                rooms[nr][nc] = rooms[r][c] + 1  <span style="color:#6b9955"># distance = parent + 1</span>
+                q.append((nr, nc))</code></pre>
+</div></div>
+
+<!-- ============ SCENE 3 PROBLEMS ============ -->
+<h3 style="color:var(--amber);border-bottom:1px solid var(--amber);padding-bottom:6px">Scene 3 &mdash; Rajamanaar's Battle Plan (Topological Sort)</h3>
+
+<!-- PROBLEM 9: Course Schedule -->
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">9</span> Course Schedule (#207) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">PROBLEM</div>There are <code>numCourses</code> courses with prerequisites. Return <code>true</code> if you can finish all courses.</div>
+
+<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+Prerequisites/ordering? YES &rarr; <span class="tag t3">Scene 3</span></div>
+
+<div class="sbox"><div class="sl" style="color:var(--amber)">THE RITUAL</div>
+Standard Rajamanaar ritual. Build dependency board. Process zero-dep fortresses first. If all fortresses conquered at the end → valid plan (return True). If some remain → cycle → impossible (return False).
+</div>
+
+<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
+<strong>This is the pure template.</strong> Edge direction: <code>[course, prereq]</code> means prereq → course. Return <code>len(order) == numCourses</code>.
+</div>
+
+<pre><code>def canFinish(numCourses, prerequisites):
+    graph = defaultdict(list)
+    in_deg = [0] * numCourses
+    for crs, pre in prerequisites:
+        graph[pre].append(crs)         <span style="color:#6b9955"># prereq → course</span>
+        in_deg[crs] += 1               <span style="color:#6b9955"># count supply lines</span>
+
+    q = deque(i for i in range(numCourses) if in_deg[i] == 0)
+    count = 0
+    while q:
+        node = q.popleft()             <span style="color:#6b9955"># conquer</span>
+        count += 1
+        for nei in graph[node]:
+            in_deg[nei] -= 1           <span style="color:#6b9955"># reduce deps</span>
+            if in_deg[nei] == 0:
+                q.append(nei)          <span style="color:#6b9955"># unlocked!</span>
+
+    return count == numCourses         <span style="color:#6b9955"># all conquered?</span></code></pre>
+</div></div>
+
+<!-- PROBLEM 10: Course Schedule II -->
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">10</span> Course Schedule II (#210) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">PROBLEM</div>Return the ordering of courses you should take. If impossible, return empty array.</div>
+
+<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+Same as Course Schedule but return the ORDER. &rarr; <span class="tag t3">Scene 3</span></div>
+
+<div class="sbox"><div class="sl" style="color:var(--amber)">THE RITUAL</div>
+Identical to Course Schedule, but instead of just counting, <strong>record the conquest order</strong> in a list.
+</div>
+
+<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
+<strong>Return the order list</strong> instead of a boolean. Use <code>order.append(node)</code> as you process. If <code>len(order) != numCourses</code>, return <code>[]</code>.
+</div>
+
+<pre><code>def findOrder(numCourses, prerequisites):
+    graph = defaultdict(list)
+    in_deg = [0] * numCourses
+    for crs, pre in prerequisites:
+        graph[pre].append(crs)
+        in_deg[crs] += 1
+
+    q = deque(i for i in range(numCourses) if in_deg[i] == 0)
+    order = []
+    while q:
+        node = q.popleft()
+        order.append(node)             <span style="color:#6b9955"># record conquest order</span>
+        for nei in graph[node]:
+            in_deg[nei] -= 1
+            if in_deg[nei] == 0:
+                q.append(nei)
+
+    return order if len(order) == numCourses else []</code></pre>
+</div></div>
+
+<!-- PROBLEM 11: Alien Dictionary -->
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">11</span> Alien Dictionary (#269) <span class="tag-h">Hard</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a sorted list of words in an alien language, derive the order of characters.</div>
+
+<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+"Derive the ORDER of characters" = ordering with dependencies. &rarr; <span class="tag t3">Scene 3</span></div>
+
+<div class="sbox"><div class="sl" style="color:var(--amber)">THE RITUAL</div>
+<strong>Two phases.</strong> Phase 1: Extract dependency edges by comparing adjacent words &mdash; the first different character gives you an edge (char_a comes before char_b). Phase 2: Standard Rajamanaar topo sort on characters.
+</div>
+
+<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
+<strong>Edge extraction phase added:</strong> Compare <code>words[i]</code> vs <code>words[i+1]</code>. Walk both character by character. First mismatch = edge.<br>
+<strong>Edge case:</strong> If <code>words[i]</code> is a prefix of <code>words[i+1]</code> but longer, the input is INVALID (return <code>""</code>).<br>
+<strong>Nodes = all unique characters</strong>, not integers.
+</div>
+
+<pre><code>def alienOrder(words):
+    graph = {c: set() for w in words for c in w}
+    in_deg = {c: 0 for c in graph}
+
+    for i in range(len(words) - 1):    <span style="color:#6b9955"># compare adjacent words</span>
+        w1, w2 = words[i], words[i+1]
+        if len(w1) > len(w2) and w1[:len(w2)] == w2:
+            return ""                  <span style="color:#6b9955"># invalid: prefix is longer</span>
+        for c1, c2 in zip(w1, w2):
+            if c1 != c2:
+                if c2 not in graph[c1]:
+                    graph[c1].add(c2)  <span style="color:#6b9955"># c1 → c2 edge</span>
+                    in_deg[c2] += 1
+                break                  <span style="color:#6b9955"># only first diff matters</span>
+
+    q = deque(c for c in in_deg if in_deg[c] == 0)
+    order = []
+    while q:
+        c = q.popleft()
+        order.append(c)
+        for nei in graph[c]:
+            in_deg[nei] -= 1
+            if in_deg[nei] == 0:
+                q.append(nei)
+
+    return "".join(order) if len(order) == len(in_deg) else ""</code></pre>
+</div></div>
+
+<!-- ============ SCENE 4 PROBLEMS ============ -->
+<h3 style="color:var(--violet);border-bottom:1px solid var(--violet);padding-bottom:6px">Scene 4 &mdash; The Blood Pact (Union-Find)</h3>
+
+<!-- PROBLEM 12: Graph Valid Tree -->
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">12</span> Graph Valid Tree (#261) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">PROBLEM</div>Given <code>n</code> nodes and a list of undirected edges, determine if these edges form a valid tree (connected, no cycles).</div>
+
+<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+"Connected, no cycles" = checking connectivity of groups. &rarr; <span class="tag t4">Scene 4</span></div>
+
+<div class="sbox"><div class="sl" style="color:var(--violet)">THE RITUAL</div>
+A valid tree has exactly <strong>n-1 edges</strong> and is <strong>fully connected</strong>. Process each blood pact. If any pact tries to merge two fortresses that are already the same clan → cycle → NOT a tree.
+</div>
+
+<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
+<strong>Quick check first:</strong> If <code>edges != n-1</code>, immediately return False.<br>
+<strong>Union all edges:</strong> If any <code>union()</code> returns False → same clan already → cycle.<br>
+<strong>Both conditions needed:</strong> n-1 edges AND no redundant unions.
+</div>
+
+<pre><code>def validTree(n, edges):
+    if len(edges) != n - 1: return False  <span style="color:#6b9955"># tree must have n-1 edges</span>
+
+    parent = list(range(n))
+    rank = [0] * n
+
+    def find(x):
+        if parent[x] != x:
+            parent[x] = find(parent[x])
+        return parent[x]
+
+    def union(x, y):
+        px, py = find(x), find(y)
+        if px == py: return False      <span style="color:#6b9955"># same clan = cycle!</span>
+        if rank[px] < rank[py]: px, py = py, px
+        parent[py] = px
+        if rank[px] == rank[py]: rank[px] += 1
+        return True
+
+    return all(union(u, v) for u, v in edges)</code></pre>
+</div></div>
+
+<!-- PROBLEM 13: Number of Connected Components -->
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">13</span> Number of Connected Components (#323) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">PROBLEM</div>Given <code>n</code> nodes and a list of undirected edges, find the number of connected components.</div>
+
+<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+Count groups = grouping/connectivity. &rarr; <span class="tag t4">Scene 4</span></div>
+
+<div class="sbox"><div class="sl" style="color:var(--violet)">THE RITUAL</div>
+Start with <strong>n separate clans</strong> (components = n). Each successful blood pact merges two clans into one → components decreases by 1. After all pacts, the remaining count is the answer.
+</div>
+
+<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
+<strong>Counter starts at n.</strong> Each successful <code>union()</code> → <code>components -= 1</code>. Final count = answer.
+</div>
+
+<pre><code>def countComponents(n, edges):
+    parent = list(range(n))
+    rank = [0] * n
+    components = n                     <span style="color:#6b9955"># start: n clans</span>
+
+    def find(x):
+        if parent[x] != x:
+            parent[x] = find(parent[x])
+        return parent[x]
+
+    def union(x, y):
+        nonlocal components
+        px, py = find(x), find(y)
+        if px == py: return
+        if rank[px] < rank[py]: px, py = py, px
+        parent[py] = px
+        if rank[px] == rank[py]: rank[px] += 1
+        components -= 1                <span style="color:#6b9955"># merged! one fewer clan</span>
+
+    for u, v in edges:
+        union(u, v)
+    return components</code></pre>
+</div></div>
+
+<!-- PROBLEM 14: Redundant Connection -->
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">14</span> Redundant Connection (#684) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a graph that started as a tree and has one extra edge added, find that extra edge.</div>
+
+<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+Find the edge that creates a cycle = grouping/connectivity check. &rarr; <span class="tag t4">Scene 4</span></div>
+
+<div class="sbox"><div class="sl" style="color:var(--violet)">THE RITUAL</div>
+Process blood pacts one by one. The pact where both fortresses are <strong>ALREADY in the same clan</strong> → that's the redundant road. It would create a cycle. Return that edge.
+</div>
+
+<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
+<strong>Return the first redundant edge:</strong> Process edges in order. The moment <code>union()</code> returns False (same clan), return that edge.
+</div>
+
+<pre><code>def findRedundantConnection(edges):
+    n = len(edges)
+    parent = list(range(n + 1))        <span style="color:#6b9955"># 1-indexed</span>
+    rank = [0] * (n + 1)
+
+    def find(x):
+        if parent[x] != x:
+            parent[x] = find(parent[x])
+        return parent[x]
+
+    def union(x, y):
+        px, py = find(x), find(y)
+        if px == py: return False      <span style="color:#6b9955"># REDUNDANT!</span>
+        if rank[px] < rank[py]: px, py = py, px
+        parent[py] = px
+        if rank[px] == rank[py]: rank[px] += 1
+        return True
+
+    for u, v in edges:
+        if not union(u, v):            <span style="color:#6b9955"># same clan already</span>
+            return [u, v]              <span style="color:#6b9955"># this is the extra road</span></code></pre>
+</div></div>
+
+<!-- ============ SCENE 5 PROBLEMS ============ -->
+<h3 style="color:var(--emerald);border-bottom:1px solid var(--emerald);padding-bottom:6px">Scene 5 &mdash; Deva's Horseback March (Dijkstra / Weighted)</h3>
+
+<!-- PROBLEM 15: Network Delay Time -->
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">15</span> Network Delay Time (#743) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a network of <code>n</code> nodes with directed weighted edges and a source node <code>k</code>, find how long it takes for a signal to reach ALL nodes. Return <code>-1</code> if not all reachable.</div>
+
+<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+Weighted edges + shortest path from source. &rarr; <span class="tag t5">Scene 5</span></div>
+
+<div class="sbox"><div class="sl" style="color:var(--emerald)">THE RITUAL</div>
+Standard Deva's march from source <code>k</code>. After the march, the answer is the <strong>maximum distance</strong> in the dist array &mdash; the slowest fortress to reach determines total time. If any fortress is still infinity → not all reachable → return -1.
+</div>
+
+<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
+<strong>This is the pure Dijkstra template.</strong> Only twist: answer = <code>max(dist.values())</code>. If max is infinity, return -1.
+</div>
+
+<pre><code>def networkDelayTime(times, n, k):
+    graph = defaultdict(list)
+    for u, v, w in times:
+        graph[u].append((v, w))
+
+    dist = {i: float('inf') for i in range(1, n+1)}
+    dist[k] = 0                        <span style="color:#6b9955"># start = 0</span>
+    heap = [(0, k)]                    <span style="color:#6b9955"># priority scroll</span>
+
+    while heap:
+        cost, node = heappop(heap)     <span style="color:#6b9955"># cheapest fortress</span>
+        if cost > dist[node]: continue <span style="color:#6b9955"># stale intel</span>
+        for nei, w in graph[node]:
+            nc = cost + w              <span style="color:#6b9955"># my cost + toll</span>
+            if nc < dist[nei]:
+                dist[nei] = nc
+                heappush(heap, (nc, nei))
+
+    mx = max(dist.values())
+    return mx if mx < float('inf') else -1</code></pre>
+</div></div>
+
+<!-- PROBLEM 16: Swim in Rising Water -->
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">16</span> Swim in Rising Water (#778) <span class="tag-h">Hard</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">PROBLEM</div>Given an n×n grid of elevations, find the minimum time <code>t</code> to swim from <code>(0,0)</code> to <code>(n-1,n-1)</code>. At time <code>t</code>, you can be on any cell with elevation ≤ t.</div>
+
+<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+Grid with costs (elevations) and need minimum cost path. &rarr; <span class="tag t5">Scene 5</span></div>
+
+<div class="sbox"><div class="sl" style="color:var(--emerald)">THE RITUAL</div>
+Modified Dijkstra on a grid. Deva's horse gallops to the cell with the <strong>lowest elevation</strong> next. The cost to reach a cell = <strong>max elevation along the path</strong> (you need to wait until the water rises to the highest point on your path).
+</div>
+
+<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
+<strong>Cost = max, not sum:</strong> Instead of <code>cost + weight</code>, use <code>max(cost, grid[nr][nc])</code>. The bottleneck is the highest cell on the path.<br>
+<strong>Grid-based:</strong> Neighbors are 4-directional. Visited set instead of dist array (since we use max, once visited at optimal cost, it's done).
+</div>
+
+<pre><code>def swimInWater(grid):
+    n = len(grid)
+    visited = set()
+    heap = [(grid[0][0], 0, 0)]        <span style="color:#6b9955"># (elevation, row, col)</span>
+
+    while heap:
+        t, r, c = heappop(heap)        <span style="color:#6b9955"># lowest elevation cell</span>
+        if (r, c) in visited: continue
+        visited.add((r, c))
+        if r == n-1 and c == n-1:      <span style="color:#6b9955"># reached destination!</span>
+            return t
+        for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:
+            nr, nc = r+dr, c+dc
+            if 0<=nr<n and 0<=nc<n and (nr,nc) not in visited:
+                heappush(heap, (max(t, grid[nr][nc]), nr, nc))
+                                       <span style="color:#6b9955"># cost = max elevation on path</span></code></pre>
+</div></div>
+
+<!-- PROBLEM 17: Cheapest Flights Within K Stops -->
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">17</span> Cheapest Flights Within K Stops (#787) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">PROBLEM</div>Find the cheapest flight from <code>src</code> to <code>dst</code> with at most <code>k</code> stops.</div>
+
+<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+Weighted edges + shortest path with a constraint. &rarr; <span class="tag t5">Scene 5</span> (modified)</div>
+
+<div class="sbox"><div class="sl" style="color:var(--emerald)">THE RITUAL</div>
+<strong>Bellman-Ford with K+1 rounds</strong> instead of Dijkstra. Each round, Deva relaxes ALL roads. But he only does K+1 rounds max (K stops = K+1 flights). This naturally limits the path length.
+</div>
+
+<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
+<strong>Not standard Dijkstra — use Bellman-Ford.</strong> Dijkstra doesn't handle the "K stops" constraint well because a longer, cheaper path might need more stops.<br>
+<strong>K+1 iterations:</strong> Each iteration allows one more flight. Copy the dist array each round to avoid using freshly-updated values within the same round.
+</div>
+
+<pre><code>def findCheapestPrice(n, flights, src, dst, k):
+    dist = [float('inf')] * n
+    dist[src] = 0
+
+    for _ in range(k + 1):             <span style="color:#6b9955"># at most k+1 flights</span>
+        temp = dist[:]                 <span style="color:#6b9955"># snapshot! don't mix rounds</span>
+        for u, v, w in flights:
+            if dist[u] + w < temp[v]:  <span style="color:#6b9955"># read old, write new</span>
+                temp[v] = dist[u] + w
+        dist = temp
+
+    return dist[dst] if dist[dst] < float('inf') else -1</code></pre>
+</div></div>
+
+<!-- PROBLEM 18: Min Cost to Connect All Points -->
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">18</span> Min Cost to Connect All Points (#1584) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">PROBLEM</div>Given points on a 2D plane, connect ALL points with minimum total Manhattan distance. (Minimum Spanning Tree)</div>
+
+<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+"Minimum cost to connect ALL" = weighted edges + connect everything. &rarr; <span class="tag t5">Scene 5</span> (Prim's MST, very similar to Dijkstra)</div>
+
+<div class="sbox"><div class="sl" style="color:var(--emerald)">THE RITUAL</div>
+<strong>Prim's algorithm</strong> (Dijkstra's cousin). Start from any fortress. Always extend to the <strong>cheapest unconnected</strong> fortress. Repeat until all fortresses are connected. Total cost = minimum spanning tree.
+</div>
+
+<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
+<strong>No source/destination — connect ALL.</strong> Start from node 0. Use a visited set. Each step: pop cheapest unvisited node, add its cost, push all edges to unvisited neighbors.<br>
+<strong>Stop when</strong> <code>len(visited) == n</code>.<br>
+<strong>Edge weight</strong> = Manhattan distance: <code>|x1-x2| + |y1-y2|</code>.
+</div>
+
+<pre><code>def minCostConnectPoints(points):
+    n = len(points)
+    visited = set()
+    heap = [(0, 0)]                    <span style="color:#6b9955"># (cost, point_index)</span>
+    total = 0
+
+    while len(visited) < n:
+        cost, i = heappop(heap)
+        if i in visited: continue
+        visited.add(i)
+        total += cost                  <span style="color:#6b9955"># add this road's cost</span>
+
+        xi, yi = points[i]
+        for j in range(n):
+            if j not in visited:
+                d = abs(xi - points[j][0]) + abs(yi - points[j][1])
+                heappush(heap, (d, j)) <span style="color:#6b9955"># potential road</span>
+
+    return total</code></pre>
+</div></div>
+
+</div>
+
+<!-- ==================== TAB 5: QUIZ ==================== -->
+<div class="sec" id="sec-quiz">
+
+<h2>Quiz &mdash; Test Your Khansaar Knowledge</h2>
+<p>Click each card to reveal the answer.</p>
+
+<div class="quiz" onclick="this.classList.toggle('show')">
+<strong>1. Fortress = ?, Road = ?, War Paint = ?</strong>
+<div class="ans"><strong>Fortress = Node.</strong> Road = Edge. War Paint = Visited set. These are the three fundamentals of every graph problem.</div>
+</div>
+
+<div class="quiz" onclick="this.classList.toggle('show')">
+<strong>2. What scene for: "Can you take all courses given prerequisites?"</strong>
+<div class="ans"><span class="tag t3">Scene 3</span> <strong>Rajamanaar's Battle Plan (Topological Sort).</strong> "Prerequisites" = ordering by dependencies. Count in-degrees, process zero-dep first, check if all processed.</div>
+</div>
+
+<div class="quiz" onclick="this.classList.toggle('show')">
+<strong>3. In Scene 2 (BFS), when do you mark a fortress as visited?</strong>
+<div class="ans"><strong>When PLACING the token on the war table</strong> (when adding to queue), NOT when popping. If you wait until popping, duplicates sneak onto the table.</div>
+</div>
+
+<div class="quiz" onclick="this.classList.toggle('show')">
+<strong>4. What scene for: "Find the extra edge that creates a cycle in a tree?"</strong>
+<div class="ans"><span class="tag t4">Scene 4</span> <strong>The Blood Pact (Union-Find).</strong> Process edges one by one. The first edge where both nodes are already in the same clan = redundant.</div>
+</div>
+
+<div class="quiz" onclick="this.classList.toggle('show')">
+<strong>5. In Dijkstra (Scene 5), what does "stale intel" mean?</strong>
+<div class="ans">When you pop a fortress from the heap, its recorded cost might be <strong>higher than the best known distance</strong> (dist[node]). That means you already found a cheaper path. Skip it — don't process stale entries.</div>
+</div>
+
+<div class="quiz" onclick="this.classList.toggle('show')">
+<strong>6. What's the difference between DFS on a grid vs DFS on an adjacency list?</strong>
+<div class="ans"><strong>Only how you find neighbors.</strong> Grid: 4 directions (N/S/E/W) with boundary checks. Adjacency list: <code>for nei in graph[node]</code>. The visited-mark-recurse pattern is identical.</div>
+</div>
+
+<div class="quiz" onclick="this.classList.toggle('show')">
+<strong>7. What makes Rotting Oranges a Scene 2 (BFS) problem instead of Scene 1 (DFS)?</strong>
+<div class="ans"><strong>Simultaneous spread.</strong> ALL rotten oranges rot their neighbors at the SAME time (same minute). DFS goes deep one-by-one; BFS spreads outward in waves, which models simultaneous spread perfectly.</div>
+</div>
+
+<div class="quiz" onclick="this.classList.toggle('show')">
+<strong>8. In Union-Find, what is path compression?</strong>
+<div class="ans"><strong>The shortcut.</strong> When finding the clan leader, make every fortress in the chain point directly to the top leader. Next time anyone in that chain calls <code>find()</code>, it's instant. Code: <code>parent[x] = find(parent[x])</code>.</div>
+</div>
+
+<div class="quiz" onclick="this.classList.toggle('show')">
+<strong>9. Why does Cheapest Flights use Bellman-Ford instead of Dijkstra?</strong>
+<div class="ans"><strong>The K-stops constraint.</strong> Dijkstra settles nodes greedily — once settled, it won't revisit with more stops. But a path with MORE stops might be CHEAPER. Bellman-Ford processes ALL edges each round, naturally limiting rounds to K+1.</div>
+</div>
+
+<div class="quiz" onclick="this.classList.toggle('show')">
+<strong>10. For Pacific Atlantic Water Flow, why raid from borders instead of from each cell?</strong>
+<div class="ans"><strong>Efficiency.</strong> Raiding from each cell = O(m*n) separate DFS runs. Raiding from borders = 2 DFS runs (Pacific borders + Atlantic borders). Same result, fraction of the work. Also, reversing direction (uphill instead of downhill) makes the logic cleaner.</div>
+</div>
+
+<h3>Scene Summary Table</h3>
+<table>
+<tr><th>Scene</th><th>Character</th><th>Algorithm</th><th>Key Data Structure</th><th>When to Use</th></tr>
+<tr><td><span class="tag t1">1</span></td><td>Deva</td><td>DFS</td><td>Recursion + visited set</td><td>Explore connected regions, traversal, path finding</td></tr>
+<tr><td><span class="tag t2">2</span></td><td>Vardha</td><td>BFS</td><td>Queue (deque) + visited set</td><td>Shortest unweighted path, level-by-level, simultaneous spread</td></tr>
+<tr><td><span class="tag t3">3</span></td><td>Rajamanaar</td><td>Topological Sort</td><td>In-degree array + queue</td><td>Prerequisites, ordering, dependency chains</td></tr>
+<tr><td><span class="tag t4">4</span></td><td>The Elder</td><td>Union-Find</td><td>Parent + rank arrays</td><td>Merge groups, count components, detect cycles in undirected</td></tr>
+<tr><td><span class="tag t5">5</span></td><td>Deva on horse</td><td>Dijkstra / Prim's</td><td>Min-heap + dist array</td><td>Weighted shortest path, MST</td></tr>
+</table>
+
+</div>
+
+</div>
+
+<script>
+function go(id){
+document.querySelectorAll('.sec').forEach(s=>s.classList.remove('vis'));
+document.getElementById('sec-'+id).classList.add('vis');
+document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('on'));
+event.target.classList.add('on');
+}
+</script>
+</body>
+</html>

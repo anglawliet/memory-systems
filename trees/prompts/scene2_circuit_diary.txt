@@ -1,0 +1,65 @@
+Generate a bright, cheerful, fun comic-strip illustration with 10 panels in 2 rows of 5. Happy colorful comic book art — think animated movie poster energy. White background between panels.
+
+**Title bar:** "Scene 2: Circuit + Diary (Bottom-Up DFS with Global Tracker)" on the left, "The Ritual" on the right.
+
+**Characters:**
+- **Circuit:** Indian man, late 20s, black t-shirt, multiple layered gold chains, dark sunglasses, styled black hair. Expressive, animated body language — big grins, exaggerated reactions. He carries a small brown leather DIARY (notebook) in his back pocket. The diary is his secret weapon — he writes in it but never sends it up.
+
+**The Bubble (CRITICAL — same in every panel):**
+Large transparent glass sphere, narrow neck at the top. At the BOTTOM of the sphere, two glass tubes branch DOWNWARD in a Y-shape — a lavender tube exits the bottom-left going down, a red tube exits the bottom-right going down. Each tube connects to a child bubble hanging below. The tubes NEVER come from the top or sides — they ALWAYS exit from the bottom of the bubble going downward. Parent bubble on top, children hanging below on tube branches.
+
+**RETURN vs WORK panels (CRITICAL visual difference):**
+RETURN panels have the ENTIRE PANEL BACKGROUND flooded with color — bright green wash for returning a value upward. Not a subtle tint — strong, obvious, impossible to miss. Circuit is LEAVING the bubble with one foot in the neck climbing out, orb ABOVE the bubble shooting upward with motion trail. WORK panels have neutral/white background, no color wash, Circuit stays inside working.
+
+**Panel 1 — WORK PANEL — "The Fall — It's Dark"**
+Looking straight DOWN through the neck from above. The bubble is DARK inside — pitch black. Circuit has just fallen through the neck, crouching at the bottom, squinting into darkness. His gold chains are still settling from the fall. He can't see anything — no tubes visible, just blackness. One hand out feeling the air.
+Text: "Falls in. It's dark. Can't see anything."
+
+**Panel 2 — WORK PANEL — "Finds the Vitals Screen"**
+Over Circuit's shoulder, looking at the wall. Circuit stumbles through the dark and finds a screen on the bubble wall. The screen GLOWS brightly, casting warm light across the bubble, brightening everything. His face shows relief and excitement. The lavender and red tubes at the bottom start to become visible below him as the screen lights up the bubble.
+Text: "Finds the vitals screen. Bubble lights up."
+
+**Panel 3 — RETURN PANEL — "Blank Screen — RETURN 0!"**
+ENTIRE PANEL FLOODED WITH BRIGHT GREEN. DIFFERENT bubble. Circuit finds the screen — it's completely BLANK. Dark display, no number. He shrugs with a goofy grin — nothing here! He's already CLIMBING OUT through the neck, one foot on the rim, body twisting upward, gold chains swinging. A green orb with "0" on it shoots ABOVE the bubble upward with a motion trail. The tubes at the bottom sit unused in the dark.
+Text: "Blank screen! Nothing here. RETURN 0!"
+
+**Panel 4 — WORK PANEL — "Peek Left Tube"**
+Low angle from the floor of the bubble looking UP at Circuit. He crouches DOWN at the bottom-left of the bubble near the lavender tube that exits DOWNWARD. He peers down into the tube opening. A glowing lavender orb with "2" on it floats UP through the tube into his waiting hand. He didn't go down — the answer rose up to him. His face shows delight — catching it like a surprise gift. The red tube at the bottom-right is visible, still untouched.
+Text: "Peeks left tube. L = 2 floats up!"
+
+**Panel 5 — WORK PANEL — "Peek Right Tube"**
+Close-up of Circuit's hands and arms. His left hand already holds the lavender orb with "2", glowing purple against his gold chains. His right hand reaches down toward the red tube at the bottom-right and catches a glowing red orb with "1" floating UP from the tube. Both orbs illuminate his chains from below. His grinning face partially visible at the top — wide smile, bottom of sunglasses. Both tubes at the bottom of the bubble are open and glowing. The Y-shape of both tubes visible from this angle.
+Text: "Peeks right tube. R = 1 floats up! Has both answers."
+
+**Panel 6 — WORK PANEL — "The Diary — Calculate"**
+Top-down view looking DOWN into the bubble from above. Circuit sits cross-legged on the floor of the bubble. The lavender orb (2) rests on his left side, the red orb (1) on his right. The screen glows "5" on the wall above him. He has the brown leather DIARY pulled from his back pocket, open on his lap. A thought cloud above his head shows the math: "L + R + me = 2 + 1 + 5 = 8". He looks at the diary's current page which shows "old best = 6". His eyes widen — 8 beats 6! The Y-shape of both tubes visible at the bottom from this angle.
+Text: "L + R + me = 2 + 1 + 5 = 8. Diary says 6. New record!"
+
+**Panel 7 — WORK PANEL — "The Diary — Overwrite"**
+Tilted angle, dynamic composition. Close-up of Circuit hunched over the diary. His pen is crossing out "6" and writing "8" in bold. His face shows pure satisfaction — wide grin, teeth showing, sunglasses pushed up on his forehead so we can see his excited eyes. Gold chains dangle over the diary pages. The lavender and red orbs sit beside him glowing. Then — he SNAPS the diary shut with one hand. He shoves it back into his back pocket. The diary is PRIVATE. It stays with him. It never goes up through the neck.
+Text: "Crosses out 6. Writes 8! Snaps diary shut. Stays in pocket."
+
+**Panel 8 — RETURN PANEL — "Report UP — Different Number!"**
+Dynamic diagonal composition with speed lines. ENTIRE PANEL FLOODED WITH BRIGHT GREEN. Circuit stands, diary secure in his back pocket with a faint "8" glow visible through the pocket. He crafts a DIFFERENT golden orb — he picks the BETTER of left and right (lavender 2 beats red 1), adds himself (5). The golden orb glows "7". He pushes it UP through the neck — the orb is ABOVE the bubble, rocketing upward with a golden trail. Circuit is LEAVING, one foot on the rim. His expression is confident but knowing — the "7" going up is NOT the "8" in his pocket. The tubes visible at the bottom of the bubble.
+Text: "Sends up me + max(L,R) = 5 + 2 = 7. Diary keeps 8. DIFFERENT!"
+
+**Panel 9 — WORK PANEL — "Diary vs Report"**
+Straight-on medium shot, symmetrical framing. Clean comparison panel. Circuit stands in the center of the bubble. His LEFT hand holds up the diary, open to the page showing "8". His RIGHT hand holds up the golden orb showing "7". His face is in the center, looking at the camera, eyebrows raised, expression saying "see the difference?" LEFT side of the panel shows a small diagram: a path going DOWN from the lavender tube, THROUGH the bubble, DOWN through the red tube — uses both tubes. Label: "Diary = 8 (both tubes)". RIGHT side shows a small diagram: a straight line going from one child UP through the bubble and continuing UP through the neck. Label: "Report = 7 (one tube + up)".
+Text: "Diary sees both tubes. Report only goes up. Two different numbers!"
+
+**Panel 10 — "Scene 2 Complete"**
+Wide establishing shot, full vertical composition. Circuit inside the bubble, standing tall. One hand pats the diary in his back pocket — it glows warmly with "8". His other hand points upward at the golden "7" orb that has already left through the neck and floats above the bubble. His expression is a cocky wink — he knows the real answer is in his pocket, not in the orb. Below him, the lavender tube branches DOWNWARD to the bottom-left and red tube DOWNWARD to the bottom-right, connecting to child bubbles. The complete tree structure visible.
+Text: "Report goes up. Answer is in the diary. nonlocal best."
+
+**Style:**
+- BRIGHT, HAPPY, COLORFUL — Pixar energy. Not dark or moody.
+- White background between panels.
+- Every panel has a genuinely different composition — bird's eye, over-shoulder, wide side view, low floor angle, hands close-up, top-down, tilted dynamic, diagonal with speed lines, symmetrical medium, wide establishing. No two panels framed the same way.
+- Circuit is EXPRESSIVE — big smiles, exaggerated reactions, animated body language.
+- Colors vivid — lavender tubes glow purple, red tubes glow red, diary is warm brown leather, golden orbs glow warm gold, "0" return orb is green.
+- The DIARY is a distinctive small brown leather notebook — visually prominent in panels 6-10. It's Circuit's secret. He writes in it but NEVER sends it up.
+- Panel borders with rounded corners.
+- Text short — placed at bottom of each panel in a clean text box.
+- RETURN panels (3, 8) have their ENTIRE BACKGROUND flooded with strong bright green. Circuit is always leaving the bubble in these panels.
+- WORK panels (1, 2, 4, 5, 6, 7, 9, 10) have neutral/white background. Circuit stays inside working. No color wash.
+- The lavender tube and red tube ALWAYS exit from the BOTTOM of the bubble — lavender bottom-left, red bottom-right, branching DOWNWARD. In EVERY panel this is consistent. The tubes NEVER come from the top or sides. Circuit crouches DOWN to reach them. Tubes go DOWN to child bubbles BELOW.

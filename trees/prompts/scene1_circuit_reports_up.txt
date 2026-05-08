@@ -1,0 +1,64 @@
+Generate a bright, cheerful, fun comic-strip illustration with 10 panels in 2 rows of 5. Happy colorful comic book art — think animated movie poster energy. White background between panels.
+
+**Title bar:** "Scene 1: Circuit Reports UP (Bottom-Up DFS)" on the left, "The Ritual" on the right.
+
+**Characters:**
+- **Circuit:** Indian man, late 20s, black t-shirt, multiple layered gold chains, dark sunglasses, styled black hair. Expressive, animated body language — big grins, exaggerated reactions.
+
+**The Bubble (CRITICAL — same in every panel):**
+Large transparent glass sphere, narrow neck at the top. At the BOTTOM of the sphere, two glass tubes branch DOWNWARD in a Y-shape — a lavender tube exits the bottom-left going down, a red tube exits the bottom-right going down. Each tube connects to a child bubble hanging below. The tubes NEVER come from the top or sides — they ALWAYS exit from the bottom of the bubble going downward. Parent bubble on top, children hanging below on tube branches.
+
+**RETURN vs WORK panels (CRITICAL visual difference):**
+RETURN panels have the ENTIRE PANEL BACKGROUND flooded with color — bright green wash for returning a value upward. Not a subtle tint — strong, obvious, impossible to miss. Circuit is LEAVING the bubble with one foot in the neck climbing out, orb ABOVE the bubble shooting upward with motion trail. WORK panels have neutral/white background, no color wash, Circuit stays inside working.
+
+**Panel 1 — WORK PANEL — "The Fall — It's Dark"**
+Looking straight DOWN through the neck from above into the bubble. The bubble is DARK inside — pitch black. Circuit has just fallen through the neck, crouching at the bottom, squinting into total darkness. His gold chains are still settling from the fall. He can't see anything — no tubes visible, just blackness. One hand out feeling the air, the other adjusting his sunglasses trying to see.
+Text: "Circuit falls in. It's dark. Can't see anything."
+
+**Panel 2 — WORK PANEL — "Finds the Vitals Screen"**
+Over Circuit's shoulder, looking at the wall. Circuit stumbles through the dark and finds a screen on the bubble wall. The screen GLOWS brightly, casting warm light across the bubble, brightening everything. His face shows relief and excitement. The lavender and red tubes at the bottom start to become visible below him as the screen lights up the bubble.
+Text: "Finds the vitals screen. Bubble lights up."
+
+**Panel 3 — RETURN PANEL — "Blank Screen — RETURN 0!"**
+ENTIRE PANEL FLOODED WITH BRIGHT GREEN. DIFFERENT bubble. Circuit finds the screen — it's completely BLANK. Dark display, no number, nothing. He shrugs with a goofy "nothing here boss" expression — palms up, head tilted. He's already CLIMBING OUT through the neck, one foot on the rim, body twisting upward, gold chains swinging with momentum. A green orb with "0" on it shoots ABOVE the bubble upward with a sparkling motion trail. He didn't bother looking at the tubes — the tubes at the bottom sit unused in the dark. Nothing to explore.
+Text: "Blank screen! RETURN 0! Climbs out."
+
+**Panel 4 — WORK PANEL — "Peek Left Tube"**
+Low angle from the floor of the bubble looking UP at Circuit. The bubble is lit by the screen. Circuit crouches DOWN at the bottom-left of the bubble near the lavender tube that exits DOWNWARD. He leans over the tube opening and peers down into it. A glowing lavender orb labeled "L" floats UP through the tube into his waiting hand. He didn't go down — the answer magically rose up to him. His face shows delight, eyebrows raised above his sunglasses — catching it like a surprise ball tossed from below. The red tube at the bottom-right is visible, still untouched.
+Text: "Peeks left tube. L answer floats up!"
+
+**Panel 5 — WORK PANEL — "Peek Right Tube"**
+Close-up of Circuit's hands and upper body. His left hand already holds the lavender orb labeled "L", glowing purple. His right hand catches a glowing red orb labeled "R" floating UP from the red tube. Both orbs illuminate his gold chains from below with their respective colors — purple on the left, red on the right. His grinning face visible — wide smile. Both tubes at the bottom of the bubble are now open and glowing. The Y-shape of both tubes visible from this angle.
+Text: "Peeks right tube. R answer floats up! Has both."
+
+**Panel 6 — WORK PANEL — "The Combine"**
+Top-down view looking DOWN into the bubble from above. Circuit sits cross-legged on the floor of the bubble. Lavender orb (L) on his left side, red orb (R) on his right. The screen glows "1" on the wall behind him. A thought cloud above his head shows: "1 + max(L, R)". He brings his hands together, the two orbs hovering between his palms. Golden energy swirls around them as they merge with the vitals. A NEW golden orb forms between his hands — the combined answer. His expression is intense concentration turning into a grin. Gold chains dangle forward as he leans in.
+Text: "Combines: me + max(L, R). Vitals + best of both tubes."
+
+**Panel 7 — RETURN PANEL — "Report UP!"**
+Dynamic diagonal composition with speed lines. ENTIRE PANEL FLOODED WITH BRIGHT GREEN. Circuit stands tall, arms thrust upward above his head. He pushes the golden answer orb UP through the narrow neck of the bubble — the orb is ABOVE the bubble, rocketing upward with a golden sparkling trail. Circuit is LEAVING — one foot on the neck rim, body angled upward, triumphant expression, hair blown back, gold chains catching the golden light. Speed lines radiate upward. The lavender and red tubes visible at the bottom of the bubble below him.
+Text: "RETURN answer UP! Tells above: 1 + max(L, R). Done!"
+
+**Panel 8 — WORK PANEL — "The Full Picture"**
+Tilted dynamic angle. Wide shot showing a complete tree of 5 bubbles in proper tree structure. Root bubble at the top, two child bubbles in the middle connected by tubes branching down, two grandchild bubbles at the bottom. Circuit is tiny inside the root bubble. Each bubble has a glowing screen on its wall. Golden orbs flow UPWARD through the tubes from children to parent — each child has computed its answer and sent it up. The root bubble receives both answers through the lavender and red tubes from below, combines them, and the final answer shoots out the top. The tree is clean and complete.
+Text: "Every bubble: check screen, peek both tubes, combine, report up."
+
+**Panel 9 — "Scene 1 Complete"**
+Wide establishing shot. Circuit stands ON TOP of the root bubble — outside it, done with the traversal. He stands proudly on the glass sphere, one foot planted, gold chains glinting, sunglasses on, confident pose with arms crossed. He holds the final golden answer orb in one raised hand like a trophy. Below him, the complete tree stretches downward — root under his feet, lavender and red tubes branching DOWNWARD to child bubbles, those branching to grandchildren. All tubes glow softly. Every answer has flowed upward and Circuit holds the final result at the very top.
+Text: "Check screen. Peek both tubes. Combine. Report up. Answer at the root."
+
+**Panel 10 — BLANK PANEL**
+Leave this panel empty or use it for a fun bonus illustration — Circuit winking at the camera with a thumbs up, gold chains sparkling.
+Text: "Bottom-Up DFS. Done!"
+
+**Style:**
+- BRIGHT, HAPPY, COLORFUL — Pixar energy. Not dark or moody.
+- White background between panels.
+- Every panel has a genuinely different composition — bird's eye looking down, over-shoulder, wide side with green wash, low floor angle looking up, hands close-up, top-down into bubble, dynamic diagonal with speed lines, tilted wide multi-bubble tree view, wide establishing with Circuit on top. No two panels framed the same way.
+- Circuit is EXPRESSIVE — big smiles, exaggerated reactions, animated body language.
+- Colors vivid — lavender tubes glow purple, red tubes glow red, golden answer orbs glow warm gold, return "0" orb is green.
+- Panel borders with rounded corners.
+- Text short — placed at bottom of each panel in a clean text box.
+- RETURN panels (3, 7) have their ENTIRE BACKGROUND flooded with strong bright green. Circuit is always leaving the bubble in these panels.
+- WORK panels (1, 2, 4, 5, 6, 8, 9, 10) have neutral/white background. Circuit stays inside working. No color wash.
+- The lavender tube and red tube ALWAYS exit from the BOTTOM of the bubble — lavender bottom-left, red bottom-right, branching DOWNWARD. In EVERY panel this is consistent. The tubes NEVER come from the top or sides. Circuit crouches DOWN to reach them. Tubes go DOWN to child bubbles BELOW.

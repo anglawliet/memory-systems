@@ -1,0 +1,111 @@
+Generate a bright, cheerful, fun comic-strip illustration with 12 panels in 2 rows of 6. Happy colorful comic book art — think animated movie poster energy. White background between panels.
+
+**Title bar:** "Scene 2: Vardha's War Drums (BFS)" on the left, "The Ritual" on the right.
+
+**Characters:**
+- **Vardha:** Prithviraj Sukumaran from the movie Salaar.
+
+**Props:**
+- **WAR MAP** — large parchment map on the WALL behind Vardha. 4 fortress icons in a diamond shape with ROADS drawn between them. Each fortress has a TORCH: DARK (tiny, black, no flame) = unconquered. BURNING (tall red flames) = conquered. NO text, NO labels anywhere on the map.
+- **TABLE** — sturdy wooden table between Vardha and the map. Coins here = QUEUE.
+- **FLOOR** — ground in front of the table. Coins here = current FOR-LOOP BATCH.
+- **GOLD COINS** — plain gold discs. No markings. All identical.
+
+**NO TEXT ON ANY PROP.** No letters on coins, no labels on map. Text ONLY in captions.
+
+**SEVEN DISTINCT ACTIONS — each one must look COMPLETELY DIFFERENT from the others:**
+
+1. **APPEARS** — a coin materializes on the table with GOLDEN SPARKLES radiating outward. Warm magical glow. The coin fades into existence.
+
+2. **TIPS** — Vardha grabs the table edge with BOTH HANDS and TILTS it sideways. Coins SLIDE off the tilted surface and CLANG onto the floor. Physical tilt, gravity, motion blur downward.
+
+3. **STOMP** — Vardha raises his LEG high and CRASHES his BOOT down on a floor coin. The coin SHATTERS into golden fragments under the boot! IMPACT LINES radiate from the stomp. Dust cloud puffs up. Always the BOOT, always the LEG.
+
+4. **ROADS GLOW** — immediately after a stomp, GLOWING YELLOW LINES appear on the map, traveling along the roads outward from the stomped fortress like electricity flowing through veins. The glow travels until it reaches neighboring fortresses.
+
+5. **COIN DROPS (neighbor valid)** — a glowing road reaches a fortress with a DARK torch → torch IGNITES with red flames → a gold coin DROPS DOWNWARD from that fortress icon on the map, falls through the air leaving a GREEN SPARKLE TRAIL, and LANDS on the table. Green glow = accepted, queued!
+
+6. **BLOCKED (neighbor invalid)** — a glowing road reaches a fortress with a BURNING torch → the glow HITS the flames — big RED FLASH! Sparks fly outward! The road FIZZLES out. No coin drops. Red = rejected, already conquered!
+
+7. **"LEVEEELLL!"** — Vardha throws his head BACK, fists RAISED to the sky, mouth wide open, ROARS. SOUND WAVES radiate from his mouth in expanding rings. Dramatic backlighting from the map's flames.
+
+**Panel 1 — "The War Room"**
+Wide side view. Full scene: WAR MAP on the wall — 4 fortresses, ALL 4 torches DARK (tiny, black, cold). Roads visible. TABLE stands empty in front of the map. FLOOR clean. Vardha stands before the table, arms crossed, studying the dark map. Cold blue-ish lighting — nothing alive yet.
+Map: 4 dark, 0 burning. Table: 0. Floor: 0.
+Text: "4 fortresses. All 4 torches dark."
+
+**Panel 2 — "First Coin Appears!"**
+Close-up of the table surface and the map above it. A gold coin MATERIALIZES on the table — GOLDEN SPARKLES radiate outward, warm magical glow, the coin fades into existence on the wood surface. On the map above, ONE torch IGNITES — WHOOSH! Tall red flames. The other 3 torches stay DARK (tiny, black). Vardha's face in the background, one eyebrow raised, lit by the warm glow.
+Map: 1 burning, 3 dark. Table: 1 coin. Floor: 0.
+Text: "A coin appears. 1 torch lights on the map."
+
+**Panel 3 — "TIPS THE TABLE!"**
+Dynamic diagonal composition. Vardha GRABS the table edge with BOTH HANDS, muscles flexed, and TILTS it hard to one side. The coin SLIDES off the tilted surface, tumbles through the air with motion blur, and CLANGS onto the stone floor. Table rocks back upright — EMPTY. 1 coin sits on the floor, gold against grey stone.
+Map: 1 burning, 3 dark. Table: 0. Floor: 1 coin.
+Text: "TIPS the table! Coin slides to the floor."
+
+**Panel 4 — "STOMP! Roads Glow!"**
+Dramatic low angle — camera on the floor looking UP at Vardha's BOOT raised high in the air, about to come down. Then: CRASH! The boot SLAMS onto the floor coin — it SHATTERS into golden fragments! IMPACT LINES radiate outward like a shockwave. Dust cloud puffs up around the boot. On the map above, GLOWING YELLOW LINES appear — light traveling along 2 roads outward from one fortress, like electricity through veins, heading toward 2 other fortresses. Both destination torches are DARK.
+Map: 1 burning, 3 dark. Yellow glow on 2 roads. Table: 0. Floor: 0 (shattered).
+Text: "STOMP! Coin shatters! 2 roads GLOW on the map!"
+
+**Panel 5 — "Two Coins DROP! Two Torches Light! LEVEEELLL!"**
+Over Vardha's shoulder, looking UP at the map. The 2 glowing roads have reached 2 fortresses with DARK torches. Both torches IGNITE — WHOOSH! WHOOSH! Red flames shoot up! From below each newly-lit fortress icon, a gold coin DROPS DOWNWARD — falling through the air with GREEN SPARKLE TRAILS — and LANDS on the table below — CLANG! CLANG! 2 coins now on the table, green glow fading. Map: 3 torches BURNING, 1 still DARK. Vardha looks down at the empty floor and throws his head BACK — "LEVEEELLL!" — SOUND WAVES radiating from his roar.
+Map: 3 burning, 1 dark. Table: 2 coins. Floor: 0.
+Text: "2 dark torches → coins DROP to table! 3 burning, 1 dark. LEVEEELLL!"
+
+**Panel 6 — "TIPS THE TABLE!"**
+Bird's eye view looking straight DOWN from above. Vardha tips the table sideways. 2 coins SLIDE off the tilted surface and CLANG onto the floor below. Table back upright, EMPTY. 2 gold coins on the stone floor, side by side. Map visible on the wall: 3 torches BURNING with flames, 1 torch DARK.
+Map: 3 burning, 1 dark. Table: 0. Floor: 2 coins.
+Text: "TIPS! 2 coins slide to floor."
+
+**Panel 7 — "STOMP! One DROPS, One BLOCKED!"**
+Split panel — LEFT half and RIGHT half showing two different outcomes side by side. CENTER: Vardha's boot STOMPS the first floor coin — SHATTERS! Map roads glow yellow outward to 2 fortresses. LEFT HALF (GREEN — valid): A glowing road reaches the LAST DARK torch → torch IGNITES — WHOOSH! A coin DROPS with a GREEN SPARKLE TRAIL from the map down to the table — CLANG! ALL 4 torches now BURNING! RIGHT HALF (RED — invalid): The other glowing road reaches a torch ALREADY BLAZING → the glow HITS the flames — big RED FLASH! Sparks fly! Road FIZZLES! No coin drops. BLOCKED! In the background, the second floor coin still sits on the floor, un-stomped.
+Map: ALL 4 BURNING. Table: 1 coin (just dropped). Floor: 1 coin (waiting).
+Text: "STOMP! 1 dark → GREEN, coin DROPS! All 4 burning! 1 burning → RED FLASH, BLOCKED!"
+
+**Panel 8 — "STOMP! BLOCKED! LEVEEELLL!"**
+Tilted dutch angle, dramatic energy. Vardha STOMPS the second floor coin — boot CRASHES down, coin SHATTERS! Map road GLOWS yellow outward to 1 fortress. The glow reaches a BURNING torch — RED FLASH! Flames burst! Road FIZZLES! BLOCKED! No coin drops. Nothing new on the table. Floor now empty — nothing but golden shattered debris. Vardha throws his head BACK, fists RAISED — "LEVEEELLL!" — SOUND WAVES blast outward. Table has 1 coin from the previous drop.
+Map: all 4 burning. Table: 1 coin. Floor: 0.
+Text: "STOMP! Road → burning → RED FLASH, BLOCKED! Floor empty → LEVEEELLL!"
+
+**Panel 9 — "TIPS THE TABLE — LAST COIN!"**
+Medium straight-on shot, eye level. Vardha tips the table one more time. The single coin slides off and CLANGS onto the floor. Table EMPTY. 1 coin on the floor. All 4 torches BURNING bright on the map behind him.
+Map: all 4 burning. Table: 0. Floor: 1 coin.
+Text: "TIPS! Last coin slides to floor."
+
+**Panel 10 — SKIP PANEL — "STOMP! BOTH BLOCKED! THE CYCLE!"**
+ENTIRE PANEL BACKGROUND FLOODED WITH BRIGHT CRIMSON. Vardha STOMPS the final coin — boot CRASHES, coin SHATTERS! Map roads glow yellow outward to 2 fortresses. BOTH roads reach BURNING torches — RED FLASH! RED FLASH! BOTH BLOCKED! Flames burst from both sides! No coins drop to the table. A thought bubble shows the CYCLE: 3 fortress icons connected by arrows going in a CIRCLE — fortress → fortress → fortress → back to the first, an infinite loop. But ALL torches BLAZE — fire blocks the loop forever! Also shown small in the corner: a glowing road leading OFF THE EDGE of the map into empty VOID — nothing there, out of bounds. Floor empty → "LEVEEELLL!" one last time.
+Map: all 4 burning. Table: 0. Floor: 0.
+Text: "STOMP! Both roads → BURNING → BOTH BLOCKED! THE CYCLE — fire breaks the loop! LEVEEELLL!"
+
+**Panel 11 — "TIPS THE TABLE... NOTHING!"**
+Top-down overhead view looking straight down. Vardha reaches for the table to tip it — but it's COMPLETELY EMPTY. Nothing slides off. He looks at the floor — COMPLETELY EMPTY. No coins anywhere. His hands hover over the bare table, then he spreads his arms wide with a slow grin. On the map: ALL 4 torches BLAZE with tall red flames.
+Map: all 4 burning. Table: 0. Floor: 0.
+Text: "Tips the table... nothing! Table empty. Floor empty. DONE."
+
+**Panel 12 — "Scene 2 Complete"**
+Wide establishing shot. Vardha stands triumphant behind the empty table, arms crossed, satisfied grin, flames from the map reflected in his eyes. War map BLAZES — all 4 torches burning bright, the cycle visible as a glowing loop with flames blocking it. Shattered gold coin fragments scattered across the floor — remnants of every stomp.
+Text: "Appears = queued. Tip = batch. Stomp = process. Roads glow = check neighbors. Green drop = queued. Red flash = blocked. LEVEEELLL = level done. BFS."
+
+**Style:**
+- BRIGHT, HAPPY, COLORFUL — Pixar energy.
+- White background between panels.
+- Every panel has a different composition — wide side, close-up table, dynamic diagonal, low angle boot, over-shoulder, bird's eye, split panel, tilted dutch, medium straight-on, crimson, top-down, wide establishing. No two panels framed the same.
+- **ALL 7 ACTIONS must look COMPLETELY DIFFERENT from each other:**
+  - APPEARS: golden sparkles, warm glow, coin fading into existence
+  - TIPS: both hands on table edge, physical tilt, coins sliding off with gravity
+  - STOMP: boot raised HIGH then CRASHING down, coin shattering, impact lines, dust cloud
+  - ROADS GLOW: yellow electric lines traveling along map roads like veins of light
+  - COIN DROPS: green sparkle trail, coin falling DOWNWARD from map to table
+  - BLOCKED: red flash, sparks exploding, flames bursting, road fizzling out
+  - LEVEEELLL: head thrown back, fists up, mouth open, sound waves radiating
+- **STOMP is ALWAYS the BOOT/LEG** — never hands. Show the boot prominently.
+- **GREEN = valid neighbor** (coin drops to table). **RED = invalid neighbor** (blocked by flames). These colors must be consistent and obvious.
+- **YELLOW = roads glowing** on the map after each stomp.
+- MAP ACCURACY: exact torch count per panel. Dark = tiny, black, cold. Burning = tall, red, flames.
+- COIN COUNT: exact number on table and floor per panel.
+- NO TEXT ON ANY PROP. Plain coins. Unlabeled map.
+- SKIP panel (10) has ENTIRE crimson background. All others neutral/white.
+- The CYCLE in Panel 10: circular arrows between fortress icons, all torches blazing, blocking the infinite loop.
+- Panel borders with rounded corners.

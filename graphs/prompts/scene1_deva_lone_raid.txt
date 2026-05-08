@@ -1,0 +1,73 @@
+Generate a bright, cheerful, fun comic-strip illustration with 12 panels in 2 rows of 6. Happy colorful comic book art — think animated movie poster energy. White background between panels.
+
+**Title bar:** "Scene 1: Deva's Lone Raid (DFS)" on the left, "The Ritual" on the right.
+
+**Characters:**
+- **Deva:** Prabhas from the movie Salaar. He moves ALONE — no army.
+
+**The Fortress:**
+A stone fortress with walls. On the outside wall: either a CRIMSON X mark (war paint = already conquered) or a clean wall (unconquered). Inside each fortress: a MAP SCROLL on the wall showing roads leading out to other fortresses.
+
+**TURN BACK panels (CRITICAL visual difference):**
+TURN BACK panels have the ENTIRE PANEL BACKGROUND flooded with BRIGHT CRIMSON/RED wash. Deva is turning around and walking AWAY. These are the base cases — he doesn't enter.
+
+**Panel 1 — WORK PANEL — "Arrives at the Fortress"**
+Wide side view. Deva walks up a dusty road toward a fortress. He approaches from the LEFT, eyes scanning the fortress wall. The wall is CLEAN — no crimson X. Behind the fortress, multiple roads branch out into the distance. Arid Rajasthani desert landscape.
+Text: "Deva arrives. Checks the wall."
+
+**Panel 2 — TURN BACK PANEL — "Off the Map!"**
+ENTIRE PANEL FLOODED WITH BRIGHT CRIMSON. Deva is running down a road and suddenly the ground ENDS — a sheer cliff edge, nothing beyond. The road crumbles into empty sky. He SKIDS to a halt, one foot hanging over the edge, arms windmilling backward, eyes wide. Dust and pebbles fall off the cliff into the void below. He stumbles BACK from the edge.
+Text: "Off the map! No fortress here. TURN BACK."
+
+**Panel 3 — TURN BACK PANEL — "Water! Can't Cross!"**
+ENTIRE PANEL FLOODED WITH BRIGHT CRIMSON. Deva runs down a road and hits a wide RIVER cutting across his path. Raging water, no bridge, no way across. He stops at the water's edge, looking down at the rushing current. One hand up in a "nope" gesture. He turns his body AWAY, heading back. Splashes at his feet.
+Text: "Water! Road is blocked. TURN BACK."
+
+**Panel 4 — TURN BACK PANEL — "War Paint! Already Conquered!"**
+ENTIRE PANEL FLOODED WITH BRIGHT CRIMSON. Close-up of a fortress wall — a huge crimson X slash painted on it, dripping. Deva spots it and is already TURNING AWAY, pivoting on one foot, dust kicking up. Quick smirk — "already got this one."
+Text: "War paint on the wall! Already conquered. TURN BACK."
+
+**Panel 5 — WORK PANEL — "Clean Wall — Enters!"**
+Low angle from the ground looking UP at Deva. He stands at the fortress entrance — the wall is CLEAN, no X, no war paint. He grins and walks THROUGH the entrance confidently. One hand rests on his sword hilt. Through the entrance, the interior of the fortress is visible — stone walls, torches, the map scroll hanging inside.
+Text: "Clean wall. No war paint. Walks in."
+
+**Panel 6 — WORK PANEL — "Slashes War Paint"**
+Over Deva's shoulder, looking at the wall from INSIDE. He draws his sword and SLASHES a crimson X onto the fortress wall — paint sprays in an arc from the blade. The X glows crimson, dripping. His arm extended in dramatic follow-through. This marks the fortress as HIS — anyone who comes here next will see the X and turn back.
+Text: "Slashes war paint on the wall. MINE. visited.add(node)"
+
+**Panel 7 — WORK PANEL — "Grabs the Map Scroll"**
+Bird's eye view looking DOWN into the fortress from above. Deva stands in the center, reaching up to GRAB the map scroll from the wall. The scroll unrolls in his hands — it shows roads branching out to THREE neighboring fortresses drawn as rough sketches. His eyes scan the routes, planning which road to take first. The crimson X on the wall is visible behind him.
+Text: "Grabs the map scroll. Three roads out. for nei in graph[node]"
+
+**Panel 8 — WORK PANEL — "Charges Down a Road"**
+Dynamic diagonal composition with speed lines. Deva RUNS down a dusty road at full speed — dust trail behind him. He charges from the conquered fortress (crimson X on wall) toward a NEW fortress in the distance with a clean wall. His body leaned forward, intense focus. Other unexplored roads branch from the first fortress in different directions, waiting for his return.
+Text: "Charges down the first road. Same ritual at the next fortress. dfs(nei)"
+
+**Panel 9 — WORK PANEL — "Deep Chain — Goes Deep First"**
+Top-down overhead view. A CHAIN of four fortresses connected by roads, arranged in a line. Every wall has a crimson X — all conquered in sequence. Deva is a figure at the DEEPEST fortress, having charged through all of them one after another. Dotted footprint lines show his path: 1 → 2 → 3 → 4, always going DEEPER before exploring sideways. DFS goes deep first.
+Text: "Goes DEEP. Fortress after fortress. DFS explores depth first."
+
+**Panel 10 — WORK PANEL — "Dead End — All Roads Done — Walks Back"**
+Tilted dutch angle. Deva stands at the deepest fortress. He checks the map scroll — ALL roads from here lead to fortresses with war paint (already conquered) or cliffs or water. NOTHING left to explore from this fortress. He rolls up the scroll, sheathes his sword, and WALKS BACK calmly along the road toward the previous fortress. Footprints going both ways in the dust.
+Text: "All roads done. Nothing left. Walks back. return"
+
+**Panel 11 — WORK PANEL — "Back at Fork — Takes Other Road"**
+Close-up split composition. LEFT side: Deva arrives back at a previous fortress (crimson X on wall). He pulls out the map scroll — there's ANOTHER road he hasn't taken yet. RIGHT side: He TURNS and charges down this new unexplored road toward a fresh fortress with a clean wall. His expression shifts from calm (left) to fierce grin (right).
+Text: "Back at the fork. Another road on the scroll. Charges!"
+
+**Panel 12 — "Scene 1 Complete"**
+Wide establishing shot from above. Deva stands on top of the tallest fortress tower, arms crossed, looking out over the conquered territory. Below: a network of fortresses connected by roads — EVERY wall has a crimson X. ALL conquered. The roads form a web across the desert. Sun sets behind him in golden-orange. Map scroll tucked in his belt.
+Text: "Every fortress. Every road. War paint everywhere. DFS."
+
+**Style:**
+- BRIGHT, HAPPY, COLORFUL — Pixar energy meets Rajasthani adventure. Fun, not dark.
+- White background between panels.
+- Every panel has a genuinely different composition — wide side view, action skid at cliff, riverside stop, close-up wall, low ground angle, over-shoulder, bird's eye, dynamic diagonal, top-down overhead, tilted dutch angle, close-up split, wide establishing. No two panels framed the same way.
+- Deva is EXPRESSIVE — fierce grins, dramatic action, warrior energy but FUN.
+- Colors vivid — crimson war paint, golden dust, warm stone fortresses, dusty brown roads, blue river water, orange sunset, green-blue sky.
+- Panel borders with rounded corners.
+- Text short — placed at bottom of each panel in a clean text box.
+- TURN BACK panels (2, 3, 4) have ENTIRE BACKGROUND flooded with strong bright crimson. Deva turns away in each. Three distinct reasons: off the map, water, war paint.
+- WORK panels have neutral/white background. No color wash.
+- War paint is always a CRIMSON X slash on the fortress WALL.
+- MAP SCROLL shows roads out = adjacency list.

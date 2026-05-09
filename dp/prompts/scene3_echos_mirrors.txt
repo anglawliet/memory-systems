@@ -1,0 +1,159 @@
+Generate a bright, cheerful, fun comic-strip illustration for Scene 3: Echo's Mirrors (Palindrome / Center-Expansion DP). 3 rows x 4 columns = 12 panels. Happy colorful comic book art — think animated movie poster energy. White background between panels.
+
+**Title bar:** "Scene 3: Echo's Mirrors (Palindrome / Center-Expansion DP)"
+
+**Character:**
+- **Echo:** A graceful acrobat/dancer in a glittering sequined outfit — iridescent blues and silvers that catch the light. Lithe, athletic build. EXPRESSIVE — arms expanding outward in dramatic stretches, satisfied spins when palindromes match, dramatic stops with sharp body tension when they don't. Fun confident performer energy.
+
+**Props:**
+- **MIRROR CORRIDOR** — a long hallway with POLISHED MIRROR WALLS on both sides and LETTER TILES on the floor. Each tile is a large square stone with a single CHARACTER carved into it. The corridor stretches away symmetrically. The mirrors reflect everything — visual palindrome metaphor.
+- **LETTER TILES** — the string. Five floor tiles in a row: "a", "a", "b", "a", "a". Each tile is big enough for Echo to stand on.
+- **GOLD TALLY COUNTER** — a handheld brass clicker counter clipped to Echo's belt. Shows the running count of palindromic substrings found. The number on the counter face is always visible.
+- **GREEN GLOW** — when s[l] == s[r], both matching tiles light up with GREEN RADIANCE and green light arcs between Echo's outstretched hands. Match!
+- **RED FLASH** — when s[l] != s[r], a harsh RED BURST between the mismatched tiles. Echo STOPS expanding, pulls her arms in sharply.
+- **TWO STANCES** — Standing on ONE TILE with both feet = odd-length center (l = r = center). Standing BETWEEN TWO TILES with feet split = even-length center (l = center, r = center + 1).
+
+**NO TEXT ON ANY PROP.** Letters on tiles are single characters only. No labels on mirrors or walls. Text ONLY in captions.
+
+**Example trace:** s = "aabaa"
+Tiles: [a, a, b, a, a] — indices 0, 1, 2, 3, 4.
+
+Total palindromes found: 9.
+- 5 single-character palindromes: a, a, b, a, a (each center expands 0 steps).
+- Odd expansions: center=2 finds "aba" (expand 1) and "aabaa" (expand 2).
+- Even expansions: between tiles 0-1 finds "aa". Between tiles 3-4 finds "aa".
+
+**Panel 1 — "The Mirror Corridor" — WORK PANEL**
+Wide establishing shot from one end of the corridor, looking DOWN its length. Mirror walls on both sides reflect infinitely. Five LETTER TILES on the floor: "a", "a", "b", "a", "a" — evenly spaced, large, carved stone. Echo stands at the corridor entrance, one hand on her hip, the other holding up her GOLD TALLY COUNTER showing "0". She studies the tiles with a confident half-smile. Cool blue-silver ambient lighting from the mirrors. The corridor is grand and symmetrical.
+Tiles: a, a, b, a, a. Counter: 0.
+Text: "s = 'aabaa'. Five letter tiles in the mirror corridor. Counter at 0. Time to find every palindrome."
+
+**Panel 2 — "Single Center Stance" — WORK PANEL**
+Close-up at floor level. Echo stands on tile 0 ("a") with BOTH FEET planted on the single tile — the ODD-LENGTH center stance. Her arms are tucked at her sides, compact. The tile beneath her glows faintly GREEN — a single character is always a palindrome. She CLICKS the counter — it ticks from "0" to "1". Her reflection in the mirror walls shows the same pose, reinforcing the single-center concept. Tight framing on her feet and the tile.
+Tiles: [a], a, b, a, a. Center = 0. Counter: 0 → 1.
+Text: "Center = 0. Stand on ONE tile. Single character 'a' — always a palindrome. Click! Count = 1."
+
+**Panel 3 — "Expand — Off the Edge!" — SKIP PANEL**
+ENTIRE PANEL FLOODED WITH BRIGHT CRIMSON. Echo is on tile 0, trying to expand. Her RIGHT ARM reaches toward tile 1 ("a") — but her LEFT ARM reaches BEHIND her into EMPTY SPACE. There is no tile to the left — the corridor ENDS. Her left hand grasps at nothing, fingers splayed in the void. She stumbles backward, eyes wide, off-balance. The mirror wall on the left shows only darkness — nothing to reflect. She pulls back sharply.
+Tiles: ?, [a], a, b, a, a. l = -1: OUT OF BOUNDS. Counter: 1.
+Text: "Expand left from center 0 — no tile! l < 0. Out of bounds. STOP. Move to next center."
+
+**Panel 4 — "Even-Center Stance" — WORK PANEL**
+Dynamic low angle from the floor looking UP at Echo. She stands BETWEEN tiles 0 ("a") and 1 ("a") — left foot on tile 0, right foot on tile 1. The EVEN-LENGTH center stance. Her arms stretch outward to both sides, fingertips pointing at each tile. BOTH tiles glow GREEN — the characters match! "a" == "a"! A green arc of light connects her outstretched hands. She CLICKS the counter — "1" to "2". Mirrors on both sides reflect the matched pair infinitely. Her body forms a perfect bridge between the tiles.
+Tiles: [a, a], b, a, a. l = 0, r = 1. s[0] == s[1]. Counter: 1 → 2.
+Text: "Even center between 0 and 1. Stand BETWEEN two tiles. 'a' == 'a' — GREEN! 'aa' found. Click! Count = 2."
+
+**Panel 5 — "Center 2: The Big Expansion Begins" — WORK PANEL**
+Over-the-shoulder shot from behind Echo. She stands on tile 2 ("b") — odd-length center stance, both feet on one tile. The tile glows faintly green — single character palindrome, counter clicks to "5" (she's counted singles for centers 0-4 off-screen, and the "aa" from panel 4; now we focus on the interesting center). Her arms BEGIN to stretch outward — left hand reaching toward tile 1, right hand reaching toward tile 3. The mirror walls show her arms extending infinitely in the reflections. Anticipation energy — the first real expansion from this center.
+Tiles: a, [a, b, a], a. Center = 2, about to expand. Counter: 5.
+Text: "Center = 2. Stand on 'b'. Single = palindrome (count 5). Now EXPAND — reach for tiles 1 and 3."
+
+**Panel 6 — "ABA — First Expansion Match!" — WORK PANEL**
+Bird's eye view looking STRAIGHT DOWN at the corridor floor. Echo stands on tile 2, her LEFT ARM fully extended to tile 1 ("a"), her RIGHT ARM fully extended to tile 3 ("a"). Both outer tiles blaze GREEN. A green arc of energy connects tiles 1 and 3 through Echo at the center. The three tiles [a, b, a] form a glowing green channel on the floor. She spins mid-pose, hair whipping — MATCH! The mirrors reflect the palindrome pattern. Counter clicks from "5" to "6". The symmetry is visually perfect from above.
+Tiles: a, [a, b, a], a. l = 1, r = 3. s[1] == s[3] = 'a'. Counter: 5 → 6.
+Text: "l=1, r=3. s[1]='a' == s[3]='a'. GREEN! 'aba' found! Click! Count = 6. Keep expanding!"
+
+**Panel 7 — "AABAA — Full Expansion!" — WORK PANEL**
+Wide symmetrical shot — Echo at DEAD CENTER of the corridor. Both arms stretched to their MAXIMUM reach. LEFT hand touches tile 0 ("a") at the far left. RIGHT hand touches tile 4 ("a") at the far right. ALL FIVE tiles blaze GREEN: [a, a, b, a, a]. The entire corridor floor is a river of green light. The mirrors on both walls reflect the full palindrome — infinite green symmetry stretching into the reflections. Echo's pose is triumphant — a full split-arm arabesque, back arched, chin up, beaming. Counter clicks from "6" to "7". GOLDEN SPARKLES erupt from the fully lit floor. This is the peak moment — the longest palindrome.
+Tiles: [a, a, b, a, a]. l = 0, r = 4. s[0] == s[4] = 'a'. Counter: 6 → 7.
+Text: "l=0, r=4. 'a' == 'a'. GREEN! 'aabaa' — the FULL string is a palindrome! Click! Count = 7."
+
+**Panel 8 — "Expansion Stops — Boundary!" — SKIP PANEL**
+ENTIRE PANEL FLOODED WITH BRIGHT CRIMSON. Echo is at full stretch from panel 7 — but now tries to expand ONE MORE STEP. Her left hand reaches PAST tile 0 into EMPTY DARKNESS. Her right hand reaches PAST tile 4 into EMPTY DARKNESS. Both sides hit the void — the corridor walls close in. l = -1, r = 5 — BOTH out of bounds. She pulls her arms back sharply, body contracting. The green glow from the previous panel SNAPS OFF. Red light fills the space.
+Tiles: ??, [a, a, b, a, a], ??. l = -1, r = 5. OUT OF BOUNDS. Counter: 7.
+Text: "l = -1, r = 5. Both out of bounds! Can't expand further. STOP. 'aabaa' was the max from center 2."
+
+**Panel 9 — "Even Center 3-4: Another AA!" — WORK PANEL**
+Dutch angle tilted frame. Echo stands BETWEEN tiles 3 ("a") and 4 ("a") — the even-length stance, feet split across both tiles. Arms stretch to each tile — GREEN GLOW connects them. "a" == "a" — match! Counter clicks from "7" to "8". This mirrors panel 4 compositionally but from a different angle — same mechanic, different position in the string. Echo grins — she's seen this before. Quick, confident click. The mirrors show the matched pair reflected.
+Tiles: a, a, b, [a, a]. l = 3, r = 4. s[3] == s[4] = 'a'. Counter: 7 → 8.
+Text: "Even center between 3 and 4. 'a' == 'a'. GREEN! 'aa' found. Click! Count = 8."
+
+**Panel 10 — "Even Center Mismatch" — SKIP PANEL**
+ENTIRE PANEL FLOODED WITH BRIGHT CRIMSON. Echo stands BETWEEN tiles 1 ("a") and 2 ("b") — even-length stance, feet split. Her arms stretch toward both tiles — but a harsh RED FLASH bursts between her hands! "a" != "b"! The tiles flash RED — no green glow. Echo RECOILS, arms snapping back to her body, face twisted in a sharp wince. The mirrors reflect the red flash angrily. No click on the counter. She immediately pivots to move on.
+Tiles: a, [a, b], a, a. l = 1, r = 2. s[1] = 'a' != s[2] = 'b'. Counter: stays at 8.
+Text: "Even center between 1 and 2. 'a' != 'b'. RED FLASH! Mismatch. No palindrome. Move on."
+
+**Panel 11 — "Last Click: Count = 9" — WORK PANEL**
+Three-quarter high angle from above-right. Echo has finished processing even center between 2 ("b") and 3 ("a") — RED FLASH, mismatch (shown as a fading red afterimage). Then even center between 4 and 5 — out of bounds (fading crimson void). But from center 4 odd, she found single "a" — the ninth palindrome. Counter now reads "9". She holds the counter up, face lit by its golden glow, satisfied nod. The corridor behind her is calm — all tiles back to neutral, no more expansions to try. She's tried every center, odd and even.
+Tiles: a, a, b, a, [a]. Counter: 9.
+Text: "All centers tried. Every odd, every even. Final count = 9. Nine palindromic substrings in 'aabaa'."
+
+**Panel 12 — "Scene 3 Complete" — WORK PANEL**
+Wide symmetrical shot — cinematic center frame. Echo stands in the MIDDLE of the mirror corridor, arms gracefully at her sides, counter held up in her right hand showing "9". The corridor glows with soft amber-gold light. The five tiles [a, a, b, a, a] are visible on the floor. The mirror walls reflect her infinitely — a visual palindrome of reflections. In a translucent overlay at the bottom, two problems listed:
+1. Longest Palindromic Substring (#5) — track the longest during expansion
+2. Palindromic Substrings (#647) — count all palindromes found
+She looks directly at the viewer, calm and confident. The corridor is complete — every center explored, every palindrome found.
+Text: "Stand on center. Expand outward. Green = match, keep going. Red = stop. One tile = odd. Between tiles = even. Try every center. Palindrome DP."
+
+**Complete Code with Panel References:**
+# Count Palindromic Substrings — Scene 3 trace (panels 1-11)
+def countSubstrings(s):                        # panel 1: the mirror corridor
+    count = 0
+    for center in range(len(s)):               # panels 2, 5: stand on each center
+        # Odd-length palindromes (single center)
+        l, r = center, center                  # panel 2: one-tile stance
+        while l >= 0 and r < len(s) and s[l] == s[r]:  # panels 6-7: green glow
+            count += 1                         # panels 2, 6, 7: click counter
+            l -= 1                             # panel 6: left arm reaches further
+            r += 1                             # panel 6: right arm reaches further
+        # l < 0 or r >= len(s)                 # panels 3, 8: off the edge, STOP
+
+        # Even-length palindromes (double center)
+        l, r = center, center + 1             # panels 4, 9: between-tiles stance
+        while l >= 0 and r < len(s) and s[l] == s[r]:  # panel 4: green glow
+            count += 1                         # panels 4, 9: click counter
+            l -= 1
+            r += 1
+        # s[l] != s[r]                        # panel 10: RED FLASH, mismatch
+
+    return count                               # panel 11: final count = 9
+
+# Longest Palindromic Substring — same expansion, track longest (panel 12, problem 1)
+def longestPalindrome(s):
+    result = ""
+    for center in range(len(s)):
+        # Odd-length
+        l, r = center, center
+        while l >= 0 and r < len(s) and s[l] == s[r]:
+            if r - l + 1 > len(result):        # panel 7: longest = "aabaa"
+                result = s[l:r+1]
+            l -= 1
+            r += 1
+        # Even-length
+        l, r = center, center + 1
+        while l >= 0 and r < len(s) and s[l] == s[r]:
+            if r - l + 1 > len(result):
+                result = s[l:r+1]
+            l -= 1
+            r += 1
+    return result
+
+**Style:**
+- BRIGHT, HAPPY, COLORFUL — Pixar energy meets acrobatic performance. Not dark or moody.
+- White background between panels.
+- Echo is EXPRESSIVE — dramatic arm expansions with dancer grace, satisfied spins when palindromes match, sharp recoils when they don't. Athletic, fluid, joyful performance energy.
+- MIRROR CORRIDOR is cool blue-silver tones — polished reflective walls, smooth stone floor tiles, ambient glow. The mirrors create infinite reflections = visual palindrome metaphor.
+- LETTER TILES are large carved stone squares with single characters. Neutral grey when inactive, GREEN GLOW when part of a palindrome match, RED FLASH when mismatched.
+- GOLD TALLY COUNTER is always visible on Echo's belt or in her hand — brass and glass, warm golden glow. The running count must be legible.
+- GREEN = match (s[l] == s[r]). Green arcs of light between matched tiles. Tiles glow green from below. These are warm, satisfying greens.
+- RED = mismatch (s[l] != s[r]). Harsh red burst, sparks. Tiles flash red. Sharp, sudden, dramatic.
+- CRIMSON SKIP PANELS (3, 8, 10) have ENTIRE BACKGROUND flooded with bright crimson. Echo recoils, stops, or hits the void. Three distinct reasons: left out of bounds, both out of bounds, character mismatch.
+- TWO STANCES must be visually distinct: ONE-TILE stance (both feet on one tile, compact) vs BETWEEN-TILES stance (feet split across two tiles, bridge pose). This distinction teaches odd vs even center.
+- Every panel has a genuinely different composition — no two panels framed the same way:
+  - Panel 1: WIDE ESTABLISHING — down the corridor length
+  - Panel 2: CLOSE-UP FLOOR LEVEL — feet on tile
+  - Panel 3: CRIMSON — reaching into void (left)
+  - Panel 4: LOW ANGLE FROM FLOOR — looking up at bridge stance
+  - Panel 5: OVER-THE-SHOULDER — arms beginning to stretch
+  - Panel 6: BIRD'S EYE STRAIGHT DOWN — three-tile palindrome from above
+  - Panel 7: WIDE SYMMETRICAL — full five-tile expansion, peak moment
+  - Panel 8: CRIMSON — reaching past both ends
+  - Panel 9: DUTCH ANGLE TILTED — even stance, different position
+  - Panel 10: CRIMSON — red flash mismatch between tiles
+  - Panel 11: THREE-QUARTER HIGH ANGLE — counter held up, all done
+  - Panel 12: WIDE SYMMETRICAL CINEMATIC — center frame, final pose
+- Code snippets in monospace, clearly legible, with panel references.
+- Panel borders with rounded corners.
+- Text short — in clean text box at bottom of each panel.
+- NO TEXT ON ANY PROP. Only single letters on tiles.
+- THE STORY ARC: empty corridor → single tile stance → boundary stop → even stance match → big center expansion begins → "aba" found → "aabaa" full expansion (peak) → boundary stop → second "aa" found → mismatch demo → final count → scene complete with problem list.

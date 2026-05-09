@@ -1,0 +1,243 @@
+Generate TWO bright, cheerful, fun comic-strip illustrations for Scene 5: Ace's Table (State Machine / Interval DP). Happy colorful comic book art — think animated movie poster energy. White background between panels.
+
+=== IMAGE A — "The Story" (2 rows x 3 columns = 6 panels) ===
+
+**Title bar:** "Scene 5: Ace's Table (State Machine DP)"
+
+**Character:**
+- **Ace:** A sharp-dressed gambler/card player at a casino table. Fedora hat tilted at a rakish angle, fitted vest over rolled sleeves, pocket watch chain glinting. Cool confidence radiating from every gesture. EXPRESSIVE — dramatic card flips with a knowing smirk, intense narrowed eyes during calculations, a slow triumphant grin when the optimal profit reveals itself. He sees the whole timeline at once — a man who plays the long game.
+
+**Visual language:**
+- **CASINO TABLE** = the timeline / array of prices. A long velvet-topped card table with DAY MARKERS along the near edge — small brass plaques numbered Day 0 through Day 4. A SPOTLIGHT moves along the table, illuminating the current day being processed. The table stretches left to right, past to future.
+- **PRICE TICKER** = a vintage mechanical stock ticker display mounted above the table on a brass stand. Flip-card digits show today's stock price. The ticker updates each day.
+- **THREE STATE CARDS** (face up on the table, large and distinct):
+  - **RED CARD "HOLD"** = holding a stock. Deep crimson card with a stock certificate icon embossed in gold on its face. GOLDEN CHIPS stacked on top of this card = the dp value (best profit while holding). Negative chip stacks shown with chips below the table surface or tilted/shadowed.
+  - **GREEN CARD "SOLD"** = just sold a stock. Emerald green card with a cash register icon embossed in gold. GOLDEN CHIPS stacked on top = the dp value (best profit after selling). This state FORCES cooldown next day.
+  - **BLUE CARD "REST"** = resting / cooldown complete / free to buy. Cool blue card with a clock icon embossed in gold. GOLDEN CHIPS stacked on top = the dp value (best profit while resting). Free to transition to HOLD (buy) or stay resting.
+- **TRANSITION ARROWS** = golden chalk lines Ace draws on the velvet table between cards, showing what leads to what:
+  - HOLD arrow curves back to HOLD (keep holding)
+  - REST arrow points to HOLD (buy — costs today's price)
+  - HOLD arrow points to SOLD (sell — gains today's price)
+  - SOLD arrow points to REST (mandatory cooldown)
+  - REST arrow curves back to REST (keep resting)
+- **GOLDEN CHIPS** = dp values. Stacked on each card. The height of the stack = the magnitude of the value. Chips gleam under the spotlight.
+- **CRIMSON FLASH** = trying to buy right after selling (violating cooldown). SOLD cannot go to HOLD directly — the arrow is blocked with a red X.
+
+**NO TEXT ON ANY PROP.** Icons on cards are visual only. Text ONLY in captions.
+
+**Example trace:** prices = [1, 2, 3, 0, 2]
+Day 0: hold=-1, sold=0, rest=0
+Day 1 (price=2): hold=max(-1, 0-2)=-1, sold=-1+2=1, rest=max(0,0)=0
+Day 2 (price=3): hold=max(-1, 0-3)=-1, sold=-1+3=2, rest=max(0,1)=1
+Day 3 (price=0): hold=max(-1, 1-0)=1, sold=-1+0=-1, rest=max(1,2)=2
+Day 4 (price=2): hold=max(1, 2-2)=1, sold=1+2=3, rest=max(2,-1)=2
+Answer: max(sold=3, rest=2) = 3
+
+**Panel 1 — "The Casino Table"**
+Wide establishing shot from across the casino floor, looking at Ace standing behind the long velvet casino table. The table stretches left to right with five brass DAY MARKERS along the near edge: Day 0 through Day 4. The PRICE TICKER above shows "[1, 2, 3, 0, 2]" on its flip-card display — the full price timeline. THREE STATE CARDS lie face up on the table in a triangle formation: RED (stock certificate icon) on the left, GREEN (cash register icon) on the upper right, BLUE (clock icon) on the lower right. No chips on any card yet — clean slate. The spotlight illuminates Day 0. Ace tips his fedora, studying the cards with cool calculation. Warm amber casino lighting, dark polished wood walls, brass fixtures gleaming.
+Text: "prices = [1, 2, 3, 0, 2]. Three state cards: HOLD (red), SOLD (green), REST (blue). Day 0 — the game begins."
+
+**Panel 2 — "Day 0 — Opening Hand"**
+Close-up at table level, tight on Ace's hands and the three cards. The spotlight hits Day 0. Price ticker shows "1". Ace's right hand places chips on the RED HOLD card — but the stack goes BELOW the table surface (value = -1, we paid 1 to buy). A single chip sits flush on the GREEN SOLD card (value = 0). A single chip sits flush on the BLUE REST card (value = 0). Ace's left hand draws the first TRANSITION ARROWS in golden chalk on the velvet: REST→HOLD with a notation showing "rest - price = 0 - 1 = -1". His expression is a knowing smirk — the opening investment always costs.
+Text: "Day 0: Buy at price 1. hold = -prices[0] = -1. sold = 0. rest = 0. The opening hand is dealt."
+
+**Panel 3 — "The State Machine Revealed"**
+Over-the-shoulder shot from behind Ace, looking down at the table. He has drawn the COMPLETE TRANSITION MAP in golden chalk on the velvet between the three cards. Five arrows glow:
+(1) HOLD curves back to HOLD (keep holding — "max(hold, ...)")
+(2) REST points to HOLD (buy today — "rest - price")
+(3) HOLD points to SOLD (sell today — "hold + price")
+(4) SOLD points to REST (mandatory cooldown)
+(5) REST curves back to REST (keep resting — "max(rest, sold)")
+A sixth arrow — SOLD directly to HOLD — is drawn in RED with a big X through it: BLOCKED! Cannot buy right after selling. Ace taps the blocked arrow with his finger, shaking his head. The three cards glow softly in their respective colors. This is the blueprint — the rules of the game.
+Text: "The state machine. HOLD↔HOLD, REST→HOLD, HOLD→SOLD, SOLD→REST, REST↔REST. SOLD→HOLD is BLOCKED — cooldown required!"
+
+**Panel 4 — "Days 1-2 — Working the Odds"**
+Bird's eye view looking STRAIGHT DOWN at the table from above. The spotlight has moved to Day 2. Price ticker shows "3". The three cards are visible with their evolving chip stacks. Day 1 values annotated: HOLD=-1, SOLD=1, REST=0. Day 2 values now being set: HOLD=max(-1, 0-3)=-1 (Ace's hand hovers between keeping the hold and buying from rest — keeping is better). SOLD=-1+3=2 (two golden chips gleam on the green card). REST=max(0,1)=1 (one chip on the blue card — the sold value from Day 1 flows into rest). Golden chalk arrows show the flow: the previous SOLD=1 feeds into today's REST=1 via the SOLD→REST arrow. Ace nods — the machine is turning.
+Text: "Day 2: price=3. hold=max(-1, 0-3)=-1. sold=-1+3=2. rest=max(0,1)=1. The sold value flows into rest — cooldown complete."
+
+**Panel 5 — "Day 3 — The Twist!"**
+Dynamic dutch angle, tilted frame — energy and surprise. Spotlight on Day 3. Price ticker shows "0" — the price CRASHED! Ace's eyes go wide with sharp recognition — this is the moment. His hand sweeps chips dramatically. The REST card had value 1, and buying at price 0 costs NOTHING: rest - price = 1 - 0 = 1. The HOLD card now gets a POSITIVE stack for the first time — one golden chip sitting ON TOP of the table! hold = max(-1, 1-0) = 1. Meanwhile SOLD = -1+0 = -1 (a loss — bad time to sell). REST = max(1, 2) = 2 (absorbing the previous sold=2). Ace grins — buying during the crash is the optimal play. The RED HOLD card glows.
+Text: "Day 3: price CRASHES to 0! hold=max(-1, 1-0)=1 — buy at the dip! sold=-1. rest=max(1,2)=2. The twist: cheap stocks change everything."
+
+**Panel 6 — "Day 4 — Ace's Triumph"**
+Wide shot from across the table, warm golden glow filling the scene. Spotlight on Day 4 — the final day. Price ticker shows "2". Ace stands triumphant, one hand resting on the table, the other tipping his fedora. The final values: HOLD=max(1, 2-2)=1, SOLD=1+2=3 (THREE golden chips gleaming tall on the green card — the highest stack on the table!), REST=max(2,-1)=2. Ace's finger points to the answer: max(sold=3, rest=2) = 3. The GREEN SOLD card BLAZES with golden light — three chips radiating warm rays. On the wall behind Ace, a brass frame lists three problems in elegant script:
+1. Best Time to Buy & Sell Stock with Cooldown (#309) — hold/sold/rest state machine
+2. Longest Increasing Subsequence (#300) — dp[i] = max(dp[j]+1) for j<i where nums[j]<nums[i]
+3. Burst Balloons (#312) — interval DP: dp[l][r] = max over k of dp[l][k]+dp[k][r]+nums[l]*nums[k]*nums[r]
+Warm amber light, Ace's satisfied grin, the game is won.
+Text: "Day 4: sold=1+2=3. Answer: max(sold=3, rest=2) = 3. Ace wins. The state machine always finds the optimal play."
+
+**Footer — "The State Machine DP Pattern:"**
+1. **"Three Cards"**: Define your states. Each state card tracks the best value achievable while IN that state. Initialize Day 0.
+2. **"Transition Arrows"**: Each day, compute new state values from PREVIOUS day's states using the transition rules. New values depend on old values — never update in place.
+3. **"Max of Finals"**: The answer is the best among all VALID ending states (sold or rest — you wouldn't end while still holding).
+
+=== IMAGE B — "The Step-by-Step with Code" (2 rows x 5 columns = 10 panels) ===
+
+Each panel shows the casino table state, the three cards with chip stacks, and relevant code.
+
+**Panel 1 — "Init: The Three Cards" — WORK PANEL**
+Wide shot. The casino table with five day markers along the edge. Price ticker shows the full array [1, 2, 3, 0, 2]. Three state cards laid out in a triangle: RED HOLD (stock certificate icon), GREEN SOLD (cash register icon), BLUE REST (clock icon). No chips yet. Ace stands ready, chalk in hand. The state values drawn below:
+```
+Day 0: hold=?, sold=?, rest=?
+```
+Code: hold = -prices[0]   # buy on day 0: pay the price
+      sold = 0             # haven't sold anything
+      rest = 0             # haven't done anything
+Text: "Three states initialized. hold = -1 (bought at price 1). sold = 0. rest = 0. The game begins."
+
+**Panel 2 — "Day 0: The Opening" — WORK PANEL**
+Close-up on the three cards at Day 0. Spotlight on the Day 0 marker. Price ticker shows "1". Ace places chips: RED HOLD card gets a chip pushed BELOW the table surface (value -1 — paid to buy). GREEN SOLD card gets a flat chip (value 0). BLUE REST card gets a flat chip (value 0). His expression is cool — this is just the setup. The transition arrows are faintly sketched in chalk, not yet active.
+Code: hold = -prices[0]  # hold = -1
+      sold = 0            # sold = 0
+      rest = 0            # rest = 0
+Text: "Day 0: price=1. hold=-1 (we bought). sold=0. rest=0. Cards dealt, arrows ready."
+
+**Panel 3 — "Day 1: First Transitions" — WORK PANEL**
+Side-view profile of Ace working left to right. Spotlight moves to Day 1. Price ticker shows "2". Three calculations shown with golden chalk arrows lighting up on the table:
+- NEW HOLD: Arrow from old HOLD (-1) curves back to HOLD. Arrow from REST (0) to HOLD costs price: 0-2=-2. Ace compares: max(-1, -2) = -1. Keeps holding. RED card stays at -1.
+- NEW SOLD: Arrow from old HOLD (-1) to SOLD, plus price: -1+2=1. GREEN card gets one chip (value 1). Gleams!
+- NEW REST: Arrow from old REST (0) stays. Arrow from old SOLD (0) to REST. max(0, 0) = 0. BLUE card stays at 0.
+Ace's hand hovers over the SOLD card with its new chip — the first profit signal.
+Code: new_hold = max(hold, rest - price)    # max(-1, 0-2) = -1
+      new_sold = hold + price               # -1 + 2 = 1
+      new_rest = max(rest, sold)            # max(0, 0) = 0
+Text: "Day 1: price=2. hold=-1, sold=1, rest=0. First profit appears on SOLD — we could sell for +1!"
+
+**Panel 4 — "Day 2: Sold Grows" — WORK PANEL**
+Over-the-shoulder shot. Spotlight on Day 2. Price ticker shows "3". Transition arrows glow as Ace traces them:
+- NEW HOLD: max(-1, 0-3) = max(-1, -3) = -1. RED stays at -1 chip below surface.
+- NEW SOLD: -1+3 = 2. GREEN card gets TWO gleaming chips! The stack grows.
+- NEW REST: max(0, 1) = 1. BLUE card gets one chip — yesterday's SOLD value (1) flows through the SOLD→REST arrow. Cooldown absorbs profit.
+Ace taps the REST card knowingly — this value will matter later. The SOLD→REST arrow glows brightest.
+Code: new_hold = max(-1, 0 - 3) = -1       # still better to keep old hold
+      new_sold = -1 + 3 = 2                # sell the stock held since day 0
+      new_rest = max(0, 1) = 1             # yesterday's sold=1 becomes today's rest
+Text: "Day 2: price=3. hold=-1, sold=2, rest=1. Sold grows to 2! Rest absorbs yesterday's profit through cooldown."
+
+**Panel 5 — "Day 3: The Price Crash — BUY THE DIP!" — WORK PANEL**
+Dramatic low angle looking UP at Ace from below the table edge. Spotlight on Day 3. Price ticker FLASHES "0" — the price crashed to zero! Ace's eyes go wide, a sharp grin spreading across his face. This is the pivotal moment:
+- NEW HOLD: max(-1, 1-0) = max(-1, 1) = 1! The REST→HOLD arrow BLAZES — buying at price 0 with rest=1 means we keep our profit AND get a free stock! RED card gets ONE chip ABOVE the table for the first time! Positive hold!
+- NEW SOLD: -1+0 = -1. GREEN card drops to one chip below surface. Terrible time to sell.
+- NEW REST: max(1, 2) = 2. BLUE card gets TWO chips. Yesterday's sold=2 feeds into rest.
+Ace dramatically flips the RED HOLD card to show its new positive value. GOLDEN SPARKLES radiate from the HOLD card.
+Code: new_hold = max(-1, 1 - 0) = 1       # BUY! rest(1) - price(0) = 1. Free stock!
+      new_sold = -1 + 0 = -1              # selling now is terrible
+      new_rest = max(1, 2) = 2            # absorb yesterday's sold=2
+Text: "Day 3: price=0! HOLD jumps to 1 — buy at the dip! rest=1 minus price=0 = free stock! sold=-1, rest=2."
+
+**Panel 6 — "Day 4: The Final Hand" — WORK PANEL**
+Wide symmetrical shot — Ace at dead center. Spotlight on Day 4, the final day. Price ticker shows "2". Last round of transitions:
+- NEW HOLD: max(1, 2-2) = max(1, 0) = 1. RED stays at 1. Keep holding is better than buying again.
+- NEW SOLD: 1+2 = 3! GREEN card gets THREE golden chips — the TALLEST stack on the table! The HOLD→SOLD arrow BLAZES as Ace sells the stock he bought at the dip for price 2. GOLDEN LIGHT radiates from the green card.
+- NEW REST: max(2, -1) = 2. BLUE stays at 2. Yesterday's sold was -1, not helpful.
+Ace leans back, arms wide, surveying the final state. The GREEN SOLD card blazes brightest.
+Code: new_hold = max(1, 2 - 2) = 1        # keep holding
+      new_sold = 1 + 2 = 3                # SELL! hold(1) + price(2) = 3!
+      new_rest = max(2, -1) = 2           # keep resting
+Text: "Day 4: price=2. sold=1+2=3! The stock bought at the dip sells for maximum profit. hold=1, sold=3, rest=2."
+
+**Panel 7 — "The Answer: max(sold, rest)" — WORK PANEL**
+Close-up on the table — just the three cards, no character. Final state clearly displayed: RED HOLD has 1 chip (value 1). GREEN SOLD has 3 chips BLAZING with golden light (value 3). BLUE REST has 2 chips (value 2). Ace's hand points between SOLD and REST — comparing them. A golden circle drawn around the SOLD card's 3 chips — the WINNER. The HOLD card is grayed out slightly — you wouldn't end the game still holding stock. Below the cards, the full day-by-day trace is visible in chalk:
+```
+Day 0: hold=-1  sold=0   rest=0
+Day 1: hold=-1  sold=1   rest=0
+Day 2: hold=-1  sold=2   rest=1
+Day 3: hold=1   sold=-1  rest=2
+Day 4: hold=1   sold=3   rest=2
+```
+Text: "Answer: max(sold=3, rest=2) = 3. We don't consider hold — never end while holding. Optimal plays: buy@1, sell@3, cooldown, buy@0, sell@2."
+
+**Panel 8 — "The Cooldown Rule" — SKIP PANEL**
+ENTIRE PANEL BACKGROUND FLOODED WITH BRIGHT CRIMSON. Ace holds up two cards side by side: GREEN SOLD and RED HOLD. A golden chalk arrow from SOLD directly to HOLD is drawn — but it's CROSSED OUT with a massive RED X! Sparks fly from the blocked arrow! A thought bubble shows the violation: Day N sells (SOLD), Day N+1 tries to buy (HOLD) — ILLEGAL! The correct path is shown below: SOLD→REST→HOLD, taking two days. Ace wags his finger at the blocked arrow, expression stern. The cooldown clock icon on the BLUE REST card glows — REST is mandatory between selling and buying.
+Text: "COOLDOWN VIOLATION! Cannot go SOLD→HOLD directly. Must pass through REST first. SOLD→REST→HOLD. The clock enforces the one-day gap."
+
+**Panel 9 — "Variant Tables: LIS and Burst Balloons" — WORK PANEL**
+Three-quarter high angle from above-right. Ace stands beside TWO SMALLER CASINO TABLES displayed on either side of him, teaching mode. TABLE A (left): Longest Increasing Subsequence — a single row of cards representing nums array, with CHIP STACKS of different heights on each card representing dp[i] values. Arrows point BACKWARD from each card to all earlier cards with smaller values, showing dp[i] = max(dp[j]+1). A small side display shows the binary search optimization — cards sorted into piles like patience solitaire. TABLE B (right): Burst Balloons — a 2D grid of cards arranged as an INTERVAL TABLE, dp[l][r]. Arrows show choosing the LAST balloon to burst in each interval. A balloon icon at position k with arrows to dp[l][k] and dp[k][r] subproblems, plus the product nums[l]*nums[k]*nums[r]. Ace gestures between the tables, showing how state machines and interval DP are cousins.
+Text: "LIS (#300): dp[i] = max(dp[j]+1) for j<i, nums[j]<nums[i]. Or patience sorting for O(n log n). Burst Balloons (#312): dp[l][r] = max over k of dp[l][k]+dp[k][r]+nums[l]*nums[k]*nums[r] — choose the LAST to burst."
+
+**Panel 10 — "Scene 5 Complete — The State Machine DP Family" — WORK PANEL**
+Wide shot from across the casino floor. Ace sits back in his chair behind the table, fedora tilted, one arm draped over the chair back, a slow satisfied grin. The three state cards glow softly in their colors — red, green, blue — with the final chip stacks still displayed. The full transition map is visible in golden chalk on the velvet. The spotlight rests on the GREEN SOLD card with its winning 3-chip stack. On a brass-framed chalkboard mounted on the casino wall behind him, three problems listed in elegant script:
+1. Best Time to Buy & Sell Stock with Cooldown (#309) — hold/sold/rest state machine; transitions encode the rules
+2. Longest Increasing Subsequence (#300) — dp[i] = max(dp[j]+1) for all j<i where nums[j]<nums[i]; patience sorting with binary search for O(n log n)
+3. Burst Balloons (#312) — interval DP: dp[l][r] = max over k in (l,r) of dp[l][k] + dp[k][r] + nums[l]*nums[k]*nums[r]; choose the LAST balloon to burst in each interval
+Golden chip fragments scattered across the velvet — remnants of every day processed. Warm amber casino light, brass fixtures gleaming.
+Text: "State Machine DP. Define your states. Draw the transitions. Process each step. The table always finds the optimal play."
+
+**Complete Code with Panel References:**
+# Best Time to Buy & Sell Stock with Cooldown — Scene 5 trace (panels 1-7)
+def maxProfit(prices):
+    if not prices: return 0
+
+    # Day 0: initialize three states              # panels 1-2: cards dealt
+    hold = -prices[0]   # bought on day 0          # panel 2: red card, chip below table
+    sold = 0            # haven't sold yet          # panel 2: green card, flat
+    rest = 0            # haven't done anything      # panel 2: blue card, flat
+
+    for price in prices[1:]:                        # panels 3-6: day by day
+        new_hold = max(hold, rest - price)          # panel 3: max(keep holding, buy from rest)
+                                                    # panel 5: rest-price=1-0=1, BUY THE DIP!
+        new_sold = hold + price                     # panel 4: hold+price=sell today
+                                                    # panel 6: 1+2=3, the winning play!
+        new_rest = max(rest, sold)                  # panel 4: cooldown absorbs sold→rest
+                                                    # panel 8: MUST pass through rest!
+        hold, sold, rest = new_hold, new_sold, new_rest  # swap all at once
+
+    return max(sold, rest)                          # panel 7: max(3, 2) = 3
+
+# Longest Increasing Subsequence — O(n^2) DP (panel 9, problem 2)
+def lengthOfLIS(nums):
+    if not nums: return 0
+    dp = [1] * len(nums)                            # every element is a subsequence of length 1
+    for i in range(1, len(nums)):
+        for j in range(i):
+            if nums[j] < nums[i]:                   # can extend subsequence ending at j
+                dp[i] = max(dp[i], dp[j] + 1)       # take the best extension
+    return max(dp)
+
+# Longest Increasing Subsequence — O(n log n) patience sorting (panel 9, problem 2)
+import bisect
+def lengthOfLIS_fast(nums):
+    tails = []                                       # smallest tail of each pile length
+    for num in nums:
+        pos = bisect.bisect_left(tails, num)
+        if pos == len(tails):
+            tails.append(num)                        # new longest subsequence
+        else:
+            tails[pos] = num                         # replace to keep tails small
+    return len(tails)
+
+# Burst Balloons — interval DP (panel 9, problem 3)
+def maxCoins(nums):
+    nums = [1] + nums + [1]                          # pad with 1s on both sides
+    n = len(nums)
+    dp = [[0] * n for _ in range(n)]
+
+    for length in range(2, n):                       # interval length
+        for l in range(0, n - length):               # left boundary
+            r = l + length                           # right boundary
+            for k in range(l + 1, r):                # last balloon to burst in (l, r)
+                dp[l][r] = max(dp[l][r],
+                    dp[l][k] + dp[k][r] + nums[l] * nums[k] * nums[r])
+    return dp[0][n - 1]
+
+**Style:**
+- BRIGHT, HAPPY, COLORFUL — Pixar energy meets casino glamour. Not dark or moody despite the casino setting — warm amber and gold tones, not noir.
+- White background between panels.
+- Ace is EXPRESSIVE — knowing smirks when optimal plays emerge, wide eyes at the price crash, cool calculation during comparisons, slow triumphant grin at the final profit, stern finger-wag at cooldown violations. Sharp-dressed gambler energy — fedora, vest, pocket watch chain, rolled sleeves.
+- CASINO TABLE is long velvet-topped with brass day markers along the edge. Five day positions clearly marked. Spotlight moves to illuminate the current day.
+- PRICE TICKER is a vintage mechanical flip-card display on a brass stand above the table. Digits click into place each day.
+- THREE STATE CARDS are large, face up, clearly distinct in color and icon:
+  - RED HOLD: deep crimson, stock certificate icon, represents holding a stock
+  - GREEN SOLD: emerald green, cash register icon, represents just having sold
+  - BLUE REST: cool blue, clock icon, represents resting/cooldown complete
+- GOLDEN CHIPS stacked on cards represent dp values. Chip height = value magnitude. Negative values shown as chips pushed below the table surface or shadowed/inverted.
+- TRANSITION ARROWS in golden chalk on the velvet. Five valid arrows glow warmly. The blocked SOLD→HOLD arrow is red with an X.
+- CRIMSON FLASH / RED X for the cooldown violation — sparks, blocked arrow, stern correction.
+- Every panel has a genuinely different composition — wide establishing, close-up hands, over-the-shoulder, bird's eye straight down, dramatic low angle, wide symmetrical, close-up cards only, crimson skip panel, three-quarter teaching, wide establishing final. No two panels framed the same way.
+- Code snippets in monospace, clearly legible, with panel references.
+- Panel borders with rounded corners.
+- Text short — in clean text box at bottom of each panel.
+- NO TEXT ON ANY PROP. Icons on cards are visual only (stock certificate, cash register, clock). No words on cards, chips, or table.
+- SKIP panel (panel 8 in Image B) has ENTIRE crimson background. All others neutral/white.
+- THE STORY ARC: casino table setup with three empty cards → Day 0 opening hand → state machine blueprint → days processing with growing chip stacks → price crash twist (Day 3 buy the dip!) → final day triumph → answer comparison → cooldown warning → variant problems → complete.

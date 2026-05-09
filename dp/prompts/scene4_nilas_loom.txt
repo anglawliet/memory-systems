@@ -1,0 +1,220 @@
+Generate TWO bright, cheerful, fun comic-strip illustrations for Scene 4: Nila's Loom (2D Table DP). Happy colorful comic book art — think animated movie poster energy. White background between panels.
+
+=== IMAGE A — "The Story" (2 rows x 3 columns = 6 panels) ===
+
+**Title bar:** "Scene 4: Nila's Loom (2D Table DP)"
+
+**Character:**
+- **Nila:** A master weaver at a giant LOOM. Calm, precise, artistic. Wears colorful traditional weaving clothes — a bright sari with gold trim, bangles on her wrists, hair tied back with a silk ribbon. EXPRESSIVE — focused threading with narrowed eyes, satisfied smiles when patterns form, dramatic reveals of the final value. Warm, graceful, meticulous artisan energy.
+
+**Visual language:**
+- **LOOM** = the dp grid/table. A massive wooden frame standing upright with a grid of intersections visible — rows and columns of taut threads. The frame is ornate carved wood, warm brown tones.
+- **ROW HEADERS** (left side of loom) = characters of text1. Each row is labeled with a letter on a carved wooden tag hanging from the frame. From top: "", "a", "c", "e".
+- **COLUMN HEADERS** (top of loom) = characters of text2. Each column labeled with a letter on a carved wooden tag. From left: "", "a", "b", "c", "d", "e".
+- **GOLDEN KNOT** at intersection = dp[i][j] value. A tied knot of golden thread at each grid crossing point, with the number embroidered into the knot. Shiny and warm.
+- **DIAGONAL GOLDEN THREAD** = MATCH! When text1[i-1] == text2[j-1], Nila pulls a thick golden thread from the DIAGONAL (up-left) cell and ties a new knot at the current cell. The diagonal pull is dramatic — a glowing golden line slanting from upper-left to current position. Diagonal = both characters consumed.
+- **HORIZONTAL/VERTICAL SILVER THREAD** = NO MATCH. Nila checks the UP cell and the LEFT cell, picks the one with the bigger value, and pulls a thin silver thread from that neighbor. Silver is muted compared to gold — clearly the "fallback" path.
+- **FIRST ROW AND COLUMN** = base case. All zeros. The top row and left column of the loom already have small "0" knots tied in plain white thread — empty string vs anything = 0. Nila didn't tie these; they were always there.
+- **BOTTOM-RIGHT CELL** = the answer. When completed, this knot GLOWS with intense golden light — the final LCS length.
+
+**NO TEXT ON ANY PROP.** Letters on wooden tags are single characters only. Numbers on knots are single digits only. Text ONLY in captions.
+
+**Example trace:** text1 = "ace", text2 = "abcde"
+Grid (4 rows x 6 columns):
+```
+    ""  a  b  c  d  e
+""   0  0  0  0  0  0
+a    0  1  1  1  1  1
+c    0  1  1  2  2  2
+e    0  1  1  2  2  3
+```
+Answer: 3 (subsequence "ace")
+
+**Panel 1 — "The Empty Loom" — WORK PANEL**
+Wide establishing shot from across the workshop, looking at the LOOM standing tall against the back wall. The massive wooden frame holds a grid of taut threads — 4 rows by 6 columns of intersection points. ROW TAGS on the left: "", "a", "c", "e". COLUMN TAGS across the top: "", "a", "b", "c", "d", "e". The first row and first column already have small WHITE "0" KNOTS tied at every intersection — base cases, always been there. All other intersections are EMPTY — bare thread crossings, no knots yet. Nila stands before the loom, hands on hips, studying the grid. Spools of GOLDEN THREAD and SILVER THREAD sit in baskets at her feet. Warm workshop light, wooden beams overhead, colorful fabric bolts stacked on shelves behind her.
+Text: "text1 = 'ace', text2 = 'abcde'. The loom: 4x6 grid. First row and column all zeros — base cases. Golden and silver thread ready."
+
+**Panel 2 — "The First Match" — WORK PANEL**
+Close-up at loom level, tight on the intersection at row "a", column "a" (cell [1][1]). Nila's hands are in frame — her LEFT hand reaches UP-LEFT along the DIAGONAL to the "0" knot at cell [0][0] (the "" vs "" intersection). Her RIGHT hand pulls a thick GOLDEN THREAD from that diagonal cell to the current intersection. The golden thread glows as it stretches diagonally. She ties a GOLDEN KNOT with the number "1" embroidered into it. Her face shows focused satisfaction — the first match! The wooden tags "a" (row) and "a" (column) are visible at the edges. text1[0] == text2[0] — both "a"!
+Text: "'a' == 'a' — MATCH! Pull golden thread from diagonal [0][0]. dp[1][1] = dp[0][0] + 1 = 0 + 1 = 1."
+
+**Panel 3 — "Silver Fallback" — WORK PANEL**
+Over-the-shoulder shot from behind Nila, looking at the loom. She's at row "a", column "b" (cell [1][2]). 'a' != 'b' — NO MATCH. Her left hand hovers between the UP cell [0][2] (value "0") and the LEFT cell [1][1] (value "1"), comparing them. She picks the BIGGER one — LEFT cell, value 1. Her right hand pulls a thin SILVER THREAD from the left cell and ties a small SILVER KNOT with "1" at the current intersection. The silver thread is muted, clearly the fallback. Her expression is a calm, businesslike nod — no drama, just taking the max.
+Text: "'a' != 'b' — no match. Check up (0) and left (1). max(0, 1) = 1. Silver thread from left. dp[1][2] = 1."
+
+**Panel 4 — "Row by Row" — WORK PANEL**
+Bird's eye view looking STRAIGHT DOWN at the loom from above. Nila works on row "c" (row 2). The entire first row ("a") is already completed: [0, 1, 1, 1, 1, 1] — a mix of golden and silver knots. She's partway through row "c": cell [2][1] shows silver "1" (c != a), cell [2][2] shows silver "1" (c != b), and she's tying a GOLDEN KNOT at cell [2][3] — 'c' == 'c'! MATCH! The diagonal golden thread stretches from cell [1][2] (value "1") to cell [2][3], making the new knot "2". Her hands weave the golden thread with fluid precision. Two complete rows behind her, the pattern emerging.
+Text: "Row 'c': 'c' == 'c' at column 3 — MATCH! Diagonal pull from dp[1][2] = 1. dp[2][3] = 1 + 1 = 2. The pattern grows."
+
+**Panel 5 — "The Final Knot" — WORK PANEL**
+Low angle looking UP at Nila from below the loom. She reaches to the BOTTOM-RIGHT corner of the grid — cell [3][5], row "e", column "e". 'e' == 'e' — MATCH! She pulls a golden thread from the diagonal cell [2][4] (value "2") and ties the final GOLDEN KNOT: "3". The knot BLAZES with intense golden light — RADIANT, casting warm rays across her face and the workshop. She beams with quiet triumph, bangles glinting in the golden glow. The completed grid is visible behind the glowing knot — all 24 cells filled with golden and silver knots.
+Text: "'e' == 'e' — MATCH! dp[3][5] = dp[2][4] + 1 = 2 + 1 = 3. The final knot GLOWS. LCS = 3. Subsequence: 'ace'."
+
+**Panel 6 — "Nila's Tapestry" — WORK PANEL**
+Wide shot from across the workshop. Nila stands back from the completed loom, arms gracefully at her sides, admiring her finished work. The full grid glows softly — golden knots for matches, silver knots for fallbacks, white knots for base cases. The bottom-right "3" radiates golden light. The completed grid reads:
+```
+0  0  0  0  0  0
+0  1  1  1  1  1
+0  1  1  2  2  2
+0  1  1  2  2  3
+```
+On a wooden workbench beside her, an open ledger lists six problems:
+1. Unique Paths (#62) — dp[i][j] = dp[i-1][j] + dp[i][j-1]
+2. Longest Common Subsequence (#1143) — match: diagonal+1, else max(up, left)
+3. Edit Distance (#72) — match: diagonal, else 1+min(diagonal, up, left)
+4. Interleaving String (#97) — dp[i][j] = can s3[:i+j] be formed?
+5. Distinct Subsequences (#115) — dp[i][j] = dp[i-1][j] + (dp[i-1][j-1] if match)
+6. Regular Expression Matching (#10) — dp[i][j] with . and * handling
+Spools of golden and silver thread sit neatly in the baskets. Warm amber workshop light.
+Text: "2D Table DP. Row headers = text1, column headers = text2. Match = diagonal golden thread. No match = silver from max(up, left). The loom weaves the answer."
+
+**Footer — "The 2D Table DP Pattern:"**
+1. **"White Zeros"**: Base case. First row and first column all zeros. Empty string vs anything = 0. Always there.
+2. **"Golden Diagonal"**: MATCH — pull golden thread from dp[i-1][j-1] and add 1. Both characters consumed. Diagonal = using both.
+3. **"Silver Fallback"**: NO MATCH — pull silver thread from max(dp[i-1][j], dp[i][j-1]). Skip one character. Take the better path.
+
+=== IMAGE B — "The Step-by-Step with Code" (2 rows x 5 columns = 10 panels) ===
+
+Each panel shows the loom state, the dp grid, and relevant code.
+
+**Panel 1 — "Init: The Empty Grid" — WORK PANEL**
+Wide shot. The loom with its 4x6 grid. Row tags: "", "a", "c", "e". Column tags: "", "a", "b", "c", "d", "e". First row all white "0" knots. First column all white "0" knots. All interior cells empty — bare thread crossings. Nila stands ready, golden and silver thread spools in baskets. dp grid drawn below:
+```
+0  0  0  0  0  0
+0  .  .  .  .  .
+0  .  .  .  .  .
+0  .  .  .  .  .
+```
+Code: dp = [[0] * (n + 1) for _ in range(m + 1)]  # white zeros
+      text1 = "ace", text2 = "abcde"
+Text: "Grid initialized. First row and column all zeros. Interior empty. m=3, n=5."
+
+**Panel 2 — "Row 1, Col 1: 'a' vs 'a' — MATCH!" — WORK PANEL**
+Tight close-up on Nila's hands at cell [1][1]. Row tag "a", column tag "a". Her fingers pull a GOLDEN THREAD from the diagonal cell [0][0] (white "0" knot). The golden thread stretches diagonally, glowing. She ties a golden knot: "1". Her expression is pleased — first gold of the grid. Split-screen comparison shown: LEFT — text1[0] = 'a', RIGHT — text2[0] = 'a'. EQUAL!
+Code: if text1[i-1] == text2[j-1]:           # 'a' == 'a' — MATCH
+          dp[1][1] = dp[0][0] + 1 = 0 + 1 = 1  # diagonal + 1
+Text: "i=1, j=1. 'a' == 'a'. MATCH! Golden diagonal from dp[0][0]. dp[1][1] = 1."
+
+**Panel 3 — "Row 1, Cols 2-5: 'a' vs rest — Silver Carry" — WORK PANEL**
+Side-view profile showing row 1 of the loom from left to right. Nila works through cells [1][2] through [1][5]. At each cell, 'a' != 'b', 'a' != 'c', 'a' != 'd', but 'a' == ... no, she just carries the value. Cell [1][2]: 'a' != 'b', up=0, left=1, silver "1". Cell [1][3]: 'a' != 'c', up=0, left=1, silver "1". Cell [1][4]: 'a' != 'd', up=0, left=1, silver "1". Cell [1][5]: 'a' == 'e'? No! 'a' != 'e', up=0, left=1, silver "1". Row completes as all silver "1"s carrying the match from cell [1][1]. Ghost images of Nila at each position, pulling silver threads from the LEFT. dp row: [0, 1, 1, 1, 1, 1].
+Code: # 'a' != 'b','c','d','e' → dp[1][j] = max(dp[0][j], dp[1][j-1]) = max(0, 1) = 1
+Text: "Row 1 complete. Only one match at col 1, then silver carries the 1 across. dp row 1 = [0,1,1,1,1,1]."
+
+**Panel 4 — "Row 2, Col 3: 'c' vs 'c' — Golden Diagonal!" — WORK PANEL**
+Dutch angle, tilted frame. Nila at cell [2][3]. Row tag "c", column tag "c". MATCH! Her left hand grips the diagonal cell [1][2] (value "1") — golden thread pulls DIAGONALLY. She ties a golden "2" knot — the LCS has grown! The diagonal line glows bright gold against the silver and white knots around it. The "2" is prominent and satisfying. Cells [2][1] and [2][2] already filled with silver "1"s behind her.
+Code: if text1[1] == text2[2]:               # 'c' == 'c' — MATCH
+          dp[2][3] = dp[1][2] + 1 = 1 + 1 = 2  # diagonal + 1
+Text: "i=2, j=3. 'c' == 'c'. MATCH! Golden diagonal from dp[1][2] = 1. dp[2][3] = 2. LCS grows!"
+
+**Panel 5 — "Row 2, Cols 4-5: Silver Carries the 2" — WORK PANEL**
+Top-down overhead view of the loom. Row 2 nearly complete. Cell [2][4]: 'c' != 'd', up = dp[1][4] = 1, left = dp[2][3] = 2. max(1, 2) = 2. Silver thread from LEFT. Cell [2][5]: 'c' != 'e', up = dp[1][5] = 1, left = dp[2][4] = 2. max(1, 2) = 2. Silver thread from LEFT. Nila's hand pulls silver threads leftward. Annotation arrows show the comparison: up vs left, circle the winner. dp row 2: [0, 1, 1, 2, 2, 2].
+Code: dp[2][4] = max(dp[1][4], dp[2][3]) = max(1, 2) = 2  # silver from left
+      dp[2][5] = max(dp[1][5], dp[2][4]) = max(1, 2) = 2  # silver from left
+Text: "Silver carries the 2 rightward. Once you find a match, it propagates. Row 2 = [0,1,1,2,2,2]."
+
+**Panel 6 — "Row 3, Cols 1-4: Silver Until the Match" — WORK PANEL**
+Wide three-quarter angle showing Nila working across row 3 ("e"). Cells [3][1] through [3][4] all get silver threads. 'e' != 'a': max(up=1, left=0) = 1. 'e' != 'b': max(up=1, left=1) = 1. 'e' != 'c': max(up=2, left=1) = 2. 'e' != 'd': max(up=2, left=2) = 2. Silver threads pulled from whichever neighbor is larger — sometimes UP, sometimes LEFT. Nila's expression is calm, patient — she knows the final match is coming.
+Code: # Row 3: 'e' vs 'a','b','c','d' — no match, take max(up, left)
+      dp[3][1]=1, dp[3][2]=1, dp[3][3]=2, dp[3][4]=2
+Text: "Row 3, cols 1-4. No matches yet — silver from the bigger neighbor. Patience. dp so far: [0,1,1,2,2,.]."
+
+**Panel 7 — "The Final Cell: 'e' vs 'e' — GOLDEN CLIMAX!" — WORK PANEL**
+Dramatic wide symmetrical shot — Nila at DEAD CENTER of the panel. She reaches to cell [3][5] — the BOTTOM-RIGHT corner of the grid. Row tag "e", column tag "e". MATCH! She pulls a thick golden thread from diagonal cell [2][4] (value "2"). The thread arcs DIAGONALLY, blazing gold. She ties the final knot: "3". The knot ERUPTS with golden light — rays streaming outward, illuminating the entire loom. Nila's face is lit up, a wide satisfied smile, bangles catching the golden radiance. GOLDEN SPARKLES burst from the completed knot. This is the peak moment — the LCS answer revealed.
+Code: if text1[2] == text2[4]:               # 'e' == 'e' — MATCH!
+          dp[3][5] = dp[2][4] + 1 = 2 + 1 = 3  # THE ANSWER
+Text: "'e' == 'e'. MATCH! dp[3][5] = dp[2][4] + 1 = 3. The answer GLOWS. LCS('ace','abcde') = 3."
+
+**Panel 8 — "Reading the Complete Grid" — WORK PANEL**
+Close-up on the finished loom, no character — just the completed tapestry of knots filling the entire frame. The full grid is clearly legible:
+```
+0  0  0  0  0  0
+0  1  1  1  1  1
+0  1  1  2  2  2
+0  1  1  2  2  3
+```
+WHITE knots for the base case border (first row and column). GOLDEN knots at cells [1][1], [2][3], [3][5] — the three match points where diagonal threads were pulled. SILVER knots everywhere else — the fallback max(up, left) values. Golden diagonal thread lines are visible connecting [0][0]→[1][1], [1][2]→[2][3], [2][4]→[3][5]. The three golden diagonals trace the subsequence "a", "c", "e".
+Text: "Complete grid. Three golden diagonals — three matches — subsequence 'ace'. Every silver knot carried a previous match forward."
+
+**Panel 9 — "Variant Looms" — WORK PANEL**
+Three-quarter high angle from above-right. Nila stands beside TWO SMALLER LOOMS displayed on easels, teaching mode. LOOM A (left easel): Unique Paths grid — every knot is golden, arrows only come from UP and LEFT (no diagonal), values are sums. dp[i][j] = dp[i-1][j] + dp[i][j-1]. LOOM B (right easel): Edit Distance grid — three-way comparison shown at one cell: diagonal, up, left, with a "+1" added to the minimum. Different colors for insert/delete/replace operations. Nila gestures between them, showing how the same loom structure adapts. Her expression is that of a patient teacher.
+Text: "Same loom, different thread rules. Unique Paths: sum up+left. Edit Distance: 1+min(diagonal, up, left). The grid is the constant."
+
+**Panel 10 — "Scene 4 Complete — The 2D Table DP Family" — WORK PANEL**
+Wide shot from across the workshop. Nila sits on a cushioned stool beside the completed loom, hands resting in her lap, looking at her finished work with quiet pride. The full grid glows softly — golden, silver, and white knots forming a beautiful geometric tapestry. The bottom-right "3" radiates golden light. On a wooden frame mounted on the workshop wall, six problems listed in elegant calligraphy:
+1. Unique Paths (#62) — dp[i][j] = dp[i-1][j] + dp[i][j-1] (only down+right)
+2. Longest Common Subsequence (#1143) — match: diagonal+1, else max(up, left)
+3. Edit Distance (#72) — match: diagonal, else 1+min(diagonal, up, left)
+4. Interleaving String (#97) — dp[i][j] = can s3[:i+j] be formed from s1[:i] and s2[:j]?
+5. Distinct Subsequences (#115) — dp[i][j] = dp[i-1][j] + (dp[i-1][j-1] if match)
+6. Regular Expression Matching (#10) — dp[i][j] with . and * handling
+Baskets of golden and silver thread sit neatly at her feet. Colorful fabric bolts line the shelves. Warm amber light fills the workshop.
+Text: "2D Table DP. Two strings become row and column headers. Fill cell by cell, row by row. The loom weaves the answer."
+
+**Complete Code with Panel References:**
+# Longest Common Subsequence — Scene 4 trace (panels 1-8)
+def longestCommonSubsequence(text1, text2):
+    m, n = len(text1), len(text2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]   # panel 1: empty grid, white zeros
+
+    for i in range(1, m + 1):                     # panels 2-7: row by row
+        for j in range(1, n + 1):                 # panels 2-7: column by column
+            if text1[i-1] == text2[j-1]:          # panels 2,4,7: MATCH
+                dp[i][j] = dp[i-1][j-1] + 1      # panels 2,4,7: golden diagonal + 1
+            else:                                  # panels 3,5,6: NO MATCH
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1])  # panels 3,5,6: silver from max(up, left)
+
+    return dp[m][n]                               # panel 7: bottom-right glows
+
+# Unique Paths — same grid, different rule (panel 9, problem 1)
+def uniquePaths(m, n):
+    dp = [[1] * n for _ in range(m)]              # first row and col all 1s
+    for i in range(1, m):
+        for j in range(1, n):
+            dp[i][j] = dp[i-1][j] + dp[i][j-1]   # sum up + left (no diagonal)
+    return dp[m-1][n-1]
+
+# Edit Distance — three-way comparison (panel 9, problem 3)
+def minDistance(word1, word2):
+    m, n = len(word1), len(word2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(m + 1): dp[i][0] = i           # base: delete all
+    for j in range(n + 1): dp[0][j] = j           # base: insert all
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if word1[i-1] == word2[j-1]:
+                dp[i][j] = dp[i-1][j-1]           # match: diagonal, no cost
+            else:
+                dp[i][j] = 1 + min(dp[i-1][j-1],  # replace (diagonal)
+                                   dp[i-1][j],     # delete (up)
+                                   dp[i][j-1])     # insert (left)
+    return dp[m][n]
+
+# Distinct Subsequences (panel 10, problem 5)
+def numDistinct(s, t):
+    m, n = len(s), len(t)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(m + 1): dp[i][0] = 1           # empty t: one way (delete all)
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            dp[i][j] = dp[i-1][j]                 # skip s[i-1]
+            if s[i-1] == t[j-1]:
+                dp[i][j] += dp[i-1][j-1]          # match: also count diagonal
+    return dp[m][n]
+
+**Style:**
+- BRIGHT, HAPPY, COLORFUL — Pixar energy meets traditional weaving workshop warmth. Not dark or moody.
+- White background between panels.
+- Nila is EXPRESSIVE — focused threading with narrowed eyes and steady hands, satisfied smiles when golden knots form, calm nods on silver fallbacks, radiant triumph at the final glowing knot. Graceful, precise, artisan energy.
+- LOOM is ornate carved wood, warm brown tones, standing upright. Grid of intersections clearly visible. Row and column tags are small carved wooden labels with single letters. The loom is grand and beautiful — a craftsman's masterpiece.
+- GOLDEN THREAD is thick, glowing, warm — used for MATCH diagonals. Golden knots are shiny with embroidered numbers. Gold = progress, both characters consumed.
+- SILVER THREAD is thin, muted, cool — used for NO MATCH fallbacks. Silver knots are smaller, subtler. Silver = carrying forward, skipping a character.
+- WHITE THREAD for base case knots (first row and column) — plain, simple, always been there. The foundation.
+- THREE THREAD COLORS must be visually distinct: GOLD (match/diagonal), SILVER (no match/max), WHITE (base case/zero).
+- DIAGONAL LINES are dramatic — golden thread pulling from upper-left to current cell at a clear 45-degree angle. This diagonal motion is the visual signature of "both characters consumed."
+- UP and LEFT comparisons shown with annotation arrows pointing to the two candidate cells, with a circle around the larger value.
+- Every panel has a genuinely different composition — wide establishing, tight close-up hands, over-the-shoulder, bird's eye straight down, dutch angle, side-view profile, top-down overhead, dramatic wide symmetrical, close-up tapestry, three-quarter teaching, wide workshop shot. No two panels framed the same way.
+- Code snippets in monospace, clearly legible, with panel references.
+- Panel borders with rounded corners.
+- Text short — in clean text box at bottom of each panel.
+- NO TEXT ON ANY PROP. Only single letters on wooden tags, single digits on knots.
+- THE STORY ARC: empty loom with white base cases → first golden match (excitement) → silver fallback (calm comparison) → row-by-row filling (rhythm) → final cell golden climax (peak moment) → complete grid revealed → variant looms (teaching) → problem family summary.

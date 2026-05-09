@@ -1,0 +1,171 @@
+Generate TWO bright, cheerful, fun comic-strip illustrations for Scene 2: Forge's Anvil (Target-Building / Knapsack DP). Happy colorful comic book art — think animated movie poster energy. White background between panels.
+
+=== IMAGE A — "The Story" (2 rows x 3 columns = 6 panels) ===
+
+**Title bar:** "Scene 2: Forge's Anvil (Target-Building / Knapsack DP)"
+
+**Character:**
+- **Forge:** A burly, cheerful blacksmith with a leather apron, thick gloves, and a massive HAMMER. Works at a FORGE with a roaring fire. EXPRESSIVE — dramatic hammer swings, proud grins at filled molds, frustrated head-shakes at impossible amounts. Warm, barrel-chested, soot-streaked face, big jolly energy.
+
+**Visual language:**
+- **SHELF** with numbered SLOTS (0 to amount) = the dp array. A long horizontal wooden shelf mounted on the forge wall. Each slot is labeled with its index number. Slots hold golden number plates.
+- **MOLDS** (different sized metal molds) = coins/items. Each mold is a different shape and has a SIZE NUMBER stamped on its face. Forge picks molds from a rack and processes them one at a time.
+- **HAMMER** = the min/max/count operation. When Forge SLAMS the hammer on a slot, he's comparing the old value to the new candidate and keeping the better one.
+- **GOLDEN NUMBER PLATE** in a slot = the dp value. A shiny metal plate with a number pressed into it. Starts as a RUSTY PLATE stamped with "inf" (infinity). Gets swapped for a shinier plate with a smaller number when a better answer is found.
+- **SLOT 0 with a SHINY ZERO PLATE** = the base case dp[0] = 0. This plate glows golden from the very start — Forge didn't make it, it was always there.
+- **CRIMSON PANEL** = impossible amount. The slot still holds a rusty "inf" plate after all molds are tried. No combination of molds can fill it.
+
+**Example trace:** Coin Change with coins = [1, 3, 4], amount = 6.
+Shelf slots 0-6. Final: dp = [0, 1, 2, 1, 1, 2, 2]. Answer: 2.
+
+**Panel 1 — "The Workshop" — WORK PANEL**
+Wide establishing shot from the doorway looking INTO Forge's workshop. A roaring forge fire on the right, anvil in the center, and along the back wall: a long SHELF with seven SLOTS labeled 0 through 6. ALL slots hold RUSTY PLATES stamped "inf" — except slot 0, which has a SHINY GOLDEN PLATE stamped "0". Three MOLDS hang on a rack to the left, stamped with sizes "1", "3", and "4". Forge stands in the center, hammer resting on his shoulder, grinning at the shelf, sizing up the job. Warm orange glow from the forge fire.
+Text: "coins = [1, 3, 4], amount = 6. Shelf slots 0-6. All rusty 'inf' except slot 0 = 0. Three molds ready."
+
+**Panel 2 — "The Golden Zero" — WORK PANEL**
+Close-up on slot 0 at eye level. The SHINY GOLDEN PLATE with "0" pressed into it GLOWS — it's pristine, untouched, always been there. Forge leans in and taps it gently with one finger, not the hammer. His expression is respectful — this is the foundation, the base case. The rusty "inf" plates in slots 1 through 6 are visible stretching away into the background, dull and oxidized. The contrast between the golden zero and the rusty infinities is stark.
+Text: "dp[0] = 0. Zero coins for zero amount. The golden base case — always been here."
+
+**Panel 3 — "First Mold: Coin 1" — WORK PANEL**
+Low angle looking UP at Forge from floor level. He holds the MOLD stamped "1" in his left hand, gripping it with tongs from the forge fire — it glows orange-hot. His right hand raises the HAMMER high overhead. He faces the shelf. In a thought bubble or overlay, his logic is shown: for each slot a from 1 to 6, check if dp[a - 1] + 1 is better than what's already there. The first rusty plate (slot 1) is about to be replaced. Energy of anticipation — the first swing.
+Text: "Mold 1: size = 1. For every slot, check: can I do better with this mold? dp[a] = min(dp[a], dp[a-1] + 1)."
+
+**Panel 4 — "Hammering the Shelf" — WORK PANEL**
+Dynamic bird's eye view looking STRAIGHT DOWN at the shelf from above. Forge's hammer is MID-SWING, slamming down on slot 3. Speed lines radiate from the impact point. The shelf now shows the RESULT of processing mold 1 through all slots: slot 0 = "0" (gold), slot 1 = "1", slot 2 = "2", slot 3 = "3" (being hammered right now), slots 4-6 still in progress. Sparks fly from the impact. Each replaced plate is now SHINY instead of rusty. The old rusty "inf" plates lie discarded on the floor below the shelf.
+Text: "SLAM! Mold 1 fills every slot. dp = [0, 1, 2, 3, 4, 5, 6]. One coin at a time — brute force baseline."
+
+**Panel 5 — "Better Molds, Better Numbers" — WORK PANEL**
+Over-the-shoulder shot from behind Forge, looking at the shelf. He now holds mold "3" — bigger, heavier. He's just finished processing it. The shelf shows UPDATED values: slot 3 swapped from "3" to "1" (shiny new plate, the old "3" plate clatters to the floor). Slot 4 now shows "2" instead of "4". Slot 5 shows "3" instead of "5". Slot 6 shows "2" instead of "6". Forge grins with pride — the numbers are getting SMALLER. A second mold "4" waits on the rack, not yet tried. Dotted annotation arrows show: slot 3 ← dp[3-3] + 1 = dp[0] + 1 = 1. Slot 6 ← dp[6-3] + 1 = dp[3] + 1 = 2.
+Text: "Mold 3 upgrades the shelf! dp[3]: 3 → 1. dp[6]: 6 → 2. Fewer coins! dp = [0, 1, 2, 1, 2, 3, 2]."
+
+**Panel 6 — "Forge's Finest" — WORK PANEL**
+Wide shot from across the workshop. Forge stands back, hammer at his side, admiring the COMPLETED SHELF. All seven slots gleam with final golden plates: 0, 1, 2, 1, 1, 2, 2. Slot 6 is circled with a glowing highlight — the answer. Forge points at it with a proud grin. On the workbench beside him, a notebook lies open listing four problems:
+1. Coin Change (#322) — dp[a] = min(dp[a], dp[a-coin]+1)
+2. Coin Change II (#518) — dp[a] += dp[a-coin]
+3. Target Sum (#494) — dp[s] += dp[s-num]
+4. Word Break (#139) — dp[i] = any(dp[j] and s[j:i] in wordDict)
+The forge fire crackles warmly behind him. Molds "1", "3", "4" hang neatly back on the rack, job done.
+Text: "dp[6] = 2. Two coins make 6 (3+3 or 2+4). Forge's anvil: pick a mold, hammer every slot, keep the best."
+
+**Footer — "The Target-Building DP Pattern:"**
+1. **"Golden Zero"**: Base case. dp[0] = 0 (or 1 for counting). The foundation plate.
+2. **"Mold by Mold"**: Outer loop over coins/items. Pick one mold, process the entire shelf with it.
+3. **"Hammer Every Slot"**: Inner loop from coin to amount. For each slot, check: is dp[a - coin] + 1 better than what's here? If yes, SLAM — swap the plate.
+
+=== IMAGE B — "The Step-by-Step with Code" (2 rows x 5 columns = 10 panels) ===
+
+Each panel shows the shelf state, the dp array, and relevant code.
+
+**Panel 1 — "Init: The Rusty Shelf" — WORK PANEL**
+Wide shot. The shelf with 7 slots (0-6). Slot 0 has a golden "0" plate. Slots 1-6 all hold rusty plates stamped "inf". Three molds on the rack: sizes 1, 3, 4. Forge stands ready, hammer in hand. dp array drawn below: [0, inf, inf, inf, inf, inf, inf].
+Code: dp = [float('inf')] * (amount + 1)  # rusty plates
+      dp[0] = 0                            # golden zero
+      coins = [1, 3, 4], amount = 6
+Text: "Shelf initialized. All rusty 'inf' except the golden zero. Three molds to try."
+
+**Panel 2 — "Outer Loop: Pick Mold 1" — WORK PANEL**
+Close-up on Forge's hands pulling mold "1" off the rack with iron tongs. The mold glows orange from the forge heat. The number "1" is stamped clearly on its face. Behind him, the shelf waits. Molds "3" and "4" remain on the rack.
+Code: for coin in coins:    # coin = 1 (first mold)
+Text: "First mold: coin = 1. Process every slot from 1 to 6."
+
+**Panel 3 — "Inner Loop: Mold 1, Slots 1-6" — WORK PANEL**
+Side-view profile showing the shelf in cross-section, left to right. Forge works his way from slot 1 to slot 6, shown as a time-lapse sequence — multiple ghost images of Forge at each slot position. At each slot a, he checks dp[a-1] + 1 vs dp[a]. Since dp[a] = inf and dp[a-1] + 1 is finite, EVERY slot gets updated. Sparks fly at each impact. dp array updates from left to right: [0, 1, 2, 3, 4, 5, 6]. Discarded rusty plates pile up on the floor.
+Code: for a in range(1, 7):              # coin=1, so start at 1
+          dp[a] = min(dp[a], dp[a-1] + 1)
+Text: "Mold 1 sweeps left to right. Every slot: dp[a] = min(inf, dp[a-1]+1). dp = [0,1,2,3,4,5,6]."
+
+**Panel 4 — "Outer Loop: Pick Mold 3" — WORK PANEL**
+Dutch angle, tilted frame. Forge hangs mold "1" back on the rack and grabs the BIGGER mold "3" — it's heavier, chunkier. He hefts it with both hands. The shelf behind him shows [0, 1, 2, 3, 4, 5, 6] from the previous pass. Mold "4" still waits on the rack.
+Code: for coin in coins:    # coin = 3 (second mold)
+Text: "Second mold: coin = 3. Can it beat the current plates?"
+
+**Panel 5 — "Inner Loop: Mold 3, Slot 3 Update" — WORK PANEL**
+Tight close-up on slot 3. Forge's hammer is FROZEN mid-impact, about to strike. Split-screen comparison shown: LEFT side shows the current plate "3" (from mold 1). RIGHT side shows the candidate: dp[3-3] + 1 = dp[0] + 1 = 0 + 1 = 1. Since 1 < 3, the "3" plate gets KNOCKED OUT and a new "1" plate slams in. The ejected "3" plate tumbles through the air. Dramatic impact moment.
+Code: dp[3] = min(dp[3], dp[3-3] + 1)    # min(3, dp[0]+1) = min(3, 1) = 1
+Text: "Slot 3: min(3, dp[0]+1) = min(3, 1) = 1. UPGRADE! Old plate ejected."
+
+**Panel 6 — "Mold 3: Remaining Slots" — WORK PANEL**
+Top-down overhead view of the entire shelf. Forge has finished processing mold 3 through all remaining slots. Annotation arrows show each update: slot 4 ← min(4, dp[1]+1) = min(4, 2) = 2. Slot 5 ← min(5, dp[2]+1) = min(5, 3) = 3. Slot 6 ← min(6, dp[3]+1) = min(6, 2) = 2. Shelf now reads [0, 1, 2, 1, 2, 3, 2]. Slots 1 and 2 unchanged (coin 3 is too big to affect them). Updated slots glow brighter.
+Code: dp[4] = min(4, dp[1]+1) = 2
+      dp[5] = min(5, dp[2]+1) = 3
+      dp[6] = min(6, dp[3]+1) = 2
+Text: "Mold 3 done. dp = [0, 1, 2, 1, 2, 3, 2]. Slots 3, 4, 5, 6 all improved!"
+
+**Panel 7 — "Outer Loop: Pick Mold 4" — WORK PANEL**
+Low angle from beneath the anvil looking up at Forge. He grabs the LARGEST mold — "4" — a massive, heavy piece. His muscles strain lifting it. The shelf in the background shows [0, 1, 2, 1, 2, 3, 2]. This is the last mold. Final pass.
+Code: for coin in coins:    # coin = 4 (third mold)
+Text: "Last mold: coin = 4. The biggest one. Final pass."
+
+**Panel 8 — "Mold 4: Slots 4 and 5 Upgrade, Slot 6 Holds" — WORK PANEL**
+Wide diagonal composition with three sub-moments. MOMENT 1: Slot 4 — dp[4-4]+1 = dp[0]+1 = 1. Current plate is "2". Since 1 < 2, SLAM — swap to "1". The "2" plate flies off. MOMENT 2: Slot 5 — dp[5-4]+1 = dp[1]+1 = 2. Current plate is "3". Since 2 < 3, SLAM — swap to "2". MOMENT 3: Slot 6 — dp[6-4]+1 = dp[2]+1 = 3. Current plate is "2". Since 3 > 2, Forge HOLDS his hammer mid-air and SHAKES HIS HEAD. No swap — current plate is already better. The hammer stays up, no impact. Forge frowns and moves on.
+Code: dp[4] = min(2, dp[0]+1) = 1   # UPGRADE
+      dp[5] = min(3, dp[1]+1) = 2   # UPGRADE
+      dp[6] = min(2, dp[2]+1) = 3   # NO CHANGE — 2 < 3, keep 2
+Text: "Mold 4: slot 4 → 1, slot 5 → 2. Slot 6 stays at 2 — current plate is already better!"
+
+**Panel 9 — SKIP PANEL — "Impossible Amount!" — CRIMSON PANEL**
+ENTIRE PANEL FLOODED WITH BRIGHT CRIMSON. A different scenario: coins = [3, 5], amount = 7. The shelf has 8 slots (0-7). After processing both molds, slots 1, 2, 4, 7 STILL hold rusty "inf" plates — no combination of 3s and 5s can make those amounts. Forge stands at slot 7, staring at the rusty "inf" plate, shaking his head slowly, hammer hanging limp at his side. Disappointment on his face. The rusty plates are cracked, corroded, useless.
+Code: if dp[amount] == float('inf'):
+          return -1                    # impossible!
+Text: "dp[7] still rusty 'inf'! No combo of 3s and 5s makes 7. Return -1. IMPOSSIBLE."
+
+**Panel 10 — "Scene 2 Complete — The Target-Building Family" — WORK PANEL**
+Wide shot from across the workshop. Forge sits on an upturned anvil, hammer resting across his knees, looking at the completed shelf with satisfaction. The final shelf glows: [0, 1, 2, 1, 1, 2, 2]. Slot 6 circled with golden light — answer is 2. On a chalkboard mounted on the workshop wall, four problems listed:
+1. Coin Change (#322) — min coins to make amount: dp[a] = min(dp[a], dp[a-coin]+1)
+2. Coin Change II (#518) — count combos: dp[a] += dp[a-coin]
+3. Target Sum (#494) — subset sum variant: dp[s] += dp[s-num]
+4. Word Break (#139) — dp[i] = any(dp[j] and s[j:i] in wordDict)
+Forge fire crackles behind him. All three molds hang on the rack. Golden light from the forge bathes the scene.
+Text: "Target-Building DP. Pick a mold, hammer every slot, keep the best. Forge's anvil."
+
+**Complete Code with References at bottom:**
+# Coin Change — Scene 2 trace (panels 1-8)
+def coinChange(coins, amount):
+    dp = [float('inf')] * (amount + 1)    # panel 1: rusty shelf
+    dp[0] = 0                              # panel 1: golden zero
+
+    for coin in coins:                     # panels 2,4,7: pick a mold
+        for a in range(coin, amount + 1):  # panels 3,5-6,8: hammer each slot
+            dp[a] = min(dp[a], dp[a - coin] + 1)  # panels 3,5,8: compare and swap
+
+    if dp[amount] == float('inf'):         # panel 9: impossible amount
+        return -1
+    return dp[amount]                      # panel 10: read the answer plate
+
+# Coin Change II — count combinations (panel 10, problem 2)
+def change(amount, coins):
+    dp = [0] * (amount + 1)
+    dp[0] = 1                              # one way to make zero: use nothing
+    for coin in coins:
+        for a in range(coin, amount + 1):
+            dp[a] += dp[a - coin]          # count, don't minimize
+    return dp[amount]
+
+# Target Sum — subset sum variant (panel 10, problem 3)
+def findTargetSumWays(nums, target):
+    total = sum(nums)
+    if (total + target) % 2 != 0: return 0
+    subset = (total + target) // 2
+    dp = [0] * (subset + 1)
+    dp[0] = 1
+    for num in nums:
+        for s in range(subset, num - 1, -1):  # reverse to avoid reuse
+            dp[s] += dp[s - num]
+    return dp[subset]
+
+**Style:**
+- BRIGHT, HAPPY, COLORFUL — Pixar energy meets blacksmith workshop warmth. Not dark or moody.
+- White background between panels.
+- Forge is EXPRESSIVE — dramatic hammer swings with full-body follow-through, proud grins when plates upgrade, frustrated head-shakes when the hammer stays up (no improvement), jolly satisfaction at the finished shelf. Big, warm, physical comedy energy.
+- FORGE WORKSHOP is warm orange-amber tones — roaring fire, glowing metal, warm wood, iron tools. The shelf is sturdy dark wood with brass slot dividers.
+- GOLDEN NUMBER PLATES are shiny, reflective, with numbers pressed into the metal. RUSTY "inf" PLATES are dull, cracked, oxidized brown-orange. The contrast between golden and rusty must be visually obvious.
+- MOLDS have clear size numbers stamped on them. Each mold is a different shape — mold 1 is small and narrow, mold 3 is medium and wide, mold 4 is large and heavy.
+- HAMMER is massive, cartoonishly oversized — Forge's signature tool. Always visible.
+- Sparks fly on every hammer impact. Discarded plates clatter to the floor.
+- Dotted annotation arrows show the dp[a - coin] + 1 logic — which slot Forge is "looking back" at to compute the new value.
+- Every panel has a genuinely different composition — wide establishing from doorway, close-up eye level, low angle from floor, bird's eye straight down, over-the-shoulder, side-view time-lapse, dutch angle, tight close-up split-screen, top-down overhead, wide diagonal multi-moment, crimson full-bleed, wide workshop shot. No two panels framed the same way.
+- Code snippets in monospace, clearly legible, with panel references.
+- Panel borders with rounded corners.
+- Text short — in clean text box at bottom of each panel.
+- CRIMSON PANEL (panel 9 in Image B) has ENTIRE BACKGROUND flooded with bright crimson. Forge shakes his head at an impossible amount. All other panels have neutral/white background.
+- THE STORY ARC: rusty shelf → golden base case → first mold sweeps all slots → bigger molds upgrade slots → hammer comparison (swap or hold) → impossible amount warning → completed shelf with answer → problem family summary.

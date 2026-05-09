@@ -1,0 +1,148 @@
+Generate TWO bright, cheerful, fun comic-strip illustrations for Scene 1: Maya's Staircase (Linear DP). Happy colorful comic book art — think animated movie poster energy. White background between panels.
+
+=== IMAGE A — "The Story" (2 rows x 3 columns = 6 panels) ===
+
+**Title bar:** "Scene 1: Maya's Staircase (Linear DP)"
+
+**Character:**
+- **Maya:** A confident young rock climber / parkour athlete. Athletic build, chalk-dusted hands, climbing harness, fingerless gloves, a CHALK BAG clipped to her hip. EXPRESSIVE — fierce focus while climbing, scribbling numbers with intensity, celebration at the top. Fun athletic energy.
+
+**Visual language:**
+- **STAIRCASE** = the dp array. A grand stone staircase stretching upward. Each step is dp[i].
+- **CHALK NUMBER** written on each step = the dp value at that index. Maya kneels and writes these with chalk from her bag.
+- **LOOKING BACK** = Maya on step i, turning her head over her shoulder to look at steps i-1 and i-2 behind her. This IS the recurrence relation — she reads the chalk numbers on those steps to compute the current one.
+- **GOLDEN CHALK** = the base case values. The first 1-2 steps have golden glowing numbers already written on them before Maya starts climbing. She didn't write these — they were always there.
+- **SKIP PANELS (crimson background)** = invalid/error cases. Out of bounds, can't look back that far.
+
+**Example trace:** Climbing Stairs, n=6 steps.
+dp = [1, 1, 2, 3, 5, 8, 13]
+dp[i] = dp[i-1] + dp[i-2]
+
+**Panel 1 — "The Staircase" — WORK PANEL**
+Wide establishing shot from below, looking UP a grand stone staircase disappearing into golden clouds at the top. Maya stands at the bottom, chalk bag on her hip, hands on hips, staring up. The steps are BLANK — no numbers yet. Six steps visible. Warm sandstone colors, dramatic scale — the staircase dwarfs her. She grins with fierce determination.
+Text: "n = 6 steps. dp = [?, ?, ?, ?, ?, ?]. Maya sees the staircase. Time to climb."
+
+**Panel 2 — "The Golden Base" — WORK PANEL**
+Close-up on the bottom two steps. GOLDEN GLOWING numbers are already chalked on them: "1" on step 0, "1" on step 1. The gold shimmers — these weren't written by Maya, they were always there, etched into the stone. Maya crouches and traces her finger over the golden "1" on step 0, eyes lit up with recognition. Her chalk bag hangs at her side, untouched — she hasn't needed her own chalk yet.
+Text: "dp[0] = 1. dp[1] = 1. Base cases. Golden chalk — always been here."
+
+**Panel 3 — "Looking Back" — WORK PANEL**
+Dynamic over-the-shoulder shot from behind Maya. She stands on step 2, body facing UP the staircase, but her HEAD is TURNED BACK over her right shoulder, looking DOWN at steps 1 and 0. Her eyes trace the golden "1" on step 1 and the golden "1" on step 0. Her left hand reaches into her chalk bag. Dotted arrow lines show her gaze: step 2 → step 1, step 2 → step 0. This is the recurrence — she MUST look back before writing.
+Text: "Step 2. Look back: dp[1] = 1, dp[0] = 1. Add them. dp[2] = 1 + 1 = 2."
+
+**Panel 4 — "Writing the Answer" — WORK PANEL**
+Bird's eye view looking STRAIGHT DOWN at the staircase from above. Maya kneels on step 2, chalk in hand, writing a bold white "2" on the stone. Steps 0 and 1 below her glow gold ("1", "1"). Steps 3, 4, 5 above her are still blank. The chalk dust puffs up from her writing. Her chalk bag is open. The pattern is emerging — gold at the bottom, white chalk climbing up.
+Text: "dp[2] = 2. Written in chalk. Now climb higher."
+
+**Panel 5 — "The Rhythm" — WORK PANEL**
+Wide side-view profile shot showing the FULL staircase in cross-section. Maya is on step 4, looking back. Steps below her now all have numbers: 1 (gold), 1 (gold), 2 (white), 3 (white), and she's about to write on step 4. Dotted arrows from step 4 back to step 3 ("3") and step 2 ("2"). The rhythm is clear: look back two steps, add, write, climb. Speed lines show her momentum — she's getting faster. Chalk dust trails behind her.
+Text: "dp[3] = 2+1 = 3. dp[4] = 3+2 = 5. Look back, add, write, climb. The rhythm!"
+
+**Panel 6 — "Summit!" — WORK PANEL**
+Low angle looking UP at Maya. She stands on the TOP step (step 5), arms raised in triumph, chalk held high in her right fist, chalk dust raining down like confetti. Below her: the complete staircase with ALL numbers visible — 1 (gold), 1 (gold), 2, 3, 5, 8. She's written "8" on step 5 in huge bold chalk. Golden light behind her. The chalk bag swings from her hip. Pure victory energy.
+Text: "dp[5] = 8. Summit! 13 ways to climb 6 steps. dp = [1, 1, 2, 3, 5, 8, 13]."
+
+**Footer — "The Linear DP Pattern:"**
+1. **"Golden Chalk"**: Base cases. The first 1-2 steps are given — dp[0], dp[1].
+2. **"Look Back"**: dp[i] depends on dp[i-1] and/or dp[i-2]. Always look at the steps behind you.
+3. **"Write and Climb"**: Compute dp[i], write it down, move up. One step at a time, left to right.
+
+=== IMAGE B — "The Step-by-Step with Code" (2 rows x 5 columns = 10 panels) ===
+
+Each panel shows the staircase state, the dp array, and relevant code.
+
+**Panel 1 — "Blank Staircase (Init)" — WORK PANEL**
+Wide shot. Six blank stone steps. Maya at the bottom. dp array drawn below: [?, ?, ?, ?, ?, ?, ?]. No values filled yet.
+Code: dp = [0] * (n + 1). n = 6.
+Text: "Six steps. All blank. dp = [?, ?, ?, ?, ?, ?, ?]."
+
+**Panel 2 — "Golden Base Cases" — WORK PANEL**
+Close-up on steps 0 and 1. Golden "1" on step 0, golden "1" on step 1. Maya points at them. dp array below: [1, 1, ?, ?, ?, ?, ?].
+Code: dp[0] = 1; dp[1] = 1  # base cases
+Text: "dp[0] = 1. dp[1] = 1. Base cases locked in gold."
+
+**Panel 3 — SKIP PANEL — "Can't Look Back from Step 0!"**
+ENTIRE PANEL FLOODED WITH BRIGHT CRIMSON. Maya stands on step 0, tries to look back over her shoulder — but there's NOTHING behind her. The staircase ENDS. She's at the very bottom edge, one foot dangling over empty air behind the first step. Arms windmilling. Wide eyes.
+Text: "Step 0! Can't look back — no steps behind. BASE CASE. No recurrence."
+
+**Panel 4 — "i = 2: First Recurrence" — WORK PANEL**
+Dutch angle, tilted frame. Maya on step 2, head turned back. Dotted arrows to step 1 (value "1") and step 0 (value "1"). She chalks "2" on step 2. dp array: [1, 1, 2, ?, ?, ?, ?].
+Code: for i in range(2, n+1):  # i = 2
+          dp[2] = dp[1] + dp[0] = 1 + 1 = 2
+Text: "i = 2. dp[2] = dp[1] + dp[0] = 1 + 1 = 2."
+
+**Panel 5 — "i = 3: Building Up" — WORK PANEL**
+Side profile shot. Maya on step 3, looking back at step 2 ("2") and step 1 ("1"). Chalks "3" on step 3. dp array: [1, 1, 2, 3, ?, ?, ?].
+Code: dp[3] = dp[2] + dp[1] = 2 + 1 = 3
+Text: "i = 3. dp[3] = dp[2] + dp[1] = 2 + 1 = 3."
+
+**Panel 6 — "i = 4: The Pattern Locks In" — WORK PANEL**
+Top-down overhead view. Maya on step 4, head craned back toward step 3 ("3") and step 2 ("2"). Writes "5" on step 4. dp array: [1, 1, 2, 3, 5, ?, ?].
+Code: dp[4] = dp[3] + dp[2] = 3 + 2 = 5
+Text: "i = 4. dp[4] = dp[3] + dp[2] = 3 + 2 = 5."
+
+**Panel 7 — "i = 5 and i = 6: Sprint to the Top" — WORK PANEL**
+Dynamic diagonal composition with speed lines. Split-panel showing two quick steps. LEFT: Maya on step 5, writing "8" (3+5). RIGHT: Maya on step 6, writing "13" (5+8). dp array: [1, 1, 2, 3, 5, 8, 13]. COMPLETE.
+Code: dp[5] = 5 + 3 = 8; dp[6] = 8 + 5 = 13
+Text: "dp[5] = 8. dp[6] = 13. return dp[n] = dp[6] = 13."
+
+**Panel 8 — "Space Trick: Two Variables!" — WORK PANEL**
+Close-up on Maya's hands. She holds TWO pieces of chalk — one in each hand. LEFT hand labeled "prev2" holds the value from 2 steps back. RIGHT hand labeled "prev1" holds the value from 1 step back. She doesn't need the whole staircase written out — just these two! The staircase behind her FADES to translucent. Only the two chalk pieces matter.
+Code: prev2, prev1 = 1, 1  # O(1) space!
+      for i in range(2, n+1):
+          curr = prev1 + prev2
+          prev2 = prev1
+          prev1 = curr
+Text: "Space optimization! Only need the last 2 values. O(n) array → O(1) two variables."
+
+**Panel 9 — "The Two-Chalk Dance" — WORK PANEL**
+Three-beat sequence within one panel, showing the variable swap. BEAT 1: prev2 = 1, prev1 = 1, curr = 2. BEAT 2: prev2 slides to 1 (old prev1), prev1 slides to 2 (old curr). BEAT 3: next step — prev2 = 1, prev1 = 2, curr = 3. Arrows show the shuffle. Maya juggles the chalk pieces, grinning.
+Code: curr = prev1 + prev2  # compute
+      prev2 = prev1         # shift
+      prev1 = curr           # shift
+Text: "Compute, shift, shift. The two-chalk dance. Same answer, no array needed."
+
+**Panel 10 — "Scene 1 Complete — The Linear DP Family" — WORK PANEL**
+Wide shot. Maya sits at the top of the completed staircase, legs dangling over the edge, chalk bag in lap, looking out at a sunset. Below her: the full staircase with all values: 1, 1, 2, 3, 5, 8, 13. In her notebook (open on her lap), six problems listed:
+1. Climbing Stairs (#70) — dp[i] = dp[i-1] + dp[i-2]
+2. Min Cost Climbing Stairs (#746) — dp[i] = min(dp[i-1]+cost[i-1], dp[i-2]+cost[i-2])
+3. House Robber (#198) — dp[i] = max(dp[i-1], dp[i-2]+nums[i])
+4. House Robber II (#213) — circular: run twice, skip first or last
+5. Decode Ways (#91) — dp[i] += dp[i-1] if valid single, dp[i-2] if valid pair
+6. Maximum Product Subarray (#152) — track both max_prod and min_prod at each step
+Text: "Linear DP. dp[i] depends on dp[i-1] and dp[i-2]. Look back, write, climb."
+
+**Complete Code with References at bottom:**
+# Climbing Stairs — Scene 1 trace (panels 1-7)
+def climbStairs(n):
+    if n <= 1: return 1                    # panel 2: base case
+    dp = [0] * (n + 1)
+    dp[0] = 1                              # panel 2: golden chalk
+    dp[1] = 1                              # panel 2: golden chalk
+    for i in range(2, n + 1):              # panels 4-7: the climb
+        dp[i] = dp[i-1] + dp[i-2]         # panel 3-7: look back, add, write
+    return dp[n]                           # panel 7: summit
+
+# Space-optimized version (panels 8-9)
+def climbStairs_optimized(n):
+    if n <= 1: return 1
+    prev2, prev1 = 1, 1                   # panel 8: two chalk pieces
+    for i in range(2, n + 1):
+        curr = prev1 + prev2              # panel 9: compute
+        prev2 = prev1                     # panel 9: shift
+        prev1 = curr                      # panel 9: shift
+    return prev1
+
+**Style:**
+- BRIGHT, HAPPY, COLORFUL — Pixar energy meets rock-climbing adventure. Not dark or moody.
+- White background between panels.
+- Maya is EXPRESSIVE — fierce focus while computing, excited grins when the pattern clicks, triumphant fist-pump at the summit. Athletic, dynamic poses.
+- STAIRCASE is grand sandstone, warm golden-brown tones. Numbers in WHITE CHALK on the steps except base cases in GOLDEN CHALK.
+- CHALK BAG is always visible on Maya's hip — it's her tool, like Deva's sword or Dij's notebook.
+- Dotted arrow lines show the "look back" gaze from current step to previous steps — the recurrence relation made visual.
+- Every panel has a genuinely different composition — wide establishing, close-up hands, bird's eye, over-shoulder, dutch angle, side profile, top-down overhead, dynamic diagonal, split-panel, wide sunset. No two panels framed the same way.
+- Code snippets in monospace, clearly legible, with panel references.
+- Panel borders with rounded corners.
+- Text short — in clean text box at bottom of each panel.
+- SKIP panel (panel 3 in Image B) has ENTIRE BACKGROUND flooded with bright crimson. Maya can't look back. All other panels have neutral/white background.
+- THE STORY ARC: blank staircase → golden base cases → first look-back → the rhythm locks in → sprint to summit → space optimization reveal → problem family summary.

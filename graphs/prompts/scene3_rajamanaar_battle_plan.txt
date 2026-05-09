@@ -1,0 +1,126 @@
+Generate a bright, cheerful, fun comic-strip illustration with 14 panels. Row 1 has 7 panels, Row 2 has 7 panels. Happy colorful comic book art — think animated movie poster energy. White background between panels.
+
+**Title bar:** "Scene 3: Rajamanaar's Battle Plan (Topological Sort)" on the left, "The Ritual" on the right.
+
+**Characters:**
+- **Rajamanaar:** From the movie Salaar. Elder war strategist with a SWORD. EXPRESSIVE — big grins, dramatic gestures, fun confident boss energy.
+
+**Props:**
+- **WAR MAP** — large parchment pinned to the WALL. Everything is DRAWN on this map: 4 fortress icons, thick dark ARROW lines between them (= supply lines), and small GATE BARS drawn across fortress entrances. Fortress icons are big enough to interact with — Rajamanaar stabs flags into the map surface and slashes arrow lines with his sword.
+- **TOKENS** — small wooden fortress-shaped pieces. They start sitting ON the map at each fortress location. When a fortress's gate opens, its token SLIDES OFF the map, down the wall, and LANDS on the war table below.
+- **WAR TABLE** — sturdy table below the map. Tokens land here = the QUEUE.
+- **CRIMSON FLAGS** — small flags Rajamanaar STABS into the map at conquered fortress locations.
+- **SWORD** — his blade for SLASHING arrow lines drawn on the map.
+
+**NO TEXT ON ANY PROP.** No letters, no numbers. Text ONLY in captions.
+
+**THE MAP LAYOUT (4 fortress icons, 3 arrow lines):**
+- Top-left and top-right fortress icons at the top, side by side
+- Middle fortress icon below them, centered
+- Bottom fortress icon at the very bottom
+
+3 arrow lines drawn on the map:
+- Arrow 1: top-left → middle
+- Arrow 2: top-right → middle
+- Arrow 3: middle → bottom
+
+**GATE STATES on the map (drawn on the fortress icon):**
+- **LOCKED** — dark iron BARS drawn across the fortress entrance. Has arrows pointing in.
+- **OPEN** — bars gone, GOLDEN GLOW around the icon. Zero arrows pointing in.
+- **FLAGGED** — crimson flag stabbed into the map at this spot. Conquered.
+
+**Panel 1 — SETUP — "The War Map"**
+WIDE SIDE VIEW. The big WAR MAP fills the wall — 4 fortress icons with 3 thick arrow lines drawn between them. All 4 fortress tokens sit ON the map at their locations. Top-left and top-right icons have open gates (golden glow). Middle and bottom icons have locked gates (dark bars drawn across). War table below is EMPTY. Rajamanaar stands between map and table, arms behind his back, studying the map with a confident half-smile.
+Arrows: all 3 SOLID. Gates: TL open, TR open, Mid locked, Bot locked. Table: empty. Flags: 0.
+Text: "4 fortress icons on the map. 3 supply line arrows. Top two gates open. Middle and bottom locked."
+
+**Panel 2 — STEP ❶ — "Counts Supply Lines"**
+EXTREME CLOSE-UP of Rajamanaar's face and hand against the map surface. His finger TRACES the arrow lines, pointing at the 2 arrows flowing INTO the middle fortress icon. His other hand holds up 2 FINGERS next to his face. The arrowheads are huge in this close-up. Playful detective smirk — counting the lines.
+State: Same as Panel 1.
+Text: "Step ❶: Count INCOMING arrows for EACH fortress. Top-left: 0. Top-right: 0. Middle: 2. Bottom: 1."
+
+**Panel 3 — STEP ❷ — "Open Gates → Tokens Slide to Table"**
+DYNAMIC VERTICAL TOP-TO-BOTTOM. The map is at the TOP, table at the BOTTOM. Two tokens SLIDE OFF the map surface — peeling away from the top-left and top-right fortress icons — and FALL downward with GOLDEN SPARKLE TRAILS like comet tails! They LAND on the war table below. The top-left and top-right icons glow golden (open gates). Middle and bottom icons stay dark (locked, bars drawn). Rajamanaar stands to the side, arms spread wide, big grin, welcoming the tokens onto his table.
+Arrows: all 3 SOLID. Gates: TL open, TR open, Mid locked, Bot locked. Table: 2 tokens landing. Flags: 0.
+Text: "Step ❷: 0 incoming arrows? Gate open! Token slides off the map to the war table. 2 ready!"
+
+**Panel 4 — STEP ❸ — "Conquers First"**
+LOW ANGLE FROM THE GROUND looking UP at Rajamanaar towering above. He holds a crimson flag HIGH in one hand. His other hand has grabbed a token from the table (1 token remaining). He STABS the flag into the map surface at the top-left fortress icon — THUNK! Impact lines radiate. The crimson flag sticks out of the parchment proudly. The arrow line from top-left to middle is still clearly drawn — thick, dark, untouched.
+Arrows: all 3 SOLID. Gates: TL flagged, TR open, Mid locked, Bot locked. Table: 1 token. Flags: 1.
+Text: "Step ❸: Picks token. Stabs flag into the map. CONQUERED! But supply line arrow still drawn..."
+
+**Panel 5 — STEP ❹ — "Slashes Arrow Line — Still Locked!"**
+FULL-BODY EYE-LEVEL MID SHOT. Rajamanaar's SWORD slashes across the map surface — cutting through the arrow line from top-left to middle! The drawn line SPLITS and peels apart! ORANGE SPARKS shower from the cut! The line fades and vanishes from the parchment. He PAUSES — sword extended — and LOOKS at the middle fortress icon. Points at it. One arrow line still flows in from top-right. Bars still drawn across. He shrugs with a grin — not yet!
+Arrows: TL→Mid GONE, TR→Mid SOLID, Mid→Bot SOLID. Gates: TL flagged, TR open, Mid locked (1 arrow left), Bot locked. Table: 1 token. Flags: 1.
+Text: "Step ❹: SLASHES the arrow! SPARKS! Checks middle icon — still 1 arrow drawn in. Gate stays locked."
+
+**Panel 6 — STEPS ❸+❹ — "Conquers Second — SLASH!"**
+DIAGONAL SPLIT PANEL. LEFT HALF: Rajamanaar STABS a flag into the map at the top-right fortress icon — THUNK! Both top icons now have crimson flags. RIGHT HALF: He SLASHES the last arrow line into the middle icon — sword gleaming, ORANGE SPARKS! The line splits and vanishes! Both arrows into middle are now gone from the map. Fierce grin, sword arm extended. This panel is pure action — flag and slash.
+Arrows: TL→Mid GONE, TR→Mid GONE, Mid→Bot SOLID. Gates: TL flagged, TR flagged, Mid transitioning, Bot locked. Table: 0 tokens. Flags: 2.
+Text: "Steps ❸+❹: Flag! SLASH! Both arrow lines into middle — gone from the map!"
+
+**Panel 7 — STEP ❹ RESULT — "Gate Opens — Token Slides Down"**
+OVER-THE-SHOULDER FROM BEHIND. Rajamanaar faces the map, sword low. Quiet. Then — the middle fortress icon's drawn bars VANISH and GOLDEN GLOW blooms around it on the parchment! The token sitting at that icon PEELS OFF the map surface and SLIDES DOWN the wall, trailing golden sparkles, and LANDS on the war table below with a CLUNK. He turns his head — edge of a smirk in profile. Walks toward the table. More work!
+Arrows: TL→Mid GONE, TR→Mid GONE, Mid→Bot SOLID. Gates: TL flagged, TR flagged, Mid OPEN, Bot locked. Table: 1 token. Flags: 2.
+Text: "Step ❹: Middle — 0 arrows left! Bars vanish. Gate glows. Token slides off the map to the table!"
+
+**Panel 8 — STEPS ❸+❹ — "Conquers Middle — SLASH!"**
+BIRD'S EYE STRAIGHT DOWN from the ceiling. Rajamanaar is a small figure below. He PICKS the token from the table — table EMPTY again. STABS a flag into the map at the middle icon. SWINGS his sword, slashing the last arrow line (middle → bottom) — ORANGE SPARKS trail across the map surface! From above, the pattern is clear: top two icons have flags, middle has a fresh flag. All 3 arrow lines are gone from the parchment. Bottom icon still has bars drawn.
+Arrows: ALL 3 GONE. Gates: TL flagged, TR flagged, Mid flagged, Bot transitioning. Table: 0 tokens. Flags: 3.
+Text: "Steps ❸+❹: Picks token. Flag on middle! SLASH! Last arrow line — gone!"
+
+**Panel 9 — STEP ❹ RESULT — "Another Token Slides Down"**
+TABLE-LEVEL HORIZONTAL SHOT — camera on the table surface, aimed across. The empty tabletop stretches out. Rajamanaar stands beyond it at the map. Then — GOLDEN GLOW erupts around the bottom fortress icon on the map above! Bars vanish! Its token PEELS OFF and SLIDES DOWN the wall, golden sparkle trail, getting bigger as it falls — SLAMS onto the table RIGHT IN FRONT OF US! Table vibrates. Rajamanaar looks over with a knowing grin, reaches for it. Same ritual!
+Arrows: ALL 3 GONE. Gates: TL flagged, TR flagged, Mid flagged, Bot OPEN. Table: 1 token. Flags: 3.
+Text: "Step ❹: Bottom — 0 arrows! Bars vanish. Token slides off the map to the table. Cycle repeats!"
+
+**Panel 10 — STEPS ❸+❹ — "Conquers Last — Nothing to Slash!"**
+THREE-QUARTER HIGH ANGLE — from above-right, looking down at 45°. He PICKS the last token from the table. Gently STABS the final crimson flag into the map at the bottom icon — a quiet push, not dramatic. The flag settles. His sword stays at his hip — no arrow lines left on the map to slash. From this angle: all 4 icons have crimson flags. The parchment is clean — no dark arrow lines anywhere.
+Arrows: all gone. Gates: all flagged. Table: empty. Flags: 4.
+Text: "Steps ❸+❹: Last token. Plants flag. No arrow lines left. Nothing to slash."
+
+**Panel 11 — "Waits... Nothing Comes"**
+DUTCH ANGLE TILTED — panel itself rotated. Rajamanaar stands between the map and the empty table. He LOOKS at the map — all flags, no arrows, no glowing. Looks at the table — EMPTY. Waits. No icon lights up. No token slides down. In Panels 7 and 9, a token slid down after this pause. NOT this time. He breaks into a satisfied GRIN. Slow nod. Done!
+Arrows: all gone. Gates: all flagged. Table: empty. Flags: 4.
+Text: "Waits... no icon glows. No token slides. Table stays empty. The loop ends!"
+
+**Panel 12 — STEP ❺ SUCCESS — "All Conquered — VALID!"**
+CENTERED MEDIUM PORTRAIT — chest-up, symmetrical. Warm amber-golden glow fills the panel. Arms FOLDED, chin UP, proud grin. Behind him the map shows all 4 crimson flags — no arrows, no bars. Sword gleams at his hip. Job done.
+State: 4 flags, 4 fortresses. VALID.
+Text: "Step ❺: 4 flags = 4 fortresses. ALL conquered in order. VALID!"
+
+**Panel 13 — SKIP PANEL — STEP ❺ FAILURE — "DEADLOCK!"**
+ENTIRE PANEL FLOODED WITH BRIGHT CRIMSON BACKGROUND. ZOOMED-IN ON THE MAP surface — two fortress icons with arrow lines pointing AT EACH OTHER. Both have bars drawn across. Dark red-black energy crackles around both. Rajamanaar small in background, head bowed, shaking it. Sword limp — nothing to slash. Thought bubble shows arrows chasing each other in a circle. Neither will ever open. DEADLOCK.
+State: Both locked forever. Cycle.
+Text: "Step ❺ FAIL: They supply EACH OTHER! Neither opens. DEADLOCK!"
+
+**Panel 14 — "Scene 3 Complete"**
+WIDE SYMMETRICAL COMPOSITION — cinematic center frame. Rajamanaar stands dead CENTER, sword on shoulder, confident grin. LEFT side: the war map with all 4 crimson flags, warm golden glow. Victory. RIGHT side: the deadlocked pair on a crimson-tinted map, dark, stuck. Failure. Left hand points at victory, right hand points at warning. Light vs shadow.
+Text: "❶ Count incoming arrows. ❷ 0 arrows = ready. ❸ Pick, plant flag. ❹ Slash arrow lines — gate opens? Token slides to table. ❺ All flagged = valid. Stuck = cycle. Topological Sort."
+
+**Style:**
+- BRIGHT, HAPPY, COLORFUL — Pixar energy. Not dark or moody.
+- White background between panels.
+- **EVERYTHING HAPPENS ON THE MAP.** Fortresses are ICONS drawn on the parchment. Gates are BARS drawn on icons. Arrows are LINES drawn between icons. Flags get STABBED into the map surface. Sword SLASHES drawn lines. Tokens sit ON the map and SLIDE OFF it to the table. The map is the battlefield — there are no real 3D buildings.
+- Every panel has a genuinely different composition — no two panels framed the same way:
+  - Panel 1: WIDE SIDE VIEW — horizontal panoramic
+  - Panel 2: EXTREME CLOSE-UP — face and hand on map
+  - Panel 3: DYNAMIC VERTICAL — top-to-bottom token falling
+  - Panel 4: LOW ANGLE FROM GROUND — looking up
+  - Panel 5: FULL-BODY EYE-LEVEL — mid-distance
+  - Panel 6: DIAGONAL SPLIT — two halves
+  - Panel 7: OVER-THE-SHOULDER FROM BEHIND — facing map
+  - Panel 8: BIRD'S EYE STRAIGHT DOWN — from ceiling
+  - Panel 9: TABLE-LEVEL HORIZONTAL — on the table surface
+  - Panel 10: THREE-QUARTER HIGH ANGLE — 45° above-right
+  - Panel 11: DUTCH ANGLE TILTED — panel rotated
+  - Panel 12: CENTERED MEDIUM PORTRAIT — chest-up
+  - Panel 13: ZOOMED-IN MAP SURFACE — crimson, icons fill panel
+  - Panel 14: WIDE SYMMETRICAL — cinematic center split
+- Rajamanaar is EXPRESSIVE — big grins, dramatic gestures, fun energy.
+- Colors vivid — CRIMSON flags, GOLDEN gate glow, DARK iron bars, ORANGE SPARKS from slashes, warm parchment tan.
+- NO TEXT ON ANY PROP. No labels on the map.
+- SKIP panel (13) has ENTIRE crimson background. All others neutral/white.
+- Panel borders with rounded corners.
+- Text short — placed at bottom of each panel in a clean text box.
+- **THE LOOP**: Action panels (6, 8) → Reveal panels where token slides to table (7, 9) → Action (10) → Empty reveal where nothing comes (11). Three rounds. Third breaks the pattern.

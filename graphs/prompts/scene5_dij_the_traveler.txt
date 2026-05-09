@@ -1,0 +1,136 @@
+Generate a bright, cheerful, fun comic-strip illustration with 20 panels. Row 1 has 5 panels, Row 2 has 5 panels, Row 3 has 5 panels, Row 4 has 5 panels. Happy colorful comic book art — think animated movie poster energy. White background between panels.
+
+**Title bar:** "Scene 5: Dij the Traveler (Dijkstra)"
+
+**Characters:**
+- **Dij:** A cheerful female traveler (inspired by Shruti Haasan). Wears a hat, carries a satchel. EXPRESSIVE — excited grins, wide eyes at discoveries, dramatic gestures. Fun adventurer energy.
+
+**Three Magic Items:**
+- **NOTEBOOK** (dist dict) — a small leather notebook. One page per city. Dij writes the best-known travel time on each page. Pages start at infinity (∞). When she finds a shorter route, she erases and rewrites.
+- **HEAP QUEUE** (min-heap) — a wooden box labeled "HEAP BOX" on the table. City tickets float inside. The ticket with the SMALLEST distance always floats to the TOP. She always grabs from the top.
+- **SETTLED BOARD / DONE STAMP** (settled set) — a board on the wall with hooks. When a city is finalized, she stamps it DONE and hangs it on the board. Once stamped, never touched again.
+
+**NO TEXT ON ANY PROP.** Text ONLY in captions.
+
+**MAP LAYOUT — 5 West Coast Cities:**
+- Seattle (start)
+- Portland (3 hours from Seattle)
+- San Francisco (10 hours from Portland)
+- Las Vegas (20 hours from Portland, 9 hours from SF)
+- Phoenix (11 hours from SF, 5 hours from Las Vegas)
+
+6 roads:
+- Seattle ↔ Portland: 3
+- Portland ↔ San Francisco: 10
+- Portland ↔ Las Vegas: 20
+- San Francisco ↔ Las Vegas: 9
+- San Francisco ↔ Phoenix: 11
+- Las Vegas ↔ Phoenix: 5
+
+**Panel 1 — "Starting Out!"**
+Dij stands at Seattle with her notebook open. dist(Seattle) = 0. All other pages show ∞. She's excited to begin her journey. Road map visible behind her with all 5 cities.
+Text: "dist(Seattle) = 0. All others = ∞. Dij's starting her road trip!"
+
+**Panel 2 — "Build the list!"**
+She drops the first ticket into the HEAP BOX — (0, Seattle). The box glows. Settled board is empty. Heap Queue initialized.
+Text: "dist: Seattle=0. Heap Queue: [(0, Seattle)]. settled = {}."
+Code ref: lines 1-4.
+
+**Panel 3 — "The queue is ready? Exciting!"**
+The heap box is shown with the (0, Seattle) ticket floating at the top, auto-sorted for smallest. She's reaching in to grab it.
+Text: "Heap is auto-sorted for smallest!"
+Code ref: line 5 (while queue).
+
+**Panel 4 — "Heap pop: Seattle. First stop!"**
+She pops (0, Seattle) from the heap. Examines the ticket. Not in settled yet — good to go!
+Text: "pop heap → (0, Seattle). Not in settled. Let's go!"
+Code ref: lines 6-8.
+
+**Panel 5 — "Seattle pop. First stop!"**
+She stamps Seattle DONE on the settled board. One hook now holds Seattle's shield.
+Text: "settled = {Seattle}. DONE — Seattle."
+Code ref: line 9.
+
+**Panel 6 — "One done, fresh and clean!"**
+DONE stamp shown prominently. Settled board has Seattle. She looks at the roads from Seattle.
+Text: "DONE — Seattle. One done, fresh and clean!"
+Code ref: lines 7-9.
+
+**Panel 7 — "Look! A new route to Portland!"**
+She traces the road from Seattle to Portland. 0 + 3 = 3. Writes 3 in her notebook for Portland. Drops (3, Portland) ticket into heap box.
+Text: "Dij's notebook updates. dist(Portland) = 0+3 = 3."
+Code ref: lines 10-14.
+
+**Panel 8 — "Portland's great!"**
+Pops (3, Portland) from heap. Not settled. Stamps Portland DONE. Now explores Portland's neighbors.
+Text: "Stamp it! Now where does it lead?"
+Code ref: lines 6-9.
+
+**Panel 9 — "Racing through San Francisco"**
+From Portland: SF = 3+10 = 13, Las Vegas = 3+20 = 23. Updates notebook. Pushes both tickets.
+Text: "queue = [(13, SF), (13, Vegas)] → settled = {Seattle, Portland}."
+
+**Panel 10 — "Discover the 23h Vegas route"**
+Shows the notebook update: dist(Vegas) = 23 (via Portland direct). But there might be a shorter way...
+Text: "dist(Vegas) = 22. 3+10+9 = 22. Shorter than 23!"
+Note: This is where the climax happens — Vegas via SF (22) beats Vegas direct (23).
+
+**Panel 11 — "Popping (22, Vegas)"**
+Pops Vegas ticket. Not settled. Stamps DONE. Explores neighbors from Vegas.
+Text: "No shortcuts needed! LV settled."
+
+**Panel 12 — "The stale (23, Vegas)"**
+Pops old (23, Vegas) ticket from heap — but Vegas is ALREADY on the settled board! She tosses the stale ticket over her shoulder.
+Text: "Wait! This one's already done! Bin it!"
+Code ref: lines 7-8 (stale check).
+
+**Panel 13 — "Popping (24, Phoenix)"**
+Pops Phoenix ticket. Stamps DONE. All 5 cities now on the settled board!
+Text: "Popping (24, Phoenix). Final stamp!"
+
+**Panel 14 — "Final stop! Mission complete!"**
+All 5 cities stamped DONE on the settled board. Notebook shows final distances: Seattle=0, Portland=3, SF=13, Vegas=22, Phoenix=24.
+Text: "settled = {Seattle, Portland, SF, Vegas, Phoenix}."
+
+**Panel 15 — "The queue is empty!"**
+Heap box is empty. She reaches in and finds nothing. Journey complete!
+Text: "The queue is empty! Iteration complete!"
+Code ref: line 5 again (while queue — now false).
+
+**Panel 16 — "My journey is complete."**
+Dij stands triumphant with her filled notebook. All distances confirmed.
+Text: "dist: Seattle=0, Portland=3, SF=13, Vegas=22, Phoenix=24."
+
+**Panel 17 — Summary steps (bottom row)**
+Visual summary of the 4-step loop:
+1. Pop min ticket
+2. Skip check (already DONE?)
+3. Stamp DONE
+4. Relax neighbors
+Text: "1. Pop min ticket. 2. Skip check. 3. Stamp DONE. 4. Relax neighbors."
+
+**Panel 18 — "Why settling is safe"**
+Explains why the popped minimum is guaranteed: non-negative edges mean no future path can beat the current shortest.
+Text: "Guaranteed minimum — smallest always popped first!"
+
+**Panel 19 — "NON-NEGATIVE EDGES ONLY!"**
+WARNING PANEL with yellow/crimson background. Big warning sign. Negative edges would let a settled city get a shorter distance later — breaking the algorithm.
+Text: "NON-NEGATIVE EDGES ONLY! Don't let negative edges trick Dijkstra!"
+
+**Panel 20 — "Exploration complete!"**
+Wide final shot. Dij with all her gear, notebook open showing final distances, settled board full, heap box empty. Warm golden glow.
+Text: "dijkstra(graph, start) → {Seattle:0, Portland:3, SF:13, LV:22, Phoenix:24}."
+
+**Style:**
+- BRIGHT, HAPPY, COLORFUL — Pixar energy. Not dark or moody.
+- White background between panels.
+- Dij is EXPRESSIVE — excited grins, wide eyes at shorter routes, dramatic toss of stale tickets, triumph at completion.
+- HEAP BOX is a wooden chest, tickets float inside sorted by distance.
+- SETTLED BOARD has hooks with DONE stamps/shields.
+- NOTEBOOK is leather-bound, pages with city names and distances.
+- West coast cities shown on a road map background.
+- Code line references shown in small text where applicable.
+- Panel borders with rounded corners.
+- Text short — in clean text box at bottom.
+- WARNING panel (19) has crimson/yellow background. All others neutral/white.
+- THE STORY ARC: start at Seattle → init heap → pop/settle loop → discover shorter route (climax!) → stale ticket (teaching moment) → all settled → empty heap → summary → warning → complete.

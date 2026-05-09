@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Memory Systems</title>
+<style>
+:root{--bg:#1a1916;--card:#252320;--card2:#2d2a26;--gold:#d4a843;--gold2:#fbbf24;--crimson:#dc2626;--text:#e8e2d6;--muted:#9b9484;--border:#3d3930;--emerald:#059669;--violet:#7c3aed}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
+h1{font-size:2.4em;color:var(--gold2);margin-bottom:8px}
+.sub{color:var(--muted);font-size:1.05em;margin-bottom:48px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:700px;width:100%}
+a.card{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:32px 28px;text-decoration:none;transition:.25s;display:block}
+a.card:hover{transform:translateY(-4px);border-color:var(--gold2);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.card .icon{font-size:2.4em;margin-bottom:12px}
+.card .title{font-size:1.25em;font-weight:800;margin-bottom:6px}
+.card .desc{font-size:.9em;color:var(--muted);line-height:1.6}
+.card.trees .title{color:var(--gold2)}
+.card.trees{border-color:#92400e40}
+.card.trees:hover{border-color:var(--gold2)}
+.card.graphs .title{color:var(--crimson)}
+.card.graphs{border-color:#dc262640}
+.card.graphs:hover{border-color:var(--crimson)}
+.footer{margin-top:48px;color:var(--muted);font-size:.82em;text-align:center}
+@media(max-width:540px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<h1>Memory Systems</h1>
+<p class="sub">NeetCode problems as cinematic study guides</p>
+
+<div class="grid">
+<a class="card trees" href="shankar_dada_trees.html">
+<div class="icon">&#x1F333;</div>
+<div class="title">Shankar Dada &mdash; Trees</div>
+<div class="desc">16 NeetCode tree problems. 4 scenes: Deva's raid, Vardha's drums, Rajamanaar's plan, The Board Room.</div>
+</a>
+<a class="card graphs" href="salaar_graphs.html">
+<div class="icon">&#x1F5FA;</div>
+<div class="title">Salaar &mdash; Graphs</div>
+<div class="desc">18 NeetCode graph problems. 5 scenes: DFS, BFS, Topo Sort, Union-Find, Dijkstra.</div>
+</a>
+</div>
+
+<div class="footer">Built by Nambi</div>
+
+</body>
+</html>

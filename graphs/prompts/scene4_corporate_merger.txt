@@ -1,0 +1,127 @@
+Generate TWO bright, cheerful, fun comic-strip illustrations for Scene 4: The Corporate Merger (Union-Find). Happy colorful comic book art — think animated movie poster energy. White background between panels.
+
+=== IMAGE A — "The Story" (2 rows x 3 columns = 6 panels) ===
+
+**Title bar:** "Scene 4: The Corporate Merger (Union-Find)"
+
+**Characters:**
+- **Kyle:** Junior employee. Young, eager, no crown.
+- **Eddie:** Startup founder. Confident, wears a golden crown when he's CEO.
+- **Nambi:** Junior employee. Friendly, no crown.
+- **Arye:** Startup founder. Ambitious, wears a golden crown when CEO.
+- **Rock:** CEO of a large established company called Rockwell. Big, dominant presence. Already has a tall org-chart tree behind him. Rank 3.
+
+**Visual language:**
+- **CROWN** on head = CEO (parent[x] = x, their own boss). Golden, glowing.
+- **TREE DIAGRAM** = company org chart. People as nodes, lines as boss relationships.
+- Crown REMOVED = absorbed into another company, no longer CEO.
+- **Rank** shown as a number label. Tracks tree height.
+
+**Panel 1 — "The Status Quo (Initial State)"**
+All five people (Kyle, Eddie, Nambi, Arye, Rock) standing separately, each wearing a golden CROWN. Five independent one-person companies. Everyone is their own CEO.
+Text: "Five people start as their own boss. parent[x] = x. Rank: Everyone is Rank 0."
+
+**Panel 2 — "The First Hire" — union('Kyle', 'Eddie')**
+Eddie (Rank 0) hires Kyle (Rank 0). It's a tie — Eddie absorbs Kyle. Eddie keeps his crown, Kyle's crown is removed. Small tree: Eddie on top, Kyle below. Eddie's rank bumps to 1.
+Text: "Eddie (Rank 0) hires Kyle (Rank 0). Since it's a tie, Eddie absorbs Kyle. Eddie Rank 1."
+Code shown: parent['Kyle'] = 'Eddie', Eddie Rank 1.
+
+**Panel 3 — "Parallel Growth" — union('Nambi', 'Arye')**
+Across town, Arye hires Nambi. Arye (Rank 0) absorbs Nambi (Rank 0). Same tie-breaking. Small tree: Arye on top, Nambi below. Arye's rank bumps to 1.
+Text: "Across town, Arye hires Nambi. Arye (Rank 0) absorbs Nambi (Rank 0). Arye Rank 1."
+Code shown: parent['Nambi'] = 'Arye', Arye Rank 1.
+
+**Panel 4 — "The Big Merger" — union('Eddie', 'Arye')**
+We connect the CEOs, not the junior employees. Both have Rank 1. Arye absorbs Eddie. Combined tree: Kyle → Eddie → Arye (CEO). Arye's rank bumps to 2.
+Text: "We connect the CEOs, not the junior employees. Both have Rank 1. Arye absorbs Eddie. Arye Rank 2."
+Code shown: parent['Eddie'] = 'Arye', Arye Rank 2.
+
+**Panel 5 — "The Corporate Giant" — union('Arye', 'Rock')**
+Rock (Rank 3) swallows Arye's company (Rank 2). The shorter company goes under the taller one. Massive tree with Rock at the very top. No rank bump — Rock was already taller.
+Text: "Rock (Rank 3) swallows Arye's company (Rank 2). The shorter goes under the taller one."
+Code shown: parent['Arye'] = 'Rock'. Rank Bump: None.
+
+**Panel 6 — "The Efficiency Hack" — find('Kyle')**
+Kyle is tired of walking through three bosses (Kyle → Eddie → Arye → Rock). While finding Rock, he updates his contract (and Eddie's!) to point DIRECTLY to Rock. Path compression — direct arrows from Kyle and Eddie straight to Rock. Future lookups are instant.
+Text: "Kyle is tired of walking through three bosses. While finding Rock, he updates his contract (and Eddie's!) to point directly to Rock. Future questions are answered instantly!"
+
+**Footer — "The Golden Rules to Remember:"**
+1. **"Union by Rank"**: Keep the building short by putting shorter trees under taller ones.
+2. **"Path Compression"**: Flatten the tree dynamically by moving everyone you pass directly under the CEO.
+3. **"Lazy Flattening"**: We only flatten the paths we actually walk (e.g., Nambi stays pointing to Arye until someone checks).
+
+=== IMAGE B — "The Step-by-Step with Code" (2 rows x 5 columns = 10 panels) ===
+
+Each panel shows the tree diagram, parent/rank state, and relevant code.
+
+**Panel 1 — "Initial State"**
+Five separate single-node trees, each with a crown. parent[x] = x for all. rank = 0 for all. Five independent CEOs.
+Code: parent = {Kyle: Kyle, Eddie: Eddie, Nambi: Nambi, Arye: Arye, Rock: Rock}. rank = 0 for all.
+
+**Panel 2 — "Eddie hires Kyle"**
+Equal ranks → Eddie wins. Rank bump to 1. Tree: Eddie (CEO, rank 1) with Kyle below.
+Code: parent['Kyle'] = 'Eddie'. Tie-breaking rule shown.
+
+**Panel 3 — "Arye hires Nambi"**
+Equal ranks → Arye wins. Rank bump to 1. Tree: Arye (CEO, rank 1) with Nambi below.
+Code: parent['Nambi'] = 'Arye'. Same tie-breaking.
+
+**Panel 4 — "Arye acquires Eddie's company"**
+Equal ranks (both 1) → Arye wins. Rank bump to 2. Tree: Arye (CEO, rank 2) with Eddie below (Kyle under Eddie), Nambi also under Arye.
+Code: parent['Eddie'] = 'Arye'. Arye rank 2.
+
+**Panel 5 — "Meanwhile, Rockwell is huge"**
+Rock's rank is 3. Rockwell has been hiring. Show Rock with a large multi-level tree. Rank 3.
+Code: rank['Rock'] = 3 with large tree visualization.
+
+**Panel 6 — "Rockwell acquires Arye's company"**
+Different ranks → Smaller (Arye, rank 2) goes under bigger (Rock, rank 3). No rank bump because ranks differ.
+Code: parent['Arye'] = 'Rock'. Show the rank comparison logic: if rank[root1] < rank[root2] → smaller under bigger.
+
+**Panel 7 — "The long chain is inefficient"**
+Kyle's path to the CEO is 3 hops: Kyle → Eddie → Arye → Rock. This is slow. Highlight the long chain.
+Text: "Kyle's path to CEO is 3 hops. This is slow."
+Show current state visual: the full tree with Kyle at the bottom.
+
+**Panel 8 — "find('Kyle') Pass 1"**
+Walk up to find the CEO. ceo = Rock. Nothing rewritten yet. Show the recursive walk: follow parent pointers up.
+Code: find(x): while parent[x] != x → walk up. Pass 1 just finds the root.
+
+**Panel 9 — "find('Kyle') Pass 2 — Path Compression"**
+Rewrite Kyle and Eddie to point directly to Rock. Nambi was NOT on this path, so Nambi stays pointing to Arye. Only the walked path gets flattened.
+Code: parent[x] = find(parent[x]) — recursive flattening. Show arrows being redirected.
+Text: "Path Compression (Find Pass 2): Rewrite to point directly to CEO."
+
+**Panel 10 — "Final Flat Tree"**
+The path find walked is now flat. Kyle → Rock (direct). Eddie → Rock (direct). Nambi still → Arye (lazy — not flattened until someone calls find(Nambi)).
+Text: "Flattens the path find walked. Nambi gets flattened when find(Nambi) is called."
+
+**Complete Code with References at bottom:**
+parent = {'Kyle': 'Kyle', ...}   # panel 1
+rank = {'Kyle': 0, ...}          # panel 1
+def find(x):
+    if parent[x] != x:
+        parent[x] = find(parent[x])  # Step 2: Path compression (panel 9)
+    return parent[x]
+def union(a, b):
+    root_a = find(a)
+    root_b = find(b)
+    if root_a == root_b: return       # already same company
+    if rank[root_a] < rank[root_b]:   # different ranks (panel 6)
+        parent[root_a] = root_b
+    elif rank[root_a] > rank[root_b]: # different ranks (panel 6)
+        parent[root_b] = root_a
+    else:
+        parent[root_b] = root_a       # exact piece of code for rank bump (panels 2, 3, 4)
+        rank[root_a] += 1
+
+**Style:**
+- BRIGHT, HAPPY, COLORFUL — Pixar energy. Not dark or moody.
+- White background between panels.
+- Characters are diverse, expressive, wearing business casual.
+- Crowns are golden and prominent on CEOs — removed when absorbed.
+- Trees drawn as clear node-and-edge diagrams showing the org chart.
+- Code snippets in monospace, clearly legible, with panel references.
+- Panel borders with rounded corners.
+- Text short — in clean text box at bottom of each panel.
+- THE STORY ARC: 5 independent CEOs → first hire (tie-break) → parallel growth → big merger (connect CEOs, not juniors) → corporate giant (rank comparison) → efficiency hack (path compression + lazy flattening).

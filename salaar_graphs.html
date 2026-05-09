@@ -58,6 +58,8 @@ th{background:var(--card2);color:var(--gold);text-align:left;padding:10px 12px;b
 td{padding:10px 12px;border:1px solid var(--border)}
 .ritual-step{display:grid;grid-template-columns:auto 1fr 1fr;gap:0}
 .ritual-step>div{padding:10px 14px;border-bottom:1px solid #ffffff10}
+.scene-img{width:100%;border-radius:10px;border:1px solid var(--border);margin-bottom:16px;cursor:pointer;transition:transform .2s}
+.scene-img:hover{transform:scale(1.02)}
 </style>
 </head>
 <body>
@@ -169,12 +171,12 @@ When Deva conquers a fortress, he <strong>slashes war paint</strong> on the gate
 <div class="map-cell"><span class="icon">&#x1F4CB;</span><div><div class="lbl">Topological Sort (Scene 3)</div><code>in_degree[node]</code></div></div>
 </div>
 <div class="map-row">
-<div class="map-cell"><span class="icon">&#x1F91D;</span><div><div class="lbl">The Elder (blood pacts)</div><div class="sub">Merges clans through ritual. Tracks who belongs to which clan.</div></div></div>
+<div class="map-cell"><span class="icon">&#x1F3E2;</span><div><div class="lbl">The Board Room (mergers)</div><div class="sub">Companies merge through acquisitions. Track who reports to which CEO.</div></div></div>
 <div class="map-cell"><span class="icon">&#x1F332;</span><div><div class="lbl">Union-Find (Scene 4)</div><code>parent[], find(), union()</code></div></div>
 </div>
 <div class="map-row">
-<div class="map-cell"><span class="icon">&#x1F40E;</span><div><div class="lbl">Deva on horseback</div><div class="sub">Roads have tolls. Horse always gallops to the cheapest fortress next.</div></div></div>
-<div class="map-cell"><span class="icon">&#x1F4B0;</span><div><div class="lbl">Dijkstra (Scene 5)</div><code>heapq, dist[]</code></div></div>
+<div class="map-cell"><span class="icon">&#x1F9ED;</span><div><div class="lbl">Dij the Traveler</div><div class="sub">Roads have distances. Dij always visits the closest city next.</div></div></div>
+<div class="map-cell"><span class="icon">&#x1F4B0;</span><div><div class="lbl">Dijkstra (Scene 5)</div><code>heapq, dist[], settled</code></div></div>
 </div>
 </div>
 
@@ -220,11 +222,11 @@ When Deva conquers a fortress, he <strong>slashes war paint</strong> on the gate
 <!-- Q1: Grouping/connectivity? -->
 <div class="flow-step q-step">
 <div style="font-size:.7em;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Q1</div>
-<strong>Are clans merging or checking if they're the same clan?</strong>
+<strong>Are companies merging or checking if they share the same CEO?</strong>
 <div style="background:rgba(251,191,36,.08);border-radius:6px;padding:10px;margin-top:8px;font-size:.88em">
 <div style="color:var(--gold2);font-weight:700;margin-bottom:4px">How to spot it:</div>
 <div style="color:var(--text)">The problem says <em>"connected components"</em>, <em>"valid tree"</em>, <em>"redundant connection"</em>, <em>"union"</em>, <em>"groups"</em>.<br>
-<strong>Key signal:</strong> You need to <strong>merge sets</strong> of nodes or <strong>count groups</strong> efficiently, especially with edge-by-edge processing.</div>
+<strong>Key signal:</strong> You need to <strong>merge companies</strong> of nodes or <strong>count groups</strong> efficiently, especially with edge-by-edge processing.</div>
 </div>
 </div>
 
@@ -232,8 +234,8 @@ When Deva conquers a fortress, he <strong>slashes war paint</strong> on the gate
 <div class="flow-step s4" style="flex:.6">
 <strong style="color:var(--violet)">YES &rarr;</strong>
 <div><span class="tag t4">Scene 4</span></div>
-<div style="margin-top:6px"><strong style="color:var(--violet);font-size:1.05em">THE BLOOD PACT</strong></div>
-<div style="font-size:.85em;color:var(--muted);margin-top:4px">Union-Find. Merge clans, track leaders.</div>
+<div style="margin-top:6px"><strong style="color:var(--violet);font-size:1.05em">THE CORPORATE MERGER</strong></div>
+<div style="font-size:.85em;color:var(--muted);margin-top:4px">Union-Find. Merge companies, track CEOs.</div>
 </div>
 <div style="display:flex;align-items:center;color:var(--muted);font-weight:700">NO &darr;</div>
 </div>
@@ -255,8 +257,8 @@ When Deva conquers a fortress, he <strong>slashes war paint</strong> on the gate
 <div class="flow-step s5" style="flex:.6">
 <strong style="color:var(--emerald)">YES &rarr;</strong>
 <div><span class="tag t5">Scene 5</span></div>
-<div style="margin-top:6px"><strong style="color:var(--emerald);font-size:1.05em">DEVA'S HORSEBACK MARCH</strong></div>
-<div style="font-size:.85em;color:var(--muted);margin-top:4px">Dijkstra. Priority scroll. Always cheapest next.</div>
+<div style="margin-top:6px"><strong style="color:var(--emerald);font-size:1.05em">DIJ THE TRAVELER</strong></div>
+<div style="font-size:.85em;color:var(--muted);margin-top:4px">Dijkstra. Heap queue. Always closest city next.</div>
 </div>
 <div style="display:flex;align-items:center;color:var(--muted);font-weight:700">NO &darr;</div>
 </div>
@@ -305,6 +307,8 @@ When Deva conquers a fortress, he <strong>slashes war paint</strong> on the gate
 
 <div style="color:var(--crimson);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 1: Deva's Lone Raid</div>
 <div style="color:var(--muted);font-size:.88em;margin-bottom:16px">DFS &mdash; charge deep, backtrack, repeat</div>
+
+<img src="graphs/images/scene_1.png" alt="Scene 1 comic strip — Deva's Lone Raid (DFS)" class="scene-img">
 
 <div style="background:rgba(220,38,38,.08);border:2px solid var(--crimson);border-radius:10px;padding:18px;margin-bottom:16px">
 <div style="color:var(--crimson);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL (Adjacency List)</div>
@@ -406,6 +410,8 @@ for nei in graph[node]:
 <div style="color:var(--blue);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 2: Vardha's War Drums</div>
 <div style="color:var(--muted);font-size:.88em;margin-bottom:16px">BFS &mdash; waves spread outward ring by ring</div>
 
+<img src="graphs/images/scene_2.png" alt="Scene 2 comic strip — Vardha's War Drums (BFS)" class="scene-img">
+
 <div style="background:rgba(37,99,235,.08);border:2px solid var(--blue);border-radius:10px;padding:18px;margin-bottom:16px">
 <div style="color:var(--blue);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL</div>
 <div style="font-size:.95em;color:var(--text);line-height:1.9">
@@ -494,6 +500,8 @@ visited.add(node)  # TOO LATE!
 <div style="color:var(--amber);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 3: Rajamanaar's Battle Plan</div>
 <div style="color:var(--muted);font-size:.88em;margin-bottom:16px">Topological Sort &mdash; plan conquest order by dependencies</div>
 
+<img src="graphs/images/scene_3.png" alt="Scene 3 comic strip — Rajamanaar's Battle Plan (Topological Sort)" class="scene-img">
+
 <div style="background:rgba(245,158,11,.08);border:2px solid var(--amber);border-radius:10px;padding:18px;margin-bottom:16px">
 <div style="color:var(--amber);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL</div>
 <div style="font-size:.95em;color:var(--text);line-height:1.9">
@@ -574,40 +582,43 @@ return order</code></pre>
 <!-- ============ SCENE 4 ============ -->
 <div style="background:var(--card);border:2px solid var(--violet);border-radius:12px;padding:20px;margin-bottom:24px">
 
-<div style="color:var(--violet);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 4: The Blood Pact</div>
-<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">Union-Find &mdash; merge clans, track leaders</div>
+<div style="color:var(--violet);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 4: The Corporate Merger</div>
+<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">Union-Find &mdash; merge companies, track CEOs</div>
+
+<img src="graphs/images/scene_4_A.png" alt="Scene 4 comic strip A — The Corporate Merger story (Union-Find)" class="scene-img">
+<img src="graphs/images/scene_4_B.png" alt="Scene 4 comic strip B — Union-Find step-by-step with code" class="scene-img">
 
 <div style="background:rgba(124,58,237,.08);border:2px solid var(--violet);border-radius:10px;padding:18px;margin-bottom:16px">
 <div style="color:var(--violet);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL</div>
 <div style="font-size:.95em;color:var(--text);line-height:1.9">
-<strong style="color:var(--violet);font-size:1.05em">&#10102;</strong> Every fortress starts as its own <strong>clan</strong>. Each fortress chief <strong>points to himself</strong> &mdash; "I am my own leader."<br>
-<strong style="color:var(--violet);font-size:1.05em">&#10103;</strong> A <strong>blood pact</strong> between two fortresses: the elder traces each fortress's chain up to find their <strong>true clan leader</strong>.<br>
-<strong style="color:var(--violet);font-size:1.05em">&#10104;</strong> Same leader already? They're the <strong>same clan</strong> &mdash; this pact is <strong>REDUNDANT</strong>. Return False.<br>
-<strong style="color:var(--violet);font-size:1.05em">&#10105;</strong> Different leaders? The <strong>weaker leader bows</strong> to the stronger. Clans merge into one.<br>
-<strong style="color:var(--violet);font-size:1.05em">&#10106;</strong> <strong>Shortcut:</strong> every fortress in the chain now points <strong>directly to the top leader</strong> (path compression). Next lookup is instant.
+<strong style="color:var(--violet);font-size:1.05em">&#10102;</strong> Every person starts as their own <strong>CEO</strong>. <code>parent[x] = x</code> &mdash; "I am my own boss."<br>
+<strong style="color:var(--violet);font-size:1.05em">&#10103;</strong> A <strong>merger</strong> between two people: trace each person's chain up to find their <strong>true CEO</strong>.<br>
+<strong style="color:var(--violet);font-size:1.05em">&#10104;</strong> Same CEO already? They're the <strong>same company</strong> &mdash; this merger is <strong>REDUNDANT</strong>. Return False.<br>
+<strong style="color:var(--violet);font-size:1.05em">&#10105;</strong> Different CEOs? The <strong>smaller company goes under the bigger</strong> one (union by rank). Companies merge.<br>
+<strong style="color:var(--violet);font-size:1.05em">&#10106;</strong> <strong>The Efficiency Hack:</strong> every person in the chain now points <strong>directly to the top CEO</strong> (path compression). Next lookup is instant.
 </div>
 <div style="margin-top:10px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:6px;font-size:.88em;color:var(--muted)">
-<strong style="color:var(--violet)">No recursion. No queue. Just arrays.</strong> Two arrays: <code>parent[]</code> (who do I point to?) and <code>rank[]</code> (how strong is my clan?). Two functions: <code>find()</code> and <code>union()</code>. That's the entire data structure.
+<strong style="color:var(--violet)">No recursion. No queue. Just arrays.</strong> Two arrays: <code>parent[]</code> (who's my boss?) and <code>rank[]</code> (how tall is my tree?). Two functions: <code>find()</code> and <code>union()</code>. That's the entire data structure.
 </div>
 </div>
 
 <div style="color:var(--gold2);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">RITUAL &rarr; CODE</div>
 
-<pre><code><span style="color:#6b9955"># &#10102; Every fortress = own clan</span>
+<pre><code><span style="color:#6b9955"># &#10102; Every person = own CEO</span>
 parent = list(range(n))
 rank = [0] * n
 
-<span style="color:#6b9955"># &#10103;&#10106; Find true leader (with path compression shortcut)</span>
+<span style="color:#6b9955"># &#10103;&#10106; Find CEO (with efficiency hack)</span>
 def find(x):
     if parent[x] != x:
-        parent[x] = find(parent[x])  <span style="color:#6b9955"># shortcut: point straight to top</span>
+        parent[x] = find(parent[x])  <span style="color:#6b9955"># efficiency hack: point straight to CEO</span>
     return parent[x]
 
-<span style="color:#6b9955"># &#10103;&#10104;&#10105; Blood pact</span>
+<span style="color:#6b9955"># &#10103;&#10104;&#10105; Merger</span>
 def union(x, y):
     px, py = find(x), find(y)
-    if px == py: return False   <span style="color:#6b9955"># &#10104; same clan = redundant</span>
-    if rank[px] < rank[py]:     <span style="color:#6b9955"># &#10105; weaker bows to stronger</span>
+    if px == py: return False   <span style="color:#6b9955"># &#10104; same company = redundant</span>
+    if rank[px] < rank[py]:     <span style="color:#6b9955"># &#10105; smaller under bigger</span>
         px, py = py, px
     parent[py] = px
     if rank[px] == rank[py]:
@@ -638,13 +649,13 @@ def union(x, y):
 <div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
 <div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; union without checking find first</div>
 <pre style="font-size:.82em;margin:0"><code>parent[x] = y  # Direct assignment!
-# Destroys existing clan structure</code></pre>
+# Destroys existing company structure</code></pre>
 </div>
 <div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
-<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; always find leaders first, then merge</div>
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; always find CEOs first, then merge</div>
 <pre style="font-size:.82em;margin:0"><code>px, py = find(x), find(y)
 if px == py: return False
-parent[py] = px  # merge LEADERS</code></pre>
+parent[py] = px  # merge CEOs</code></pre>
 </div>
 </div>
 </div>
@@ -653,20 +664,24 @@ parent[py] = px  # merge LEADERS</code></pre>
 <!-- ============ SCENE 5 ============ -->
 <div style="background:var(--card);border:2px solid var(--emerald);border-radius:12px;padding:20px;margin-bottom:24px">
 
-<div style="color:var(--emerald);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 5: Deva's Horseback March</div>
-<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">Dijkstra &mdash; priority scroll, always cheapest next</div>
+<div style="color:var(--emerald);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 5: Dij the Traveler</div>
+<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">Dijkstra &mdash; notebook, heap queue, DONE stamp</div>
+
+<img src="graphs/images/scene_5_A.png" alt="Scene 5 comic strip A — Dij the Traveler story (Dijkstra)" class="scene-img">
+<img src="graphs/images/scene_5_B.png" alt="Scene 5 comic strip B — Dijkstra step-by-step trace with code" class="scene-img">
 
 <div style="background:rgba(5,150,105,.08);border:2px solid var(--emerald);border-radius:10px;padding:18px;margin-bottom:16px">
 <div style="color:var(--emerald);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL</div>
 <div style="font-size:.95em;color:var(--text);line-height:1.9">
-<strong style="color:var(--emerald);font-size:1.05em">&#10102;</strong> Deva marks every fortress as <strong>"infinitely dangerous"</strong> except his starting point (cost = 0).<br>
-<strong style="color:var(--emerald);font-size:1.05em">&#10103;</strong> Mounts his horse with a <strong>priority scroll</strong> &mdash; cheapest fortress always floats to the top.<br>
-<strong style="color:var(--emerald);font-size:1.05em">&#10104;</strong> Horse gallops to the <strong>cheapest fortress</strong> on the scroll. Is the real cost <strong>higher</strong> than what Deva already recorded? <strong>Skip it</strong> &mdash; stale intel.<br>
-<strong style="color:var(--emerald);font-size:1.05em">&#10105;</strong> Reads the map scroll. For each road: calculates <strong>total cost</strong> (my cost + road toll). <strong>Cheaper than recorded?</strong> Update the record. Add to priority scroll.<br>
-<strong style="color:var(--emerald);font-size:1.05em">&#10106;</strong> Rides to the <strong>next cheapest</strong> fortress on the scroll. Repeats from &#10104;. Stops when scroll is <strong>empty</strong>.
+<strong style="color:var(--emerald);font-size:1.05em">&#10102;</strong> Dij opens his <strong>notebook</strong> &mdash; writes <strong>&infin;</strong> for every city except the start (distance = 0). Seeds the <strong>heap queue</strong> with the start city.<br>
+<strong style="color:var(--emerald);font-size:1.05em">&#10103;</strong> <strong>Pop</strong> the closest city from the heap queue &mdash; smallest distance always comes out first.<br>
+<strong style="color:var(--emerald);font-size:1.05em">&#10104;</strong> Already <strong>DONE-stamped?</strong> Stale ticket &mdash; <strong>skip it</strong>.<br>
+<strong style="color:var(--emerald);font-size:1.05em">&#10105;</strong> Stamp it <strong>DONE</strong>. Its distance is now final.<br>
+<strong style="color:var(--emerald);font-size:1.05em">&#10106;</strong> <strong>Relax neighbors:</strong> for each road out, calculate <code>my dist + road weight</code>. <strong>Shorter than notebook?</strong> Update notebook, push neighbor into the heap queue.<br>
+<strong style="color:var(--emerald);font-size:1.05em">&#10107;</strong> Repeat from &#10103;. Stop when the heap queue is <strong>empty</strong>.
 </div>
 <div style="margin-top:10px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:6px;font-size:.88em;color:var(--muted)">
-<strong style="color:var(--emerald)">Priority scroll = min-heap.</strong> Unlike BFS where everything costs 1, here roads have different tolls. The horse (heap) always picks the cheapest next destination. That's why Dijkstra finds the shortest <em>weighted</em> path.
+<strong style="color:var(--emerald)">Three magic items:</strong> <code>dist</code> (notebook &mdash; best-known distance per city), <code>queue</code> (min-heap &mdash; always hands back the smallest ticket first), <code>settled</code> (DONE stamp set &mdash; once stamped, never touched again). Non-negative edges only!
 </div>
 </div>
 
@@ -674,28 +689,33 @@ parent[py] = px  # merge LEADERS</code></pre>
 <div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
 <div class="ritual-step">
 <div style="background:#059669 25;font-weight:700;color:var(--emerald);display:flex;align-items:center;justify-content:center">&#10102;</div>
-<div style="background:#05966912;font-size:.9em"><strong>Everything = infinity.</strong> Start = 0.</div>
-<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>dist = [float('inf')]*n; dist[start] = 0</code></div>
+<div style="background:#05966912;font-size:.9em"><strong>Notebook = &infin; everywhere.</strong> Start = 0. Seed heap.</div>
+<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>dist={c:inf for c in graph}; dist[start]=0; queue=[(0,start)]; settled=set()</code></div>
 </div>
 <div class="ritual-step">
 <div style="background:#05966925;font-weight:700;color:var(--emerald);display:flex;align-items:center;justify-content:center">&#10103;</div>
-<div style="background:#05966912;font-size:.9em"><strong>Mount horse</strong> with priority scroll.</div>
-<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>heap = [(0, start)]</code></div>
+<div style="background:#05966912;font-size:.9em"><strong>Pop closest</strong> from heap queue.</div>
+<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>d, city = heappop(queue)</code></div>
 </div>
 <div class="ritual-step">
 <div style="background:#05966925;font-weight:700;color:var(--emerald);display:flex;align-items:center;justify-content:center">&#10104;</div>
-<div style="background:#05966912;font-size:.9em"><strong>Gallop to cheapest.</strong> Stale intel? Skip.</div>
-<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>cost,node = heappop(heap); if cost>dist[node]: continue</code></div>
+<div style="background:#05966912;font-size:.9em"><strong>DONE-stamped?</strong> Stale &mdash; skip.</div>
+<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>if city in settled: continue</code></div>
 </div>
 <div class="ritual-step">
 <div style="background:#05966925;font-weight:700;color:var(--emerald);display:flex;align-items:center;justify-content:center">&#10105;</div>
-<div style="background:#05966912;font-size:.9em"><strong>Each road: my cost + toll.</strong> Cheaper? Update &amp; add.</div>
-<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>nc=cost+w; if nc&lt;dist[nei]: dist[nei]=nc; heappush(heap,(nc,nei))</code></div>
+<div style="background:#05966912;font-size:.9em"><strong>Stamp DONE.</strong> Distance is final.</div>
+<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>settled.add(city)</code></div>
 </div>
 <div class="ritual-step">
 <div style="background:#05966925;font-weight:700;color:var(--emerald);display:flex;align-items:center;justify-content:center">&#10106;</div>
-<div style="background:#05966912;font-size:.9em"><strong>Next cheapest.</strong> Repeat. Stop when empty.</div>
-<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>while heap:  # outer loop wraps &#10104;</code></div>
+<div style="background:#05966912;font-size:.9em"><strong>Relax neighbors.</strong> Shorter? Update &amp; push.</div>
+<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>new_dist=d+w; if new_dist&lt;dist[nei]: dist[nei]=new_dist; heappush(queue,(new_dist,nei))</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#05966925;font-weight:700;color:var(--emerald);display:flex;align-items:center;justify-content:center">&#10107;</div>
+<div style="background:#05966912;font-size:.9em"><strong>Repeat.</strong> Stop when heap empty.</div>
+<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>while queue:  # outer loop wraps &#10103;</code></div>
 </div>
 </div>
 
@@ -703,24 +723,24 @@ parent[py] = px  # merge LEADERS</code></pre>
 <div style="color:var(--emerald);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 <div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
-<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; no stale check</div>
-<pre style="font-size:.82em;margin:0"><code>cost, node = heappop(heap)
-# Process even if we already found
-# a cheaper path! Wastes time.</code></pre>
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; no DONE check</div>
+<pre style="font-size:.82em;margin:0"><code>d, city = heappop(queue)
+# Process even if already stamped DONE!
+# Wastes time on stale tickets.</code></pre>
 </div>
 <div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
-<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; skip stale intel</div>
-<pre style="font-size:.82em;margin:0"><code>cost, node = heappop(heap)
-if cost > dist[node]:
-    continue  # stale! already beaten</code></pre>
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; skip DONE-stamped cities</div>
+<pre style="font-size:.82em;margin:0"><code>d, city = heappop(queue)
+if city in settled:
+    continue  # already DONE — skip</code></pre>
 </div>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 <div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
 <div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; using Dijkstra with negative weights</div>
-<pre style="font-size:.82em;margin:0"><code># Road toll = -5?
-# Dijkstra assumes: once a node is
-# settled, no cheaper path exists.
+<pre style="font-size:.82em;margin:0"><code># Road weight = -5?
+# Dijkstra assumes: once DONE-stamped,
+# no shorter path exists.
 # Negative edges break this!</code></pre>
 </div>
 <div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
@@ -1168,7 +1188,7 @@ Identical to Course Schedule, but instead of just counting, <strong>record the c
 </div></div>
 
 <!-- ============ SCENE 4 PROBLEMS ============ -->
-<h3 style="color:var(--violet);border-bottom:1px solid var(--violet);padding-bottom:6px">Scene 4 &mdash; The Blood Pact (Union-Find)</h3>
+<h3 style="color:var(--violet);border-bottom:1px solid var(--violet);padding-bottom:6px">Scene 4 &mdash; The Corporate Merger (Union-Find)</h3>
 
 <!-- PROBLEM 12: Graph Valid Tree -->
 <div class="deriv" onclick="this.classList.toggle('open')">
@@ -1180,12 +1200,12 @@ Identical to Course Schedule, but instead of just counting, <strong>record the c
 "Connected, no cycles" = checking connectivity of groups. &rarr; <span class="tag t4">Scene 4</span></div>
 
 <div class="sbox"><div class="sl" style="color:var(--violet)">THE RITUAL</div>
-A valid tree has exactly <strong>n-1 edges</strong> and is <strong>fully connected</strong>. Process each blood pact. If any pact tries to merge two fortresses that are already the same clan → cycle → NOT a tree.
+A valid tree has exactly <strong>n-1 edges</strong> and is <strong>fully connected</strong>. Process each merger. If any merger tries to merge two nodes that are already in the same company → cycle → NOT a tree.
 </div>
 
 <div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
 <strong>Quick check first:</strong> If <code>edges != n-1</code>, immediately return False.<br>
-<strong>Union all edges:</strong> If any <code>union()</code> returns False → same clan already → cycle.<br>
+<strong>Union all edges:</strong> If any <code>union()</code> returns False → same company already → cycle.<br>
 <strong>Both conditions needed:</strong> n-1 edges AND no redundant unions.
 </div>
 
@@ -1202,7 +1222,7 @@ A valid tree has exactly <strong>n-1 edges</strong> and is <strong>fully connect
 
     def union(x, y):
         px, py = find(x), find(y)
-        if px == py: return False      <span style="color:#6b9955"># same clan = cycle!</span>
+        if px == py: return False      <span style="color:#6b9955"># same company = cycle!</span>
         if rank[px] < rank[py]: px, py = py, px
         parent[py] = px
         if rank[px] == rank[py]: rank[px] += 1
@@ -1221,7 +1241,7 @@ A valid tree has exactly <strong>n-1 edges</strong> and is <strong>fully connect
 Count groups = grouping/connectivity. &rarr; <span class="tag t4">Scene 4</span></div>
 
 <div class="sbox"><div class="sl" style="color:var(--violet)">THE RITUAL</div>
-Start with <strong>n separate clans</strong> (components = n). Each successful blood pact merges two clans into one → components decreases by 1. After all pacts, the remaining count is the answer.
+Start with <strong>n separate companies</strong> (components = n). Each successful merger combines two companies into one → components decreases by 1. After all mergers, the remaining count is the answer.
 </div>
 
 <div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
@@ -1245,7 +1265,7 @@ Start with <strong>n separate clans</strong> (components = n). Each successful b
         if rank[px] < rank[py]: px, py = py, px
         parent[py] = px
         if rank[px] == rank[py]: rank[px] += 1
-        components -= 1                <span style="color:#6b9955"># merged! one fewer clan</span>
+        components -= 1                <span style="color:#6b9955"># merged! one fewer company</span>
 
     for u, v in edges:
         union(u, v)
@@ -1262,7 +1282,7 @@ Start with <strong>n separate clans</strong> (components = n). Each successful b
 Find the edge that creates a cycle = grouping/connectivity check. &rarr; <span class="tag t4">Scene 4</span></div>
 
 <div class="sbox"><div class="sl" style="color:var(--violet)">THE RITUAL</div>
-Process blood pacts one by one. The pact where both fortresses are <strong>ALREADY in the same clan</strong> → that's the redundant road. It would create a cycle. Return that edge.
+Process mergers one by one. The merger where both nodes are <strong>ALREADY in the same company</strong> → that's the redundant connection. It would create a cycle. Return that edge.
 </div>
 
 <div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
@@ -1288,12 +1308,12 @@ Process blood pacts one by one. The pact where both fortresses are <strong>ALREA
         return True
 
     for u, v in edges:
-        if not union(u, v):            <span style="color:#6b9955"># same clan already</span>
+        if not union(u, v):            <span style="color:#6b9955"># same company already</span>
             return [u, v]              <span style="color:#6b9955"># this is the extra road</span></code></pre>
 </div></div>
 
 <!-- ============ SCENE 5 PROBLEMS ============ -->
-<h3 style="color:var(--emerald);border-bottom:1px solid var(--emerald);padding-bottom:6px">Scene 5 &mdash; Deva's Horseback March (Dijkstra / Weighted)</h3>
+<h3 style="color:var(--emerald);border-bottom:1px solid var(--emerald);padding-bottom:6px">Scene 5 &mdash; Dij the Traveler (Dijkstra / Weighted)</h3>
 
 <!-- PROBLEM 15: Network Delay Time -->
 <div class="deriv" onclick="this.classList.toggle('open')">
@@ -1305,7 +1325,7 @@ Process blood pacts one by one. The pact where both fortresses are <strong>ALREA
 Weighted edges + shortest path from source. &rarr; <span class="tag t5">Scene 5</span></div>
 
 <div class="sbox"><div class="sl" style="color:var(--emerald)">THE RITUAL</div>
-Standard Deva's march from source <code>k</code>. After the march, the answer is the <strong>maximum distance</strong> in the dist array &mdash; the slowest fortress to reach determines total time. If any fortress is still infinity → not all reachable → return -1.
+Standard Dijkstra from source <code>k</code>. After the traversal, the answer is the <strong>maximum distance</strong> in the dist array &mdash; the slowest city to reach determines total time. If any city is still infinity &rarr; not all reachable &rarr; return -1.
 </div>
 
 <div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
@@ -1319,13 +1339,15 @@ Standard Deva's march from source <code>k</code>. After the march, the answer is
 
     dist = {i: float('inf') for i in range(1, n+1)}
     dist[k] = 0                        <span style="color:#6b9955"># start = 0</span>
-    heap = [(0, k)]                    <span style="color:#6b9955"># priority scroll</span>
+    heap = [(0, k)]                    <span style="color:#6b9955"># heap queue</span>
+    settled = set()
 
     while heap:
-        cost, node = heappop(heap)     <span style="color:#6b9955"># cheapest fortress</span>
-        if cost > dist[node]: continue <span style="color:#6b9955"># stale intel</span>
+        cost, node = heappop(heap)     <span style="color:#6b9955"># pop closest city</span>
+        if node in settled: continue   <span style="color:#6b9955"># already DONE-stamped</span>
+        settled.add(node)
         for nei, w in graph[node]:
-            nc = cost + w              <span style="color:#6b9955"># my cost + toll</span>
+            nc = cost + w              <span style="color:#6b9955"># my dist + road weight</span>
             if nc < dist[nei]:
                 dist[nei] = nc
                 heappush(heap, (nc, nei))
@@ -1344,7 +1366,7 @@ Standard Deva's march from source <code>k</code>. After the march, the answer is
 Grid with costs (elevations) and need minimum cost path. &rarr; <span class="tag t5">Scene 5</span></div>
 
 <div class="sbox"><div class="sl" style="color:var(--emerald)">THE RITUAL</div>
-Modified Dijkstra on a grid. Deva's horse gallops to the cell with the <strong>lowest elevation</strong> next. The cost to reach a cell = <strong>max elevation along the path</strong> (you need to wait until the water rises to the highest point on your path).
+Modified Dijkstra on a grid. Pop the cell with the <strong>lowest elevation</strong> next. The cost to reach a cell = <strong>max elevation along the path</strong> (you need to wait until the water rises to the highest point on your path).
 </div>
 
 <div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
@@ -1380,7 +1402,7 @@ Modified Dijkstra on a grid. Deva's horse gallops to the cell with the <strong>l
 Weighted edges + shortest path with a constraint. &rarr; <span class="tag t5">Scene 5</span> (modified)</div>
 
 <div class="sbox"><div class="sl" style="color:var(--emerald)">THE RITUAL</div>
-<strong>Bellman-Ford with K+1 rounds</strong> instead of Dijkstra. Each round, Deva relaxes ALL roads. But he only does K+1 rounds max (K stops = K+1 flights). This naturally limits the path length.
+<strong>Bellman-Ford with K+1 rounds</strong> instead of Dijkstra. Each round, relax ALL edges. But only K+1 rounds max (K stops = K+1 flights). This naturally limits the path length.
 </div>
 
 <div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
@@ -1412,7 +1434,7 @@ Weighted edges + shortest path with a constraint. &rarr; <span class="tag t5">Sc
 "Minimum cost to connect ALL" = weighted edges + connect everything. &rarr; <span class="tag t5">Scene 5</span> (Prim's MST, very similar to Dijkstra)</div>
 
 <div class="sbox"><div class="sl" style="color:var(--emerald)">THE RITUAL</div>
-<strong>Prim's algorithm</strong> (Dijkstra's cousin). Start from any fortress. Always extend to the <strong>cheapest unconnected</strong> fortress. Repeat until all fortresses are connected. Total cost = minimum spanning tree.
+<strong>Prim's algorithm</strong> (Dijkstra's cousin). Start from any node. Always extend to the <strong>cheapest unconnected</strong> node. Repeat until all nodes are connected. Total cost = minimum spanning tree.
 </div>
 
 <div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
@@ -1467,12 +1489,12 @@ Weighted edges + shortest path with a constraint. &rarr; <span class="tag t5">Sc
 
 <div class="quiz" onclick="this.classList.toggle('show')">
 <strong>4. What scene for: "Find the extra edge that creates a cycle in a tree?"</strong>
-<div class="ans"><span class="tag t4">Scene 4</span> <strong>The Blood Pact (Union-Find).</strong> Process edges one by one. The first edge where both nodes are already in the same clan = redundant.</div>
+<div class="ans"><span class="tag t4">Scene 4</span> <strong>The Corporate Merger (Union-Find).</strong> Process edges one by one. The first edge where both nodes are already in the same company = redundant.</div>
 </div>
 
 <div class="quiz" onclick="this.classList.toggle('show')">
-<strong>5. In Dijkstra (Scene 5), what does "stale intel" mean?</strong>
-<div class="ans">When you pop a fortress from the heap, its recorded cost might be <strong>higher than the best known distance</strong> (dist[node]). That means you already found a cheaper path. Skip it — don't process stale entries.</div>
+<strong>5. In Dijkstra (Scene 5), what does a "stale ticket" mean?</strong>
+<div class="ans">When you pop a city from the heap, it might already be <strong>DONE-stamped</strong> (in the settled set). That means you already found its shortest distance. Skip it &mdash; it's a stale duplicate ticket.</div>
 </div>
 
 <div class="quiz" onclick="this.classList.toggle('show')">
@@ -1487,7 +1509,7 @@ Weighted edges + shortest path with a constraint. &rarr; <span class="tag t5">Sc
 
 <div class="quiz" onclick="this.classList.toggle('show')">
 <strong>8. In Union-Find, what is path compression?</strong>
-<div class="ans"><strong>The shortcut.</strong> When finding the clan leader, make every fortress in the chain point directly to the top leader. Next time anyone in that chain calls <code>find()</code>, it's instant. Code: <code>parent[x] = find(parent[x])</code>.</div>
+<div class="ans"><strong>The Efficiency Hack.</strong> When finding the CEO, make every person in the chain point directly to the top CEO. Next time anyone in that chain calls <code>find()</code>, it's instant. Code: <code>parent[x] = find(parent[x])</code>.</div>
 </div>
 
 <div class="quiz" onclick="this.classList.toggle('show')">
@@ -1506,8 +1528,8 @@ Weighted edges + shortest path with a constraint. &rarr; <span class="tag t5">Sc
 <tr><td><span class="tag t1">1</span></td><td>Deva</td><td>DFS</td><td>Recursion + visited set</td><td>Explore connected regions, traversal, path finding</td></tr>
 <tr><td><span class="tag t2">2</span></td><td>Vardha</td><td>BFS</td><td>Queue (deque) + visited set</td><td>Shortest unweighted path, level-by-level, simultaneous spread</td></tr>
 <tr><td><span class="tag t3">3</span></td><td>Rajamanaar</td><td>Topological Sort</td><td>In-degree array + queue</td><td>Prerequisites, ordering, dependency chains</td></tr>
-<tr><td><span class="tag t4">4</span></td><td>The Elder</td><td>Union-Find</td><td>Parent + rank arrays</td><td>Merge groups, count components, detect cycles in undirected</td></tr>
-<tr><td><span class="tag t5">5</span></td><td>Deva on horse</td><td>Dijkstra / Prim's</td><td>Min-heap + dist array</td><td>Weighted shortest path, MST</td></tr>
+<tr><td><span class="tag t4">4</span></td><td>The Board Room</td><td>Union-Find</td><td>Parent + rank arrays</td><td>Merge companies, count components, detect cycles in undirected</td></tr>
+<tr><td><span class="tag t5">5</span></td><td>Dij the Traveler</td><td>Dijkstra / Prim's</td><td>Min-heap + dist dict + settled set</td><td>Weighted shortest path, MST</td></tr>
 </table>
 
 </div>

@@ -1,136 +1,272 @@
-Generate a bright, cheerful, fun comic-strip illustration with 20 panels. Row 1 has 5 panels, Row 2 has 5 panels, Row 3 has 5 panels, Row 4 has 5 panels. Happy colorful comic book art — think animated movie poster energy. White background between panels.
+SCENE 5: DIJ THE TRAVELER — DIJKSTRA'S ALGORITHM
+=================================================
+5 prompts total: 1 character reference + 4 tutorial pages (1024×1792 each).
+Graph: Seattle-Portland(3), Seattle-SF(13), Seattle-Vegas(25),
+       Portland-SF(10), SF-Vegas(9), SF-Phoenix(11), Vegas-Phoenix(4)
+Final distances: Seattle=0, Portland=3, SF=13, Vegas=22, Phoenix=24
 
-**Title bar:** "Scene 5: Dij the Traveler (Dijkstra)"
 
-**Characters:**
-- **Dij:** A cheerful female traveler (inspired by Shruti Haasan). Wears a hat, carries a satchel. EXPRESSIVE — excited grins, wide eyes at discoveries, dramatic gestures. Fun adventurer energy.
+PROMPT 0 — CHARACTER REFERENCE (generate first, use as style reference for prompts 1-4)
+=========================================================================================
 
-**Three Magic Items:**
-- **NOTEBOOK** (dist dict) — a small leather notebook. One page per city. Dij writes the best-known travel time on each page. Pages start at infinity (∞). When she finds a shorter route, she erases and rewrites.
-- **HEAP QUEUE** (min-heap) — a wooden box labeled "HEAP BOX" on the table. City tickets float inside. The ticket with the SMALLEST distance always floats to the TOP. She always grabs from the top.
-- **SETTLED BOARD / DONE STAMP** (settled set) — a board on the wall with hooks. When a city is finalized, she stamps it DONE and hangs it on the board. Once stamped, never touched again.
+Create a tall portrait image (1024×1792) with a clean white background. Soft 3D cartoon style (Pixar/Disney energy), bright and cheerful.
 
-**NO TEXT ON ANY PROP.** Text ONLY in captions.
+Show a cheerful young woman named Dij — dark brown wavy shoulder-length hair, purple sweater, dark jeans, warm brown eyes, confident friendly smile.
 
-**MAP LAYOUT — 5 West Coast Cities:**
-- Seattle (start)
-- Portland (3 hours from Seattle)
-- San Francisco (10 hours from Portland)
-- Las Vegas (20 hours from Portland, 9 hours from SF)
-- Phoenix (11 hours from SF, 5 hours from Las Vegas)
+She is standing front-facing, equipped with all 3 items at once. Each item must look WILDLY different from the others — unique shape, unique color, unique personality. They should be instantly distinguishable even as tiny thumbnails.
 
-6 roads:
-- Seattle ↔ Portland: 3
-- Portland ↔ San Francisco: 10
-- Portland ↔ Las Vegas: 20
-- San Francisco ↔ Las Vegas: 9
-- San Francisco ↔ Phoenix: 11
-- Las Vegas ↔ Phoenix: 5
+Left hand — Dex the Notebook (dist):
+A chunky tan/brown leather-bound spiral notebook with GOLD page edges. Has a cute sleepy/wise face (half-closed eyes, small knowing smile) — he's the "bookworm" of the group. A yellow pencil tucked into the spiral. Pages fanning open showing handwritten numbers. Warm golden GLOW around him. He is ROUND and SOFT shaped.
+Label: "Dex (dist)"
 
-**Panel 1 — "Starting Out!"**
-Dij stands at Seattle with her notebook open. dist(Seattle) = 0. All other pages show ∞. She's excited to begin her journey. Road map visible behind her with all 5 cities.
-Text: "dist(Seattle) = 0. All others = ∞. Dij's starting her road trip!"
+Standing beside Dij (waist height) — Poppy the Ticket Machine (heap):
+A BRIGHT CHERRY RED boxy mechanical machine — TALL and RECTANGULAR with sharp geometric edges. Big enthusiastic face (wide round eyes, huge excited grin) — she's the hyperactive one, always buzzing. A chrome lever/crank handle on the side. A glowing slot on top where tickets go IN. A dispensing slot at the bottom spitting out a cream-colored ticket showing (0, Seattle). Small STEAM PUFFS coming out the sides like she's working hard. She has METALLIC SHINE and RIVETS on her body.
+Label: "Poppy (heap)"
 
-**Panel 2 — "Build the list!"**
-She drops the first ticket into the HEAP BOX — (0, Seattle). The box glows. Settled board is empty. Heap Queue initialized.
-Text: "dist: Seattle=0. Heap Queue: [(0, Seattle)]. settled = {}."
-Code ref: lines 1-4.
+Right hand — Shetty the Checklist (settled set):
+A BRIGHT LIME GREEN clipboard — FLAT and WIDE with a big silver metal clip at the top. Has a proud/serious face (determined eyes, firm little smile) — he's the "security guard" of the group, stamps things DONE. The board shows 5 checkbox rows: Seattle checked, Portland checked, SF unchecked, Vegas unchecked, Phoenix unchecked. Checked boxes have BIG RED checkmarks. A small golden "DONE!" stamp badge hanging from the clip. He has a MATTE TEXTURE, completely flat — no shine, opposite of Poppy's metallic look.
+Label: "Shetty (settled set)"
 
-**Panel 3 — "The queue is ready? Exciting!"**
-The heap box is shown with the (0, Seattle) ticket floating at the top, auto-sorted for smallest. She's reaching in to grab it.
-Text: "Heap is auto-sorted for smallest!"
-Code ref: line 5 (while queue).
+Visual contrast summary (IMPORTANT):
+- Dex = ROUND, WARM BROWN/GOLD, soft glow, sleepy personality
+- Poppy = BOXY, CHERRY RED, metallic shine + steam, hyper personality
+- Shetty = FLAT, LIME GREEN, matte texture, serious personality
 
-**Panel 4 — "Heap pop: Seattle. First stop!"**
-She pops (0, Seattle) from the heap. Examines the ticket. Not in settled yet — good to go!
-Text: "pop heap → (0, Seattle). Not in settled. Let's go!"
-Code ref: lines 6-8.
+Below the character, a bold banner reads: "Dij the Traveler — ready to find the shortest path!"
 
-**Panel 5 — "Seattle pop. First stop!"**
-She stamps Seattle DONE on the settled board. One hook now holds Seattle's shield.
-Text: "settled = {Seattle}. DONE — Seattle."
-Code ref: line 9.
+Each object should POP with its own distinct color, shape, and texture. Even in a small thumbnail, you should instantly tell them apart: the warm round brown one, the shiny red boxy one, and the flat green wide one.
 
-**Panel 6 — "One done, fresh and clean!"**
-DONE stamp shown prominently. Settled board has Seattle. She looks at the roads from Seattle.
-Text: "DONE — Seattle. One done, fresh and clean!"
-Code ref: lines 7-9.
+NAME MNEMONICS:
+- Dex = "dict" + "index" → dictionary/hashmap
+- Poppy = "heappop()" → heap/priority queue
+- Shetty = "set" → set (membership check)
 
-**Panel 7 — "Look! A new route to Portland!"**
-She traces the road from Seattle to Portland. 0 + 3 = 3. Writes 3 in her notebook for Portland. Drops (3, Portland) ticket into heap box.
-Text: "Dij's notebook updates. dist(Portland) = 0+3 = 3."
-Code ref: lines 10-14.
 
-**Panel 8 — "Portland's great!"**
-Pops (3, Portland) from heap. Not settled. Stamps Portland DONE. Now explores Portland's neighbors.
-Text: "Stamp it! Now where does it lead?"
-Code ref: lines 6-9.
+PROMPT 1 OF 4 — Intro + Setup + Iteration 1 (Pages 1-3)
+=========================================================
 
-**Panel 9 — "Racing through San Francisco"**
-From Portland: SF = 3+10 = 13, Las Vegas = 3+20 = 23. Updates notebook. Pushes both tickets.
-Text: "queue = [(13, SF), (13, Vegas)] → settled = {Seattle, Portland}."
+Create a tall portrait infographic (1024×1792) for Dijkstra's algorithm tutorial.
 
-**Panel 10 — "Discover the 23h Vegas route"**
-Shows the notebook update: dist(Vegas) = 23 (via Portland direct). But there might be a shorter way...
-Text: "dist(Vegas) = 22. 3+10+9 = 22. Shorter than 23!"
-Note: This is where the climax happens — Vegas via SF (22) beats Vegas direct (23).
+CRITICAL DESIGN RULES:
+- ALL text must be HUGE — section titles 60pt+, body text 32pt+, code 26pt+
+- SHOW don't tell. Use big arrows, crossed-out numbers, green checkmarks, red X marks, color-coded boxes. If a picture can say it, don't write a sentence.
+- Every single element must be readable on a phone held vertically WITHOUT zooming
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
 
-**Panel 11 — "Popping (22, Vegas)"**
-Pops Vegas ticket. Not settled. Stamps DONE. Explores neighbors from Vegas.
-Text: "No shortcuts needed! LV settled."
+Style: soft 3D cartoon characters, light purple/lavender section backgrounds, white/cream rounded content cards, dark purple headers with LARGE circled page numbers in top-right. Code in large monospace on light gray rounded boxes.
 
-**Panel 12 — "The stale (23, Vegas)"**
-Pops old (23, Vegas) ticket from heap — but Vegas is ALREADY on the settled board! She tosses the stale ticket over her shoulder.
-Text: "Wait! This one's already done! Bin it!"
-Code ref: lines 7-8 (stale check).
+Characters (use EXACT same designs in ALL 4 images — consistency is critical):
+- Dij: young woman with dark brown hair, purple sweater, cheerful expression, pointing up
+- Dex the Notebook: chunky tan/brown leather-bound spiral notebook with GOLD page edges, cute sleepy/wise face (half-closed eyes, knowing smile), yellow pencil tucked in spiral, ROUND and SOFT shaped, warm golden GLOW — label "(dist)"
+- Poppy the Ticket Machine: BRIGHT CHERRY RED boxy mechanical machine with sharp geometric edges, big enthusiastic face (wide eyes, huge excited grin), chrome lever on side, glowing slot on top, steam puffs from sides, METALLIC SHINE and RIVETS — label "(heap)"
+- Shetty the Checklist: BRIGHT LIME GREEN clipboard, FLAT and WIDE, big silver metal clip at top, proud/serious face (determined eyes, firm smile), golden "DONE!" stamp badge hanging from clip, MATTE TEXTURE — label "(settled set)"
+- Tickets: cream/tan paper slips, each showing (distance, city) in large text
+- Graph nodes: LARGE colored ovals — Seattle(blue), Portland(green), SF(teal), Vegas(orange), Phoenix(purple). Edge weights shown as large numbers on the lines.
 
-**Panel 13 — "Popping (24, Phoenix)"**
-Pops Phoenix ticket. Stamps DONE. All 5 cities now on the settled board!
-Text: "Popping (24, Phoenix). Final stamp!"
+THE EXACT GRAPH — draw this precisely, do NOT invent edges:
+  Seattle —3— Portland
+  Seattle —13— SF
+  Seattle —25— Vegas
+  Portland —10— SF
+  SF —9— Vegas
+  SF —11— Phoenix
+  Vegas —4— Phoenix
+That's 7 edges total. There is NO Portland-Vegas edge. NO Portland-Phoenix edge. NO Seattle-Phoenix edge.
 
-**Panel 14 — "Final stop! Mission complete!"**
-All 5 cities stamped DONE on the settled board. Notebook shows final distances: Seattle=0, Portland=3, SF=13, Vegas=22, Phoenix=24.
-Text: "settled = {Seattle, Portland, SF, Vegas, Phoenix}."
+Stack 3 sections vertically:
 
-**Panel 15 — "The queue is empty!"**
-Heap box is empty. She reaches in and finds nothing. Journey complete!
-Text: "The queue is empty! Iteration complete!"
-Code ref: line 5 again (while queue — now false).
+PAGE 1 — "DIJKSTRA'S ALGORITHM" (LARGE circled 1 top-right):
+BIG bold title "DIJKSTRA'S ALGORITHM"
+Left side: Dij (large) with speech bubble: "Shortest path from Seattle to every city!"
+Right side: The weighted graph drawn LARGE with all 7 edges. Nodes are big colored ovals. Edge weights are big bold numbers on the lines. Make the graph take up significant space — it's the centerpiece.
+Below the graph: Three LARGE character cards side by side, each showing the character big with just their name and a 3-4 word role:
+  Dex the Notebook (dist) — "Best distances so far"
+  Poppy the Ticket Machine (heap) — "Smallest ticket first"
+  Shetty the Checklist (settled set) — "Who's done?"
+Bottom gold banner: WRITE → CHOOSE → SEAL → RELAX → repeat
 
-**Panel 16 — "My journey is complete."**
-Dij stands triumphant with her filled notebook. All distances confirmed.
-Text: "dist: Seattle=0, Portland=3, SF=13, Vegas=22, Phoenix=24."
+PAGE 2 — "THE SETUP" (LARGE circled 2 top-right):
+Header: "THE SETUP" — "Everyone gets ready."
+Show 3 characters LARGE side by side:
+  Dex (notebook open): Seattle = 0, Portland = ∞, SF = ∞, Vegas = ∞, Phoenix = ∞. Label: "Start city = 0. Rest = ∞"
+  Poppy (machine): "(empty)"
+  Shetty (clipboard): all 5 cities with empty boxes. Label: "All unchecked"
+Below: Dij hands first ticket to Poppy. Show code: heappush(queue, (0, 'Seattle')). Big arrow to Poppy now holding ticket (0, Seattle). Label: "First ticket!"
 
-**Panel 17 — Summary steps (bottom row)**
-Visual summary of the 4-step loop:
-1. Pop min ticket
-2. Skip check (already DONE?)
-3. Stamp DONE
-4. Relax neighbors
-Text: "1. Pop min ticket. 2. Skip check. 3. Stamp DONE. 4. Relax neighbors."
+PAGE 3 — "MAIN LOOP — ITERATION 1" (LARGE circled 3 top-right):
+Three BIG visual step cards stacked:
+  STEP 1 — POP (blue card): Show Poppy dispensing ticket (0, Seattle) in LARGE text. Code: d, city = heappop(queue). Below: d = 0, city = Seattle. Dij speech bubble: "Distance 0 to Seattle!"
+  STEP 2 — CHECK (yellow card): Show Shetty holding clipboard. Seattle = unchecked. Code: if city in settled: continue. Shetty speech bubble: "Not done yet!"
+  STEP 3 — SEAL (green card): Show Shetty's clipboard: Seattle = checked (big green checkmark). Code: settled.add(city). BIG green badge: "DONE!" "Shortest distance to Seattle is final."
 
-**Panel 18 — "Why settling is safe"**
-Explains why the popped minimum is guaranteed: non-negative edges mean no future path can beat the current shortest.
-Text: "Guaranteed minimum — smallest always popped first!"
 
-**Panel 19 — "NON-NEGATIVE EDGES ONLY!"**
-WARNING PANEL with yellow/crimson background. Big warning sign. Negative edges would let a settled city get a shorter distance later — breaking the algorithm.
-Text: "NON-NEGATIVE EDGES ONLY! Don't let negative edges trick Dijkstra!"
+PROMPT 2 OF 4 — Relax Seattle + Portland + SF (Pages 4-6)
+==========================================================
 
-**Panel 20 — "Exploration complete!"**
-Wide final shot. Dij with all her gear, notebook open showing final distances, settled board full, heap box empty. Warm golden glow.
-Text: "dijkstra(graph, start) → {Seattle:0, Portland:3, SF:13, LV:22, Phoenix:24}."
+Continue the Dijkstra tutorial. Tall portrait (1024×1792). SAME exact style. SAME exact character designs. ALL text HUGE (titles 60pt+, body 32pt+, code 26pt+). Show don't tell — use arrows, crossed-out numbers, checkmarks/X marks. Max 15 words per explanation.
 
-**Style:**
-- BRIGHT, HAPPY, COLORFUL — Pixar energy. Not dark or moody.
-- White background between panels.
-- Dij is EXPRESSIVE — excited grins, wide eyes at shorter routes, dramatic toss of stale tickets, triumph at completion.
-- HEAP BOX is a wooden chest, tickets float inside sorted by distance.
-- SETTLED BOARD has hooks with DONE stamps/shields.
-- NOTEBOOK is leather-bound, pages with city names and distances.
-- West coast cities shown on a road map background.
-- Code line references shown in small text where applicable.
-- Panel borders with rounded corners.
-- Text short — in clean text box at bottom.
-- WARNING panel (19) has crimson/yellow background. All others neutral/white.
-- THE STORY ARC: start at Seattle → init heap → pop/settle loop → discover shorter route (climax!) → stale ticket (teaching moment) → all settled → empty heap → summary → warning → complete.
+SAME characters:
+- Dij: dark hair, purple sweater
+- Dex: tan/gold notebook with sleepy wise face
+- Poppy: cherry red ticket machine with excited face
+- Shetty: lime green clipboard with serious face
+
+EXACT GRAPH (show small in corner of page 4):
+Seattle-Portland(3), Seattle-SF(13), Seattle-Vegas(25), Portland-SF(10), SF-Vegas(9), SF-Phoenix(11), Vegas-Phoenix(4). NO other edges.
+
+EXACT ADJACENCY — critical for correct trace:
+- Seattle connects to: Portland(3), SF(13), Vegas(25) — 3 neighbors
+- Portland connects to: Seattle(3), SF(10) — 2 neighbors only
+- SF connects to: Seattle(13), Portland(10), Vegas(9), Phoenix(11) — 4 neighbors
+
+Stack 3 sections vertically:
+
+PAGE 4 — "RELAX SEATTLE" (LARGE circled 4):
+Top: Dij saying "Exploring Seattle's 3 roads!" Small graph with Seattle glowing.
+Code block (large):
+  for nei, w in graph[city]:
+      new_dist = d + w
+      if new_dist < dist[nei]:
+          dist[nei] = new_dist
+          heappush(queue, (new_dist, nei))
+
+Three LARGE road cards side by side (or stacked), each showing the math BIG:
+  Road 1 → Portland: 0 + 3 = 3. 3 < ∞ → YES. Dex: ∞ → 3. Poppy prints: (3, Portland)
+  Road 2 → SF: 0 + 13 = 13. 13 < ∞ → YES. Dex: ∞ → 13. Poppy prints: (13, SF)
+  Road 3 → Vegas: 0 + 25 = 25. 25 < ∞ → YES. Dex: ∞ → 25. Poppy prints: (25, Vegas)
+
+Bottom summary — three characters LARGE:
+  Dex: Seattle=0, Portland=3, SF=13, Vegas=25, Phoenix=∞
+  Poppy: (3,Portland) on top, (13,SF), (25,Vegas). Arrow: "smallest on top"
+  Shetty: Seattle checked, rest unchecked. Star: "Poppy picks smallest next!"
+
+PAGE 5 — "ITERATION 2 — PORTLAND" (LARGE circled 5):
+Three big step columns:
+  POP: Poppy → (3, Portland). Code: d, city = heappop(queue). "Portland, distance 3."
+  CHECK + SEAL: Shetty: Portland unchecked → checked. Code: if city in settled: continue → not sealed → settled.add(city). Green "DONE!"
+  RELAX: Code block shown. Two neighbor cards:
+    Road 1 → Seattle: 3 + 3 = 6. Compare: 6 vs 0 → 6 > 0 → BIG RED X NO
+    Road 2 → SF: 3 + 10 = 13. Compare: 13 vs 13 → 13 = 13 → BIG RED X NO
+Bottom banner with Dij shrugging: "No better paths. No new tickets."
+
+PAGE 6 — "ITERATION 3 — SF" (LARGE circled 6):
+  POP: Poppy → (13, SF). "SF, distance 13."
+  CHECK + SEAL: Shetty: SF unchecked → checked. "DONE!"
+  RELAX: Code block. Three neighbor cards:
+    Road 1 → Portland: 13 + 10 = 23. Compare: 23 vs 3 → 23 > 3 → X NO
+    Road 2 → Vegas: 13 + 9 = 22. Compare: 22 vs 25 → 22 < 25 → GREEN YES!
+      Show Dex's notebook: Vegas 25 crossed out → 22. Poppy prints (22, Vegas).
+    Road 3 → Phoenix: 13 + 11 = 24. Compare: 24 vs ∞ → GREEN YES!
+      Show Dex: Phoenix ∞ → 24. Poppy prints (24, Phoenix).
+Bottom gold star banner: "Better paths found! 2 new tickets!"
+
+
+PROMPT 3 OF 4 — Vegas + Stale Entry + Phoenix Final (Pages 7-9)
+=================================================================
+
+Continue the Dijkstra tutorial. Tall portrait (1024×1792). SAME exact style. SAME exact character designs. ALL text HUGE. Show don't tell.
+
+SAME characters: Dij (purple sweater), Dex (tan/gold notebook), Poppy (cherry red machine), Shetty (lime green clipboard).
+
+EXACT GRAPH: Seattle-Portland(3), Seattle-SF(13), Seattle-Vegas(25), Portland-SF(10), SF-Vegas(9), SF-Phoenix(11), Vegas-Phoenix(4). NO other edges.
+
+VEGAS'S NEIGHBORS: Seattle(25), SF(9), Phoenix(4) — only these 3.
+
+Stack 3 sections vertically:
+
+PAGE 7 — "ITERATION 4 — VEGAS" (LARGE circled 7):
+Show small graph in corner with Vegas highlighted/glowing.
+  POP: Poppy → (22, Vegas). Code: d, city = heappop(queue). "Vegas, distance 22."
+  Note: Poppy had (22,Vegas), (24,Phoenix), (25,Vegas). Smallest = 22.
+  CHECK + SEAL: Shetty: Seattle/Portland/SF checked, Vegas unchecked → checked. "DONE!"
+  RELAX: Three neighbor cards:
+    Road 1 → Seattle: 22 + 25 = 47. 47 vs 0 → X NO
+    Road 2 → SF: 22 + 9 = 31. 31 vs 13 → X NO
+    Road 3 → Phoenix: 22 + 4 = 26. 26 vs 24 → 26 > 24 → X NO
+  Bottom: "No better paths from Vegas."
+  State summary:
+    Dex: Seattle=0, Portland=3, SF=13, Vegas=22, Phoenix=24
+    Poppy: (24, Phoenix) and (25, Vegas) remaining. Arrow: "smallest on top"
+    Shetty: Seattle/Portland/SF/Vegas checked, Phoenix unchecked
+
+PAGE 8 — "ITERATION 5 — STALE ENTRY" (LARGE circled 8):
+Make this section visually dramatic — slightly grayed/washed out to show "skipping."
+  POP: Poppy → (24, Phoenix). "Phoenix, distance 24."
+  CHECK + SEAL: Shetty: Phoenix unchecked → checked. "DONE!" All 5 cities now sealed!
+  Shetty's checklist shown BIG: ALL FIVE checkboxes checked.
+  Then: Poppy → (25, Vegas) — another ticket!
+  CHECK: Shetty looks at checklist — Vegas already checked!
+  BIG dramatic visual: Show the (25, Vegas) ticket being TOSSED into a TRASH CAN.
+  Large explosive label: "STALE TICKET!"
+  "Vegas is already sealed! This ticket is OLD. Skip!"
+  Code: if city in settled: continue — the "continue" highlighted in red.
+  Big red symbol: "We SKIP. No exploring. Old tickets get thrown out."
+
+PAGE 9 — "ALL DONE!" (LARGE circled 9):
+Big celebration scene!
+  Poppy is EMPTY. Show Poppy with slot showing nothing. "No more tickets!"
+  Code: while queue: → queue is empty → loop ends.
+  Show Dex's final notebook VERY LARGE, centered, with big bold numbers:
+    Seattle   =  0
+    Portland  =  3
+    SF        = 13
+    Vegas     = 22
+    Phoenix   = 24
+  Gold trophy and star next to it.
+  Dij (large, celebrating): "These are the shortest distances from Seattle to every city!"
+  Below: Show the graph one final time with the shortest path tree highlighted — edges that were actually used drawn in bold gold/green, unused edges in gray:
+    Seattle → Portland (3) USED
+    Seattle → SF (13) USED
+    SF → Vegas (9, total 22) USED
+    SF → Phoenix (11, total 24) USED
+    Grayed out: Seattle-Vegas(25), Portland-SF(10), Vegas-Phoenix(4)
+  Label each node with its final distance.
+
+
+PROMPT 4 OF 4 — Recap + Code + Time Complexity (Page 10)
+==========================================================
+
+Final panel of the Dijkstra tutorial. Tall portrait (1024×1792). SAME exact style. SAME exact character designs. ALL text HUGE.
+
+SAME characters: Dij (purple sweater), Dex (tan/gold notebook), Poppy (cherry red machine), Shetty (lime green clipboard).
+
+"OUR 3 FRIENDS" (top section):
+Three LARGE character portraits side by side in white cards:
+  Dex the Notebook (dist) — "Best known distances. Update when better."
+  Poppy the Ticket Machine (heap / priority queue) — "Always gives smallest distance first."
+  Shetty the Checklist (settled set) — "Cities whose shortest distance is final."
+
+"THE REPEAT CYCLE" (middle section):
+Show the 5 steps as a LARGE horizontal flow with big numbered circles and character icons:
+  1 Poppy POPS smallest ticket → 2 Shetty CHECKS — already done? SKIP → 3 Shetty SEALS it as DONE → 4 Dij RELAXES all neighbors → 5 If better → Dex WRITES + Poppy PUSHES new ticket
+Below: big circular arrow: "Repeat until Poppy is empty."
+
+"THE CODE (PYTHON)" (large section):
+LARGE monospace code block, line-numbered, on a light gray/white background. Make the code BIG enough to read on a phone:
+   1  def dijkstra(graph, start):
+   2      dist = {node: float('inf')
+   3              for node in graph}
+   4      dist[start] = 0
+   5      queue = []
+   6      heapq.heappush(queue, (0, start))
+   7      settled = set()
+   8
+   9      while queue:
+  10          d, city = heapq.heappop(queue)
+  11          if city in settled:
+  12              continue
+  13          settled.add(city)
+  14          for nei, w in graph[city]:
+  15              new_dist = d + w
+  16              if new_dist < dist[nei]:
+  17                  dist[nei] = new_dist
+  18                  heapq.heappush(queue,
+  19                      (new_dist, nei))
+  20      return dist
+
+"TIME COMPLEXITY" (bottom section):
+Large highlighted golden box. Show Dij and trophy:
+  O((V + E) log V) with a heap
+  V = number of cities (vertices)
+  E = number of roads (edges)

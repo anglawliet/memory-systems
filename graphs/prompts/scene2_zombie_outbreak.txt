@@ -1,0 +1,307 @@
+SCENE 2: ZOMBIE REDDY'S OUTBREAK — BFS
+========================================
+4 prompts total: 1 character reference + 3 tutorial pages (1024x1792 each).
+Story: Mario from Zombie Reddy tracks a zombie outbreak spreading through Kurnool.
+The infection starts at the Cricket Ground and spreads wave by wave to 7 locations.
+
+Sequence: patient zero at Cricket Ground → infection spreads to neighbors (wave 1) →
+          those zombies bite their neighbors (wave 2) → repeat until all infected →
+          wave count = shortest distance from patient zero.
+
+Characters (zombie outbreak themed, Zombie Reddy Telugu movie):
+  Mario = the gamer-turned-survivor (tracks the outbreak like a game level)
+  Deck = the cricket scoreboard (queue/deque — tracks who's next to get infected, FIFO)
+  Viz = the spray can (visited set — sprays a red X on infected locations, no duplicates)
+
+The 7 Kurnool Locations (graph):
+  Cricket Ground — Tea Stall — Market — Hospital
+        |               |
+     Temple ———— School — Bus Stand
+
+  Key: Tea Stall AND Temple both connect to School (duplicate trap!)
+
+
+PROMPT 0 — CHARACTER REFERENCE (generate first, use as style reference for prompts 1-3)
+=========================================================================================
+
+Create a tall portrait image (1024x1792) with a clean white background. Soft 3D cartoon style (Pixar/Disney energy), bright and cheerful despite the zombie theme.
+
+Show a young Indian guy named Mario — inspired by the lead character from the Telugu movie Zombie Reddy. Curly/wavy brown hair, ROUND GLASSES, short scruffy beard, wide energetic expression with mouth open in excitement, fists-up action pose. Wearing a BRIGHT YELLOW JACKET (with a small emblem/patch on the chest) over a BLACK HOODIE that has "ZOMBIE REDDY" written in big bold text on the front. He's a gamer who treats the zombie apocalypse as the ultimate game level. He is the outbreak tracker who maps how the infection spreads wave by wave.
+
+He is standing front-facing, equipped with both items at once. Each item must look WILDLY different from the other — unique shape, unique color, unique personality. They should be instantly distinguishable even as tiny thumbnails.
+
+Left hand — Deck the Scoreboard (queue/deque):
+A FLAT RECTANGULAR digital cricket scoreboard tablet. DARK GREEN background with BRIGHT GREEN glowing LED-style text/numbers (like an old-school cricket ground scoreboard). Has a calm/methodical face on the screen (focused steady eyes, small organized smile, one eyebrow slightly raised) — he's the "scorekeeper" of the outbreak, tracking exactly who's up next to get infected. Currently showing a FIFO list: "1. Tea Stall  2. Temple" in glowing green text. A thin metal frame/border around the screen. COOL GREEN GLOW around him. He is FLAT and RECTANGULAR shaped, like a tablet or digital display board.
+Label: "Deck (queue)"
+
+Right hand — Viz the Spray Can (visited set):
+A TALL CYLINDRICAL bright RED spray paint can with a white nozzle on top. Has an intense/aggressive face on the can body (sharp NARROWED eyes, fierce determined expression, paint splatter marks on cheeks like war paint) — he's the "marker" of the outbreak, spraying a big red X on every infected location so nobody counts it twice. Red paint drips and splatters around the base. A red mist/spray coming from the nozzle. WARM RED GLOW around him. He is TALL and CYLINDRICAL shaped, with a distinctive spray nozzle cap.
+Label: "Viz (visited)"
+
+Standing beside Mario at waist height — a row of 7 small location icons representing Kurnool:
+  Cricket Ground: a small cricket pitch with stumps and a bat
+  Tea Stall: a tiny chai shop with steaming cups
+  Temple: a small gopuram/temple tower
+  Market: a busy market with colorful stalls
+  School: a small school building with a bell
+  Hospital: a white building with a red cross
+  Bus Stand: a bus stop sign with a bench
+Each location that is CLEAN (uninfected) has a GREEN glow.
+Each location that is INFECTED has a RED X sprayed on it and zombie hands reaching out.
+
+Visual contrast summary (IMPORTANT):
+- Deck = FLAT RECTANGLE, DARK GREEN, digital screen texture, calm personality, cool glow
+- Viz = TALL CYLINDER, BRIGHT RED, paint/metal texture, aggressive personality, warm glow
+- Clean location = GREEN glow (uninfected, not visited)
+- Infected location = RED X spray painted on it (visited, already in the system)
+
+Below the characters, a bold banner reads: "Mario's Outbreak Tracker — Spray when BITTEN, not when TURNED!"
+
+Each object should POP with its own distinct color, shape, and texture. Even in a small thumbnail, you should instantly tell them apart: the flat green digital scoreboard and the tall red spray paint can.
+
+NAME MNEMONICS (Zombie Reddy themed):
+- Mario = the gamer → he tracks the outbreak level by level, like clearing game waves
+- Deck = "Deck" sounds like "deque" → Deck IS the deque, tracks who's up next to get infected FIFO
+- Viz = "Viz" sounds like "visited" → Viz sprays infected locations, marking them as visited
+- Green glow = clean, uninfected, not yet in the queue
+- Red X = infected, sprayed by Viz, already visited
+
+
+PROMPT 1 OF 3 — Intro + Patient Zero + Wave 1 (Pages 1-3)
+============================================================
+
+Create a tall portrait infographic (1024x1792) for BFS algorithm tutorial.
+
+CRITICAL DESIGN RULES:
+- ALL text must be HUGE — section titles 60pt+, body text 32pt+, code 26pt+
+- SHOW don't tell. Use big arrows, red X sprays, green/red location markers, wave rings. If a picture can say it, don't write a sentence.
+- Every single element must be readable on a phone held vertically WITHOUT zooming
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+
+Style: soft 3D cartoon characters, cool blue section backgrounds, white/cream rounded content cards, dark blue headers with LARGE circled page numbers in top-right. Code in large monospace on light gray rounded boxes.
+
+Characters (use EXACT same designs in ALL 3 images — consistency is critical):
+- Mario: young Indian guy, curly/wavy hair, ROUND GLASSES, short beard, YELLOW JACKET over BLACK HOODIE with "ZOMBIE REDDY" text, energetic
+- Deck the Scoreboard: DARK GREEN flat digital cricket scoreboard, calm face (steady eyes), green glow — label "(queue)"
+- Viz the Spray Can: BRIGHT RED tall cylindrical can with white nozzle, aggressive face (narrowed eyes, paint war marks), red glow — label "(visited)"
+- 7 Locations: Cricket Ground (pitch+stumps), Tea Stall (chai shop), Temple (gopuram), Market (stalls), School (building+bell), Hospital (white+red cross), Bus Stand (bus stop sign)
+- GREEN glow on a location = clean, uninfected
+- RED X spray on a location = infected, visited, sprayed by Viz
+- Zombie hands reaching from infected locations
+
+Stack 3 sections vertically:
+
+PAGE 1 — "BREADTH-FIRST SEARCH" (LARGE circled 1 top-right):
+BIG bold title "BREADTH-FIRST SEARCH (BFS)"
+Left side: Mario (large, fists-up action pose, yellow jacket + round glasses) with speech bubble: "Infection spreading through Kurnool. Level 1: Track every wave!"
+Right side: Show the 7 locations arranged as a GRAPH with edges:
+  Cricket Ground — Tea Stall — Market — Hospital
+        |               |
+     Temple ———— School — Bus Stand
+  All locations have GREEN glow (clean). Make this visual take up significant space.
+Below: Two LARGE character cards side by side:
+  Deck the Scoreboard (queue) — "Who's next to get infected?"
+  Viz the Spray Can (visited) — "Already sprayed? SKIP!"
+Bottom blue banner: SPRAY SOURCE → PROCESS WAVE → BITE NEIGHBORS → SPRAY THEM → NEXT WAVE
+
+PAGE 2 — "PATIENT ZERO" (LARGE circled 2 top-right):
+Header: "PATIENT ZERO" — "The outbreak begins at the Cricket Ground."
+Show the graph LARGE at the top. Cricket Ground is now RED with a big red X and zombie hands. All other locations still GREEN.
+Below: Viz spraying a big red X on Cricket Ground. Label: "Viz sprays FIRST."
+Next to Viz: Deck with one entry: 1. Cricket Ground. Label: "Deck adds Patient Zero."
+Code block:
+  queue   = deque([Cricket_Ground])
+  visited = {Cricket_Ground}    # Viz sprays IMMEDIATELY
+  waves   = 0
+
+PAGE 3 — "WAVE 1: THE FIRST BITES" (LARGE circled 3 top-right):
+Header: "WAVE 1 — process(Cricket Ground)"
+Show Cricket Ground zombie biting outward with TWO arrows going to Tea Stall and Temple.
+Viz sprays Tea Stall (red X) — "SPRAYED!"
+Viz sprays Temple (red X) — "SPRAYED!"
+Both added to Deck's scoreboard. Callout: "Viz sprays WHEN BITTEN, not when they fully turn!"
+Code: for nei in [Tea_Stall, Temple]:
+          visited.add(nei)      # Viz sprays NOW
+          queue.append(nei)     # Deck adds to scoreboard
+Graph state: Cricket Ground, Tea Stall, Temple = red X. Others still green.
+Deck: [Tea Stall, Temple]. waves = 1. 3/7 infected.
+
+
+PROMPT 2 OF 3 — Wave 2 (Duplicate Trap) + Wave 3 + Golden Rule + Wave Counting (Pages 4-7)
+==============================================================================================
+
+Continue the BFS tutorial. Tall portrait (1024x1792). SAME exact style. SAME exact character designs. ALL text HUGE (titles 60pt+, body 32pt+, code 26pt+). Show don't tell. Max 15 words per explanation.
+
+SAME characters:
+- Mario: curly hair, round glasses, short beard, yellow jacket over black hoodie with "ZOMBIE REDDY" text, energetic
+- Deck: dark green cricket scoreboard, calm face
+- Viz: bright red spray can, aggressive face
+- Infected locations have red X + zombie hands
+
+CURRENT STATE entering this page:
+  Infected (red X): Cricket Ground, Tea Stall, Temple
+  Clean (green): Market, School, Hospital, Bus Stand
+  Deck's scoreboard: [Tea Stall, Temple]
+
+Stack 4 sections vertically:
+
+PAGE 4 — "WAVE 2: THE DUPLICATE TRAP" (LARGE circled 4 top-right):
+Header: "WAVE 2" — "Two zombies, one target. Who sprays first?"
+Make this DRAMATIC — this is THE key BFS teaching moment.
+
+Code: for _ in range(len(queue)):  # len = 2, process exactly 2
+
+PROCESS TEA STALL:
+Tea Stall zombie bites Market and School. Viz sprays both (red X). Both added to Deck.
+
+PROCESS TEMPLE:
+Temple zombie reaches toward School... BUT School already has a RED X!
+Viz (blocking, arm out): "ALREADY SPRAYED! Move along!"
+BIG highlighted callout (red border): "Without Viz, School gets added to Deck TWICE. Duplicate!"
+Code: School → IN visited → SKIP!
+
+State: 5/7 infected. Deck: [Market, School]. waves = 2.
+
+PAGE 5 — "WAVE 3: THE EDGE OF TOWN" (LARGE circled 5 top-right):
+Header: "WAVE 3" — "The infection reaches the last corners."
+
+Market zombie bites Hospital. School zombie bites Bus Stand. Viz sprays both.
+Then Hospital and Bus Stand process: no unsprayed neighbors. Deck: EMPTY!
+
+ALL 7 LOCATIONS INFECTED! Show the full graph with every location having a red X.
+Mario (victorious gaming pose): "GG! Outbreak mapped in 3 waves!"
+
+THE FINAL WAVE MAP (shown as concentric rings):
+  Wave 0: Cricket Ground (center)
+  Wave 1: Tea Stall, Temple (ring 1)
+  Wave 2: Market, School (ring 2)
+  Wave 3: Hospital, Bus Stand (ring 3)
+Label: "Wave number = shortest distance from Patient Zero!"
+
+PAGE 6 — "SPRAY WHEN BITTEN, NOT WHEN TURNED" (LARGE circled 6 top-right):
+Header: "THE GOLDEN RULE OF BFS"
+This is a concept page — the most common BFS mistake.
+
+Visual comparison — two panels side by side:
+
+LEFT panel (red border, big X): "WRONG: Spray when TURNING (popping from queue)"
+  Tea Stall adds School to Deck. Temple ALSO adds School to Deck.
+  School appears TWICE on Deck! Duplicate! Processed twice!
+  Code:
+    node = queue.popleft()
+    visited.add(node)    # TOO LATE! Already added twice!
+
+RIGHT panel (green border, big checkmark): "RIGHT: Spray when BITTEN (adding to queue)"
+  Tea Stall adds School. Viz sprays School IMMEDIATELY.
+  Temple tries School. Viz: "Already sprayed!" Skip.
+  School appears ONCE on Deck.
+  Code:
+    if nei not in visited:
+        visited.add(nei)   # Viz sprays NOW
+        queue.append(nei)  # then add to Deck
+
+Mario: "Tag the enemy when you SPOT them, not when you FIGHT them."
+Bold rule in gold box: "Spray when BITTEN = mark visited when ADDING to queue. Always."
+
+PAGE 7 — "COUNTING WAVES" (LARGE circled 7 top-right):
+Header: "THE FOR LOOP TRICK" — "How do you know when a wave ends?"
+
+Show Deck's scoreboard at start of Wave 2: [Tea Stall, Temple]
+Key question: "Tea Stall adds Market and School. But those are Wave 3, not Wave 2!"
+
+THE TRICK: len(queue) = 2 at the START. The for loop processes EXACTLY 2.
+Market and School go to the BACK of the queue. They wait for next wave!
+
+Visual: Deck's scoreboard as a horizontal bar. A dotted line separates "THIS wave" from "NEXT wave." The for loop processes everything LEFT of the line.
+
+Code (LARGE, annotated):
+  while queue:
+      for _ in range(len(queue)):    # THIS wave's size, frozen!
+          node = queue.popleft()
+          for nei in graph[node]:
+              if nei not in visited:
+                  visited.add(nei)
+                  queue.append(nei)  # added to BACK = next wave
+      waves += 1                     # wave done!
+
+Mario: "Process everyone in THIS round. New spawns wait for the NEXT round."
+
+
+PROMPT 3 OF 3 — Multi-Source BFS + Code + Recap (Pages 8-10)
+===============================================================
+
+Final panel of the BFS tutorial. Tall portrait (1024x1792). SAME exact style. SAME exact character designs. ALL text HUGE.
+
+SAME characters: Mario (curly hair, round glasses, short beard, yellow jacket over black hoodie with "ZOMBIE REDDY" text, energetic), Deck (green scoreboard), Viz (red spray can).
+
+Stack 3 sections vertically:
+
+PAGE 8 — "MULTIPLE PATIENT ZEROS" (LARGE circled 8 top-right):
+Header: "MULTI-SOURCE BFS" — "What if the outbreak started in TWO places?"
+
+Show the SAME graph, but now TWO locations start infected:
+Cricket Ground AND Hospital are BOTH Patient Zero.
+Both sprayed by Viz. Both on Deck's scoreboard.
+Code: queue = deque([Cricket_Ground, Hospital])
+      visited = {Cricket_Ground, Hospital}
+
+Infection spreads from BOTH sides simultaneously:
+  Wave 1: Cricket Ground → Tea Stall, Temple. Hospital → Market.
+  Wave 2: Tea Stall → School (Market already sprayed from Hospital's side!)
+  Wave 3: School → Bus Stand.
+The two outbreaks MEET IN THE MIDDLE!
+
+Callout: "Multi-source BFS: put ALL sources in queue at the start. Same algorithm. Each location gets shortest distance to NEAREST source."
+
+Real-world examples:
+  "Rotting Oranges: every rotten orange is a patient zero."
+  "Walls and Gates: every gate is a patient zero."
+  "01 Matrix: every 0-cell is a patient zero."
+
+PAGE 9 — "THE CODE" (LARGE circled 9 top-right):
+Header: "MARIO'S OUTBREAK PROTOCOL"
+
+Show the 4 steps as a LARGE flow:
+  1 Viz SPRAYS Patient Zero, Deck adds to scoreboard
+  → 2 Process THIS wave: for _ in range(len(queue))
+  → 3 BITE unsprayed neighbors. Viz SPRAYS them. Deck ADDS them.
+  → 4 waves += 1. Repeat until Deck is empty.
+
+LARGE monospace code block, line-numbered:
+   1  from collections import deque
+   2
+   3  def bfs(graph, source, n):
+   4      visited = {source}
+   5      q = deque([source])
+   6      waves = 0
+   7
+   8      while q:
+   9          for _ in range(len(q)):
+  10              node = q.popleft()
+  11              for nei in graph[node]:
+  12                  if nei not in visited:
+  13                      visited.add(nei)
+  14                      q.append(nei)
+  15          waves += 1
+  16
+  17      return waves - 1
+
+Line annotations:
+  Line 4: "Viz sprays Patient Zero FIRST."
+  Line 5: "Deck adds Patient Zero."
+  Lines 8-9: "Process THIS wave. Freeze the count!"
+  Lines 12-13: "Not sprayed? Viz sprays NOW."
+  Line 14: "Add to BACK = next wave."
+  Line 15: "Wave done!"
+
+PAGE 10 — "THREE GOLDEN RULES" (LARGE circled 10 top-right):
+Three golden cards side by side:
+  1. "SPRAY WHEN BITTEN" — Mark visited when ADDING to queue, never when popping. (Viz icon)
+  2. "WAVE BY WAVE" — for _ in range(len(q)) freezes this wave's size. New bites wait. (Deck icon)
+  3. "WAVES = SHORTEST" — Wave count = shortest distance from source. BFS guarantees it. (Mario icon)
+
+"TIME COMPLEXITY":
+Large blue box. Mario with a confident gamer victory pose:
+  O(V + E) — visit every location once, check every connection once
+  Mario: "GG. Outbreak tracked. Shortest paths found. Level complete!"

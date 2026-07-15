@@ -1,0 +1,388 @@
+SCENE 4: THE CORPORATE MERGER — UNION-FIND
+============================================
+5 prompts total: 1 character reference + 4 tutorial pages (1024x1792 each).
+Story: Kyle, Eddie, Nambi, Arye, Rock — five people, one big acquisition.
+Sequence: everyone starts as CEO → Eddie hires Kyle → Arye hires Nambi →
+          Arye acquires Eddie's company → Rockwell acquires Arye's company →
+          find(Kyle) with path compression.
+
+Characters from Person of Interest (all from the same show):
+  Root = the merger queen (orchestrates unions, her name IS the key concept)
+  Finch = the parent book (parent[] — tracks who reports to whom)
+  Reese = the military stars (rank[] — counts stars to compare company power)
+
+
+PROMPT 0 — CHARACTER REFERENCE (generate first, use as style reference for prompts 1-4)
+=========================================================================================
+
+Create a tall portrait image (1024x1792) with a clean white background. Soft 3D cartoon style (Pixar/Disney energy), bright and cheerful.
+
+Show a confident woman named Root — inspired by the hacker from Person of Interest. Dark brown hair flowing past shoulders, sleek black leather jacket over a fitted dark top, sharp intelligent eyes, mysterious half-smile. She radiates a calm "I already know everything" energy. She is the corporate merger queen who cracks any company structure and finds who's really in charge.
+
+She is standing front-facing, equipped with both items at once. Each item must look WILDLY different from the other — unique shape, unique color, unique personality. They should be instantly distinguishable even as tiny thumbnails.
+
+Left hand — Finch the Parent Book (parent[]):
+A NAVY BLUE hardcover book with a large GOLDEN father-and-child silhouette logo embossed on the cover (a parent figure holding a child's hand, both facing forward). Has a bookish/meticulous face below the logo (round silver SPECTACLES, small knowing smile, slightly raised eyebrow) — he's the "record keeper" of the group, quietly tracks who reports to whom. A thin golden bookmark ribbon hangs from the bottom. Inside pages visible showing neat entries: "Kyle → Eddie" and "Eddie → Arye." WARM NAVY GLOW around him. He is THICK and RECTANGULAR shaped. Leather texture with silver corner protectors.
+Label: "Finch (parent[])"
+
+Right hand — Reese the Military Stars (rank[]):
+A DARK OLIVE GREEN military shoulder board/epaulet with BRIGHT GOLD STARS pinned on it. Currently showing 3 gold stars in a row. Has an intense/focused face on the fabric (sharp NARROWED eyes, firm jaw, hint of stubble drawn on) — he's the "commanding officer" of the group, counts stars to determine who outranks whom. The stars are large, bold, and DETACHABLE (can add/remove stars to show rank 0 = no stars, rank 1 = one star, rank 2 = two stars, rank 3 = three stars). Gold braided trim along the edges. He has a MATTE FABRIC TEXTURE with metallic gold star accents. He is FLAT and WIDE shaped, like a rectangular shoulder patch.
+Label: "Reese (rank[])"
+
+Standing beside Root at waist height — a row of 5 small cartoon people representing the cast:
+  Kyle: young guy, green hoodie, eager expression, no crown
+  Eddie: confident guy, blue button-up shirt, slight smirk, golden crown on head
+  Nambi: friendly guy, orange t-shirt, warm smile, no crown
+  Arye: ambitious guy, red vest over white shirt, intense eyes, golden crown on head
+  Rock: big imposing guy, black suit and tie, dominant presence, TALL golden crown
+Each person with a crown has it GLOWING — crown = CEO (parent[x] = x).
+
+Visual contrast summary (IMPORTANT):
+- Finch = THICK RECTANGLE, NAVY BLUE, leather/paper texture, father-child logo, bookish personality, warm glow
+- Reese = FLAT WIDE PATCH, DARK OLIVE GREEN + GOLD STARS, fabric/metallic texture, intense personality
+- Crown = GOLDEN GLOW on a person's head = they are a CEO (parent[x] = x)
+
+Below the characters, a bold banner reads: "Root the Merger Queen — I already know who's really in charge."
+
+Each object should POP with its own distinct color, shape, and texture. Even in a small thumbnail, you should instantly tell them apart: the thick blue book with the parent logo and the flat green military patch with gold stars.
+
+NAME MNEMONICS (all from Person of Interest):
+- Root = her name IS the concept → find() walks parent[] to find the ROOT (the CEO). "Root finds the root."
+- Finch = "Finch finds" → he tracks every connection in parent[]. The find() function walks through Finch's book.
+- Reese = "Reese ranks" → he counts military stars to see who outranks whom. rank[] decides who goes under whom.
+- Crown on head = CEO = parent[x] = x
+
+
+PROMPT 1 OF 4 — Intro + Setup + Step 1: Eddie Hires Kyle (Pages 1-3)
+=====================================================================
+
+Create a tall portrait infographic (1024x1792) for Union-Find algorithm tutorial.
+
+CRITICAL DESIGN RULES:
+- ALL text must be HUGE — section titles 60pt+, body text 32pt+, code 26pt+
+- SHOW don't tell. Use big arrows, crossed-out text, golden crowns, crown-removal animations, color-coded boxes. If a picture can say it, don't write a sentence.
+- Every single element must be readable on a phone held vertically WITHOUT zooming
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+
+Style: soft 3D cartoon characters, light violet/lavender section backgrounds, white/cream rounded content cards, dark violet headers with LARGE circled page numbers in top-right. Code in large monospace on light gray rounded boxes.
+
+Characters (use EXACT same designs in ALL 4 images — consistency is critical):
+- Root: woman with dark brown hair past shoulders, black leather jacket, confident mysterious expression
+- Finch the Parent Book: NAVY BLUE thick hardcover with golden father-and-child silhouette logo on cover, bookish face (round spectacles, knowing smile), leather texture, warm glow — label "(parent[])"
+- Reese the Military Stars: DARK OLIVE GREEN military shoulder board/epaulet with BRIGHT GOLD detachable stars, intense face (narrowed eyes, firm jaw, stubble), gold braided trim — label "(rank[])"
+- Kyle: young guy, green hoodie, eager
+- Eddie: confident guy, blue button-up shirt
+- Nambi: friendly guy, orange t-shirt
+- Arye: ambitious guy, red vest over white shirt
+- Rock: big imposing guy, black suit and tie
+- Golden CROWN on a person's head = CEO (parent[x] = x, their own boss). Crown GLOWS.
+- Crown REMOVED = absorbed into another company, no longer CEO.
+
+Stack 3 sections vertically:
+
+PAGE 1 — "UNION-FIND" (LARGE circled 1 top-right):
+BIG bold title "UNION-FIND (DISJOINT SET UNION)"
+Left side: Root (large, arms crossed, confident) with speech bubble: "Five startups. One mega-corp. I already know how this ends."
+Right side: Show the 5 people standing separately, EACH wearing a golden glowing CROWN. Five independent one-person companies. Make this visual take up significant space — it's the centerpiece.
+Below: Two LARGE character cards side by side, each showing the character big with just their name and a 3-4 word role:
+  Finch the Parent Book (parent[]) — "Who's your boss?"
+  Reese the Stars (rank[]) — "How many stars?"
+Bottom gold banner: FIND ROOT → SAME COMPANY? → SMALLER UNDER BIGGER → FLATTEN PATH
+
+PAGE 2 — "THE SETUP" (LARGE circled 2 top-right):
+Header: "THE SETUP" — "Everyone is their own CEO."
+Show 5 people LARGE in a row, each with a golden glowing CROWN on their head. Each person stands on a small pedestal with their name.
+Below: Finch (book shown LARGE, open) showing 5 entries on the pages:
+  Kyle → Kyle (CEO)
+  Eddie → Eddie (CEO)
+  Nambi → Nambi (CEO)
+  Arye → Arye (CEO)
+  Rock → Rock (CEO)
+  Label: "Everyone points to themselves. Every person is their own boss."
+Next to Finch: Reese (shoulder board shown LARGE) with NO stars pinned on it — completely empty:
+  Kyle=0 stars, Eddie=0 stars, Nambi=0 stars, Arye=0 stars, Rock=0 stars
+  Label: "All Rank 0. No stars. Five single-person companies."
+Below: Code block:
+  parent = {Kyle: Kyle, Eddie: Eddie, Nambi: Nambi, Arye: Arye, Rock: Rock}
+  rank   = {Kyle: 0,    Eddie: 0,     Nambi: 0,     Arye: 0,    Rock: 0}
+
+PAGE 3 — "STEP 1: EDDIE HIRES KYLE" (LARGE circled 3 top-right):
+Header: "STEP 1 — union('Kyle', 'Eddie')"
+Three BIG visual step cards stacked:
+
+  CARD 1 — FIND THE ROOTS (blue card):
+  Show Root pointing at Kyle and Eddie. Speech bubble: "Who are their CEOs? Let me trace the chain."
+  Finch opens his book — two side-by-side lookups:
+    find(Kyle): Kyle → Kyle (himself!) Root = Kyle, Rank 0
+    find(Eddie): Eddie → Eddie (himself!) Root = Eddie, Rank 0
+  Label: "Both are their own CEOs."
+
+  CARD 2 — COMPARE STARS (olive card):
+  Show Reese comparing stars: Kyle has 0 stars, Eddie has 0 stars.
+  Reese: "Equal stars! Tie-breaker: Eddie absorbs Kyle."
+  Code: rank[Kyle_CEO] == rank[Eddie_CEO] → 0 == 0 → TIE
+
+  CARD 3 — MERGE (violet card):
+  Show Kyle's crown being REMOVED from his head (dramatic visual — crown floating away with sparkles).
+  Eddie keeps his crown (still glowing).
+  A tree diagram: Eddie (crown, rank 1) on top, Kyle below connected by a line.
+  Finch updates his book: Kyle → Eddie (the old "Kyle → Kyle" crossed out with red line)
+  Reese pins 1 gold star onto Eddie's shoulder board (was 0 stars → now 1 star)
+  Code: parent['Kyle'] = 'Eddie'    rank['Eddie'] = 1
+  Root stamps approval: "Kyle loses his crown. Eddie is now Kyle's boss."
+
+
+PROMPT 2 OF 4 — Steps 2-3: Arye Hires Nambi + The Big Merger (Pages 4-6)
+==========================================================================
+
+Continue the Union-Find tutorial. Tall portrait (1024x1792). SAME exact style. SAME exact character designs. ALL text HUGE (titles 60pt+, body 32pt+, code 26pt+). Show don't tell — use crowns, crossed-out text, tree diagrams. Max 15 words per explanation.
+
+SAME characters:
+- Root: dark hair, black leather jacket, confident
+- Finch: navy blue parent book with father-child logo, spectacles face
+- Reese: dark olive green shoulder board with gold stars, intense face
+- Kyle: green hoodie (no crown now — reports to Eddie)
+- Eddie: blue shirt (has crown, rank 1)
+- Nambi: orange t-shirt (has crown, rank 0)
+- Arye: red vest (has crown, rank 0)
+- Rock: black suit (has crown, rank 0)
+
+Stack 3 sections vertically:
+
+PAGE 4 — "STEP 2: ARYE HIRES NAMBI" (LARGE circled 4 top-right):
+Header: "STEP 2 — union('Nambi', 'Arye')" — "Across town, another merger!"
+Two-column layout:
+
+  Left column — FIND + COMPARE:
+  Finch checks book: find(Nambi) → Nambi (CEO), Rank 0
+  Finch checks book: find(Arye) → Arye (CEO), Rank 0
+  Reese compares stars: "Equal stars again! Arye absorbs Nambi."
+
+  Right column — MERGE:
+  Nambi's crown REMOVED (floating away). Arye keeps crown.
+  Tree diagram: Arye (crown, rank 1) on top, Nambi below.
+  Code: parent['Nambi'] = 'Arye'    rank['Arye'] = 1
+
+Bottom state summary — show current state of ALL 5 people:
+  Tree 1: Eddie (crown, r=1) with Kyle below
+  Tree 2: Arye (crown, r=1) with Nambi below
+  Solo: Rock (crown, r=0)
+  Finch's book: Kyle→Eddie, Eddie→Eddie(CEO), Nambi→Arye, Arye→Arye(CEO), Rock→Rock(CEO)
+  Reese's stars: Kyle=0★, Eddie=1★, Nambi=0★, Arye=1★, Rock=0★
+
+PAGE 5 — "STEP 3: THE BIG MERGER" (LARGE circled 5 top-right):
+Header: "STEP 3 — union('Eddie', 'Arye')" — "Two companies become one!"
+Make this page dramatic — this is the key teaching moment.
+
+  CARD 1 — FIND THE ROOTS (blue card):
+  Root speech bubble: "We connect the CEOs, NOT the employees!"
+  Show the important distinction visually:
+    WRONG (red X): Connecting Eddie directly to Nambi. Big red X over this. Label: "Never connect employees directly!"
+    RIGHT (green check): Finding each person's root first, then connecting roots.
+    Finch traces: find(Eddie) → Eddie (root), Rank 1
+    Finch traces: find(Arye) → Arye (root), Rank 1
+  BIG highlighted callout: "Always find the ROOT first. Connect roots, not nodes."
+
+  CARD 2 — COMPARE STARS (olive card):
+  Reese comparing stars: Eddie has 1★, Arye has 1★.
+  Reese: "Equal stars! Arye absorbs Eddie."
+  Code: rank[Eddie_CEO] == rank[Arye_CEO] → 1 == 1 → TIE
+
+  CARD 3 — MERGE (violet card):
+  Eddie's crown REMOVED (dramatic). Arye keeps crown. Arye's crown grows BIGGER and more ornate (rank going up).
+  Combined tree diagram shown BIG:
+    Arye (crown, rank 2) at top
+    Eddie and Nambi below Arye (side by side, connected by lines)
+    Kyle below Eddie
+  Code: parent['Eddie'] = 'Arye'    rank['Arye'] = 2
+  Root: "Kyle still reports to Eddie. But Eddie now reports to Arye."
+  Small note: "We changed parent['Eddie'], NOT parent['Kyle']. We attach CEOs, not employees."
+
+PAGE 6 — "WHY RANK 2, NOT RANK 4?" (LARGE circled 6 top-right):
+Header: "Understanding Rank"
+This is a concept page — explain why rank only goes up by 1.
+
+  Visual 1 — Two trees merging:
+  Show Eddie's tree (height 1: Eddie→Kyle) and Arye's tree (height 1: Arye→Nambi).
+  When Arye absorbs Eddie, only ONE new edge appears (Eddie→Arye). The combined tree is height 2.
+  Label: "Only one new level appears. Heights don't add."
+
+  Visual 2 — When rank does NOT bump:
+  Show a rank 1 tree going under a rank 3 tree. The shorter tree slides in as a branch. The tallest path doesn't change. Rank stays 3.
+  Label: "Smaller under bigger = no height change. Rank stays."
+
+  Visual 3 — The ONLY time rank bumps:
+  Show two rank 1 trees merging. Arrow pointing to result: rank 2.
+  Bold rule in gold box: "Rank bumps ONLY when two EQUAL-rank trees merge."
+
+  Bottom callout box with Reese:
+  Reese pinning/unpinning stars: "I track the UPPER BOUND of tree height. I only pin a new star when two equals merge. That keeps trees short!"
+  Code:
+    if rank[px] == rank[py]:
+        rank[px] += 1    # ONLY case where rank grows
+
+
+PROMPT 3 OF 4 — Step 4: Rockwell + Step 5: Path Compression (Pages 7-9)
+=========================================================================
+
+Continue the Union-Find tutorial. Tall portrait (1024x1792). SAME exact style. SAME exact character designs. ALL text HUGE. Show don't tell.
+
+SAME characters: Root (leather jacket), Finch (navy blue parent book), Reese (olive green shoulder board with gold stars), Kyle (green hoodie), Eddie (blue shirt), Nambi (orange t-shirt), Arye (red vest), Rock (black suit).
+
+CURRENT STATE entering this page:
+  Tree 1: Arye (crown, rank 2) → Eddie (rank 1) → Kyle (rank 0), and Arye → Nambi (rank 0)
+  Solo: Rock (crown, rank 0 — but we PRETEND Rock has been hiring elsewhere, rank = 3)
+
+Stack 3 sections vertically:
+
+PAGE 7 — "STEP 4: ROCKWELL ACQUIRES ARYE'S COMPANY" (LARGE circled 7 top-right):
+Header: "STEP 4 — union('Arye', 'Rock')" — "The corporate giant swallows them all."
+
+  Setup text: "Rock has been busy building Rockwell elsewhere. His company is already rank 3."
+  Show Rock's tree: Rock (crown, rank 3) with a large shadowed org chart behind him (abstract, showing he has many employees already). Rock looks imposing and dominant.
+
+  CARD 1 — FIND THE ROOTS:
+  Finch checks book: find(Arye) → Arye (root), Rank 2
+  Finch checks book: find(Rock) → Rock (root), Rank 3
+
+  CARD 2 — COMPARE STARS:
+  Reese comparing stars: Arye has 2★, Rock has 3★.
+  Reese: "MISMATCH. Fewer stars goes under more stars."
+  Show a dramatic visual: Arye's entire tree (Arye→Eddie→Kyle, Arye→Nambi) being LIFTED and placed UNDER Rock. Like a smaller company being absorbed by a corporate giant.
+  Code: rank[Arye] < rank[Rock] → 2 < 3 → Arye goes under Rock
+
+  CARD 3 — MERGE:
+  Arye's crown REMOVED. Only Rock has a crown now. Rock's crown is the biggest, most ornate.
+  Show the FULL combined tree BIG and centered:
+    Rock (crown, rank 3) at very top
+    Arye below Rock
+    Eddie and Nambi below Arye (side by side)
+    Kyle below Eddie
+  Code: parent['Arye'] = 'Rock'    rank stays at 3 — NO bump!
+  Root: "Rank did NOT bump! Rock's tree was already taller."
+
+  State summary:
+  Finch's book: Kyle→Eddie, Eddie→Arye, Nambi→Arye, Arye→Rock, Rock→Rock(CEO)
+  Reese's stars: Kyle=0★, Eddie=1★, Nambi=0★, Arye=2★, Rock=3★
+
+PAGE 8 — "STEP 5: WHO DOES KYLE WORK FOR?" (LARGE circled 8 top-right):
+Header: "find('Kyle')" — "Root, trace the chain. Who's really in charge?"
+Make this page dramatic — this is the PATH COMPRESSION teaching moment.
+
+  Show Kyle's current chain visually as a TALL VERTICAL PATH with big arrows:
+    Kyle → Eddie → Arye → Rock (CEO)
+    Label each hop with a number: "3 hops! This is slow."
+  Kyle (speech bubble): "I'm tired of walking through three bosses to reach the top!"
+
+  PASS 1 — WALK UP TO FIND THE ROOT (blue card):
+  Root traces the chain, Finch's book open — step by step with big arrows going UP:
+    parent[Kyle] = Eddie (not self) → keep walking
+    parent[Eddie] = Arye (not self) → keep walking
+    parent[Arye] = Rock (not self) → keep walking
+    parent[Rock] = Rock (SELF!) → STOP. The root is Rock.
+  Code: def find(x): if parent[x] != x: ... return parent[x]
+  Root speech bubble: "Found the root. Now let me clean up the path."
+  Label: "Pass 1: Walk up the chain. Find the root. Nothing rewritten yet."
+
+  PASS 2 — REWRITE ON THE WAY BACK DOWN (green card):
+  Show the REWIRING dramatically — old arrows being ERASED (red X) and new arrows drawn DIRECTLY to Rock (bold green arrows):
+    Kyle: old arrow to Eddie CROSSED OUT, NEW green arrow straight to Rock
+    Eddie: old arrow to Arye CROSSED OUT, NEW green arrow straight to Rock
+    Arye: already points to Rock — no change needed.
+  Finch frantically updating his book:
+    Kyle → Eddie crossed out → Rock (new)
+    Eddie → Arye crossed out → Rock (new)
+  Code: parent[x] = find(parent[x])  # rewrite every link to point directly to the root
+  Root: "Done. Everyone I walked through now reports directly to Rock."
+
+PAGE 9 — "THE LAZY TRUTH" (LARGE circled 9 top-right):
+Header: "Path compression is LAZY"
+
+  Show the FINAL tree after find(Kyle) — LARGE and centered:
+    Rock (crown, rank 3) at very top
+    Kyle, Eddie, Arye all pointing DIRECTLY to Rock (flat! one hop each)
+    BUT Nambi still points to Arye (NOT directly to Rock!)
+
+  Nambi (speech bubble with confused expression and question mark): "Nobody asked about me yet!"
+  Arrow pointing to Nambi→Arye connection with label: "Still 2 hops. Not flattened."
+
+  BIG highlighted callout box (violet border):
+  "Root only rewrites the path she actually walked.
+   Nambi was NOT on Kyle's path. So Nambi stays pointing to Arye.
+   Nambi's chain flattens only when someone calls find('Nambi')."
+
+  Visual comparison — two panels side by side:
+    LEFT panel (crossed out, red border): "If Root flattened everything eagerly"
+      Everyone points directly to Rock. Clean but expensive.
+    RIGHT panel (green border, big checkmark): "What actually happens (LAZY)"
+      Kyle, Eddie, Arye → Rock directly. Nambi → Arye → Rock (still 2 hops).
+      Label: "Only flatten what you walk. That's why it's nearly free."
+
+  Bottom callout with Reese:
+  Reese: "Rock keeps 3★, even though Kyle and Eddie are now 1 hop away. Stars can be stale. They still work as a tiebreaker for future mergers."
+
+
+PROMPT 4 OF 4 — Recap + Code + Time Complexity (Page 10)
+==========================================================
+
+Final panel of the Union-Find tutorial. Tall portrait (1024x1792). SAME exact style. SAME exact character designs. ALL text HUGE.
+
+SAME characters: Root (leather jacket), Finch (navy blue parent book), Reese (olive green shoulder board with gold stars).
+
+"OUR 2 TOOLS" (top section):
+Two LARGE character portraits side by side in white cards:
+  Finch the Parent Book (parent[]) — "Who's your boss? Tracks every connection in the chain."
+  Reese the Military Stars (rank[]) — "How many stars? Keeps trees short by comparing rank."
+
+"ROOT'S MERGER RITUAL" (middle section):
+Show the 4 steps as a LARGE horizontal flow with big numbered circles and character icons:
+  1 Finch FINDS the root of each person (walk up the chain in his book)
+  → 2 SAME root already? Same company — REDUNDANT, skip
+  → 3 DIFFERENT roots? Reese COUNTS stars — fewer stars goes UNDER more stars
+  → 4 EQUAL stars? One absorbs the other, Reese PINS one more star
+Below: Big label: "Every union() does exactly this. Every find() compresses the path."
+
+"THE CODE (PYTHON)" (large section):
+LARGE monospace code block, line-numbered, on a light gray/white background. Make the code BIG enough to read on a phone:
+   1  parent = list(range(n))
+   2  rank = [0] * n
+   3
+   4  def find(x):
+   5      if parent[x] != x:
+   6          parent[x] = find(parent[x])
+   7      return parent[x]
+   8
+   9  def union(a, b):
+  10      pa, pb = find(a), find(b)
+  11      if pa == pb:
+  12          return False
+  13      if rank[pa] < rank[pb]:
+  14          pa, pb = pb, pa
+  15      parent[pb] = pa
+  16      if rank[pa] == rank[pb]:
+  17          rank[pa] += 1
+  18      return True
+
+Line annotations (beside or below each line, mapped to story moments):
+  Lines 1-2: "Everyone starts as their own CEO. All rank 0." (Page 2)
+  Lines 5-6: "Root walks up Finch's book. Rewrites to point to the root." (Page 8, Pass 1+2)
+  Line 10: "Find roots of both people." (Pages 3, 4, 5)
+  Lines 11-12: "Same company already? Redundant!" (Root's ritual step 2)
+  Lines 13-14: "Reese counts stars. Fewer stars goes under more stars." (Page 7, Rock absorbs Arye)
+  Line 15: "Losing CEO reports to winning CEO." (Crown removed)
+  Lines 16-17: "Equal stars? Reese pins one more star on the winner." (Pages 3, 4, 5)
+
+"THE THREE GOLDEN RULES" (bottom section):
+Three golden cards side by side:
+  1. "UNION BY RANK" — Keep trees short. Smaller under bigger. Reese decides. (Reese icon)
+  2. "PATH COMPRESSION" — Root rewrites the path she walked. Direct to CEO. (Finch icon being updated)
+  3. "LAZY FLATTENING" — Only flatten what you walk. Nambi stays until asked. (Nambi icon with ?)
+
+"TIME COMPLEXITY" (bottom banner):
+Large highlighted golden box. Show Root with a confident pose and a golden trophy:
+  O(α(n)) per operation — nearly O(1)
+  α = inverse Ackermann function
+  "So slow-growing it never exceeds 4 for any practical input."
+  With both optimizations: m operations on n elements = O(m · α(n))
+  Root: "I told you I already knew how this ends."

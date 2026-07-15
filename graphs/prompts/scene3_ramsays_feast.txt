@@ -1,0 +1,397 @@
+SCENE 3: RAMSAY'S PIZZA NIGHT — TOPOLOGICAL SORT
+==================================================
+5 prompts total: 1 character reference + 4 tutorial pages (1024x1792 each).
+Story: Gordon Ramsay plans a vegetarian Pizza Night feast.
+He must figure out the correct cooking order because some dishes depend on others.
+
+Sequence: 6 dishes with dependencies → count prereqs → fire zero-dep dishes first →
+          process each dish, decrementing dependents → cascade until all done →
+          cycle detection if stuck.
+
+Characters (all cooking-themed):
+  Gordon Ramsay = the head chef (orchestrates the cooking order, uses both tools)
+  Indie = the ticket rail (in_degree[] — tracks remaining prereqs per dish)
+  Cue = the service bell (queue — holds dishes ready to fire, FIFO)
+
+The 6 Dishes (dependency graph):
+  Dough(0) ──→ Garlic Bread(1) ──→ Feast Platter(3)
+     └───────→ Pizza(2) ─────────→ Feast Platter(3)
+  Sauce(0) ──→ Pizza(2)
+  Salad(0) ──────────────────────→ Feast Platter(3)
+
+
+PROMPT 0 — CHARACTER REFERENCE (generate first, use as style reference for prompts 1-4)
+=========================================================================================
+
+Create a tall portrait image (1024x1792) with a clean white background. Soft 3D cartoon style (Pixar/Disney energy), bright and cheerful.
+
+Show a fiery head chef inspired by Gordon Ramsay. Sandy/blonde short cropped hair, strong jaw, intense blue eyes, animated expression, commanding presence. Wearing a crisp WHITE double-breasted chef jacket with rolled-up sleeves showing muscular forearms. He radiates a calm "this kitchen runs MY way" energy. He is the head chef planning the perfect cooking order for Pizza Night.
+
+He is standing front-facing, equipped with both items at once. Each item must look WILDLY different from the other — unique shape, unique color, unique personality. They should be instantly distinguishable even as tiny thumbnails.
+
+Left hand — Indie the Ticket Rail (in_degree[]):
+A LONG HORIZONTAL STAINLESS STEEL kitchen order rail (the classic restaurant ticket rail with metal clips along the top). WHITE PAPER TICKETS hang from the clips, each showing a dish name and a BIG RED NUMBER (remaining dependencies). Has a serious/meticulous face centered on the rail (precise NARROW EYES behind small rectangular READING GLASSES, thin pursed lips, slightly furrowed brow) — he's the "accountant" of the kitchen, tracking exactly what each dish is still waiting on. Currently showing 6 tickets: Dough(0), Sauce(0), Salad(0), Garlic Bread(1), Pizza(2), Feast(3). The zero-tickets are highlighted in GREEN. COOL STEEL GLOW around him. He is LONG and HORIZONTAL shaped, like a metal bar with dangling tickets.
+Label: "Indie (in_degree[])"
+
+Right hand — Cue the Service Bell (queue):
+A SHINY BRASS dome service bell (the classic restaurant "ding!" bell) sitting on a small SILVER pass counter/tray. The dome is large, round, and polished to a mirror finish. Has an excited/energetic face on the dome (WIDE bright eyes, huge enthusiastic grin, raised eyebrows) — he's the "announcer" of the kitchen, DINGING loudly when a dish is ready to fire. A small button/plunger on top. Currently has 3 small dish icons lined up on the counter beside him (Dough, Sauce, Salad — the zero-dep dishes). WARM GOLDEN GLOW around him. He is ROUND and DOME shaped.
+Label: "Cue (queue)"
+
+Standing beside Gordon at waist height — a row of 6 small colorful dish icons representing the menu:
+  Dough: golden round ball dusted with flour
+  Sauce: red pot with tomato sauce, steam rising
+  Salad: green bowl with fresh colorful vegetables
+  Garlic Bread: golden brown slices with garlic aroma lines
+  Pizza: classic margherita with cheese and basil on a wooden board
+  Feast Platter: large oval platter with all dishes arranged on it
+Each dish with a GREEN "0" has a green glow — ready to fire (no dependencies).
+Each dish with a RED number has a small red number badge — still waiting on prereqs.
+
+Visual contrast summary (IMPORTANT):
+- Indie = LONG HORIZONTAL BAR, STAINLESS STEEL/SILVER, paper ticket texture, serious personality, cool glow
+- Cue = ROUND DOME, SHINY BRASS/GOLD, metallic polish, excited personality, warm glow
+- Green 0 on a dish = ready to fire (zero remaining dependencies)
+- Red number on a dish = still waiting on that many prereqs
+- Golden checkmark on a dish = cooked/processed/done
+
+Below the characters, a bold banner reads: "Chef Ramsay's Pizza Night — Get the order wrong and IT'S RAW!"
+
+Each object should POP with its own distinct color, shape, and texture. Even in a small thumbnail, you should instantly tell them apart: the long silver rail with dangling white tickets and the round golden bell on its silver counter.
+
+NAME MNEMONICS (cooking-themed):
+- Gordon Ramsay = the head chef → he orchestrates the cooking order, picks dishes off Cue's counter
+- Indie = "Indie tracks in-degrees" → he counts remaining prereqs per dish on his hanging tickets
+- Cue = "Cue queues up ready dishes" → he DINGS when a dish hits 0, lines them up FIFO
+- Green 0 = no dependencies left = ready to fire
+- Red number = still waiting on that many prereqs
+
+
+PROMPT 1 OF 4 — Intro + Setup + Step 1: Fire the Dough (Pages 1-3)
+====================================================================
+
+Create a tall portrait infographic (1024x1792) for Topological Sort algorithm tutorial.
+
+CRITICAL DESIGN RULES:
+- ALL text must be HUGE — section titles 60pt+, body text 32pt+, code 26pt+
+- SHOW don't tell. Use big arrows, ticket drops, green/red numbers, checkmarks. If a picture can say it, don't write a sentence.
+- Every single element must be readable on a phone held vertically WITHOUT zooming
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+
+Style: soft 3D cartoon characters, warm amber/golden section backgrounds, white/cream rounded content cards, dark amber headers with LARGE circled page numbers in top-right. Code in large monospace on light gray rounded boxes.
+
+Characters (use EXACT same designs in ALL 4 images — consistency is critical):
+- Gordon: sandy/blonde hair, white chef jacket, intense blue eyes, commanding
+- Indie the Ticket Rail: STAINLESS STEEL horizontal rail with white paper tickets, serious face (reading glasses, pursed lips), cool glow — label "(in_degree[])"
+- Cue the Service Bell: SHINY BRASS dome bell on silver counter, excited face (wide eyes, big grin), warm glow — label "(queue)"
+- 6 Dishes: Dough (golden ball), Sauce (red pot), Salad (green bowl), Garlic Bread (golden slices), Pizza (margherita), Feast Platter (large oval platter)
+- GREEN "0" on a dish = ready to fire, no dependencies remaining
+- RED number on a dish = still waiting on prereqs
+- GOLDEN CHECKMARK on a dish = cooked/processed/done
+
+Stack 3 sections vertically:
+
+PAGE 1 — "TOPOLOGICAL SORT" (LARGE circled 1 top-right):
+BIG bold title "TOPOLOGICAL SORT (KAHN'S ALGORITHM)"
+Left side: Gordon (large, arms crossed, commanding) with speech bubble: "Six dishes. One perfect order. Get it wrong and IT'S RAW!"
+Right side: Show the 6 dishes arranged as a DEPENDENCY GRAPH with arrows:
+  Dough → Garlic Bread → Feast Platter
+  Dough → Pizza → Feast Platter
+  Sauce → Pizza
+  Salad → Feast Platter
+  Make this visual take up significant space — it's the centerpiece.
+Below: Two LARGE character cards side by side, each showing the character big with just their name and a 3-4 word role:
+  Indie the Ticket Rail (in_degree[]) — "How many prereqs left?"
+  Cue the Service Bell (queue) — "Who's ready to fire?"
+Bottom gold banner: COUNT PREREQS → FIRE ZEROS → COOK → DECREMENT → REPEAT
+
+PAGE 2 — "THE KITCHEN" (LARGE circled 2 top-right):
+Header: "THE KITCHEN" — "Every dish starts with a ticket."
+Show the dependency graph LARGE at the top with all 6 dishes and arrows.
+Below: Indie's rail (shown LARGE, open) with 6 tickets hanging from clips:
+  Dough = 0 (GREEN highlight), Sauce = 0 (GREEN), Salad = 0 (GREEN)
+  Garlic Bread = 1 (RED), Pizza = 2 (RED), Feast Platter = 3 (RED)
+  Label: "Indie counts incoming arrows. Zero prereqs = ready to fire!"
+Next to Indie: Cue (bell shown LARGE) with 3 dishes lined up on his counter:
+  Dough, Sauce, Salad — in a row, ready to go
+  Cue DINGING excitedly. Label: "Three dishes start at zero. DING DING DING!"
+Below: Code block:
+  in_degree = {Dough: 0, Sauce: 0, Salad: 0, G.Bread: 1, Pizza: 2, Feast: 3}
+  queue     = [Dough, Sauce, Salad]   # all the zeros
+  order     = []
+
+PAGE 3 — "STEP 1: FIRE THE DOUGH" (LARGE circled 3 top-right):
+Header: "STEP 1 — process('Dough')"
+Make this page dramatic — this is the FAN-OUT teaching moment.
+Three BIG visual step cards stacked:
+
+  CARD 1 — PICK FROM CUE'S COUNTER (brass card):
+  Gordon picks up Dough from Cue's counter. Cue: "DING! Dough is up!"
+  Gordon kneads/processes the dough (visual of dough being worked).
+  Dough gets a GOLDEN CHECKMARK — it's done!
+  Code: node = queue.popleft()  # Dough
+        order.append('Dough')
+
+  CARD 2 — THE FAN-OUT (amber card):
+  BIG visual showing Dough's TWO outgoing arrows to Garlic Bread AND Pizza.
+  Show Indie updating TWO tickets at once:
+    Garlic Bread: 1 → 0 (RED crossed out, GREEN 0 written!) Ticket DROPS off the rail!
+    Pizza: 2 → 1 (RED 2 crossed out, RED 1 written). Still waiting.
+  BIG highlighted callout: "ONE dish can unblock MANY. Dough freed Garlic Bread!"
+
+  CARD 3 — CUE DINGS (gold card):
+  Garlic Bread's ticket dropped to 0 → Cue DINGS! Garlic Bread joins the counter.
+  Show Cue's counter now: [Sauce, Salad, Garlic Bread]
+  Pizza still has a red 1. NOT ready yet. Still needs Sauce.
+  Gordon: "Garlic Bread is cleared. Pizza? NOT YET."
+  Code: in_degree['G.Bread'] -= 1  → 0 → queue.append('G.Bread')
+        in_degree['Pizza'] -= 1    → 1 → still waiting
+
+
+PROMPT 2 OF 4 — Steps 2-6: The Cascade to SERVICE! (Pages 4-6)
+================================================================
+
+Continue the Topological Sort tutorial. Tall portrait (1024x1792). SAME exact style. SAME exact character designs. ALL text HUGE (titles 60pt+, body 32pt+, code 26pt+). Show don't tell — use ticket drops, checkmarks, green/red numbers. Max 15 words per explanation.
+
+SAME characters:
+- Gordon: white chef jacket, commanding
+- Indie: stainless steel ticket rail with reading glasses, serious face
+- Cue: brass service bell on silver counter, excited face
+- Dishes with golden checkmarks = already cooked
+
+CURRENT STATE entering this page:
+  Cooked: [Dough ✓]
+  Indie's rail: Sauce(0), Salad(0), Garlic Bread(0), Pizza(1), Feast(3)
+  Cue's counter: [Sauce, Salad, Garlic Bread]
+
+Stack 3 sections vertically:
+
+PAGE 4 — "STEPS 2-3: SAUCE & SALAD" (LARGE circled 4 top-right):
+Header: "STEPS 2-3" — "Two more dishes cleared to fire!"
+Two-column layout:
+
+  Left column — STEP 2: PROCESS SAUCE:
+  Gordon picks Sauce from Cue's counter. Sauce simmering in pot, steam rising.
+  Sauce gets a GOLDEN CHECKMARK.
+  Indie updates: Pizza 1 → 0 (ticket DROPS! GREEN!)
+  Cue DINGS! Pizza joins the counter!
+  Code: process('Sauce') → in_degree['Pizza'] -= 1 → 0 → queue!
+
+  Right column — STEP 3: PROCESS SALAD:
+  Gordon picks Salad from Cue's counter. Fresh salad being tossed.
+  Salad gets a GOLDEN CHECKMARK.
+  Indie updates: Feast 3 → 2 (still red, still waiting)
+  No new dish reaches 0. Cue stays quiet. No ding.
+  Code: process('Salad') → in_degree['Feast'] -= 1 → 2 → still waiting
+
+Bottom state summary — show current state:
+  Cooked: [Dough ✓, Sauce ✓, Salad ✓]
+  Indie's rail: Garlic Bread(0), Pizza(0), Feast(2)
+  Cue's counter: [Garlic Bread, Pizza]
+
+PAGE 5 — "STEPS 4-5: GARLIC BREAD & PIZZA" (LARGE circled 5 top-right):
+Header: "STEPS 4-5" — "The countdown to the Feast!"
+
+  STEP 4 — PROCESS GARLIC BREAD:
+  Gordon picks Garlic Bread from Cue's counter. Bakes it golden brown, garlic aroma.
+  Garlic Bread gets a GOLDEN CHECKMARK.
+  Indie updates: Feast 2 → 1 (still red, still one away)
+  Code: process('G.Bread') → in_degree['Feast'] -= 1 → 1
+
+  STEP 5 — PROCESS PIZZA:
+  Gordon picks Pizza from Cue's counter. Slides it into the oven. Classic margherita comes out.
+  Pizza gets a GOLDEN CHECKMARK.
+  Indie updates: Feast 1 → 0 (ticket DROPS! GREEN! THE LAST TICKET!)
+  Cue DINGS LOUDLY! Feast Platter finally joins the counter!
+  Show this moment DRAMATICALLY — the last ticket dropping off Indie's rail, Cue going wild with excitement.
+  Code: process('Pizza') → in_degree['Feast'] -= 1 → 0 → queue!
+
+  State summary:
+  Cooked: [Dough ✓, Sauce ✓, Salad ✓, Garlic Bread ✓, Pizza ✓]
+  Indie's rail: only Feast(0) was left, and it just dropped
+  Cue's counter: [Feast Platter] — the final dish!
+
+PAGE 6 — "STEP 6: SERVICE!" (LARGE circled 6 top-right):
+Header: "STEP 6 — process('Feast Platter')" — "SERVICE!"
+Make this page CELEBRATORY — this is the climax!
+
+  Gordon picks up Feast Platter from Cue's counter. Plates EVERYTHING together.
+  Show a beautiful large oval platter with all dishes arranged: golden garlic bread slices, pizza slices with melted cheese, fresh green salad, red sauce on the side.
+  Feast Platter gets the biggest, most ornate GOLDEN CHECKMARK.
+
+  Indie's rail: COMPLETELY EMPTY. All 6 tickets have dropped. Indie (satisfied, glasses slightly askew): "Every ticket accounted for."
+  Cue's counter: EMPTY. Cue (proud, slightly exhausted): "Every dish fired in order."
+
+  THE FINAL ORDER (shown as a LARGE horizontal flow with arrows):
+  Dough ✓ → Sauce ✓ → Salad ✓ → Garlic Bread ✓ → Pizza ✓ → Feast ✓
+  All 6 dishes with golden checkmarks in a row.
+
+  Code: len(order) == 6 == n → ALL DISHES COOKED! Valid topological order!
+
+  Gordon (triumphant pose, chef's kiss gesture): "SERVICE! The feast is READY!"
+
+  BIG highlighted callout (gold border):
+  "Every dish was cooked AFTER all its prereqs. That's a valid topological order."
+
+
+PROMPT 3 OF 4 — Cycles + Multiple Orders + Why It Works (Pages 7-9)
+=====================================================================
+
+Continue the Topological Sort tutorial. Tall portrait (1024x1792). SAME exact style. SAME exact character designs. ALL text HUGE. Show don't tell.
+
+SAME characters: Gordon (white chef jacket), Indie (steel ticket rail with reading glasses), Cue (brass bell on silver counter).
+
+Stack 3 sections vertically:
+
+PAGE 7 — "THE IMPOSSIBLE MENU" (LARGE circled 7 top-right):
+Header: "CYCLE DETECTION" — "What if the menu is impossible?"
+Make this page dramatic — this is the key concept page.
+
+  Setup: Show the ORIGINAL dependency graph, but with ONE scary new RED arrow added:
+  Pizza → Dough (NEW! drawn in red, with a skull/warning icon)
+  This means: "Dough now needs Pizza to be done first."
+  But Pizza already needs Dough! Circular dependency!
+
+  What happens:
+  Show Indie's rail at the start with MODIFIED in_degrees:
+    Dough = 1 (RED, needs Pizza now!), Sauce = 0 (GREEN), Salad = 0 (GREEN)
+    Garlic Bread = 1 (RED), Pizza = 2 (RED), Feast = 3 (RED)
+  Cue's counter starts with ONLY: [Sauce, Salad] — only two zeros now!
+
+  Process Sauce → Pizza: 2 → 1. Still waiting.
+  Process Salad → Feast: 3 → 2. Still waiting.
+  Cue's counter: EMPTY. But only 2 out of 6 dishes cooked!
+
+  Show Indie's rail with 4 STUCK tickets that can NEVER drop:
+    Dough(1), Garlic Bread(1), Pizza(1), Feast(2)
+  The tickets look frozen/stuck, with little ice crystals or chains on them.
+  None can ever reach 0. They are DEADLOCKED. Waiting on each other forever.
+
+  Gordon (furious, face red, pointing): "IT'S RAW! Dough needs Pizza but Pizza needs Dough! This menu is IMPOSSIBLE!"
+
+  BIG highlighted callout (red border):
+  "len(order) = 2 ≠ 6 = n → NOT all dishes cooked → CYCLE DETECTED!"
+  "If the queue empties but dishes remain, there's a circular dependency. The menu is impossible."
+
+  Code:
+    if len(order) != n:
+        return []    # CYCLE! Impossible menu!
+
+PAGE 8 — "MANY VALID ORDERS" (LARGE circled 8 top-right):
+Header: "TOPOLOGICAL ORDER IS NOT UNIQUE"
+
+  Show the ORIGINAL graph (no cycle) again at the top.
+
+  Visual comparison — two panels side by side:
+    LEFT panel (blue border): "Order A: Dough first"
+      Dough → Sauce → Salad → Garlic Bread → Pizza → Feast
+      Label: "This is what we did in our walkthrough."
+
+    RIGHT panel (green border): "Order B: Sauce first"
+      Sauce → Dough → Salad → Garlic Bread → Pizza → Feast
+      Label: "Also valid! Every dish still comes after its prereqs."
+
+  Both panels have a big green checkmark — both are correct!
+
+  Cue (speech bubble): "I had three dishes to start with. Whichever Gordon picks first changes the final order!"
+
+  BIG highlighted callout (gold border):
+  "Multiple valid topological orders can exist.
+   Which one you get depends on which zero-dep dish you pick first.
+   Regular queue → one valid order.
+   Min-heap → lexicographically smallest order."
+
+  Small note at bottom: "If the problem asks for a SPECIFIC ordering (smallest lexicographic), swap Cue for a priority queue!"
+
+PAGE 9 — "WHY DOES THIS WORK?" (LARGE circled 9 top-right):
+Header: "THE KEY INSIGHT"
+
+  Visual 1 — PEELING LAYERS:
+  Show the dependency graph being processed in layers, like peeling an onion:
+    Layer 0 (outermost, green): Dough, Sauce, Salad (zero deps, processed first)
+    Layer 1 (middle, amber): Garlic Bread, Pizza (deps only on Layer 0)
+    Layer 2 (innermost, gold): Feast Platter (deps only on earlier layers)
+  Label: "Each round peels off the outermost layer. Like BFS levels in a graph."
+
+  Visual 2 — WHY ZERO IS SAFE:
+  Show a dish with in_degree 0 and NO arrows pointing at it.
+  Label: "No arrows coming IN = nothing needs to happen before me. Safe to fire FIRST."
+  Contrast: a dish with in_degree 2, two arrows pointing at it.
+  Label: "Two arrows in = I MUST wait for both. NOT safe yet."
+
+  Visual 3 — IT'S JUST BFS:
+  Side-by-side comparison table:
+    BFS:        Start from source → process level by level → use queue
+    Topo Sort:  Start from zero-dep → process layer by layer → use queue
+  Label: "Topological Sort IS BFS — just seeded by in-degree instead of a start node!"
+
+  Bottom callout with Gordon:
+  Gordon (calm, confident, pointing at the viewer): "Cue IS the queue. Indie IS the in-degrees. When a ticket hits zero, the dish joins the line. That's the entire algorithm."
+
+
+PROMPT 4 OF 4 — Recap + Code + Time Complexity (Page 10)
+==========================================================
+
+Final panel of the Topological Sort tutorial. Tall portrait (1024x1792). SAME exact style. SAME exact character designs. ALL text HUGE.
+
+SAME characters: Gordon (white chef jacket), Indie (steel ticket rail with reading glasses), Cue (brass bell on silver counter).
+
+PAGE 10:
+
+"OUR 2 TOOLS" (top section):
+Two LARGE character portraits side by side in white cards:
+  Indie the Ticket Rail (in_degree[]) — "How many prereqs left? Tracks every dependency count."
+  Cue the Service Bell (queue) — "Who's ready to fire? Lines up zero-dep dishes FIFO."
+
+"GORDON'S KITCHEN RITUAL" (middle section):
+Show the 4 steps as a LARGE horizontal flow with big numbered circles and character icons:
+  1 Indie COUNTS incoming arrows for every dish (build in_degree[])
+  → 2 Zero on the ticket? Cue DINGS — dish joins the counter (seed the queue)
+  → 3 Gordon PICKS a dish from the counter, COOKS it (process node, add to order)
+  → 4 DECREMENT tickets of all dishes that depended on it. Hit zero? Cue DINGS again!
+Below: Big label: "Repeat steps 3-4 until Cue's counter is empty. All cooked = valid order. Some left = CYCLE!"
+
+"THE CODE (PYTHON)" (large section):
+LARGE monospace code block, line-numbered, on a light gray/white background. Make the code BIG enough to read on a phone:
+   1  from collections import deque
+   2
+   3  def topo_sort(n, edges):
+   4      graph = [[] for _ in range(n)]
+   5      in_deg = [0] * n
+   6      for u, v in edges:
+   7          graph[u].append(v)
+   8          in_deg[v] += 1
+   9
+  10      q = deque(i for i in range(n) if in_deg[i] == 0)
+  11      order = []
+  12
+  13      while q:
+  14          node = q.popleft()
+  15          order.append(node)
+  16          for nei in graph[node]:
+  17              in_deg[nei] -= 1
+  18              if in_deg[nei] == 0:
+  19                  q.append(nei)
+  20
+  21      return order if len(order) == n else []
+
+Line annotations (beside or below each line, mapped to story moments):
+  Lines 4-5: "Build BOTH graph and in_degree at the same time!" (Page 2, The Kitchen)
+  Lines 6-8: "Indie counts incoming arrows for each dish." (Setup)
+  Line 10: "All zero-dep dishes start on Cue's counter." (Page 2, three dings)
+  Lines 13-15: "Gordon picks from the counter, cooks it, adds to order." (Pages 3-6)
+  Lines 16-19: "Decrement dependents. Hit zero? Cue DINGS, joins counter." (Fan-out, Page 3)
+  Line 21: "All cooked? Valid order! Some stuck? CYCLE! IT'S RAW!" (Page 7)
+
+"THE THREE GOLDEN RULES" (bottom section):
+Three golden cards side by side:
+  1. "COUNT FIRST" — Build in_degree by counting incoming arrows. Indie's tickets. (Indie icon)
+  2. "FIRE ZEROS" — Zero prereqs = safe to cook first. Cue collects them FIFO. (Cue icon dinging)
+  3. "CHECK ALL COOKED" — len(order) != n means cycle. Some dishes stuck forever. (Gordon angry icon)
+
+"TIME COMPLEXITY" (bottom banner):
+Large highlighted golden box. Show Gordon with a confident pose and a chef's kiss gesture:
+  O(V + E) — visit every dish once, check every dependency once
+  V = number of dishes (nodes), E = number of dependency arrows (edges)
+  "One pass through every dish. One check of every arrow. Done."
+  Gordon: "Now THAT'S a perfectly cooked algorithm."

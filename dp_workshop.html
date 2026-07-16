@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The DP Workshop</title>
 <style>
-:root{--bg:#1a1916;--card:#252320;--card2:#2d2a26;--gold:#d4a843;--gold2:#fbbf24;--amber:#f59e0b;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;--red:#ef4444;--crimson:#dc2626;--emerald:#059669;--violet:#7c3aed;--text:#e8e2d6;--muted:#9b9484;--border:#3d3930}
+:root{--bg:#1a1916;--card:#252320;--card2:#2d2a26;--gold:#d4a843;--gold2:#fbbf24;--amber:#f59e0b;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;--red:#ef4444;--crimson:#dc2626;--emerald:#059669;--violet:#7c3aed;--teal:#14b8a6;--text:#e8e2d6;--muted:#9b9484;--border:#3d3930}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;padding:0 0 80px}
 .hdr{background:linear-gradient(135deg,#1f1a0e,#1a1916);border-bottom:3px solid var(--amber);padding:40px 20px;text-align:center}
@@ -18,24 +18,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 h2{color:var(--amber);font-size:1.4em;margin:32px 0 12px;border-bottom:2px solid var(--border);padding-bottom:8px}
 h3{color:var(--amber);margin:20px 0 8px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin:16px 0}
-.map-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:2px solid var(--border);border-radius:10px;overflow:hidden;margin:16px 0}
-.map-row{display:contents}
-.map-cell{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.map-cell:nth-child(odd){background:var(--card);border-right:1px solid var(--border)}
-.map-cell:nth-child(even){background:var(--card2)}
-.map-cell .icon{font-size:1.5em;flex-shrink:0;width:36px;text-align:center}
-.map-cell .lbl{font-weight:700;color:var(--gold2);font-size:.9em}
-.map-cell .sub{color:var(--muted);font-size:.8em}
-.map-cell code{background:#0d0d0b;padding:2px 6px;border-radius:3px;font-family:'Fira Code',monospace;font-size:.8em;color:var(--amber)}
-.flow-step{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:20px;margin:0 auto;max-width:600px;text-align:center;position:relative}
-.flow-step.q-step{border-color:var(--gold)}
-.flow-arrow{text-align:center;font-size:2em;color:var(--muted);margin:4px 0;line-height:1}
-.flow-branch{display:flex;gap:16px;margin:8px auto;max-width:650px}
-.flow-step.s1{border-color:var(--crimson);background:#7f1d1d15}.flow-step.s2{border-color:var(--blue);background:#1e3a5f15}
-.flow-step.s3{border-color:var(--amber);background:#92400e15}.flow-step.s4{border-color:var(--violet);background:#581c8715}
-.flow-step.s5{border-color:var(--emerald);background:#064e3b15}
-.flow-step .tag{display:inline-block;padding:2px 10px;border-radius:4px;font-size:.8em;font-weight:700}
-.t1{background:#991b1b;color:#fecaca}.t2{background:#1e40af;color:#bfdbfe}.t3{background:#92400e;color:#fef3c7}.t4{background:#581c87;color:#e9d5ff}.t5{background:#064e3b;color:#a7f3d0}
+.scene-img{width:100%;border-radius:10px;margin:12px 0;border:1px solid var(--border)}
 .deriv{background:var(--card);border:1px solid var(--border);border-radius:10px;margin:16px 0;overflow:hidden}
 .deriv-h{padding:14px 20px;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
 .deriv-h:hover{background:var(--card2)}
@@ -56,662 +39,583 @@ code{font-family:'Fira Code','Courier New',monospace}
 table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
 th{background:var(--card2);color:var(--gold);text-align:left;padding:10px 12px;border:1px solid var(--border)}
 td{padding:10px 12px;border:1px solid var(--border)}
-.ritual-step{display:grid;grid-template-columns:auto 1fr 1fr;gap:0}
-.ritual-step>div{padding:10px 14px;border-bottom:1px solid #ffffff10}
+.pipe-step{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:20px;margin:0 auto;max-width:700px;text-align:center;position:relative}
+.pipe-arrow{text-align:center;font-size:2em;color:var(--muted);margin:4px 0;line-height:1}
+.ftag{display:inline-block;padding:2px 10px;border-radius:4px;font-size:.8em;font-weight:700}
+.ftag-knap{background:#1e40af;color:#bfdbfe}
+.ftag-uknap{background:#0f766e;color:#ccfbf1}
+.ftag-lin{background:#991b1b;color:#fecaca}
+.ftag-lcs{background:#581c87;color:#e9d5ff}
+.ftag-pal{background:#92400e;color:#fef3c7}
+.ftag-sm{background:#064e3b;color:#a7f3d0}
+.ftag-grid{background:#4338ca;color:#c7d2fe}
+.ftag-int{background:#365314;color:#d9f99d}
+.walkthrough-section{background:var(--card);border-radius:12px;padding:20px;margin:20px 0;border-left:4px solid var(--blue)}
+.walkthrough-section h3{color:var(--blue);margin-top:0}
+.var-table{display:grid;grid-template-columns:auto 1fr auto;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:12px 0}
+.var-table>div{padding:10px 14px;border-bottom:1px solid #ffffff10}
 </style>
 </head>
 <body>
 
 <div class="hdr">
 <h1>The DP Workshop</h1>
-<p>All 21 NeetCode DP Problems &mdash; 5 Templates</p>
+<p>Aditya Verma's Intuition Pipeline, applied to 21 NeetCode problems</p>
 </div>
 
 <div class="wrap">
 <div class="nav">
-<button class="on" onclick="go('workshop')">The Workshop Map</button>
-<button onclick="go('flowchart')">Flowchart</button>
-<button onclick="go('scenes')">5 Scenes</button>
+<button class="on" onclick="go('pipeline')">The Pipeline</button>
+<button onclick="go('knapsack')">0/1 Knapsack</button>
 <button onclick="go('problems')">21 Problems</button>
 <button onclick="go('quiz')">Quiz</button>
 </div>
 
-<!-- ==================== TAB 1: THE WORKSHOP MAP ==================== -->
-<div class="sec vis" id="sec-workshop">
+<!-- ==================== TAB 1: THE PIPELINE ==================== -->
+<div class="sec vis" id="sec-pipeline">
 
-<h2>The Workshop Map</h2>
-<p>The Workshop is a vast crafting hall where five master artisans each work at their own station. Each has their own tools, their own ritual, and their own way of turning raw material into a finished answer. Every DP problem belongs to one of these five stations.</p>
+<h2>Aditya Verma's Pipeline</h2>
+<p>Every DP problem, same method. Don't memorize templates. Build the solution from the choices.</p>
 
-<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px">
-<h3 style="margin-top:0;color:var(--amber)">The Workshop Map &mdash; What Everything Means</h3>
-
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
-
-<div style="background:rgba(245,158,11,.06);border:1px solid var(--amber);border-radius:8px;padding:16px">
-<div style="font-size:1.1em;font-weight:700;color:var(--amber);margin-bottom:8px">Workshop Table = Array/String</div>
-<div style="font-size:.95em;color:var(--text)">
-The raw material sitting on the table. Could be a row of numbers, a string of characters, or a list of prices. The craftsperson walks along it, step by step.<br><br>
-<strong>In code:</strong> <code>nums[]</code>, <code>s</code>, <code>prices[]</code>
-</div>
+<div class="pipe-step" style="border-color:var(--gold)">
+<div style="font-size:.7em;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">STEP 1</div>
+<strong style="color:var(--gold2);font-size:1.15em">What CHOICES do you have?</strong>
+<div style="font-size:.9em;color:var(--muted);margin-top:6px">At each item/position/step, what can you do? Take or skip? Go left or right? Match or insert?<br>The choices ARE the problem. Find them first.</div>
 </div>
 
-<div style="background:rgba(245,158,11,.06);border:1px solid var(--amber);border-radius:8px;padding:16px">
-<div style="font-size:1.1em;font-weight:700;color:var(--amber);margin-bottom:8px">Chalk/Notebook = Memoized Results</div>
-<div style="font-size:.95em;color:var(--text)">
-As the craftsperson works, they write results in chalk on the table or in a notebook. Later steps <strong>look back</strong> at these notes instead of recalculating from scratch.<br><br>
-<strong>In code:</strong> <code>dp[]</code> or <code>dp[][]</code>
-</div>
+<div class="pipe-arrow">&darr;</div>
+
+<div class="pipe-step" style="border-color:var(--blue)">
+<div style="font-size:.7em;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">STEP 2</div>
+<strong style="color:var(--blue);font-size:1.15em">Draw the Choice Diagram &rarr; Write Recursion</strong>
+<div style="font-size:.9em;color:var(--muted);margin-top:6px">The choice diagram IS the recursive function. Each branch = a recursive call. The code writes itself from the diagram.</div>
 </div>
 
-<div style="background:rgba(245,158,11,.06);border:1px solid var(--amber);border-radius:8px;padding:16px">
-<div style="font-size:1.1em;font-weight:700;color:var(--amber);margin-bottom:8px">Looking Back = Previous Results</div>
-<div style="font-size:.95em;color:var(--text)">
-The craftsperson never starts from scratch. They <strong>look back</strong> at what they already computed &mdash; the last step, the last two steps, or a specific earlier position.<br><br>
-<strong>In code:</strong> <code>dp[i-1]</code>, <code>dp[i-2]</code>, <code>dp[i][j-1]</code>
-</div>
+<div class="pipe-arrow">&darr;</div>
+
+<div class="pipe-step" style="border-color:var(--crimson)">
+<div style="font-size:.7em;color:var(--crimson);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">STEP 3</div>
+<strong style="color:var(--crimson);font-size:1.15em">Draw the Recursive Tree &rarr; Spot Overlapping Subproblems</strong>
+<div style="font-size:.9em;color:var(--muted);margin-top:6px">Expand the recursion into a tree. See the SAME subproblem appear in DIFFERENT branches? Same inputs, same answer. Why solve it twice?<br><strong style="color:var(--crimson)">THAT'S WHY IT'S DP.</strong></div>
 </div>
 
-<div style="background:rgba(245,158,11,.06);border:1px solid var(--amber);border-radius:8px;padding:16px">
-<div style="font-size:1.1em;font-weight:700;color:var(--amber);margin-bottom:8px">Base Case = Starting Values</div>
-<div style="font-size:.95em;color:var(--text)">
-Before the loop begins, the first few entries are set by hand. These are the <strong>golden base cases</strong> &mdash; the foundation everything else builds on.<br><br>
-<strong>In code:</strong> <code>dp[0] = ...</code>, <code>dp[0][0] = True</code>
-</div>
-</div>
+<div class="pipe-arrow">&darr;</div>
+
+<div class="pipe-step" style="border-color:var(--green)">
+<div style="font-size:.7em;color:var(--green);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">STEP 4</div>
+<strong style="color:var(--green);font-size:1.15em">Memoize (3 extra lines)</strong>
+<div style="font-size:.9em;color:var(--muted);margin-top:6px">Same recursive code. Just add a cache. Before computing: check the cache. After computing: store in the cache. Done. O(2<sup>n</sup>) &rarr; O(n&times;W).</div>
 </div>
 
-<h2>Quick Reference: Workshop = DP</h2>
+<div class="pipe-arrow">&darr;</div>
 
-<div class="map-grid">
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x1F6E0;</span><div><div class="lbl">Workshop Table</div><div class="sub">The array/string being processed</div></div></div>
-<div class="map-cell"><span class="icon">&#x1F4CA;</span><div><div class="lbl">Input Data</div><code>nums[]</code>, <code>s</code>, <code>prices[]</code></div></div>
-</div>
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x1F4DD;</span><div><div class="lbl">Chalk / Notebook</div><div class="sub">Memoized results written down</div></div></div>
-<div class="map-cell"><span class="icon">&#x1F4CB;</span><div><div class="lbl">DP Table</div><code>dp[]</code> or <code>dp[][]</code></div></div>
-</div>
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x1F519;</span><div><div class="lbl">Looking Back</div><div class="sub">Checking previous chalk values</div></div></div>
-<div class="map-cell"><span class="icon">&#x1F504;</span><div><div class="lbl">Recurrence</div><code>dp[i-1]</code>, <code>dp[i-2]</code></div></div>
-</div>
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x2B50;</span><div><div class="lbl">Base Case</div><div class="sub">The golden starting values</div></div></div>
-<div class="map-cell"><span class="icon">&#x1F3AF;</span><div><div class="lbl">Initialization</div><code>dp[0] = ...</code></div></div>
-</div>
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x1F4D0;</span><div><div class="lbl">Recurrence</div><div class="sub">The formula at each step</div></div></div>
-<div class="map-cell"><span class="icon">&#x2699;</span><div><div class="lbl">Transition</div><code>dp[i] = f(dp[i-1], ...)</code></div></div>
-</div>
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x1F9F1;</span><div><div class="lbl">Tabulation</div><div class="sub">Filling bottom-up, brick by brick</div></div></div>
-<div class="map-cell"><span class="icon">&#x1F501;</span><div><div class="lbl">Bottom-Up Loop</div><code>for i in range(...)</code></div></div>
-</div>
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x2702;</span><div><div class="lbl">Space Optimization</div><div class="sub">Keeping only what you need</div></div></div>
-<div class="map-cell"><span class="icon">&#x1F4BE;</span><div><div class="lbl">O(1) Space</div><code>prev1, prev2</code> instead of full array</div></div>
-</div>
+<div class="pipe-step" style="border-color:var(--amber)">
+<div style="font-size:.7em;color:var(--amber);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">STEP 5</div>
+<strong style="color:var(--amber);font-size:1.15em">Tabulate (Changing Variables &rarr; Table Dimensions)</strong>
+<div style="font-size:.9em;color:var(--muted);margin-top:6px">Count the variables that CHANGE across recursive calls. That's how many dimensions the table has.<br>Recursive base case &rarr; first row/column of the table. Same formula, bottom-up.</div>
 </div>
 
-<h3>The Characters</h3>
-<div class="map-grid">
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x1FA9C;</span><div><div class="lbl">Maya the Climber</div><div class="sub">Steps up one staircase, looks back 1-2 steps</div></div></div>
-<div class="map-cell"><span class="icon">&#x1F4C8;</span><div><div class="lbl">Linear DP (Scene 1)</div><code>dp[i] = f(dp[i-1], dp[i-2])</code></div></div>
+<div class="hi" style="margin-top:24px">
+<strong style="color:var(--amber)">The key insight:</strong> You don't memorize a template and apply it. You <em>discover</em> the recursion from choices, <em>notice</em> overlapping subproblems, and <em>derive</em> the table from the recursion. The table isn't magic. It comes from the code you already wrote.
 </div>
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x1F528;</span><div><div class="lbl">Forge the Blacksmith</div><div class="sub">Fills shelf slots with different molds</div></div></div>
-<div class="map-cell"><span class="icon">&#x1F3AF;</span><div><div class="lbl">Target/Knapsack DP (Scene 2)</div><code>for coin: for amount:</code></div></div>
+
+<h2>Three Golden Rules</h2>
+<div style="display:grid;gap:12px;margin-bottom:24px">
+
+<div style="background:var(--card);border:2px solid var(--gold);border-radius:10px;padding:18px">
+<div style="color:var(--gold2);font-weight:800;font-size:1.1em;margin-bottom:8px">1. Find the CHOICES First</div>
+<div style="font-size:.95em">At each step, what can you do? Take or skip? Include or exclude? Match, insert, or delete? The choice diagram IS the recursion. Once you see the choices, the code follows.</div>
 </div>
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x1FA9E;</span><div><div class="lbl">Echo the Acrobat</div><div class="sub">Expands arms from center, checks reflections</div></div></div>
-<div class="map-cell"><span class="icon">&#x1F50D;</span><div><div class="lbl">Palindrome DP (Scene 3)</div><code>expand l--, r++</code></div></div>
+
+<div style="background:var(--card);border:2px solid var(--gold);border-radius:10px;padding:18px">
+<div style="color:var(--gold2);font-weight:800;font-size:1.1em;margin-bottom:8px">2. Changing Variables = Table Dimensions</div>
+<div style="font-size:.95em">Look at your recursive function's parameters. Which ones change across calls? 1 variable changes &rarr; 1D array. 2 variables change &rarr; 2D table. The table shape is never a guess.</div>
 </div>
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x1F9F5;</span><div><div class="lbl">Nila the Weaver</div><div class="sub">Threads a 2D loom, match=diagonal, else=max(up,left)</div></div></div>
-<div class="map-cell"><span class="icon">&#x1F4CA;</span><div><div class="lbl">2D Table DP (Scene 4)</div><code>dp[i][j]</code></div></div>
+
+<div style="background:var(--card);border:2px solid var(--gold);border-radius:10px;padding:18px">
+<div style="color:var(--gold2);font-weight:800;font-size:1.1em;margin-bottom:8px">3. One Parent, Many Children</div>
+<div style="font-size:.95em">Each DP family has a parent problem. Every variation is ONE tweak from the parent. Learn the parent deeply. Solve the children by identifying what changed.</div>
 </div>
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x1F0CF;</span><div><div class="lbl">Ace the Gambler</div><div class="sub">Flips between state cards each turn</div></div></div>
-<div class="map-cell"><span class="icon">&#x1F3B0;</span><div><div class="lbl">State Machine DP (Scene 5)</div><code>hold, sold, rest</code></div></div>
+
+</div>
+
+<h2>The DP Families</h2>
+<p>Every DP problem belongs to a family. The parent teaches the pattern. Each variation is one tweak.</p>
+
+<table>
+<tr><th>Family</th><th>Parent Problem</th><th>Key Choice</th><th># Variations</th><th>Status</th></tr>
+<tr><td><span class="ftag ftag-knap">0/1 Knapsack</span></td><td>Knapsack (take/skip, capacity limit)</td><td>GRAB it or SKIP it</td><td>6</td><td style="color:var(--green)">&#10003; Done</td></tr>
+<tr><td><span class="ftag ftag-uknap">Unbounded Knapsack</span></td><td>Coin Change (items reusable)</td><td>Use it AGAIN or move on</td><td>3</td><td style="color:var(--muted)">Coming</td></tr>
+<tr><td><span class="ftag ftag-lcs">LCS</span></td><td>Longest Common Subsequence</td><td>Match, skip from A, skip from B</td><td>10</td><td style="color:var(--muted)">Coming</td></tr>
+<tr><td><span class="ftag ftag-lin">Linear/Fibonacci</span></td><td>Climbing Stairs</td><td>Step 1 or step 2</td><td>4</td><td style="color:var(--muted)">Coming</td></tr>
+<tr><td><span class="ftag ftag-pal">Palindrome</span></td><td>Longest Palindromic Substring</td><td>Expand or stop</td><td>2</td><td style="color:var(--muted)">Coming</td></tr>
+<tr><td><span class="ftag ftag-sm">State Machine</span></td><td>Buy & Sell Stock</td><td>Buy, sell, or rest</td><td>3</td><td style="color:var(--muted)">Coming</td></tr>
+<tr><td><span class="ftag ftag-int">Interval/MCM</span></td><td>Matrix Chain Multiplication</td><td>Where to split</td><td>5</td><td style="color:var(--muted)">Coming</td></tr>
+<tr><td><span class="ftag ftag-grid">Grid DP</span></td><td>Unique Paths</td><td>Go right or go down</td><td>3</td><td style="color:var(--muted)">Coming</td></tr>
+</table>
+
+<h2>How to Identify the Family</h2>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px">
+<div style="font-size:.95em;line-height:2">
+<strong style="color:var(--blue)">0/1 Knapsack:</strong> "subset", "partition", "target sum", take-or-skip each item <em>once</em><br>
+<strong style="color:var(--teal)">Unbounded Knapsack:</strong> "coin change", "combinations", items can be <em>reused</em><br>
+<strong style="color:var(--violet)">LCS:</strong> comparing <em>two</em> sequences, "common", "edit distance", "interleaving"<br>
+<strong style="color:var(--crimson)">Linear:</strong> simple recurrence, look back 1-2 steps, "climbing stairs", "decode ways"<br>
+<strong style="color:var(--amber)">Palindrome:</strong> "palindromic", symmetry, expanding from center<br>
+<strong style="color:var(--emerald)">State Machine:</strong> "buy and sell", "cooldown", multiple states per step<br>
+<strong style="color:var(--green)">Interval:</strong> "burst balloons", "matrix chain", choosing where to split a range<br>
+<strong style="color:#818cf8">Grid:</strong> "unique paths", "minimum path sum", 2D grid traversal
 </div>
 </div>
 
 </div>
+
+<!-- ==================== TAB 2: 0/1 KNAPSACK ==================== -->
+<div class="sec" id="sec-knapsack">
+
+<h2>Family 1: 0/1 Knapsack</h2>
+<p>The parent of 6 problems. At each item: GRAB it or SKIP it. Same item, same capacity? Same answer. Don't solve it twice.</p>
+
+<div style="color:var(--blue);font-weight:800;font-size:1.25em;margin-bottom:4px">Kit's Casino Vault Heist</div>
+<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">Kit (vault raider), Sack (duffel bag / knapsack), Branch (holographic choice projector)</div>
+
+<img src="dp/images/family1_A.png" alt="Character reference: Kit the vault raider with Sack (duffel bag) and Branch (choice projector), 5 treasures on pedestals" class="scene-img">
+
+<!-- Characters and Setup -->
+<div class="walkthrough-section">
+<h3 style="margin-bottom:12px">The Setup</h3>
+
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px">
+<div style="background:var(--card2);border-radius:8px;padding:14px;text-align:center">
+<div style="font-size:1.5em">&#x1F9D1;&#x200D;&#x2708;&#xFE0F;</div>
+<div style="color:var(--blue);font-weight:700;font-size:.95em">Kit</div>
+<div style="font-size:.82em;color:var(--muted)">Vault raider. Makes the choices.</div>
 </div>
-
-<!-- ==================== TAB 2: FLOWCHART ==================== -->
-<div class="sec" id="sec-flowchart">
-
-<h2>The Decision Flowchart</h2>
-<p>Four questions. That's all you need to pick the right scene for ANY DP problem.</p>
-
-<div class="flow-step" style="border-color:var(--amber);background:rgba(245,158,11,.05)">
-<div style="font-size:.7em;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">START</div>
-<strong style="color:var(--amber);font-size:1.1em">Read the DP problem</strong>
+<div style="background:var(--card2);border-radius:8px;padding:14px;text-align:center">
+<div style="font-size:1.5em">&#x1F45C;</div>
+<div style="color:var(--blue);font-weight:700;font-size:.95em">Sack</div>
+<div style="font-size:.82em;color:var(--muted)">Duffel bag. Tracks remaining capacity (W=7).</div>
 </div>
-
-<div class="flow-arrow">&darr;</div>
-
-<!-- Q0: Two sequences? -->
-<div class="flow-step q-step">
-<div style="font-size:.7em;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Q0</div>
-<strong>Are you comparing TWO sequences (strings/arrays)?</strong>
-<div style="background:rgba(251,191,36,.08);border-radius:6px;padding:10px;margin-top:8px;font-size:.88em">
-<div style="color:var(--gold2);font-weight:700;margin-bottom:4px">How to spot it:</div>
-<div style="color:var(--text)">The problem says <em>"longest common"</em>, <em>"edit distance"</em>, <em>"interleaving"</em>, <em>"regex"</em>, <em>"distinct subsequences"</em>.<br>
-<strong>Key signal:</strong> You have <strong>two inputs</strong> being compared character-by-character or element-by-element.</div>
-</div>
-</div>
-
-<div class="flow-branch">
-<div class="flow-step s4" style="flex:.6">
-<strong style="color:var(--violet)">YES &rarr;</strong>
-<div><span class="tag t4">Scene 4</span></div>
-<div style="margin-top:6px"><strong style="color:var(--violet);font-size:1.05em">NILA'S LOOM</strong></div>
-<div style="font-size:.85em;color:var(--muted);margin-top:4px">2D Table DP. Match=diagonal, else=max(up,left).</div>
-</div>
-<div style="display:flex;align-items:center;color:var(--muted);font-weight:700">NO &darr;</div>
-</div>
-
-<div class="flow-arrow">&darr;</div>
-
-<!-- Q1: Palindrome? -->
-<div class="flow-step q-step">
-<div style="font-size:.7em;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Q1</div>
-<strong>Is it a PALINDROME or SYMMETRY problem?</strong>
-<div style="background:rgba(251,191,36,.08);border-radius:6px;padding:10px;margin-top:8px;font-size:.88em">
-<div style="color:var(--gold2);font-weight:700;margin-bottom:4px">How to spot it:</div>
-<div style="color:var(--text)">The problem says <em>"palindrome"</em>, <em>"palindromic"</em>, or involves checking symmetry.<br>
-<strong>Key signal:</strong> You need to find or count substrings/subsequences that <strong>read the same forwards and backwards</strong>.</div>
+<div style="background:var(--card2);border-radius:8px;padding:14px;text-align:center">
+<div style="font-size:1.5em">&#x1F4A1;</div>
+<div style="color:var(--blue);font-weight:700;font-size:.95em">Branch</div>
+<div style="font-size:.82em;color:var(--muted)">Holographic projector. Shows TAKE (green) vs SKIP (red).</div>
 </div>
 </div>
 
-<div class="flow-branch">
-<div class="flow-step s3" style="flex:.6">
-<strong style="color:var(--amber)">YES &rarr;</strong>
-<div><span class="tag t3">Scene 3</span></div>
-<div style="margin-top:6px"><strong style="color:var(--amber);font-size:1.05em">ECHO'S MIRRORS</strong></div>
-<div style="font-size:.85em;color:var(--muted);margin-top:4px">Palindrome DP. Expand from center.</div>
-</div>
-<div style="display:flex;align-items:center;color:var(--muted);font-weight:700">NO &darr;</div>
-</div>
-
-<div class="flow-arrow">&darr;</div>
-
-<!-- Q2: Target/knapsack? -->
-<div class="flow-step q-step">
-<div style="font-size:.7em;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Q2</div>
-<strong>Are you building up to a TARGET AMOUNT using items/coins?</strong>
-<div style="background:rgba(251,191,36,.08);border-radius:6px;padding:10px;margin-top:8px;font-size:.88em">
-<div style="color:var(--gold2);font-weight:700;margin-bottom:4px">How to spot it:</div>
-<div style="color:var(--text)">The problem says <em>"coins"</em>, <em>"amount"</em>, <em>"target sum"</em>, <em>"word break"</em>, <em>"how many ways to make"</em>.<br>
-<strong>Key signal:</strong> You have a set of items and need to reach or fill a <strong>specific capacity/target</strong>.</div>
-</div>
+<div style="font-weight:700;color:var(--gold2);margin-bottom:8px">The 5 Vault Treasures (bag capacity W = 7 kg)</div>
+<table>
+<tr><th>Treasure</th><th>Weight</th><th>Value</th></tr>
+<tr><td>Gold Bar Stack</td><td>4 kg</td><td>$10K</td></tr>
+<tr><td>Ruby Collection</td><td>3 kg</td><td>$7K</td></tr>
+<tr><td>Diamond Display</td><td>5 kg</td><td>$12K</td></tr>
+<tr><td>Emerald Ring Box</td><td>1 kg</td><td>$3K</td></tr>
+<tr><td>Platinum Watches</td><td>2 kg</td><td>$5K</td></tr>
+</table>
+<div style="color:var(--green);font-size:.9em;margin-top:8px"><strong>Optimal:</strong> Gold ($10K, 4kg) + Emerald ($3K, 1kg) + Platinum ($5K, 2kg) = <strong>$18K, 7kg</strong></div>
+<div style="color:var(--muted);font-size:.85em;margin-top:4px">"0/1" means: each item, at most once. Grab it or skip it. No taking half. No taking twice.</div>
 </div>
 
-<div class="flow-branch">
-<div class="flow-step s2" style="flex:.6">
-<strong style="color:var(--blue)">YES &rarr;</strong>
-<div><span class="tag t2">Scene 2</span></div>
-<div style="margin-top:6px"><strong style="color:var(--blue);font-size:1.05em">FORGE'S ANVIL</strong></div>
-<div style="font-size:.85em;color:var(--muted);margin-top:4px">Knapsack/Target DP. Build shelf, sweep with molds.</div>
-</div>
-<div style="display:flex;align-items:center;color:var(--muted);font-weight:700">NO &darr;</div>
-</div>
+<!-- Pages 1-3: The Choice Diagram + Recursion -->
+<img src="dp/images/family1_C_1.png" alt="Pages 1-3: The problem setup, choice diagram, and recursion from choices" class="scene-img">
 
-<div class="flow-arrow">&darr;</div>
+<div class="walkthrough-section">
+<h3>Step 1: What Are My Choices?</h3>
+<p>This is how EVERY knapsack problem starts. At each treasure, Kit has two choices:</p>
 
-<!-- Q3: State machine / interval? -->
-<div class="flow-step q-step">
-<div style="font-size:.7em;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Q3</div>
-<strong>Does each step have MULTIPLE STATES (buy/hold/sell) or INTERVAL RANGES?</strong>
-<div style="background:rgba(251,191,36,.08);border-radius:6px;padding:10px;margin-top:8px;font-size:.88em">
-<div style="color:var(--gold2);font-weight:700;margin-bottom:4px">How to spot it:</div>
-<div style="color:var(--text)">The problem says <em>"cooldown"</em>, <em>"buy and sell"</em>, <em>"burst"</em>, <em>"increasing subsequence"</em>.<br>
-<strong>Key signal:</strong> You track <strong>multiple state variables</strong> that transition between each other, or you process <strong>intervals</strong> by length.</div>
+<div style="background:rgba(59,130,246,.08);border:2px solid var(--blue);border-radius:10px;padding:18px;margin:12px 0">
+<div style="color:var(--blue);font-weight:700;font-size:1.1em;margin-bottom:12px">THE CHOICE DIAGRAM</div>
+<div style="font-size:.95em;line-height:1.9">
+<strong>At each item:</strong> Does it FIT in the bag? (<code>weight &lt;= remaining capacity</code>?)<br><br>
+<strong style="color:var(--green)">IF IT FITS</strong> (two branches):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&#x2705; <strong>GRAB:</strong> add value, reduce capacity, move to next item<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&#x274C; <strong>SKIP:</strong> keep capacity, move to next item<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&rarr; Take the <strong>MAX</strong> of both paths<br><br>
+<strong style="color:var(--red)">IF IT DOESN'T FIT</strong> (one branch only):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&#x274C; <strong>SKIP:</strong> move to next item (no choice!)
 </div>
 </div>
 
-<div class="flow-branch">
-<div class="flow-step s5" style="flex:.5">
-<strong style="color:var(--emerald)">YES &rarr;</strong>
-<div><span class="tag t5">Scene 5</span></div>
-<div style="margin-top:6px"><strong style="color:var(--emerald);font-size:1.05em">ACE'S TABLE</strong></div>
-<div style="font-size:.85em;color:var(--muted);margin-top:4px">State Machine / Interval DP.</div>
-</div>
-<div class="flow-step s1" style="flex:.5">
-<strong style="color:var(--crimson)">NO &rarr;</strong>
-<div><span class="tag t1">Scene 1</span></div>
-<div style="margin-top:6px"><strong style="color:var(--crimson);font-size:1.05em">MAYA'S STAIRCASE</strong></div>
-<div style="font-size:.85em;color:var(--muted);margin-top:4px">Linear DP. Simple recurrence.</div>
+<div class="hi">
+<strong style="color:var(--gold2)">Aditya Verma's Rule:</strong> Every DP problem has CHOICES. Find the choices FIRST. The recursion follows.
 </div>
 </div>
 
-<div class="hi" style="margin-top:30px">
-<strong>Why this covers EVERY DP problem:</strong> You either match two sequences (2D Table), check symmetry (Palindrome), build to a target (Knapsack), track multiple states (State Machine), or walk a simple recurrence (Linear). There is no 6th type.
-</div>
-</div>
+<div class="walkthrough-section">
+<h3>Step 2: Choices &rarr; Recursion (the code writes itself)</h3>
+<p>The choice diagram IS the recursive function. Each branch = a recursive call.</p>
 
-<!-- ==================== TAB 3: 5 SCENES ==================== -->
-<div class="sec" id="sec-scenes">
+<pre><code>def knapsack(wt, val, W, n):
+    # BASE CASE: no items left OR no capacity
+    if n == 0 or W == 0:
+        return 0
 
-<h2>The 5 Scenes</h2>
-<p>Each scene is a ritual. Each step in the ritual maps to exactly one line of code. Memorize the ritual, you've memorized the algorithm.</p>
+    # Does item n-1 fit?
+    if wt[n-1] <= W:
+        # CHOICE! Grab or skip, take the better one
+        grab = val[n-1] + knapsack(wt, val, W - wt[n-1], n - 1)
+        skip = knapsack(wt, val, W, n - 1)
+        return max(grab, skip)
+    else:
+        # Doesn't fit. Skip only.
+        return knapsack(wt, val, W, n - 1)</code></pre>
 
-<!-- ============ SCENE 1 ============ -->
-<div style="background:var(--card);border:2px solid var(--crimson);border-radius:12px;padding:20px;margin-bottom:24px">
-
-<div style="color:var(--crimson);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 1: Maya's Staircase</div>
-<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">Linear DP &mdash; step up, look back 1-2 steps, combine</div>
-
-<div style="background:rgba(220,38,38,.08);border:2px solid var(--crimson);border-radius:10px;padding:18px;margin-bottom:16px">
-<div style="color:var(--crimson);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL</div>
-<div style="font-size:.95em;color:var(--text);line-height:1.9">
-<strong style="color:var(--crimson);font-size:1.05em">&#10102;</strong> Maya stands at the bottom. Writes <strong>GOLDEN BASE CASES</strong> on the first 1-2 steps. <code>dp[0], dp[1] = base</code><br>
-<strong style="color:var(--crimson);font-size:1.05em">&#10103;</strong> Climbs to step i. <strong>LOOKS BACK</strong> at steps i-1 and i-2.<br>
-<strong style="color:var(--crimson);font-size:1.05em">&#10104;</strong> <strong>COMBINES</strong> their chalk values using the formula. Writes the new value on step i.<br>
-<strong style="color:var(--crimson);font-size:1.05em">&#10105;</strong> Repeats for every step until the top.<br>
-<strong style="color:var(--crimson);font-size:1.05em">&#10106;</strong> Reads the chalk on the <strong>TOP STEP</strong>. That's the answer.
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+<div style="background:var(--card2);border-radius:6px;padding:10px;font-size:.88em">
+<div style="color:var(--blue);font-weight:700;margin-bottom:4px">Choice Diagram</div>
+<code>if wt[n-1] &lt;= W</code> &rarr; "Does it fit?"<br>
+<code style="color:var(--green)">grab = val[n-1] + ...</code> &rarr; GREEN path<br>
+<code style="color:var(--red)">skip = ...</code> &rarr; RED path<br>
+<code>max(grab, skip)</code> &rarr; "Take the better one"
 </div>
-</div>
-
-<div style="color:var(--gold2);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">RITUAL &rarr; CODE</div>
-<div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
-<div class="ritual-step">
-<div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10102;</div>
-<div style="background:#dc262612;font-size:.9em"><strong>Golden base cases</strong> on first steps.</div>
-<div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>dp[0], dp[1] = base_cases</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10103;&#10104;</div>
-<div style="background:#dc262612;font-size:.9em"><strong>Look back, combine</strong> &mdash; write on step i.</div>
-<div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>dp[i] = combine(dp[i-1], dp[i-2])</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10105;</div>
-<div style="background:#dc262612;font-size:.9em"><strong>Repeat</strong> for every step.</div>
-<div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>for i in range(2, n):</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10106;</div>
-<div style="background:#dc262612;font-size:.9em"><strong>Top step</strong> = the answer.</div>
-<div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>return dp[n-1]</code></div>
-</div>
-</div>
-
-<div style="background:rgba(220,38,38,.06);border:1px solid #b91c1c;border-radius:10px;padding:18px;margin-top:12px">
-<div style="color:var(--crimson);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
-<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; forgetting base cases</div>
-<pre style="font-size:.82em;margin:0"><code>for i in range(2, n):
-    dp[i] = dp[i-1] + dp[i-2]
-# dp[0] and dp[1] never set!
-# Everything builds on garbage.</code></pre>
-</div>
-<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
-<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; always set base cases first</div>
-<pre style="font-size:.82em;margin:0"><code>dp[0], dp[1] = 1, 2  # GOLDEN
-for i in range(2, n):
-    dp[i] = dp[i-1] + dp[i-2]</code></pre>
-</div>
-</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
-<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; reading dp[i-2] when i &lt; 2</div>
-<pre style="font-size:.82em;margin:0"><code>for i in range(0, n):
-    dp[i] = dp[i-1] + dp[i-2]
-# IndexError at i=0 and i=1!</code></pre>
-</div>
-<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
-<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; start loop at i = 2</div>
-<pre style="font-size:.82em;margin:0"><code>for i in range(2, n):  # safe!
-    dp[i] = dp[i-1] + dp[i-2]
-# i-2 is always >= 0</code></pre>
-</div>
+<div style="background:var(--card2);border-radius:6px;padding:10px;font-size:.88em">
+<div style="color:var(--blue);font-weight:700;margin-bottom:4px">Base Case</div>
+<code>n == 0</code> &rarr; No items left<br>
+<code>W == 0</code> &rarr; No capacity left<br>
+Either way &rarr; value is $0<br>
+Base case = smallest valid input
 </div>
 </div>
 </div>
 
-<!-- ============ SCENE 2 ============ -->
-<div style="background:var(--card);border:2px solid var(--blue);border-radius:12px;padding:20px;margin-bottom:24px">
+<!-- Pages 4-5: Recursive Tree + WHY It's DP -->
+<img src="dp/images/family1_C_2.png" alt="Pages 4-5: The recursive tree with overlapping subproblems highlighted, and memoization" class="scene-img">
 
-<div style="color:var(--blue);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 2: Forge's Anvil</div>
-<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">Target/Knapsack DP &mdash; fill shelf slots with molds</div>
+<div class="walkthrough-section">
+<h3>Step 3: Draw the Tree, Spot the Overlap</h3>
+<p>Expand the recursion into a tree (using just the first 3 items to keep it readable):</p>
 
-<div style="background:rgba(37,99,235,.08);border:2px solid var(--blue);border-radius:10px;padding:18px;margin-bottom:16px">
-<div style="color:var(--blue);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL</div>
-<div style="font-size:.95em;color:var(--text);line-height:1.9">
-<strong style="color:var(--blue);font-size:1.05em">&#10102;</strong> Forge sets up a <strong>SHELF</strong> with slots 0 to amount. Slot 0 gets a <strong>GOLDEN ZERO</strong>. Rest get &infin; (or 0 for counting).<br>
-<strong style="color:var(--blue);font-size:1.05em">&#10103;</strong> Picks up the <strong>FIRST MOLD</strong> (coin). Walks the shelf left to right.<br>
-<strong style="color:var(--blue);font-size:1.05em">&#10104;</strong> At each slot a: Can this mold fit? Check slot a-coin. <strong>HAMMER:</strong> <code>dp[a] = min(dp[a], dp[a-coin]+1)</code>.<br>
-<strong style="color:var(--blue);font-size:1.05em">&#10105;</strong> Picks the <strong>NEXT MOLD</strong>. Repeats the full shelf sweep.<br>
-<strong style="color:var(--blue);font-size:1.05em">&#10106;</strong> Reads slot[amount]. That's the answer. Still &infin;? Impossible.
-</div>
-<div style="margin-top:10px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:6px;font-size:.88em;color:var(--muted)">
-<strong style="color:var(--blue)">Unbounded vs 0-1:</strong> Unbounded (can reuse coins) = inner loop LEFT to RIGHT. 0-1 Knapsack (each item once) = inner loop RIGHT to LEFT. Direction matters!
-</div>
+<pre style="font-size:.8em;line-height:1.4;overflow-x:auto"><code>                    (n=3, W=7)
+                   /          \
+            GRAB Diamond    SKIP Diamond
+            (n=2, W=2)      (n=2, W=7)
+            /      \         /      \
+      GRAB Ruby  SKIP Ruby  GRAB Ruby  SKIP Ruby
+      TOO HEAVY  (n=1,W=2)  (n=1,W=4)  (n=1,W=7)
+                  /    \      /    \      /    \
+               GRAB  SKIP  GRAB  SKIP  GRAB  SKIP
+               Gold  Gold  Gold  Gold  Gold  Gold</code></pre>
+
+<div style="background:rgba(251,191,36,.12);border:2px solid var(--gold2);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
+<div style="font-size:1.2em;font-weight:800;color:var(--gold2);margin-bottom:8px">THAT'S WHY IT'S DP!</div>
+<div style="font-size:.95em">The SAME subproblem (same items remaining, same capacity) appears in DIFFERENT branches.<br>Same inputs, same answer. <strong>Why solve it twice?</strong></div>
 </div>
 
-<div style="color:var(--gold2);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">RITUAL &rarr; CODE</div>
-<div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
-<div class="ritual-step">
-<div style="background:#2563eb25;font-weight:700;color:var(--blue);display:flex;align-items:center;justify-content:center">&#10102;</div>
-<div style="background:#2563eb12;font-size:.9em"><strong>Shelf setup.</strong> Slot 0 = golden zero.</div>
-<div style="background:#2563eb08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>dp = [inf]*(amount+1); dp[0] = 0</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#2563eb25;font-weight:700;color:var(--blue);display:flex;align-items:center;justify-content:center">&#10103;</div>
-<div style="background:#2563eb12;font-size:.9em"><strong>Pick up mold</strong> (outer loop = coins).</div>
-<div style="background:#2563eb08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>for coin in coins:</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#2563eb25;font-weight:700;color:var(--blue);display:flex;align-items:center;justify-content:center">&#10104;</div>
-<div style="background:#2563eb12;font-size:.9em"><strong>Sweep shelf.</strong> Hammer each slot.</div>
-<div style="background:#2563eb08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>for a in range(coin, amount+1): dp[a] = min(dp[a], dp[a-coin]+1)</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#2563eb25;font-weight:700;color:var(--blue);display:flex;align-items:center;justify-content:center">&#10105;&#10106;</div>
-<div style="background:#2563eb12;font-size:.9em"><strong>All molds done.</strong> Read slot[amount].</div>
-<div style="background:#2563eb08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>return dp[amount] if dp[amount] != inf else -1</code></div>
+<div style="font-size:.95em;margin-bottom:12px">A problem is DP when:</div>
+<div style="display:grid;grid-template-columns:auto 1fr;gap:8px 12px;font-size:.95em;margin-bottom:12px">
+<div style="color:var(--gold2);font-weight:700">1.</div><div>You make <strong>CHOICES</strong> (grab or skip)</div>
+<div style="color:var(--gold2);font-weight:700">2.</div><div>The <strong>SAME subproblem</strong> appears MULTIPLE times in the recursive tree</div>
+<div style="color:var(--gold2);font-weight:700">3.</div><div>Each subproblem has the <strong>SAME answer</strong> every time</div>
 </div>
 </div>
 
-<div style="background:rgba(37,99,235,.06);border:1px solid #1d4ed8;border-radius:10px;padding:18px;margin-top:12px">
+<div class="walkthrough-section">
+<h3>Step 4: Memoize (3 extra lines)</h3>
+<p>Same recursive code. Just add a cache. That's it.</p>
+
+<pre><code>def knapsack(wt, val, W, n, memo={}):
+    if (n, W) in memo: return memo[(n, W)]   # CHECK cache
+    if n == 0 or W == 0:
+        return 0
+    if wt[n-1] <= W:
+        grab = val[n-1] + knapsack(wt, val, W - wt[n-1], n - 1, memo)
+        skip = knapsack(wt, val, W, n - 1, memo)
+        result = max(grab, skip)
+    else:
+        result = knapsack(wt, val, W, n - 1, memo)
+    memo[(n, W)] = result                     # STORE result
+    return result</code></pre>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+<div style="background:rgba(239,68,68,.08);border-radius:6px;padding:10px;font-size:.88em">
+<div style="color:var(--red);font-weight:700;margin-bottom:4px">Without cache: O(2<sup>n</sup>)</div>
+Every branch explored, including duplicates.
+</div>
+<div style="background:rgba(34,197,94,.08);border-radius:6px;padding:10px;font-size:.88em">
+<div style="color:var(--green);font-weight:700;margin-bottom:4px">With cache: O(n &times; W)</div>
+Every unique (n, W) pair solved at most once.
+</div>
+</div>
+</div>
+
+<!-- Pages 6-7: Changing Variables → Table -->
+<img src="dp/images/family1_C_3.png" alt="Pages 6-7: Changing variables become table dimensions, base cases become first row/column, filled table" class="scene-img">
+
+<div class="walkthrough-section">
+<h3>Step 5: Changing Variables &rarr; Table Dimensions</h3>
+<p>The table isn't magic. It comes directly from the recursion.</p>
+
+<div style="font-weight:700;color:var(--gold2);margin-bottom:8px">Which parameters CHANGE across recursive calls?</div>
+<div style="display:grid;grid-template-columns:auto 1fr auto;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:16px">
+<div style="padding:10px 14px;background:var(--card2);font-weight:700"><code>wt</code></div>
+<div style="padding:10px 14px">Weight array</div>
+<div style="padding:10px 14px;color:var(--red);font-weight:700">SAME every call &#x2717;</div>
+<div style="padding:10px 14px;background:var(--card2);font-weight:700"><code>val</code></div>
+<div style="padding:10px 14px">Value array</div>
+<div style="padding:10px 14px;color:var(--red);font-weight:700">SAME every call &#x2717;</div>
+<div style="padding:10px 14px;background:var(--card2);font-weight:700"><code>W</code></div>
+<div style="padding:10px 14px">Remaining capacity</div>
+<div style="padding:10px 14px;color:var(--green);font-weight:700">CHANGES &#x2713;</div>
+<div style="padding:10px 14px;background:var(--card2);font-weight:700"><code>n</code></div>
+<div style="padding:10px 14px">Items remaining</div>
+<div style="padding:10px 14px;color:var(--green);font-weight:700">CHANGES &#x2713;</div>
+</div>
+
+<div style="background:rgba(59,130,246,.1);border-radius:8px;padding:14px;margin-bottom:16px;font-size:1.05em;text-align:center">
+<strong>2 changing variables &rarr; 2D table.</strong> Rows = items (0 to 5). Columns = capacity (0 to 7).<br>
+<code>dp[i][j]</code> = max value using first <code>i</code> items with capacity <code>j</code>
+</div>
+
+<div style="font-weight:700;color:var(--gold2);margin-bottom:8px">Base case in recursion &rarr; first row and column</div>
+<div style="font-size:.95em;margin-bottom:12px">
+Recursive base: <code>if n == 0 or W == 0: return 0</code><br>
+Table: first row (0 items) = all zeros. First column (0 capacity) = all zeros.
+</div>
+
+<div class="hi">
+<strong style="color:var(--gold2)">Aditya Verma's Rule:</strong> Recursive base case &rarr; table initialization. Whatever the recursion returns at the base, fill that into the table.
+</div>
+</div>
+
+<div class="walkthrough-section">
+<h3>Step 6: Fill the Table (same formula, bottom-up)</h3>
+<p>The recursive formula becomes the cell formula. Just read from the table instead of recursing.</p>
+
+<pre><code># Same logic as recursion:
+if wt[i-1] <= j:
+    dp[i][j] = max(val[i-1] + dp[i-1][j - wt[i-1]],  # GRAB (row above, reduced capacity)
+                   dp[i-1][j])                          # SKIP (row above, same capacity)
+else:
+    dp[i][j] = dp[i-1][j]                              # Doesn't fit, skip</code></pre>
+
+<div style="overflow-x:auto;margin:16px 0">
+<table style="font-size:.82em;text-align:center">
+<tr><th></th><th>W=0</th><th>W=1</th><th>W=2</th><th>W=3</th><th>W=4</th><th>W=5</th><th>W=6</th><th>W=7</th></tr>
+<tr><td style="color:var(--muted)">i=0 (none)</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td style="color:var(--gold2)">i=1 (Gold 4/$10K)</td><td>0</td><td>0</td><td>0</td><td>0</td><td>10</td><td>10</td><td>10</td><td>10</td></tr>
+<tr><td style="color:var(--crimson)">i=2 (Ruby 3/$7K)</td><td>0</td><td>0</td><td>0</td><td>7</td><td>10</td><td>10</td><td>10</td><td>17</td></tr>
+<tr><td style="color:#818cf8">i=3 (Diamond 5/$12K)</td><td>0</td><td>0</td><td>0</td><td>7</td><td>10</td><td>12</td><td>12</td><td>17</td></tr>
+<tr><td style="color:var(--green)">i=4 (Emerald 1/$3K)</td><td>0</td><td>3</td><td>3</td><td>7</td><td>10</td><td>13</td><td>15</td><td>17</td></tr>
+<tr><td style="color:var(--teal)">i=5 (Platinum 2/$5K)</td><td>0</td><td>3</td><td>5</td><td>7</td><td>10</td><td>13</td><td>15</td><td style="background:rgba(34,197,94,.15);font-weight:700;color:var(--green)">18</td></tr>
+</table>
+</div>
+<div style="color:var(--green);font-size:.9em"><strong>Answer:</strong> dp[5][7] = $18K. Gold ($10K) + Emerald ($3K) + Platinum ($5K) = $18K at exactly 7kg.</div>
+</div>
+
+<!-- Pages 8-10: All Three Versions + Family Tree -->
+<img src="dp/images/family1_C_4.png" alt="Pages 8-10: Three code versions (recursion, memoization, tabulation), the knapsack family tree, and three golden rules" class="scene-img">
+
+<div class="walkthrough-section">
+<h3>The Pipeline: All Three Versions</h3>
+
+<div style="font-weight:700;color:var(--gold2);margin-bottom:8px">VERSION 1: Recursion (correct but slow, O(2<sup>n</sup>))</div>
+<pre><code>def knapsack(wt, val, W, n):
+    if n == 0 or W == 0:
+        return 0
+    if wt[n-1] <= W:
+        grab = val[n-1] + knapsack(wt, val, W - wt[n-1], n - 1)
+        skip = knapsack(wt, val, W, n - 1)
+        return max(grab, skip)
+    else:
+        return knapsack(wt, val, W, n - 1)</code></pre>
+
+<div style="text-align:center;color:var(--muted);margin:4px 0">&darr; add a cache (3 lines) &darr;</div>
+
+<div style="font-weight:700;color:var(--gold2);margin-bottom:8px">VERSION 2: Memoization (O(n &times; W))</div>
+<pre><code>def knapsack(wt, val, W, n, memo={}):
+    if (n, W) in memo: return memo[(n, W)]
+    if n == 0 or W == 0:
+        return 0
+    if wt[n-1] <= W:
+        grab = val[n-1] + knapsack(wt, val, W - wt[n-1], n - 1, memo)
+        skip = knapsack(wt, val, W, n - 1, memo)
+        result = max(grab, skip)
+    else:
+        result = knapsack(wt, val, W, n - 1, memo)
+    memo[(n, W)] = result
+    return result</code></pre>
+
+<div style="text-align:center;color:var(--muted);margin:4px 0">&darr; replace recursion with loops &darr;</div>
+
+<div style="font-weight:700;color:var(--gold2);margin-bottom:8px">VERSION 3: Tabulation (O(n &times; W), no recursion)</div>
+<pre><code>def knapsack(wt, val, W, n):
+    dp = [[0] * (W + 1) for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        for j in range(1, W + 1):
+            if wt[i-1] <= j:
+                dp[i][j] = max(val[i-1] + dp[i-1][j - wt[i-1]],
+                               dp[i-1][j])
+            else:
+                dp[i][j] = dp[i-1][j]
+    return dp[n][W]</code></pre>
+</div>
+
+<!-- The Knapsack Family Tree -->
+<div style="background:var(--card);border:2px solid var(--blue);border-radius:12px;padding:20px;margin:20px 0">
+<div style="color:var(--blue);font-weight:800;font-size:1.25em;margin-bottom:4px">The 0/1 Knapsack Family</div>
+<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">One parent, six children. Learn the parent. Every variation is ONE tweak.</div>
+
+<div style="background:rgba(59,130,246,.15);border:2px solid var(--blue);border-radius:8px;padding:14px;text-align:center;margin-bottom:16px">
+<strong style="color:var(--blue);font-size:1.1em">0/1 KNAPSACK (parent)</strong><br>
+<span style="font-size:.88em;color:var(--muted)">At each item: grab or skip. Maximize total value within capacity.</span>
+</div>
+
+<div style="display:grid;gap:10px">
+
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">1</span> Subset Sum</h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl" style="color:var(--blue)">THE TWEAK</div>
+Values = weights. Answer is True/False, not max. "Can I pick items that sum to exactly S?"</div>
+<pre><code>def subsetSum(nums, target):
+    dp = [False] * (target + 1)
+    dp[0] = True
+    for num in nums:
+        for j in range(target, num - 1, -1):
+            dp[j] = dp[j] or dp[j - num]
+    return dp[target]</code></pre>
+</div></div>
+
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">2</span> Equal Sum Partition</h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl" style="color:var(--blue)">THE TWEAK</div>
+Target = totalSum / 2, then run Subset Sum. "Can I split into two groups with equal sum?" If total is odd, immediately False.</div>
+<pre><code>def canPartition(nums):
+    total = sum(nums)
+    if total % 2: return False
+    return subsetSum(nums, total // 2)</code></pre>
+</div></div>
+
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">3</span> Count of Subsets with Sum</h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl" style="color:var(--blue)">THE TWEAK</div>
+Replace <code>max()</code> with <code>+=</code>. Count instead of optimize. "HOW MANY subsets sum to S?"</div>
+<pre><code>def countSubsets(nums, target):
+    dp = [0] * (target + 1)
+    dp[0] = 1
+    for num in nums:
+        for j in range(target, num - 1, -1):
+            dp[j] += dp[j - num]
+    return dp[target]</code></pre>
+</div></div>
+
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">4</span> Minimum Subset Sum Difference</h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl" style="color:var(--blue)">THE TWEAK</div>
+Use Subset Sum table's last row to find which sums are achievable. Pick the achievable sum closest to totalSum/2. Difference = totalSum - 2 * closestSum.</div>
+<pre><code>def minimumDifference(nums):
+    total = sum(nums)
+    half = total // 2
+    dp = [False] * (half + 1)
+    dp[0] = True
+    for num in nums:
+        for j in range(half, num - 1, -1):
+            dp[j] = dp[j] or dp[j - num]
+    for j in range(half, -1, -1):
+        if dp[j]:
+            return total - 2 * j</code></pre>
+</div></div>
+
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">5</span> Target Sum (LeetCode #494)</h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl" style="color:var(--blue)">THE TWEAK</div>
+Assign +/- to each number to reach target. Math reduction: P - (total - P) = target, so P = (total + target) / 2. Then Count of Subsets with Sum = P.</div>
+<pre><code>def findTargetSumWays(nums, target):
+    total = sum(nums)
+    if (total + target) % 2 or abs(target) > total: return 0
+    goal = (total + target) // 2
+    dp = [0] * (goal + 1)
+    dp[0] = 1
+    for num in nums:
+        for a in range(goal, num - 1, -1):
+            dp[a] += dp[a - num]
+    return dp[goal]</code></pre>
+</div></div>
+
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">6</span> Count Subsets with Given Difference</h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl" style="color:var(--blue)">THE TWEAK</div>
+S1 - S2 = diff. Same math as Target Sum: target = (total + diff) / 2, then Count of Subsets.</div>
+<pre><code>def countWithDiff(nums, diff):
+    total = sum(nums)
+    if (total + diff) % 2 or abs(diff) > total: return 0
+    target = (total + diff) // 2
+    dp = [0] * (target + 1)
+    dp[0] = 1
+    for num in nums:
+        for j in range(target, num - 1, -1):
+            dp[j] += dp[j - num]
+    return dp[target]</code></pre>
+</div></div>
+
+</div>
+
+<div class="hi" style="margin-top:16px">
+<strong>Key pattern for the whole family:</strong> 0/1 = each item used at most once, so the 1D inner loop goes <strong>RIGHT to LEFT</strong>. This prevents using the same item twice. If the inner loop went left to right, earlier updates would be read by later cells, effectively reusing the item (that's Unbounded Knapsack, a different family).
+</div>
+</div>
+
+<!-- Common Mistakes -->
+<div style="background:var(--card);border:1px solid var(--blue);border-radius:10px;padding:18px;margin-top:12px">
 <div style="color:var(--blue);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 <div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
-<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; inner loop starts at 0</div>
-<pre style="font-size:.82em;margin:0"><code>for a in range(0, amount + 1):
-    dp[a] = min(dp[a], dp[a - coin] + 1)
-# dp[a-coin] with negative index!</code></pre>
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG: inner loop left to right</div>
+<pre style="font-size:.82em;margin:0"><code>for j in range(num, target + 1):
+    dp[j] += dp[j - num]
+# Same item counted MULTIPLE times!
+# This is unbounded knapsack, not 0/1.</code></pre>
 </div>
 <div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
-<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; inner loop starts at coin</div>
-<pre style="font-size:.82em;margin:0"><code>for a in range(coin, amount + 1):
-    dp[a] = min(dp[a], dp[a - coin] + 1)
-# a-coin is always >= 0</code></pre>
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT: right to left for 0/1</div>
+<pre style="font-size:.82em;margin:0"><code>for j in range(target, num - 1, -1):
+    dp[j] += dp[j - num]
+# Each item used at most once.
+# RIGHT to LEFT = 0/1 knapsack.</code></pre>
 </div>
 </div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
 <div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
-<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; wrong loop direction for 0-1 knapsack</div>
-<pre style="font-size:.82em;margin:0"><code># Target Sum: each num used ONCE
-for a in range(num, goal + 1):  # LEFT to RIGHT
-    dp[a] += dp[a - num]
-# Same num counted multiple times!</code></pre>
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG: skipping the math reduction</div>
+<pre style="font-size:.82em;margin:0"><code># Target Sum: trying all 2^n combos
+# of +/- signs with recursion.
+# Exponential time, no DP insight.</code></pre>
 </div>
 <div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
-<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; right to left for 0-1</div>
-<pre style="font-size:.82em;margin:0"><code># 0-1 knapsack: RIGHT to LEFT
-for a in range(goal, num - 1, -1):
-    dp[a] += dp[a - num]
-# Each num only used once!</code></pre>
-</div>
-</div>
-</div>
-</div>
-
-<!-- ============ SCENE 3 ============ -->
-<div style="background:var(--card);border:2px solid var(--amber);border-radius:12px;padding:20px;margin-bottom:24px">
-
-<div style="color:var(--amber);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 3: Echo's Mirrors</div>
-<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">Palindrome DP &mdash; expand from center, check reflections</div>
-
-<div style="background:rgba(245,158,11,.08);border:2px solid var(--amber);border-radius:10px;padding:18px;margin-bottom:16px">
-<div style="color:var(--amber);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL</div>
-<div style="font-size:.95em;color:var(--text);line-height:1.9">
-<strong style="color:var(--amber);font-size:1.05em">&#10102;</strong> Echo stands at the first tile. <strong>ODD STANCE</strong> &mdash; stands ON the center tile. l = r = center.<br>
-<strong style="color:var(--amber);font-size:1.05em">&#10103;</strong> Checks s[l] == s[r]. <strong>MATCH?</strong> GREEN GLOW. Count it! Expand: l--, r++.<br>
-<strong style="color:var(--amber);font-size:1.05em">&#10104;</strong> Keeps expanding until <strong>MISMATCH</strong> (RED FLASH) or out of bounds. Stops.<br>
-<strong style="color:var(--amber);font-size:1.05em">&#10105;</strong> Returns to center. <strong>EVEN STANCE</strong> &mdash; stands BETWEEN two tiles. l = center, r = center+1.<br>
-<strong style="color:var(--amber);font-size:1.05em">&#10106;</strong> Same expansion. Done with this center? Walks to the next tile. Repeat.
-</div>
-</div>
-
-<div style="color:var(--gold2);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">RITUAL &rarr; CODE</div>
-<div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
-<div class="ritual-step">
-<div style="background:#d9770625;font-weight:700;color:var(--amber);display:flex;align-items:center;justify-content:center">&#10102;</div>
-<div style="background:#d9770612;font-size:.9em"><strong>Odd stance</strong> &mdash; center on one tile.</div>
-<div style="background:#d9770608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>l, r = center, center</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#d9770625;font-weight:700;color:var(--amber);display:flex;align-items:center;justify-content:center">&#10103;&#10104;</div>
-<div style="background:#d9770612;font-size:.9em"><strong>Expand</strong> while match. Count each palindrome.</div>
-<div style="background:#d9770608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>while l>=0 and r&lt;len(s) and s[l]==s[r]: count+=1; l-=1; r+=1</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#d9770625;font-weight:700;color:var(--amber);display:flex;align-items:center;justify-content:center">&#10105;</div>
-<div style="background:#d9770612;font-size:.9em"><strong>Even stance</strong> &mdash; between two tiles.</div>
-<div style="background:#d9770608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>l, r = center, center + 1</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#d9770625;font-weight:700;color:var(--amber);display:flex;align-items:center;justify-content:center">&#10106;</div>
-<div style="background:#d9770612;font-size:.9em"><strong>Next center.</strong> Repeat for all tiles.</div>
-<div style="background:#d9770608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>for center in range(len(s)):</code></div>
-</div>
-</div>
-
-<div style="background:rgba(245,158,11,.06);border:1px solid #b45309;border-radius:10px;padding:18px;margin-top:12px">
-<div style="color:var(--amber);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
-<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; only checking odd-length</div>
-<pre style="font-size:.82em;margin:0"><code>l, r = center, center
-while s[l] == s[r]: ...
-# Misses "aa", "abba" — even palindromes!</code></pre>
-</div>
-<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
-<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; check BOTH odd and even</div>
-<pre style="font-size:.82em;margin:0"><code># Odd: (center, center)
-# Even: (center, center + 1)
-for l, r in [(c, c), (c, c+1)]:
-    while ... expand ...</code></pre>
-</div>
-</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
-<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; using O(n^2) dp table</div>
-<pre style="font-size:.82em;margin:0"><code>dp = [[False]*n for _ in range(n)]
-# O(n^2) space! Unnecessary for
-# palindrome counting/finding.</code></pre>
-</div>
-<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
-<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; expand from center = O(1) space</div>
-<pre style="font-size:.82em;margin:0"><code># O(1) space, O(n^2) time
-# Just two pointers expanding out
-l, r = center, center
-while ... expand ...</code></pre>
-</div>
-</div>
-</div>
-</div>
-
-<!-- ============ SCENE 4 ============ -->
-<div style="background:var(--card);border:2px solid var(--violet);border-radius:12px;padding:20px;margin-bottom:24px">
-
-<div style="color:var(--violet);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 4: Nila's Loom</div>
-<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">2D Table DP &mdash; match=diagonal, else=max(up, left)</div>
-
-<div style="background:rgba(124,58,237,.08);border:2px solid var(--violet);border-radius:10px;padding:18px;margin-bottom:16px">
-<div style="color:var(--violet);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL</div>
-<div style="font-size:.95em;color:var(--text);line-height:1.9">
-<strong style="color:var(--violet);font-size:1.05em">&#10102;</strong> Nila sets up the <strong>LOOM</strong>. Row headers = text1 chars. Column headers = text2 chars. First row and column all <strong>ZEROS</strong> (white thread).<br>
-<strong style="color:var(--violet);font-size:1.05em">&#10103;</strong> Moves to cell (i,j). Checks: does text1[i-1] <strong>MATCH</strong> text2[j-1]?<br>
-<strong style="color:var(--violet);font-size:1.05em">&#10104;</strong> <strong>MATCH!</strong> Pulls <strong>GOLDEN THREAD</strong> from DIAGONAL (i-1,j-1). Ties knot = diagonal value + 1.<br>
-<strong style="color:var(--violet);font-size:1.05em">&#10105;</strong> <strong>NO MATCH.</strong> Checks UP cell (i-1,j) and LEFT cell (i,j-1). Pulls <strong>SILVER THREAD</strong> from the LARGER one.<br>
-<strong style="color:var(--violet);font-size:1.05em">&#10106;</strong> Fills every cell, row by row. Bottom-right cell = the answer. <strong>GOLDEN GLOW.</strong>
-</div>
-</div>
-
-<div style="color:var(--gold2);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">RITUAL &rarr; CODE</div>
-<div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
-<div class="ritual-step">
-<div style="background:#7c3aed25;font-weight:700;color:var(--violet);display:flex;align-items:center;justify-content:center">&#10102;</div>
-<div style="background:#7c3aed12;font-size:.9em"><strong>Set up loom.</strong> First row/col = zeros.</div>
-<div style="background:#7c3aed08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>dp = [[0]*(n+1) for _ in range(m+1)]</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#7c3aed25;font-weight:700;color:var(--violet);display:flex;align-items:center;justify-content:center">&#10103;</div>
-<div style="background:#7c3aed12;font-size:.9em"><strong>Check match</strong> at cell (i,j).</div>
-<div style="background:#7c3aed08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>if text1[i-1] == text2[j-1]:</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#7c3aed25;font-weight:700;color:var(--violet);display:flex;align-items:center;justify-content:center">&#10104;</div>
-<div style="background:#7c3aed12;font-size:.9em"><strong>Match!</strong> Golden thread from diagonal + 1.</div>
-<div style="background:#7c3aed08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>dp[i][j] = dp[i-1][j-1] + 1</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#7c3aed25;font-weight:700;color:var(--violet);display:flex;align-items:center;justify-content:center">&#10105;</div>
-<div style="background:#7c3aed12;font-size:.9em"><strong>No match.</strong> Silver thread from max(up, left).</div>
-<div style="background:#7c3aed08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>dp[i][j] = max(dp[i-1][j], dp[i][j-1])</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#7c3aed25;font-weight:700;color:var(--violet);display:flex;align-items:center;justify-content:center">&#10106;</div>
-<div style="background:#7c3aed12;font-size:.9em"><strong>Bottom-right</strong> = answer.</div>
-<div style="background:#7c3aed08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>return dp[m][n]</code></div>
-</div>
-</div>
-
-<div style="background:rgba(124,58,237,.06);border:1px solid #6d28d9;border-radius:10px;padding:18px;margin-top:12px">
-<div style="color:var(--violet);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
-<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; off-by-one indexing</div>
-<pre style="font-size:.82em;margin:0"><code>if text1[i] == text2[j]:
-    dp[i][j] = dp[i-1][j-1] + 1
-# Grid is 1-indexed, strings are 0-indexed!
-# text1[i] is wrong when grid starts at 1.</code></pre>
-</div>
-<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
-<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; use i-1 for string index</div>
-<pre style="font-size:.82em;margin:0"><code>if text1[i-1] == text2[j-1]:
-    dp[i][j] = dp[i-1][j-1] + 1
-# Grid row i maps to string index i-1</code></pre>
-</div>
-</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
-<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; forgetting +1 in grid size</div>
-<pre style="font-size:.82em;margin:0"><code>dp = [[0]*n for _ in range(m)]
-# No room for base case row/column!
-# dp[0][j] and dp[i][0] would be data, not base.</code></pre>
-</div>
-<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
-<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; (m+1) x (n+1) grid</div>
-<pre style="font-size:.82em;margin:0"><code>dp = [[0]*(n+1) for _ in range(m+1)]
-# Row 0 and Col 0 = base cases (all 0)
-# Actual data starts at dp[1][1]</code></pre>
-</div>
-</div>
-</div>
-</div>
-
-<!-- ============ SCENE 5 ============ -->
-<div style="background:var(--card);border:2px solid var(--emerald);border-radius:12px;padding:20px;margin-bottom:24px">
-
-<div style="color:var(--emerald);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 5: Ace's Table</div>
-<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">State Machine / Interval DP &mdash; multiple state cards, simultaneous swap</div>
-
-<div style="background:rgba(5,150,105,.08);border:2px solid var(--emerald);border-radius:10px;padding:18px;margin-bottom:16px">
-<div style="color:var(--emerald);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL</div>
-<div style="font-size:.95em;color:var(--text);line-height:1.9">
-<strong style="color:var(--emerald);font-size:1.05em">&#10102;</strong> Ace lays <strong>THREE STATE CARDS</strong> on the table: RED (hold), GREEN (sold), BLUE (rest). Sets starting chips.<br>
-<strong style="color:var(--emerald);font-size:1.05em">&#10103;</strong> Day advances. Price ticker updates. Ace calculates new values for <strong>ALL THREE cards simultaneously</strong>.<br>
-<strong style="color:var(--emerald);font-size:1.05em">&#10104;</strong> HOLD = max(keep holding, buy today from rest). SOLD = hold + today's price. REST = max(keep resting, done cooling from sold).<br>
-<strong style="color:var(--emerald);font-size:1.05em">&#10105;</strong> <strong>Swaps all three cards AT ONCE</strong> (temp variables). Repeats for each day.<br>
-<strong style="color:var(--emerald);font-size:1.05em">&#10106;</strong> Game over. Answer = max(sold, rest). Can't end while holding!
-</div>
-<div style="margin-top:10px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:6px;font-size:.88em;color:var(--muted)">
-<strong style="color:var(--emerald)">Why simultaneous swap:</strong> If you update <code>hold</code> first and then use it to compute <code>sold</code>, you're using today's hold decision to sell today &mdash; that's time travel. Compute ALL new values first, THEN swap.
-</div>
-</div>
-
-<div style="color:var(--gold2);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">RITUAL &rarr; CODE</div>
-<div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
-<div class="ritual-step">
-<div style="background:#05966925;font-weight:700;color:var(--emerald);display:flex;align-items:center;justify-content:center">&#10102;</div>
-<div style="background:#05966912;font-size:.9em"><strong>Lay state cards.</strong> Set starting chips.</div>
-<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>hold, sold, rest = -prices[0], 0, 0</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#05966925;font-weight:700;color:var(--emerald);display:flex;align-items:center;justify-content:center">&#10103;&#10104;</div>
-<div style="background:#05966912;font-size:.9em"><strong>Compute new values</strong> for all cards.</div>
-<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>new_hold=max(hold,rest-price); new_sold=hold+price; new_rest=max(rest,sold)</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#05966925;font-weight:700;color:var(--emerald);display:flex;align-items:center;justify-content:center">&#10105;</div>
-<div style="background:#05966912;font-size:.9em"><strong>Swap all at once.</strong></div>
-<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>hold, sold, rest = new_hold, new_sold, new_rest</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#05966925;font-weight:700;color:var(--emerald);display:flex;align-items:center;justify-content:center">&#10106;</div>
-<div style="background:#05966912;font-size:.9em"><strong>Game over.</strong> Answer = max(sold, rest).</div>
-<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>return max(sold, rest)</code></div>
-</div>
-</div>
-
-<div style="background:rgba(5,150,105,.06);border:1px solid #047857;border-radius:10px;padding:18px;margin-top:12px">
-<div style="color:var(--emerald);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
-<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; updating states sequentially</div>
-<pre style="font-size:.82em;margin:0"><code>hold = max(hold, rest - price)
-sold = hold + price  # USING UPDATED HOLD!
-rest = max(rest, sold)
-# Buy and sell same day = time travel!</code></pre>
-</div>
-<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
-<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; compute all, then swap</div>
-<pre style="font-size:.82em;margin:0"><code>new_hold = max(hold, rest - price)
-new_sold = hold + price
-new_rest = max(rest, sold)
-hold, sold, rest = new_hold, new_sold, new_rest</code></pre>
-</div>
-</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
-<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; returning max(hold, sold, rest)</div>
-<pre style="font-size:.82em;margin:0"><code>return max(hold, sold, rest)
-# Can't end the game while holding stock!
-# hold might be positive but unrealized.</code></pre>
-</div>
-<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
-<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; only sold or rest</div>
-<pre style="font-size:.82em;margin:0"><code>return max(sold, rest)
-# You must have SOLD your stock or be
-# RESTING (already sold before). No holding!</code></pre>
-</div>
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT: reduce to Count of Subsets</div>
+<pre style="font-size:.82em;margin:0"><code># P - (total - P) = target
+# P = (total + target) / 2
+# Now it's just: count subsets summing to P
+goal = (total + target) // 2</code></pre>
 </div>
 </div>
 </div>
 
 </div>
 
-<!-- ==================== TAB 4: 21 PROBLEMS ==================== -->
+<!-- ==================== TAB 3: 21 PROBLEMS ==================== -->
 <div class="sec" id="sec-problems">
 
-<h2>21 Problems by Scene</h2>
+<h2>21 Problems by Family</h2>
 
-<!-- ============ SCENE 1 PROBLEMS ============ -->
-<h3 style="color:var(--crimson);border-bottom:1px solid var(--crimson);padding-bottom:6px">Scene 1 &mdash; Maya's Staircase (Linear DP)</h3>
+<!-- ============ LINEAR/FIBONACCI PROBLEMS ============ -->
+<h3 style="color:var(--crimson);border-bottom:1px solid var(--crimson);padding-bottom:6px"><span class="ftag ftag-lin">Linear</span> Fibonacci / Linear Recurrence</h3>
 
-<!-- PROBLEM 1: Climbing Stairs -->
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">1</span> Climbing Stairs (#70) <span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>You are climbing a staircase. It takes <code>n</code> steps to reach the top. Each time you can climb 1 or 2 steps. In how many distinct ways can you climb to the top?</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
-Two sequences? No. Palindrome? No. Target/coins? No. Multiple states? No. &rarr; <span class="tag t1">Scene 1</span> Maya's Staircase. Pure linear recurrence.</div>
+<div class="sbox"><div class="sl" style="color:var(--crimson)">THE CHOICES</div>
+At each step: climb 1 or climb 2. Two choices, each leads to a smaller subproblem. Ways to reach step i = ways from (i-1) + ways from (i-2). Pure Fibonacci.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--crimson)">THE RITUAL</div>
-dp[i] = dp[i-1] + dp[i-2]. Ways to reach step i = ways from i-1 (one step) + ways from i-2 (two steps). Pure Fibonacci.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE</div>
-Space-optimized to two variables. No array needed &mdash; only ever look back 1-2 steps.</div>
+<div class="sbox"><div class="sl" style="color:var(--blue)">WHY IT'S DP</div>
+"How many ways to reach step 5?" calls step 4 and step 3. "Step 4?" calls step 3 and step 2. Step 3 appears twice. Same subproblem, same answer.</div>
 
 <pre><code>def climbStairs(n):
     if n <= 2: return n
@@ -721,20 +625,13 @@ Space-optimized to two variables. No array needed &mdash; only ever look back 1-
     return prev1</code></pre>
 </div></div>
 
-<!-- PROBLEM 2: Min Cost Climbing Stairs -->
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">2</span> Min Cost Climbing Stairs (#746) <span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given an array <code>cost</code> where <code>cost[i]</code> is the cost of step i, find the minimum cost to reach the top. You can start from step 0 or step 1, and climb 1 or 2 steps at a time.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
-Two sequences? No. Palindrome? No. Target? No. Multiple states? No. &rarr; <span class="tag t1">Scene 1</span> Linear recurrence with min.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--crimson)">THE RITUAL</div>
-dp[i] = min(dp[i-1]+cost[i-1], dp[i-2]+cost[i-2]). Cheapest way to reach step i. Cost comes from the step you jump FROM.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE</div>
-<code>min</code> instead of sum. Costs come from the departure step, not arrival.</div>
+<div class="sbox"><div class="sl" style="color:var(--crimson)">THE CHOICES</div>
+At each step: arrive from (i-1) paying cost[i-1], or from (i-2) paying cost[i-2]. Pick the cheaper path.</div>
 
 <pre><code>def minCostClimbingStairs(cost):
     prev2, prev1 = 0, 0
@@ -743,68 +640,13 @@ dp[i] = min(dp[i-1]+cost[i-1], dp[i-2]+cost[i-2]). Cheapest way to reach step i.
     return prev1</code></pre>
 </div></div>
 
-<!-- PROBLEM 3: House Robber -->
 <div class="deriv" onclick="this.classList.toggle('open')">
-<div class="deriv-h"><h3><span class="deriv-n">3</span> House Robber (#198) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
-<div class="deriv-b">
-<div class="sbox"><div class="sl sl-q">PROBLEM</div>Given an array of non-negative integers representing money in each house, determine the maximum amount you can rob without robbing two adjacent houses.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
-Two sequences? No. Palindrome? No. Target? No. Multiple states? No. &rarr; <span class="tag t1">Scene 1</span> Take-or-skip linear DP.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--crimson)">THE RITUAL</div>
-dp[i] = max(dp[i-1], dp[i-2]+nums[i]). Rob this house (skip prev, take i) or skip this house (keep prev). Classic take-or-skip.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE</div>
-<code>max</code> instead of sum. Decision at each step: take or skip.</div>
-
-<pre><code>def rob(nums):
-    if len(nums) <= 2: return max(nums)
-    prev2, prev1 = nums[0], max(nums[0], nums[1])
-    for i in range(2, len(nums)):
-        prev2, prev1 = prev1, max(prev1, prev2 + nums[i])
-    return prev1</code></pre>
-</div></div>
-
-<!-- PROBLEM 4: House Robber II -->
-<div class="deriv" onclick="this.classList.toggle('open')">
-<div class="deriv-h"><h3><span class="deriv-n">4</span> House Robber II (#213) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
-<div class="deriv-b">
-<div class="sbox"><div class="sl sl-q">PROBLEM</div>Same as House Robber, but houses are arranged in a circle. First and last houses are adjacent.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
-Same as House Robber but circular constraint. Still <span class="tag t1">Scene 1</span> &mdash; just run it twice.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--crimson)">THE RITUAL</div>
-Circular! Can't rob both first and last. Run House Robber twice: once skipping first, once skipping last. Answer = max of both.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE</div>
-Two passes of the same linear DP on different slices. Answer = max of both passes.</div>
-
-<pre><code>def rob(nums):
-    if len(nums) <= 2: return max(nums)
-    def rob_line(arr):
-        prev2, prev1 = arr[0], max(arr[0], arr[1])
-        for i in range(2, len(arr)):
-            prev2, prev1 = prev1, max(prev1, prev2 + arr[i])
-        return prev1
-    return max(rob_line(nums[1:]), rob_line(nums[:-1]))</code></pre>
-</div></div>
-
-<!-- PROBLEM 5: Decode Ways -->
-<div class="deriv" onclick="this.classList.toggle('open')">
-<div class="deriv-h"><h3><span class="deriv-n">5</span> Decode Ways (#91) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-h"><h3><span class="deriv-n">3</span> Decode Ways (#91) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a string of digits, determine the total number of ways to decode it. 'A'=1, 'B'=2, ..., 'Z'=26.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
-Two sequences? No. Palindrome? No. Target? No. Multiple states? No. &rarr; <span class="tag t1">Scene 1</span> Conditional lookback.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--crimson)">THE RITUAL</div>
-dp[i] depends on dp[i-1] (single digit valid?) and dp[i-2] (two-digit valid?). Not always looking back 2 &mdash; only if the two-digit number is 10-26.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE</div>
-Conditional lookback. Single digit '0' contributes nothing. Two-digit must be 10-26. Watch for '0' edge cases.</div>
+<div class="sbox"><div class="sl" style="color:var(--crimson)">THE CHOICES</div>
+At position i: decode 1 digit (if valid, i.e. not '0') or decode 2 digits (if the pair is 10-26). Conditional Fibonacci: not always looking back 2.</div>
 
 <pre><code>def numDecodings(s):
     if s[0] == '0': return 0
@@ -819,20 +661,13 @@ Conditional lookback. Single digit '0' contributes nothing. Two-digit must be 10
     return prev1</code></pre>
 </div></div>
 
-<!-- PROBLEM 6: Maximum Product Subarray -->
 <div class="deriv" onclick="this.classList.toggle('open')">
-<div class="deriv-h"><h3><span class="deriv-n">6</span> Maximum Product Subarray (#152) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-h"><h3><span class="deriv-n">4</span> Maximum Product Subarray (#152) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given an integer array, find a contiguous subarray that has the largest product, and return its product.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
-Two sequences? No. Palindrome? No. Target? No. Multiple states? Kind of &mdash; but it's still linear with two tracking values. &rarr; <span class="tag t1">Scene 1</span> Linear DP with dual tracking.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--crimson)">THE RITUAL</div>
-Track BOTH max and min at each step (negative x negative = positive). dp_max[i] and dp_min[i] evolve together.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE</div>
-Two values per step instead of one. Need min because a negative number can flip min to max.</div>
+<div class="sbox"><div class="sl" style="color:var(--crimson)">THE CHOICES</div>
+At each element: extend the current subarray or start fresh. Track BOTH max and min at each step because a negative times a negative becomes positive.</div>
 
 <pre><code>def maxProduct(nums):
     res = max(nums)
@@ -844,71 +679,50 @@ Two values per step instead of one. Need min because a negative number can flip 
     return res</code></pre>
 </div></div>
 
-<!-- ============ SCENE 2 PROBLEMS ============ -->
-<h3 style="color:var(--blue);border-bottom:1px solid var(--blue);padding-bottom:6px">Scene 2 &mdash; Forge's Anvil (Knapsack/Target DP)</h3>
+<!-- ============ 0/1 KNAPSACK PROBLEMS ============ -->
+<h3 style="color:var(--blue);border-bottom:1px solid var(--blue);padding-bottom:6px"><span class="ftag ftag-knap">0/1 Knapsack</span> Take or Skip, Each Item Once</h3>
 
-<!-- PROBLEM 7: Coin Change -->
 <div class="deriv" onclick="this.classList.toggle('open')">
-<div class="deriv-h"><h3><span class="deriv-n">7</span> Coin Change (#322) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-h"><h3><span class="deriv-n">5</span> House Robber (#198) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
-<div class="sbox"><div class="sl sl-q">PROBLEM</div>Given coins of different denominations and a total amount, return the fewest number of coins needed. Return -1 if impossible.</div>
+<div class="sbox"><div class="sl sl-q">PROBLEM</div>Given an array of non-negative integers representing money in each house, determine the maximum amount you can rob without robbing two adjacent houses.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
-Two sequences? No. Palindrome? No. Building to a target amount using coins? YES! &rarr; <span class="tag t2">Scene 2</span> Forge's Anvil.</div>
+<div class="sbox"><div class="sl" style="color:var(--blue)">THE CHOICES</div>
+At each house: ROB it (skip previous, take this one's money + best from 2 houses back) or SKIP it (keep the best from previous). Same take-or-skip pattern as knapsack, but the constraint is adjacency instead of capacity.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--blue)">THE RITUAL</div>
-Pure template. Min coins to reach amount. Unbounded (can reuse coins) = left to right inner loop.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE</div>
-Nothing &mdash; this IS the template. Minimum count. Unbounded knapsack.</div>
-
-<pre><code>def coinChange(coins, amount):
-    dp = [float('inf')] * (amount + 1)
-    dp[0] = 0
-    for coin in coins:
-        for a in range(coin, amount + 1):
-            dp[a] = min(dp[a], dp[a - coin] + 1)
-    return dp[amount] if dp[amount] != float('inf') else -1</code></pre>
+<pre><code>def rob(nums):
+    if len(nums) <= 2: return max(nums)
+    prev2, prev1 = nums[0], max(nums[0], nums[1])
+    for i in range(2, len(nums)):
+        prev2, prev1 = prev1, max(prev1, prev2 + nums[i])
+    return prev1</code></pre>
 </div></div>
 
-<!-- PROBLEM 8: Coin Change II -->
 <div class="deriv" onclick="this.classList.toggle('open')">
-<div class="deriv-h"><h3><span class="deriv-n">8</span> Coin Change II (#518) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-h"><h3><span class="deriv-n">6</span> House Robber II (#213) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
-<div class="sbox"><div class="sl sl-q">PROBLEM</div>Given coins and an amount, return the number of combinations that make up that amount.</div>
+<div class="sbox"><div class="sl sl-q">PROBLEM</div>Same as House Robber, but houses are arranged in a circle. First and last houses are adjacent.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
-"How many ways to make amount" using coins. &rarr; <span class="tag t2">Scene 2</span> Forge's Anvil. Count combinations.</div>
+<div class="sbox"><div class="sl" style="color:var(--blue)">THE CHOICES</div>
+Same take-or-skip, but circular constraint. Can't rob both first and last. Run the linear version twice: once skipping first house, once skipping last. Answer = max of both.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--blue)">THE RITUAL</div>
-COUNT combinations (not min). dp[0] = 1 (one way to make 0). Outer loop = coins ensures unique combos (no duplicates like [1,2] and [2,1]).</div>
-
-<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE</div>
-<code>+=</code> instead of <code>min</code>. Base case = 1 instead of 0. Init rest to 0 (not inf).</div>
-
-<pre><code>def change(amount, coins):
-    dp = [0] * (amount + 1)
-    dp[0] = 1
-    for coin in coins:
-        for a in range(coin, amount + 1):
-            dp[a] += dp[a - coin]
-    return dp[amount]</code></pre>
+<pre><code>def rob(nums):
+    if len(nums) <= 2: return max(nums)
+    def rob_line(arr):
+        prev2, prev1 = arr[0], max(arr[0], arr[1])
+        for i in range(2, len(arr)):
+            prev2, prev1 = prev1, max(prev1, prev2 + arr[i])
+        return prev1
+    return max(rob_line(nums[1:]), rob_line(nums[:-1]))</code></pre>
 </div></div>
 
-<!-- PROBLEM 9: Target Sum -->
 <div class="deriv" onclick="this.classList.toggle('open')">
-<div class="deriv-h"><h3><span class="deriv-n">9</span> Target Sum (#494) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-h"><h3><span class="deriv-n">7</span> Target Sum (#494) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given an array of integers and a target, assign + or - to each integer to make the sum equal target. Return the number of ways.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
-"How many ways to reach target sum" with items. &rarr; <span class="tag t2">Scene 2</span> Forge's Anvil. 0-1 knapsack variant.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--blue)">THE RITUAL</div>
-Transform to subset sum. Each num used ONCE = loop RIGHT TO LEFT (0-1 knapsack). Math trick: target = P - (total - P) means P = (total + target) / 2.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE</div>
-Reverse inner loop direction (0-1 knapsack). Mathematical transformation to reduce to subset sum.</div>
+<div class="sbox"><div class="sl" style="color:var(--blue)">THE CHOICES</div>
+At each number: assign + or assign -. This is 0/1 knapsack (each number used once). Math trick: P - (total - P) = target means P = (total + target) / 2. Reduces to Count of Subsets with Sum.</div>
 
 <pre><code>def findTargetSumWays(nums, target):
     total = sum(nums)
@@ -922,20 +736,53 @@ Reverse inner loop direction (0-1 knapsack). Mathematical transformation to redu
     return dp[goal]</code></pre>
 </div></div>
 
-<!-- PROBLEM 10: Word Break -->
+<!-- ============ UNBOUNDED KNAPSACK PROBLEMS ============ -->
+<h3 style="color:var(--teal);border-bottom:1px solid var(--teal);padding-bottom:6px"><span class="ftag ftag-uknap">Unbounded Knapsack</span> Items Reusable</h3>
+
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">8</span> Coin Change (#322) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">PROBLEM</div>Given coins of different denominations and a total amount, return the fewest number of coins needed. Return -1 if impossible.</div>
+
+<div class="sbox"><div class="sl" style="color:var(--teal)">THE CHOICES</div>
+At each amount: try using each coin denomination. If coin fits, use it and solve for (amount - coin). Can reuse the same coin, so inner loop goes LEFT to RIGHT.</div>
+
+<div class="sbox"><div class="sl" style="color:var(--blue)">WHY IT'S DP</div>
+"Min coins for amount 7" might need "min coins for amount 4" (after using a 3-coin). "Min coins for amount 6" also needs "amount 4." Same subproblem.</div>
+
+<pre><code>def coinChange(coins, amount):
+    dp = [float('inf')] * (amount + 1)
+    dp[0] = 0
+    for coin in coins:
+        for a in range(coin, amount + 1):
+            dp[a] = min(dp[a], dp[a - coin] + 1)
+    return dp[amount] if dp[amount] != float('inf') else -1</code></pre>
+</div></div>
+
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">9</span> Coin Change II (#518) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">PROBLEM</div>Given coins and an amount, return the number of combinations that make up that amount.</div>
+
+<div class="sbox"><div class="sl" style="color:var(--teal)">THE CHOICES</div>
+Same as Coin Change, but COUNT combinations instead of minimizing. <code>+=</code> instead of <code>min</code>. Base case dp[0] = 1 (one way to make 0). Outer loop = coins ensures unique combos (avoids counting [1,2] and [2,1] separately).</div>
+
+<pre><code>def change(amount, coins):
+    dp = [0] * (amount + 1)
+    dp[0] = 1
+    for coin in coins:
+        for a in range(coin, amount + 1):
+            dp[a] += dp[a - coin]
+    return dp[amount]</code></pre>
+</div></div>
+
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">10</span> Word Break (#139) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a string <code>s</code> and a dictionary of words, determine if <code>s</code> can be segmented into a space-separated sequence of dictionary words.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
-"Can you break s into dictionary words?" = build s from word pieces (like building an amount from coins). &rarr; <span class="tag t2">Scene 2</span> Forge's Anvil.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--blue)">THE RITUAL</div>
-dp[i] = can s[:i] be segmented? Try every split point j: if dp[j] is True AND s[j:i] is a word, then dp[i] = True.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE</div>
-Boolean dp. Inner loop tries all split points instead of fixed coin sizes. Words replace coins, string length replaces amount.</div>
+<div class="sbox"><div class="sl" style="color:var(--teal)">THE CHOICES</div>
+At position i: try every split point j. If s[j:i] is a dictionary word AND dp[j] is True (prefix is valid), then dp[i] = True. Words are like coins (reusable), string length is the amount.</div>
 
 <pre><code>def wordBreak(s, wordDict):
     dp = [False] * (len(s) + 1)
@@ -949,23 +796,16 @@ Boolean dp. Inner loop tries all split points instead of fixed coin sizes. Words
     return dp[len(s)]</code></pre>
 </div></div>
 
-<!-- ============ SCENE 3 PROBLEMS ============ -->
-<h3 style="color:var(--amber);border-bottom:1px solid var(--amber);padding-bottom:6px">Scene 3 &mdash; Echo's Mirrors (Palindrome DP)</h3>
+<!-- ============ PALINDROME PROBLEMS ============ -->
+<h3 style="color:var(--amber);border-bottom:1px solid var(--amber);padding-bottom:6px"><span class="ftag ftag-pal">Palindrome</span> Expand from Center</h3>
 
-<!-- PROBLEM 11: Longest Palindromic Substring -->
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">11</span> Longest Palindromic Substring (#5) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a string <code>s</code>, return the longest palindromic substring in <code>s</code>.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
-"Palindromic substring" &mdash; palindrome keyword! &rarr; <span class="tag t3">Scene 3</span> Echo's Mirrors.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--amber)">THE RITUAL</div>
-Expand from center. Track the longest palindrome found. Store the actual substring, not just count.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE</div>
-Instead of counting, track the longest substring found so far. Update result when a longer palindrome is found.</div>
+<div class="sbox"><div class="sl" style="color:var(--amber)">THE CHOICES</div>
+At each center: expand outward. If s[l] == s[r], it's still a palindrome, keep expanding. If mismatch, stop. Try both odd-length (center on one char) and even-length (center between two chars).</div>
 
 <pre><code>def longestPalindrome(s):
     res = ""
@@ -978,20 +818,13 @@ Instead of counting, track the longest substring found so far. Update result whe
     return res</code></pre>
 </div></div>
 
-<!-- PROBLEM 12: Palindromic Substrings -->
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">12</span> Palindromic Substrings (#647) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a string <code>s</code>, return the number of palindromic substrings in it.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
-"Palindromic substrings" &mdash; palindrome keyword! &rarr; <span class="tag t3">Scene 3</span> Echo's Mirrors.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--amber)">THE RITUAL</div>
-Pure template. Count every palindrome found during expansion. Each successful match in the while loop = one more palindromic substring.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE</div>
-Nothing &mdash; this IS the template. Pure counting.</div>
+<div class="sbox"><div class="sl" style="color:var(--amber)">THE CHOICES</div>
+Same expand-from-center approach. Instead of tracking the longest, just count every successful expansion as one more palindromic substring.</div>
 
 <pre><code>def countSubstrings(s):
     count = 0
@@ -1003,46 +836,19 @@ Nothing &mdash; this IS the template. Pure counting.</div>
     return count</code></pre>
 </div></div>
 
-<!-- ============ SCENE 4 PROBLEMS ============ -->
-<h3 style="color:var(--violet);border-bottom:1px solid var(--violet);padding-bottom:6px">Scene 4 &mdash; Nila's Loom (2D Table DP)</h3>
+<!-- ============ LCS / TWO SEQUENCE PROBLEMS ============ -->
+<h3 style="color:var(--violet);border-bottom:1px solid var(--violet);padding-bottom:6px"><span class="ftag ftag-lcs">LCS</span> Two Sequences Compared</h3>
 
-<!-- PROBLEM 13: Unique Paths -->
 <div class="deriv" onclick="this.classList.toggle('open')">
-<div class="deriv-h"><h3><span class="deriv-n">13</span> Unique Paths (#62) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
-<div class="deriv-b">
-<div class="sbox"><div class="sl sl-q">PROBLEM</div>A robot is on an m x n grid. It can only move right or down. How many unique paths exist from top-left to bottom-right?</div>
-
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
-Two dimensions (grid), paths through a 2D space. &rarr; <span class="tag t4">Scene 4</span> Nila's Loom. Simplified 2D table.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--violet)">THE RITUAL</div>
-Only DOWN and RIGHT. dp[i][j] = up + left. First row and column all 1s (only one way to reach any edge cell).</div>
-
-<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE</div>
-No diagonal. No match/mismatch. Simpler than LCS &mdash; always sum up + left. Base = all 1s on edges.</div>
-
-<pre><code>def uniquePaths(m, n):
-    dp = [[1] * n for _ in range(m)]
-    for i in range(1, m):
-        for j in range(1, n):
-            dp[i][j] = dp[i-1][j] + dp[i][j-1]
-    return dp[m-1][n-1]</code></pre>
-</div></div>
-
-<!-- PROBLEM 14: Longest Common Subsequence -->
-<div class="deriv" onclick="this.classList.toggle('open')">
-<div class="deriv-h"><h3><span class="deriv-n">14</span> Longest Common Subsequence (#1143) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-h"><h3><span class="deriv-n">13</span> Longest Common Subsequence (#1143) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given two strings <code>text1</code> and <code>text2</code>, return the length of their longest common subsequence.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
-"Longest common" between two strings &mdash; two sequences being compared. &rarr; <span class="tag t4">Scene 4</span> Nila's Loom.</div>
+<div class="sbox"><div class="sl" style="color:var(--violet)">THE CHOICES</div>
+At position (i, j): do the characters match? If YES: both advance, count it (diagonal + 1). If NO: skip one character from either string, take the better result (max of up, left).</div>
 
-<div class="sbox"><div class="sl" style="color:var(--violet)">THE RITUAL</div>
-Pure template. Match = diagonal + 1. No match = max(up, left). This IS the canonical 2D table problem.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE</div>
-Nothing &mdash; this IS the template.</div>
+<div class="sbox"><div class="sl" style="color:var(--blue)">WHY IT'S DP</div>
+2 changing variables (i and j) &rarr; 2D table. Base case (empty string) &rarr; first row/column = 0.</div>
 
 <pre><code>def longestCommonSubsequence(text1, text2):
     m, n = len(text1), len(text2)
@@ -1056,20 +862,13 @@ Nothing &mdash; this IS the template.</div>
     return dp[m][n]</code></pre>
 </div></div>
 
-<!-- PROBLEM 15: Edit Distance -->
 <div class="deriv" onclick="this.classList.toggle('open')">
-<div class="deriv-h"><h3><span class="deriv-n">15</span> Edit Distance (#72) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-h"><h3><span class="deriv-n">14</span> Edit Distance (#72) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given two strings <code>word1</code> and <code>word2</code>, return the minimum number of operations (insert, delete, replace) to convert word1 to word2.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
-"Edit distance" between two strings &mdash; comparing two sequences. &rarr; <span class="tag t4">Scene 4</span> Nila's Loom.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--violet)">THE RITUAL</div>
-Match = diagonal (free, no cost). No match = 1 + min(diagonal=replace, up=delete, left=insert). Three-way min instead of two-way max.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE</div>
-Base cases = distance to empty string (0,1,2,...). Three neighbors instead of two. <code>min</code> instead of <code>max</code>. Match = free (no +1 needed).</div>
+<div class="sbox"><div class="sl" style="color:var(--violet)">THE CHOICES</div>
+At (i, j): characters match? Free, take diagonal. Don't match? Three choices: replace (diagonal + 1), delete from word1 (up + 1), insert into word1 (left + 1). Take the minimum.</div>
 
 <pre><code>def minDistance(word1, word2):
     m, n = len(word1), len(word2)
@@ -1085,20 +884,13 @@ Base cases = distance to empty string (0,1,2,...). Three neighbors instead of tw
     return dp[m][n]</code></pre>
 </div></div>
 
-<!-- PROBLEM 16: Interleaving String -->
 <div class="deriv" onclick="this.classList.toggle('open')">
-<div class="deriv-h"><h3><span class="deriv-n">16</span> Interleaving String (#97) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-h"><h3><span class="deriv-n">15</span> Interleaving String (#97) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given strings <code>s1</code>, <code>s2</code>, and <code>s3</code>, determine if <code>s3</code> is formed by interleaving <code>s1</code> and <code>s2</code>.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
-"Interleaving" two strings to form a third &mdash; comparing sequences. &rarr; <span class="tag t4">Scene 4</span> Nila's Loom.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--violet)">THE RITUAL</div>
-dp[i][j] = can s3[:i+j] be formed from s1[:i] and s2[:j]? Check if next char in s3 matches s1 (from up) or s2 (from left).</div>
-
-<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE</div>
-Boolean grid. Three strings involved but grid is still 2D (s1 x s2). Check s3[i+j-1] against s1[i-1] or s2[j-1].</div>
+<div class="sbox"><div class="sl" style="color:var(--violet)">THE CHOICES</div>
+At (i, j): does the next character in s3 come from s1 or s2? Check s3[i+j-1] against s1[i-1] (from above) or s2[j-1] (from left). Boolean 2D table.</div>
 
 <pre><code>def isInterleave(s1, s2, s3):
     m, n = len(s1), len(s2)
@@ -1116,20 +908,13 @@ Boolean grid. Three strings involved but grid is still 2D (s1 x s2). Check s3[i+
     return dp[m][n]</code></pre>
 </div></div>
 
-<!-- PROBLEM 17: Distinct Subsequences -->
 <div class="deriv" onclick="this.classList.toggle('open')">
-<div class="deriv-h"><h3><span class="deriv-n">17</span> Distinct Subsequences (#115) <span class="tag-h">Hard</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-h"><h3><span class="deriv-n">16</span> Distinct Subsequences (#115) <span class="tag-h">Hard</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given strings <code>s</code> and <code>t</code>, return the number of distinct subsequences of <code>s</code> which equals <code>t</code>.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
-"Distinct subsequences" &mdash; comparing s against t. Two sequences. &rarr; <span class="tag t4">Scene 4</span> Nila's Loom.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--violet)">THE RITUAL</div>
-dp[i][j] = ways to form t[:j] from s[:i]. Always inherit from UP (skip char in s). If match, also ADD diagonal value.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE</div>
-<code>+=</code> diagonal on match instead of choosing max. Always inherit UP value. Base case: dp[i][0] = 1 (empty t always matches).</div>
+<div class="sbox"><div class="sl" style="color:var(--violet)">THE CHOICES</div>
+At (i, j): always inherit from above (skip this char in s). If characters match, ALSO add the diagonal value (use this char). Count, not max.</div>
 
 <pre><code>def numDistinct(s, t):
     m, n = len(s), len(t)
@@ -1143,20 +928,13 @@ dp[i][j] = ways to form t[:j] from s[:i]. Always inherit from UP (skip char in s
     return dp[m][n]</code></pre>
 </div></div>
 
-<!-- PROBLEM 18: Regular Expression Matching -->
 <div class="deriv" onclick="this.classList.toggle('open')">
-<div class="deriv-h"><h3><span class="deriv-n">18</span> Regular Expression Matching (#10) <span class="tag-h">Hard</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-h"><h3><span class="deriv-n">17</span> Regular Expression Matching (#10) <span class="tag-h">Hard</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a string <code>s</code> and a pattern <code>p</code> with <code>'.'</code> (any char) and <code>'*'</code> (zero or more of preceding), determine if the pattern matches the entire string.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
-"Regex matching" &mdash; comparing string against pattern. Two sequences. &rarr; <span class="tag t4">Scene 4</span> Nila's Loom.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--violet)">THE RITUAL</div>
-Boolean 2D grid. '.' matches any char (diagonal). '*' means zero-or-more of preceding: zero = dp[i][j-2], more = dp[i-1][j] if char matches.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE</div>
-Special handling for '*' (look 2 cols back for zero matches, or inherit from UP for one-more match). '.' acts as wildcard.</div>
+<div class="sbox"><div class="sl" style="color:var(--violet)">THE CHOICES</div>
+At (i, j): if pattern char is '*', two choices: use zero of preceding (look 2 cols back) or use one more (look up, if char matches). If '.' or exact match, diagonal. Boolean 2D grid.</div>
 
 <pre><code>def isMatch(s, p):
     m, n = len(s), len(p)
@@ -1176,23 +954,35 @@ Special handling for '*' (look 2 cols back for zero matches, or inherit from UP 
     return dp[m][n]</code></pre>
 </div></div>
 
-<!-- ============ SCENE 5 PROBLEMS ============ -->
-<h3 style="color:var(--emerald);border-bottom:1px solid var(--emerald);padding-bottom:6px">Scene 5 &mdash; Ace's Table (State Machine / Interval DP)</h3>
+<!-- ============ GRID DP PROBLEMS ============ -->
+<h3 style="color:#818cf8;border-bottom:1px solid #818cf8;padding-bottom:6px"><span class="ftag ftag-grid">Grid</span> 2D Grid Traversal</h3>
 
-<!-- PROBLEM 19: Best Time to Buy & Sell Stock with Cooldown -->
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">18</span> Unique Paths (#62) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<div class="sbox"><div class="sl sl-q">PROBLEM</div>A robot is on an m x n grid. It can only move right or down. How many unique paths exist from top-left to bottom-right?</div>
+
+<div class="sbox"><div class="sl" style="color:#818cf8">THE CHOICES</div>
+At each cell: come from above or come from the left. dp[i][j] = dp[i-1][j] + dp[i][j-1]. Base: first row and first column all 1s (only one way to reach any edge cell).</div>
+
+<pre><code>def uniquePaths(m, n):
+    dp = [[1] * n for _ in range(m)]
+    for i in range(1, m):
+        for j in range(1, n):
+            dp[i][j] = dp[i-1][j] + dp[i][j-1]
+    return dp[m-1][n-1]</code></pre>
+</div></div>
+
+<!-- ============ STATE MACHINE PROBLEMS ============ -->
+<h3 style="color:var(--emerald);border-bottom:1px solid var(--emerald);padding-bottom:6px"><span class="ftag ftag-sm">State Machine</span> Multiple States per Step</h3>
+
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">19</span> Best Time to Buy &amp; Sell Stock with Cooldown (#309) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given an array of stock prices, find the maximum profit. After selling, you must wait one day before buying again (cooldown).</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
-"Buy and sell stock" with "cooldown" &mdash; multiple states per step. &rarr; <span class="tag t5">Scene 5</span> Ace's Table.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--emerald)">THE RITUAL</div>
-Pure template. Three state cards: hold (bought, waiting to sell), sold (just sold today), rest (cooling down or idle). Simultaneous swap.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE</div>
-Nothing &mdash; this IS the template.</div>
+<div class="sbox"><div class="sl" style="color:var(--emerald)">THE CHOICES</div>
+At each day, you're in one of three states: HOLD (bought, waiting), SOLD (just sold today), REST (cooling down or idle). Each state transitions based on the choice: hold = max(keep holding, buy from rest). sold = hold + price. rest = max(keep resting, cooldown from sold). Compute ALL new values simultaneously, then swap.</div>
 
 <pre><code>def maxProfit(prices):
     hold, sold, rest = -prices[0], 0, 0
@@ -1202,22 +992,19 @@ Nothing &mdash; this IS the template.</div>
         new_rest = max(rest, sold)
         hold, sold, rest = new_hold, new_sold, new_rest
     return max(sold, rest)</code></pre>
+
+<div class="hi">
+<strong>Why simultaneous swap:</strong> If you update <code>hold</code> first and then use it to compute <code>sold</code>, you're using today's buy decision to sell today. That's time travel. Compute ALL new values first, THEN swap.
+</div>
 </div></div>
 
-<!-- PROBLEM 20: Longest Increasing Subsequence -->
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">20</span> Longest Increasing Subsequence (#300) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given an integer array <code>nums</code>, return the length of the longest strictly increasing subsequence.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
-"Increasing subsequence" &mdash; at each position you track a state (best LIS ending here) and look back at ALL previous. &rarr; <span class="tag t5">Scene 5</span> Ace's Table.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--emerald)">THE RITUAL</div>
-dp[i] = length of LIS ending at i. For each i, check ALL previous j where nums[j] &lt; nums[i]. Answer = max of entire dp array.</div>
-
-<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE</div>
-O(n^2). For each position, look back at ALL previous positions (not just i-1, i-2). Answer = max of entire dp array, not just the last element.</div>
+<div class="sbox"><div class="sl" style="color:var(--emerald)">THE CHOICES</div>
+At position i: for each previous position j where nums[j] &lt; nums[i], you can extend that subsequence by 1. dp[i] = max(dp[j] + 1) for all valid j. Answer = max of entire dp array (the LIS can end anywhere).</div>
 
 <pre><code>def lengthOfLIS(nums):
     dp = [1] * len(nums)
@@ -1228,20 +1015,19 @@ O(n^2). For each position, look back at ALL previous positions (not just i-1, i-
     return max(dp)</code></pre>
 </div></div>
 
-<!-- PROBLEM 21: Burst Balloons -->
+<!-- ============ INTERVAL DP PROBLEMS ============ -->
+<h3 style="color:#84cc16;border-bottom:1px solid #84cc16;padding-bottom:6px"><span class="ftag ftag-int">Interval</span> Process a Range</h3>
+
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">21</span> Burst Balloons (#312) <span class="tag-h">Hard</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given <code>n</code> balloons with values, burst them to maximize coins. Bursting balloon i gives <code>nums[left] * nums[i] * nums[right]</code>. Return maximum coins.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
-"Burst balloons" &mdash; interval problem, processing ranges. Multiple states, choosing the LAST element in an interval. &rarr; <span class="tag t5">Scene 5</span> Ace's Table (Interval DP).</div>
+<div class="sbox"><div class="sl" style="color:#84cc16">THE CHOICES</div>
+Within interval [l, r]: which balloon pops LAST? Think backwards. The last balloon to pop in this range sees boundaries l and r as its neighbors. Try each k in [l+1, r-1] as the last pop. dp[l][r] = max over all k of (dp[l][k] + dp[k][r] + nums[l]*nums[k]*nums[r]).</div>
 
-<div class="sbox"><div class="sl" style="color:var(--emerald)">THE RITUAL</div>
-Interval DP. dp[l][r] = max coins from popping all balloons between l and r. Choose the LAST balloon to pop (k). Boundaries l and r are always there (padding with 1s).</div>
-
-<div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE</div>
-Triple nested loop. Iterate by interval LENGTH (small to large). Think backwards &mdash; which balloon pops LAST. Pad array with 1s at boundaries.</div>
+<div class="sbox"><div class="sl" style="color:var(--blue)">WHY IT'S DP</div>
+Overlapping subintervals. dp[0][3] and dp[2][5] both need dp[2][3]. Same range, same answer. Also: iterate by interval LENGTH (small to large) so smaller subproblems are solved first.</div>
 
 <pre><code>def maxCoins(nums):
     nums = [1] + nums + [1]
@@ -1258,70 +1044,73 @@ Triple nested loop. Iterate by interval LENGTH (small to large). Think backwards
 
 </div>
 
-<!-- ==================== TAB 5: QUIZ ==================== -->
+<!-- ==================== TAB 4: QUIZ ==================== -->
 <div class="sec" id="sec-quiz">
 
-<h2>Quiz &mdash; Test Your Workshop Knowledge</h2>
+<h2>Quiz</h2>
 <p>Click each card to reveal the answer.</p>
 
 <div class="quiz" onclick="this.classList.toggle('show')">
-<strong>1. What scene for: "How many ways to climb n stairs taking 1 or 2 steps at a time?"</strong>
-<div class="ans"><span class="tag t1">Scene 1</span> <strong>Maya's Staircase (Linear DP).</strong> dp[i] = dp[i-1] + dp[i-2]. Pure Fibonacci recurrence, look back 1-2 steps.</div>
+<strong>1. What is Aditya Verma's first step for any DP problem?</strong>
+<div class="ans"><strong>Find the CHOICES.</strong> At each item/position/step, what can you do? Take or skip? Match or insert? The choice diagram IS the recursion. The code writes itself from the choices.</div>
 </div>
 
 <div class="quiz" onclick="this.classList.toggle('show')">
-<strong>2. What scene for: "Find the minimum number of coins to make amount?"</strong>
-<div class="ans"><span class="tag t2">Scene 2</span> <strong>Forge's Anvil (Knapsack DP).</strong> Build up to a target amount using coins. Shelf from 0 to amount, sweep with each coin mold.</div>
+<strong>2. How do you know a problem is DP (not just recursion)?</strong>
+<div class="ans"><strong>Overlapping subproblems.</strong> Draw the recursive tree. If the SAME subproblem (same inputs) appears in DIFFERENT branches, it's DP. Same inputs, same answer, why solve it twice?</div>
 </div>
 
 <div class="quiz" onclick="this.classList.toggle('show')">
-<strong>3. What scene for: "Find the longest palindromic substring?"</strong>
-<div class="ans"><span class="tag t3">Scene 3</span> <strong>Echo's Mirrors (Palindrome DP).</strong> Expand from each center, both odd and even stances. O(1) space, O(n^2) time.</div>
+<strong>3. How do you determine the table dimensions?</strong>
+<div class="ans"><strong>Count the changing variables.</strong> Look at the recursive function's parameters. Which ones change across calls? 1 variable &rarr; 1D array. 2 variables &rarr; 2D table. The table shape comes directly from the recursion, not from guessing.</div>
 </div>
 
 <div class="quiz" onclick="this.classList.toggle('show')">
-<strong>4. What scene for: "Find the longest common subsequence of two strings?"</strong>
-<div class="ans"><span class="tag t4">Scene 4</span> <strong>Nila's Loom (2D Table DP).</strong> Two sequences being compared. Match = diagonal + 1. No match = max(up, left).</div>
+<strong>4. How do you initialize the table?</strong>
+<div class="ans"><strong>From the recursive base case.</strong> Whatever the recursion returns at the base (<code>n==0</code> or <code>W==0</code>), fill that into the corresponding row/column of the table. Recursive base case = table initialization.</div>
 </div>
 
 <div class="quiz" onclick="this.classList.toggle('show')">
-<strong>5. What scene for: "Best time to buy and sell stock with cooldown?"</strong>
-<div class="ans"><span class="tag t5">Scene 5</span> <strong>Ace's Table (State Machine DP).</strong> Three state cards: hold, sold, rest. Compute all new values simultaneously, then swap.</div>
+<strong>5. In 0/1 Knapsack, why does the 1D inner loop go RIGHT to LEFT?</strong>
+<div class="ans"><strong>To prevent using the same item twice.</strong> Right to left ensures dp[j-num] still holds the value from BEFORE this item was considered. Left to right would let earlier updates affect later cells, effectively reusing the item (that's Unbounded Knapsack).</div>
 </div>
 
 <div class="quiz" onclick="this.classList.toggle('show')">
-<strong>6. In Linear DP (Scene 1), why can you optimize to O(1) space?</strong>
-<div class="ans"><strong>Only need last 1-2 values, not the full array.</strong> Since dp[i] only depends on dp[i-1] and dp[i-2], you can replace the entire array with just two variables: <code>prev1</code> and <code>prev2</code>. Everything older is never accessed again.</div>
+<strong>6. What is the relationship between memoization and tabulation?</strong>
+<div class="ans"><strong>Same logic, different direction.</strong> Memoization = top-down recursion + cache (3 extra lines). Tabulation = bottom-up loops + table (replace recursion with loops). The formula in each cell is identical to the recursive formula. Tabulation avoids function call overhead and stack overflow risk.</div>
 </div>
 
 <div class="quiz" onclick="this.classList.toggle('show')">
-<strong>7. In Coin Change (Scene 2), why does the inner loop go LEFT to RIGHT?</strong>
-<div class="ans"><strong>Unbounded: same coin can be reused.</strong> Going left to right means when you compute dp[a], dp[a-coin] may already include this coin &mdash; which is correct because you CAN reuse it. For 0-1 knapsack (Target Sum), loop RIGHT to LEFT so each item is only used once.</div>
+<strong>7. How does Target Sum (#494) reduce to a knapsack problem?</strong>
+<div class="ans"><strong>Math trick.</strong> Split numbers into P (positive set) and N (negative set). P - N = target, and P + N = totalSum. So P = (totalSum + target) / 2. Now it's: "count subsets summing to P." That's Count of Subsets with Sum, a direct child of 0/1 Knapsack.</div>
 </div>
 
 <div class="quiz" onclick="this.classList.toggle('show')">
-<strong>8. In the 2D Table (Scene 4), what do the three neighbors represent?</strong>
-<div class="ans"><strong>Diagonal = both chars consumed (match).</strong> Up = skip char from text1 (delete). Left = skip char from text2 (insert). These three directions cover all possible operations when comparing two sequences.</div>
+<strong>8. What family does Coin Change belong to, and how is it different from 0/1 Knapsack?</strong>
+<div class="ans"><strong>Unbounded Knapsack.</strong> Coins can be reused (take the same coin multiple times). In 0/1, each item is used at most once. The code difference: 0/1 inner loop goes RIGHT to LEFT. Unbounded goes LEFT to RIGHT. In 2D table: 0/1 looks at row above (dp[i-1]). Unbounded looks at same row (dp[i]).</div>
 </div>
 
 <div class="quiz" onclick="this.classList.toggle('show')">
-<strong>9. In Buy &amp; Sell Cooldown (Scene 5), why must you swap all states simultaneously?</strong>
-<div class="ans"><strong>Using an already-updated value within the same day would let you buy and sell on the same day.</strong> If you update <code>hold</code> first (buying today), then immediately use the new <code>hold</code> to compute <code>sold</code> (selling today), you've time-traveled. Compute ALL new values from yesterday's cards, THEN replace.</div>
+<strong>9. In Buy & Sell with Cooldown, why must you swap all state variables simultaneously?</strong>
+<div class="ans"><strong>To avoid time travel.</strong> If you update <code>hold</code> first (buying today) then use the updated <code>hold</code> to compute <code>sold</code> (selling today), you've bought and sold on the same day. Compute ALL new values from yesterday's state, THEN swap all at once.</div>
 </div>
 
 <div class="quiz" onclick="this.classList.toggle('show')">
-<strong>10. What makes Burst Balloons an "interval DP" instead of a regular 2D table?</strong>
-<div class="ans"><strong>dp[l][r] represents a range/interval, not two sequence positions.</strong> You iterate by interval LENGTH (small intervals first, building up to larger ones) and at each interval you choose the LAST element to process. This "think backwards" approach is the hallmark of interval DP.</div>
+<strong>10. What makes Burst Balloons an interval DP problem?</strong>
+<div class="ans"><strong>You process a range, choosing where to split.</strong> dp[l][r] represents a range/interval, not two sequence positions. You iterate by interval LENGTH (small first, building to larger). At each interval, you choose which balloon pops LAST (think backwards). This "last to process" trick is the hallmark of interval DP / Matrix Chain Multiplication.</div>
 </div>
 
-<h3>Scene Summary Table</h3>
+<h3>Family Summary</h3>
 <table>
-<tr><th>Scene</th><th>Character</th><th>Algorithm</th><th>Key Data Structure</th><th>When to Use</th></tr>
-<tr><td><span class="tag t1">1</span></td><td>Maya</td><td>Linear DP</td><td>prev1, prev2</td><td>Step-by-step recurrence, take-or-skip</td></tr>
-<tr><td><span class="tag t2">2</span></td><td>Forge</td><td>Knapsack/Target DP</td><td>dp[amount] array</td><td>Build to target, coin problems</td></tr>
-<tr><td><span class="tag t3">3</span></td><td>Echo</td><td>Palindrome DP</td><td>l, r pointers</td><td>Palindrome, symmetry</td></tr>
-<tr><td><span class="tag t4">4</span></td><td>Nila</td><td>2D Table DP</td><td>dp[m+1][n+1] grid</td><td>Two-sequence comparison</td></tr>
-<tr><td><span class="tag t5">5</span></td><td>Ace</td><td>State Machine DP</td><td>hold, sold, rest</td><td>Multiple states per step, intervals</td></tr>
+<tr><th>Family</th><th>Key Choice</th><th>Table Shape</th><th>Problems Here</th></tr>
+<tr><td><span class="ftag ftag-lin">Linear</span></td><td>Step 1 or step 2</td><td>prev1, prev2 (O(1) space)</td><td>#70, #746, #91, #152</td></tr>
+<tr><td><span class="ftag ftag-knap">0/1 Knapsack</span></td><td>Grab or skip, each once</td><td>1D right-to-left, or 2D (items x capacity)</td><td>#198, #213, #494</td></tr>
+<tr><td><span class="ftag ftag-uknap">Unbounded</span></td><td>Use again or move on</td><td>1D left-to-right</td><td>#322, #518, #139</td></tr>
+<tr><td><span class="ftag ftag-lcs">LCS</span></td><td>Match, skip A, skip B</td><td>2D (len1+1 x len2+1)</td><td>#1143, #72, #97, #115, #10</td></tr>
+<tr><td><span class="ftag ftag-pal">Palindrome</span></td><td>Expand or stop</td><td>Two pointers (O(1) space)</td><td>#5, #647</td></tr>
+<tr><td><span class="ftag ftag-grid">Grid</span></td><td>Right or down</td><td>2D grid</td><td>#62</td></tr>
+<tr><td><span class="ftag ftag-sm">State Machine</span></td><td>Buy, sell, or rest</td><td>k state variables</td><td>#309, #300</td></tr>
+<tr><td><span class="ftag ftag-int">Interval</span></td><td>Where to split</td><td>2D (l x r), by length</td><td>#312</td></tr>
 </table>
 
 </div>

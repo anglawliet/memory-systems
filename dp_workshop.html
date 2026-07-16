@@ -341,114 +341,247 @@ Every unique (n, W) pair solved at most once.
 <!-- Pages 6-7: Changing Variables → Table -->
 <img src="dp/images/family1_C_3.png" alt="Pages 6-7: Changing variables become table dimensions, base cases become first row/column, filled table" class="scene-img">
 
-<div class="walkthrough-section">
-<h3>Step 5: Changing Variables &rarr; Table Dimensions</h3>
-<p>The table isn't magic. It comes directly from the recursion.</p>
+<!-- ======== TABULATION: Q&A, one question at a time ======== -->
 
-<div style="font-weight:700;color:var(--gold2);margin-bottom:8px">Which parameters CHANGE across recursive calls?</div>
-<div style="display:grid;grid-template-columns:auto 1fr auto;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:16px">
+<div class="walkthrough-section" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">Step 5: From Recursion to Table (one question at a time)</h3>
+<p>Every part of the table comes from a specific line in the recursion. Nothing is invented. Let's derive it question by question.</p>
+</div>
+
+<!-- Q1: Why is it a table at all? -->
+<div class="walkthrough-section" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">Q: Why a table? Why 2D?</h3>
+
+<p>Look at your recursive function signature:</p>
+<pre><code>def knapsack(wt, val, W, n):</code></pre>
+
+<p>Cross out what stays the same across every recursive call:</p>
+<div style="display:grid;grid-template-columns:auto 1fr auto;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:12px 0">
 <div style="padding:10px 14px;background:var(--card2);font-weight:700"><code>wt</code></div>
-<div style="padding:10px 14px">Weight array</div>
-<div style="padding:10px 14px;color:var(--red);font-weight:700">SAME every call &#x2717;</div>
+<div style="padding:10px 14px">Same array every call</div>
+<div style="padding:10px 14px;color:var(--red);font-weight:700">crossed out &#x2717;</div>
 <div style="padding:10px 14px;background:var(--card2);font-weight:700"><code>val</code></div>
-<div style="padding:10px 14px">Value array</div>
-<div style="padding:10px 14px;color:var(--red);font-weight:700">SAME every call &#x2717;</div>
+<div style="padding:10px 14px">Same array every call</div>
+<div style="padding:10px 14px;color:var(--red);font-weight:700">crossed out &#x2717;</div>
 <div style="padding:10px 14px;background:var(--card2);font-weight:700"><code>W</code></div>
-<div style="padding:10px 14px">Remaining capacity</div>
+<div style="padding:10px 14px">Goes down when you GRAB an item</div>
 <div style="padding:10px 14px;color:var(--green);font-weight:700">CHANGES &#x2713;</div>
 <div style="padding:10px 14px;background:var(--card2);font-weight:700"><code>n</code></div>
-<div style="padding:10px 14px">Items remaining</div>
+<div style="padding:10px 14px">Goes down as you move to the next item</div>
 <div style="padding:10px 14px;color:var(--green);font-weight:700">CHANGES &#x2713;</div>
 </div>
 
-<div style="background:rgba(59,130,246,.1);border-radius:8px;padding:14px;margin-bottom:16px;font-size:1.05em;text-align:center">
-<strong>2 changing variables &rarr; 2D table.</strong> Rows = items (0 to 5). Columns = capacity (0 to 7).<br>
-<code>dp[i][j]</code> = max value using first <code>i</code> items with capacity <code>j</code>
+<p><strong>2 variables change &rarr; 2D table.</strong> One dimension for each changing variable. That's it.</p>
+<p style="color:var(--muted);font-size:.9em">If only 1 variable changed, it would be a 1D array. If 3 changed, it would be 3D. The number of changing variables = number of dimensions. Always.</p>
 </div>
 
-<div style="font-weight:700;color:var(--gold2);margin-bottom:8px">Base case in recursion &rarr; first row and column</div>
-<div style="font-size:.95em;margin-bottom:12px">
-Recursive base: <code>if n == 0 or W == 0: return 0</code><br>
-Table: first row (0 items) = all zeros. First column (0 capacity) = all zeros.
+<!-- Q2: What are the rows and columns? -->
+<div class="walkthrough-section" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">Q: What are the rows? What are the columns?</h3>
+
+<p>The two changing variables are <code>n</code> (items) and <code>W</code> (capacity). Each becomes one axis:</p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0">
+<div style="background:var(--card2);border-radius:8px;padding:14px">
+<div style="color:var(--amber);font-weight:700;margin-bottom:6px">Rows = <code>n</code> (items)</div>
+<div style="font-size:.9em">Row 0 = considering 0 items<br>Row 1 = considering first 1 item (Gold)<br>Row 2 = considering first 2 items (Gold, Ruby)<br>...<br>Row 5 = considering all 5 items</div>
+</div>
+<div style="background:var(--card2);border-radius:8px;padding:14px">
+<div style="color:var(--amber);font-weight:700;margin-bottom:6px">Columns = <code>W</code> (capacity)</div>
+<div style="font-size:.9em">Col 0 = bag holds 0 kg<br>Col 1 = bag holds 1 kg<br>Col 2 = bag holds 2 kg<br>...<br>Col 7 = bag holds 7 kg</div>
+</div>
 </div>
 
-<div class="hi">
-<strong style="color:var(--gold2)">Aditya Verma's Rule:</strong> Recursive base case &rarr; table initialization. Whatever the recursion returns at the base, fill that into the table.
+<p>So <code>dp[i][j]</code> answers: <strong>"What's the max value using the first <code>i</code> items with a bag that holds <code>j</code> kg?"</strong></p>
+<p style="color:var(--muted);font-size:.9em">This is exactly what the recursion computes. The table just stores every answer so you don't recompute.</p>
 </div>
-</div>
 
-<div class="walkthrough-section">
-<h3>Step 6: Fill the Table (same formula, bottom-up)</h3>
-<p>The recursive formula becomes the cell formula. Just read from the table instead of recursing.</p>
+<!-- Q3: Why is the first row all zeros? -->
+<div class="walkthrough-section" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">Q: Why is the first row all zeros?</h3>
 
-<pre><code># Same logic as recursion:
-if wt[i-1] <= j:
-    dp[i][j] = max(val[i-1] + dp[i-1][j - wt[i-1]],  # GRAB (row above, reduced capacity)
-                   dp[i-1][j])                          # SKIP (row above, same capacity)
-else:
-    dp[i][j] = dp[i-1][j]                              # Doesn't fit, skip</code></pre>
+<p>Look at your recursive base case:</p>
+<pre><code>if n == 0 or W == 0:
+    return 0</code></pre>
 
-<div style="overflow-x:auto;margin:16px 0">
+<p><code>n == 0</code> means "no items to consider." Row 0 in the table is exactly that: zero items available.</p>
+<p>With zero items, no matter how much capacity you have (W=0, W=1, ... W=7), the best value is always <strong>$0</strong>. You have nothing to grab.</p>
+
+<div style="overflow-x:auto;margin:12px 0">
 <table style="font-size:.82em;text-align:center">
 <tr><th></th><th>W=0</th><th>W=1</th><th>W=2</th><th>W=3</th><th>W=4</th><th>W=5</th><th>W=6</th><th>W=7</th></tr>
-<tr><td style="color:var(--muted)">i=0 (none)</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-<tr><td style="color:var(--gold2)">i=1 (Gold 4/$10K)</td><td>0</td><td>0</td><td>0</td><td>0</td><td>10</td><td>10</td><td>10</td><td>10</td></tr>
-<tr><td style="color:var(--crimson)">i=2 (Ruby 3/$7K)</td><td>0</td><td>0</td><td>0</td><td>7</td><td>10</td><td>10</td><td>10</td><td>17</td></tr>
-<tr><td style="color:#818cf8">i=3 (Diamond 5/$12K)</td><td>0</td><td>0</td><td>0</td><td>7</td><td>10</td><td>12</td><td>12</td><td>17</td></tr>
-<tr><td style="color:var(--green)">i=4 (Emerald 1/$3K)</td><td>0</td><td>3</td><td>3</td><td>7</td><td>10</td><td>13</td><td>15</td><td>17</td></tr>
-<tr><td style="color:var(--teal)">i=5 (Platinum 2/$5K)</td><td>0</td><td>3</td><td>5</td><td>7</td><td>10</td><td>13</td><td>15</td><td style="background:rgba(34,197,94,.15);font-weight:700;color:var(--green)">18</td></tr>
+<tr style="background:rgba(245,158,11,.08)"><td style="color:var(--amber);font-weight:700">i=0 (no items)</td><td><strong>0</strong></td><td><strong>0</strong></td><td><strong>0</strong></td><td><strong>0</strong></td><td><strong>0</strong></td><td><strong>0</strong></td><td><strong>0</strong></td><td><strong>0</strong></td></tr>
+<tr><td style="color:var(--muted)">i=1 (Gold)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="color:var(--muted)">i=2 (Ruby)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="color:var(--muted)">i=3 (Diamond)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="color:var(--muted)">i=4 (Emerald)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="color:var(--muted)">i=5 (Platinum)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 </table>
 </div>
-<div style="color:var(--green);font-size:.9em"><strong>Answer:</strong> dp[5][7] = $18K. Gold ($10K) + Emerald ($3K) + Platinum ($5K) = $18K at exactly 7kg.</div>
+<p style="font-size:.9em"><strong>Recursion says:</strong> <code>n == 0 &rarr; return 0</code>. <strong>Table says:</strong> row 0 = all zeros. Same thing.</p>
 </div>
 
-<!-- Pages 8-10: All Three Versions + Family Tree -->
-<img src="dp/images/family1_C_4.png" alt="Pages 8-10: Three code versions (recursion, memoization, tabulation), the knapsack family tree, and three golden rules" class="scene-img">
+<!-- Q4: Why is the first column all zeros? -->
+<div class="walkthrough-section" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">Q: Why is the first column all zeros?</h3>
 
-<div class="walkthrough-section">
-<h3>The Pipeline: All Three Versions</h3>
+<p>Same base case: <code>W == 0 &rarr; return 0</code></p>
+<p><code>W == 0</code> means "bag has zero capacity." Column 0 is exactly that.</p>
+<p>If your bag holds 0 kg, it doesn't matter how many items exist. You can't grab anything. Value = <strong>$0</strong>.</p>
 
-<div style="font-weight:700;color:var(--gold2);margin-bottom:8px">VERSION 1: Recursion (correct but slow, O(2<sup>n</sup>))</div>
+<div style="overflow-x:auto;margin:12px 0">
+<table style="font-size:.82em;text-align:center">
+<tr><th></th><th style="background:rgba(245,158,11,.08)">W=0</th><th>W=1</th><th>W=2</th><th>W=3</th><th>W=4</th><th>W=5</th><th>W=6</th><th>W=7</th></tr>
+<tr><td style="color:var(--amber);font-weight:700">i=0</td><td style="background:rgba(245,158,11,.08)"><strong>0</strong></td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td style="color:var(--muted)">i=1 (Gold)</td><td style="background:rgba(245,158,11,.08)"><strong>0</strong></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="color:var(--muted)">i=2 (Ruby)</td><td style="background:rgba(245,158,11,.08)"><strong>0</strong></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="color:var(--muted)">i=3 (Diamond)</td><td style="background:rgba(245,158,11,.08)"><strong>0</strong></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="color:var(--muted)">i=4 (Emerald)</td><td style="background:rgba(245,158,11,.08)"><strong>0</strong></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="color:var(--muted)">i=5 (Platinum)</td><td style="background:rgba(245,158,11,.08)"><strong>0</strong></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+</table>
+</div>
+<p style="font-size:.9em"><strong>Recursion says:</strong> <code>W == 0 &rarr; return 0</code>. <strong>Table says:</strong> column 0 = all zeros. Same thing.</p>
+</div>
+
+<!-- Q5: How do I fill each cell? -->
+<div class="walkthrough-section" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">Q: How do I fill each cell? Where does the formula come from?</h3>
+
+<p>Straight from the recursion. There are two cases:</p>
+
+<div style="background:rgba(239,68,68,.06);border:1px solid var(--red);border-radius:10px;padding:16px;margin:12px 0">
+<div style="color:var(--red);font-weight:700;font-size:1.05em;margin-bottom:8px">Case 1: Item DOESN'T FIT (weight > capacity)</div>
+<div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center">
+<div>
+<div style="font-size:.8em;color:var(--muted);margin-bottom:4px">RECURSION SAYS:</div>
+<pre style="margin:0;font-size:.85em"><code>return knapsack(wt, val, W, n-1)</code></pre>
+<div style="font-size:.85em;margin-top:6px">"This item doesn't fit. Pretend it doesn't exist. Solve with one fewer item, same capacity."</div>
+</div>
+<div style="font-size:1.5em;color:var(--muted)">&rarr;</div>
+<div>
+<div style="font-size:.8em;color:var(--muted);margin-bottom:4px">TABLE SAYS:</div>
+<pre style="margin:0;font-size:.85em"><code>dp[i][j] = dp[i-1][j]</code></pre>
+<div style="font-size:.85em;margin-top:6px"><strong>Copy from directly above.</strong><br><code>i-1</code> = one row up (one fewer item).<br><code>j</code> = same column (same capacity).</div>
+</div>
+</div>
+</div>
+
+<div style="background:rgba(34,197,94,.06);border:1px solid var(--green);border-radius:10px;padding:16px;margin:12px 0">
+<div style="color:var(--green);font-weight:700;font-size:1.05em;margin-bottom:8px">Case 2: Item FITS (weight &lt;= capacity)</div>
+<div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center">
+<div>
+<div style="font-size:.8em;color:var(--muted);margin-bottom:4px">RECURSION SAYS:</div>
+<pre style="margin:0;font-size:.85em"><code>grab = val[n-1] + knapsack(W-wt[n-1], n-1)
+skip = knapsack(W, n-1)
+return max(grab, skip)</code></pre>
+</div>
+<div style="font-size:1.5em;color:var(--muted)">&rarr;</div>
+<div>
+<div style="font-size:.8em;color:var(--muted);margin-bottom:4px">TABLE SAYS:</div>
+<pre style="margin:0;font-size:.85em"><code>grab = val[i-1] + dp[i-1][j - wt[i-1]]
+skip = dp[i-1][j]
+dp[i][j] = max(grab, skip)</code></pre>
+</div>
+</div>
+<div style="margin-top:12px;font-size:.9em">
+<strong style="color:var(--green)">GRAB</strong> = this item's value + best value with <em>remaining capacity</em> and <em>remaining items</em><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<code>dp[i-1]</code> = row above (one fewer item, because you've decided on this one)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<code>[j - wt[i-1]]</code> = column shifted left by this item's weight (capacity used up)<br><br>
+<strong style="color:var(--red)">SKIP</strong> = best value without this item, same capacity<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<code>dp[i-1][j]</code> = row above, same column (just ignore this item entirely)<br><br>
+<strong>Pick whichever is better.</strong>
+</div>
+</div>
+</div>
+
+<!-- Q6: Walk through one cell -->
+<div class="walkthrough-section" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">Q: Show me one cell being filled. Step by step.</h3>
+
+<p>Let's fill <code>dp[2][7]</code>: first 2 items (Gold 4/$10K, Ruby 3/$7K), capacity 7.</p>
+
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:12px 0;font-size:.95em;line-height:1.8">
+<strong>Item:</strong> Ruby (i=2), weight = 3, value = $7K<br>
+<strong>Capacity:</strong> j = 7<br>
+<strong>Does it fit?</strong> weight 3 &lt;= capacity 7? <strong style="color:var(--green)">YES.</strong> So we have a choice.<br><br>
+
+<strong style="color:var(--green)">GRAB Ruby:</strong><br>
+&nbsp;&nbsp;Ruby's value + best without Ruby at reduced capacity<br>
+&nbsp;&nbsp;= $7K + dp[1][7-3] = $7K + dp[1][4]<br>
+&nbsp;&nbsp;dp[1][4] = $10K (from row above: Gold fits in capacity 4)<br>
+&nbsp;&nbsp;= $7K + $10K = <strong>$17K</strong><br><br>
+
+<strong style="color:var(--red)">SKIP Ruby:</strong><br>
+&nbsp;&nbsp;Best without Ruby, same capacity<br>
+&nbsp;&nbsp;= dp[1][7] = $10K (from row above: just Gold with capacity 7)<br>
+&nbsp;&nbsp;= <strong>$10K</strong><br><br>
+
+<strong>dp[2][7] = max($17K, $10K) = $17K</strong> &#x2713;
+</div>
+<p style="font-size:.9em;color:var(--muted)">Every cell asks the exact same question the recursion asked. It just reads previous answers from the table instead of recursing.</p>
+</div>
+
+<!-- Q7: Why do some cells just copy from above? -->
+<div class="walkthrough-section" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">Q: Why do some cells just copy the value from the row above?</h3>
+
+<p>Let's fill <code>dp[1][2]</code>: first 1 item (Gold, weight 4), capacity 2.</p>
+
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:12px 0;font-size:.95em;line-height:1.8">
+<strong>Item:</strong> Gold (i=1), weight = 4, value = $10K<br>
+<strong>Capacity:</strong> j = 2<br>
+<strong>Does it fit?</strong> weight 4 &lt;= capacity 2? <strong style="color:var(--red)">NO.</strong> Gold is too heavy.<br><br>
+
+Kit has <strong>no choice</strong>. Gold doesn't fit. Skip it.<br>
+dp[1][2] = dp[0][2] = <strong>0</strong> (copy from row above)
+</div>
+
+<p>This is why you see many cells with the same value as the cell above. It means: <strong>"this item was too heavy for this capacity, so adding it to the available items changed nothing."</strong></p>
+
+<p style="font-size:.9em;color:var(--muted)">Look at Gold's row (i=1): columns W=0 through W=3 are all 0, copied from row 0. Gold weighs 4kg, so it doesn't fit until capacity 4. At W=4, Gold finally fits, and the value jumps to $10K.</p>
+</div>
+
+<!-- The full table -->
+<div class="walkthrough-section" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">The Complete Table</h3>
+
+<div style="overflow-x:auto;margin:12px 0">
+<table style="font-size:.82em;text-align:center">
+<tr><th></th><th>W=0</th><th>W=1</th><th>W=2</th><th>W=3</th><th>W=4</th><th>W=5</th><th>W=6</th><th>W=7</th></tr>
+<tr style="background:rgba(245,158,11,.06)"><td style="color:var(--amber);font-weight:700">i=0 (none)</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td style="color:var(--gold2)">i=1 (Gold 4/$10K)</td><td>0</td><td style="color:var(--muted)">0&uarr;</td><td style="color:var(--muted)">0&uarr;</td><td style="color:var(--muted)">0&uarr;</td><td>10</td><td>10</td><td>10</td><td>10</td></tr>
+<tr><td style="color:var(--crimson)">i=2 (Ruby 3/$7K)</td><td>0</td><td style="color:var(--muted)">0&uarr;</td><td style="color:var(--muted)">0&uarr;</td><td>7</td><td style="color:var(--muted)">10&uarr;</td><td style="color:var(--muted)">10&uarr;</td><td style="color:var(--muted)">10&uarr;</td><td>17</td></tr>
+<tr><td style="color:#818cf8">i=3 (Diamond 5/$12K)</td><td>0</td><td style="color:var(--muted)">0&uarr;</td><td style="color:var(--muted)">0&uarr;</td><td style="color:var(--muted)">7&uarr;</td><td style="color:var(--muted)">10&uarr;</td><td>12</td><td style="color:var(--muted)">12&uarr;</td><td style="color:var(--muted)">17&uarr;</td></tr>
+<tr><td style="color:var(--green)">i=4 (Emerald 1/$3K)</td><td>0</td><td>3</td><td>3</td><td style="color:var(--muted)">7&uarr;</td><td>10</td><td>13</td><td>15</td><td style="color:var(--muted)">17&uarr;</td></tr>
+<tr><td style="color:var(--teal)">i=5 (Platinum 2/$5K)</td><td>0</td><td style="color:var(--muted)">3&uarr;</td><td>5</td><td>7</td><td style="color:var(--muted)">10&uarr;</td><td>13</td><td>15</td><td style="background:rgba(34,197,94,.15);font-weight:700;color:var(--green)">18</td></tr>
+</table>
+</div>
+<p style="font-size:.85em;color:var(--muted)">Cells with <strong>&uarr;</strong> were copied from the row above (item didn't fit, or skipping was better).</p>
+<p style="color:var(--green);font-size:.9em"><strong>Answer:</strong> dp[5][7] = $18K (bottom-right). Gold ($10K) + Emerald ($3K) + Platinum ($5K) = $18K at exactly 7kg.</p>
+<p style="font-size:.9em"><strong>Why bottom-right?</strong> Because dp[5][7] means "all 5 items available, full 7kg capacity." That's the original question.</p>
+</div>
+
+<!-- Tabulation code -->
+<div class="walkthrough-section" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">The Tabulation Code</h3>
+<p>Every line maps to something we just derived:</p>
+
 <pre><code>def knapsack(wt, val, W, n):
-    if n == 0 or W == 0:
-        return 0
-    if wt[n-1] <= W:
-        grab = val[n-1] + knapsack(wt, val, W - wt[n-1], n - 1)
-        skip = knapsack(wt, val, W, n - 1)
-        return max(grab, skip)
-    else:
-        return knapsack(wt, val, W, n - 1)</code></pre>
-
-<div style="text-align:center;color:var(--muted);margin:4px 0">&darr; add a cache (3 lines) &darr;</div>
-
-<div style="font-weight:700;color:var(--gold2);margin-bottom:8px">VERSION 2: Memoization (O(n &times; W))</div>
-<pre><code>def knapsack(wt, val, W, n, memo={}):
-    if (n, W) in memo: return memo[(n, W)]
-    if n == 0 or W == 0:
-        return 0
-    if wt[n-1] <= W:
-        grab = val[n-1] + knapsack(wt, val, W - wt[n-1], n - 1, memo)
-        skip = knapsack(wt, val, W, n - 1, memo)
-        result = max(grab, skip)
-    else:
-        result = knapsack(wt, val, W, n - 1, memo)
-    memo[(n, W)] = result
-    return result</code></pre>
-
-<div style="text-align:center;color:var(--muted);margin:4px 0">&darr; replace recursion with loops &darr;</div>
-
-<div style="font-weight:700;color:var(--gold2);margin-bottom:8px">VERSION 3: Tabulation (O(n &times; W), no recursion)</div>
-<pre><code>def knapsack(wt, val, W, n):
-    dp = [[0] * (W + 1) for _ in range(n + 1)]
-    for i in range(1, n + 1):
-        for j in range(1, W + 1):
-            if wt[i-1] <= j:
-                dp[i][j] = max(val[i-1] + dp[i-1][j - wt[i-1]],
-                               dp[i-1][j])
+    dp = [[0] * (W + 1) for _ in range(n + 1)]   # first row + col = all zeros (base case)
+    for i in range(1, n + 1):                      # row by row (each item)
+        for j in range(1, W + 1):                  # column by column (each capacity)
+            if wt[i-1] <= j:                        # does this item fit?
+                dp[i][j] = max(                     # YES: grab or skip, pick better
+                    val[i-1] + dp[i-1][j-wt[i-1]],  #   GRAB: value + row above, left by weight
+                    dp[i-1][j]                       #   SKIP: row above, same column
+                )
             else:
-                dp[i][j] = dp[i-1][j]
-    return dp[n][W]</code></pre>
+                dp[i][j] = dp[i-1][j]              # NO: copy from above (can't use this item)
+    return dp[n][W]                                 # bottom-right = all items, full capacity</code></pre>
 </div>
+
+<!-- Pages 8-10: Family Tree -->
+<img src="dp/images/family1_C_4.png" alt="Pages 8-10: Three code versions (recursion, memoization, tabulation), the knapsack family tree, and three golden rules" class="scene-img">
 
 <!-- The Knapsack Family Tree -->
 <div style="background:var(--card);border:2px solid var(--blue);border-radius:12px;padding:20px;margin:20px 0">

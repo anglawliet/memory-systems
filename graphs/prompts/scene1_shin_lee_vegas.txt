@@ -1,0 +1,395 @@
+SCENE 1: SHIN LEE'S VEGAS ADVENTURE — DFS
+=============================================
+5 prompts total: 1 character reference + 4 tutorial pages (1024x1792 each).
+Story: Shin Lim, the world-famous card magician, explores Las Vegas venue by venue.
+He picks one direction, goes ALL THE WAY through connected venues, dead end?
+Comes back, tries the next venue. That IS depth-first search.
+
+Sequence: start at The Strip → pick one venue, go ALL THE WAY → dead end
+          (VIP only, sold out, closed)? → come back to the last fork →
+          try the next venue → repeat until every venue has been visited.
+
+Characters (Las Vegas magician themed):
+  Shin Lim = the magician (explores deep first, comes back, tries the next spot)
+  Chip = the casino chip (stack/path — drop a chip at each venue, follow chips back)
+  Snap = the polaroid camera (visited — take a pic at each venue, already got the pic? Skip!)
+
+The 7 Vegas Locations (graph):
+  The Strip —— Bellagio —— Caesars Palace
+      |             |
+      |         Venetian —— The Sphere
+      |             |
+      +—— Fremont St —— High Roller
+
+  Key: The Strip connects to BOTH Bellagio AND Fremont St (cycle!).
+  This creates the "already visited" teaching moment.
+
+DFS traversal order from The Strip:
+  The Strip → Bellagio → Caesars Palace (dead end, come back)
+  → Venetian → The Sphere (dead end, come back)
+  → Fremont St → High Roller (dead end, come back)
+  → Fremont St tries The Strip... SNAP ALREADY TAKEN! Already visited! Turn back!
+  → Come back all the way to The Strip. Done!
+
+
+PROMPT 0 — CHARACTER REFERENCE (generate first, use as style reference for prompts 1-4)
+=========================================================================================
+
+Create a tall portrait image (1024x1792) with a clean white background. Soft 3D cartoon style (Pixar/Disney energy), bright neon Vegas energy, fun and vibrant.
+
+Show a young man named Shin Lim, the world-famous close-up card magician (2x America's Got Talent winner). East Asian, late 20s, clean-shaven, short styled black hair swept to one side. Wearing his SIGNATURE ALL-BLACK performance outfit: a sleek fitted BLACK DRESS SHIRT (top button undone, sleeves rolled to forearms), BLACK PANTS, BLACK SHOES. He has an intense, focused expression with a slight confident smirk, like he's about to perform an impossible trick. A deck of cards fans out between the fingers of one hand (his signature move). He carries himself with quiet, dramatic confidence, like every move is part of a performance. He explores Vegas venue by venue, going deep before coming back.
+
+He is standing front-facing, equipped with both items at once. Each item must look WILDLY different from the other — unique shape, unique color, unique personality. They should be instantly distinguishable even as tiny thumbnails.
+
+Left hand — Chip the Casino Chip (stack/path tracker):
+A LARGE ROUND casino poker chip. BRIGHT GOLD color with a "$" symbol in the center, ridged edges, shiny metallic surface. Has a smooth/cool face on the chip surface (half-lidded confident eyes, small knowing smirk, one eyebrow raised) — he's the "trail marker." Shin Lim drops a Chip at each venue he walks into. The trail of gold chips shows exactly the path he took. When he hits a dead end and comes back, the LAST chip he dropped is the FIRST one he picks up — that's LIFO (last in, first out). WARM GOLD GLOW around him. He is ROUND and FLAT shaped, like a poker chip or coin.
+Label: "Chip (stack)"
+
+Right hand — Snap the Polaroid Camera (visited set):
+A chunky VINTAGE POLAROID CAMERA. WHITE body with a RAINBOW stripe across the front (classic Polaroid look). Has an enthusiastic/eager face on the camera body (wide bright eyes where the lens is, big excited smile below, a small flash unit on top like a hat) — she's the "memory keeper." Shin Lim uses Snap to take a polaroid photo at every venue he visits. The photo slides out and shows the venue. If Shin Lim arrives at a venue and already has a polaroid of it, he knows: already visited, skip! COOL WHITE GLOW with rainbow accents around her. She is BOXY and RECTANGULAR shaped, like a chunky instant camera.
+Label: "Snap (visited)"
+
+Standing beside Shin Lim at waist height (deck of cards in his other hand) — a row of 7 Vegas venue icons:
+  The Strip: the famous "Welcome to Las Vegas" neon sign
+  Bellagio: the hotel with its iconic fountains spraying water
+  Caesars Palace: Roman columns and a Caesar statue
+  Venetian: gondola on a canal with striped poles
+  The Sphere: the giant spherical LED venue
+  Fremont St: the Fremont Experience LED canopy with old-school neon signs
+  High Roller: the giant observation wheel lit up at night
+Each venue that is UNVISITED has a bright NEON GLOW (lit up, inviting).
+Each venue that is VISITED has a POLAROID PHOTO pinned to it and a slightly dimmed appearance.
+
+Visual contrast summary (IMPORTANT):
+- Chip = ROUND/FLAT, BRIGHT GOLD, metallic texture, cool/smooth personality, warm glow
+- Snap = BOXY/RECTANGULAR, WHITE + RAINBOW, plastic texture, eager/excited personality, cool glow
+- Unvisited venue = NEON GLOW (bright, inviting, "visit me!")
+- Visited venue = POLAROID pinned + dimmed (done, "already got the pic")
+
+Below the characters, a bold banner reads: "Shin Lim's Vegas Adventure — Snap a pic BEFORE you explore, or you'll loop forever!"
+
+Each object should POP with its own distinct color, shape, and texture. Even in a small thumbnail, you should instantly tell them apart: the round gold casino chip and the boxy white polaroid camera.
+
+NAME MNEMONICS (Vegas themed):
+- Shin Lim = the magician → he goes DEEP first, then comes back (depth-first search)
+- Chip = casino "chip" → drop a chip at each venue, follow chips back. The chip trail IS the stack.
+- Snap = "snap a pic" → polaroid at each venue means visited. "Already got the snap? Skip!"
+- Neon glow = unvisited, lit up, waiting to be explored
+- Polaroid pinned = visited, already captured, do not revisit
+
+
+PROMPT 1 OF 4 — Intro + Arriving in Vegas + Going Deep (Pages 1-3)
+=====================================================================
+
+Create a tall portrait infographic (1024x1792) for DFS algorithm tutorial.
+
+CRITICAL DESIGN RULES:
+- ALL text must be HUGE — section titles 60pt+, body text 32pt+, code 26pt+
+- SHOW don't tell. Use big arrows, polaroid photos, neon/dimmed venue markers. If a picture can say it, don't write a sentence.
+- Every single element must be readable on a phone held vertically WITHOUT zooming
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+
+Style: soft 3D cartoon characters, dark neon-purple section backgrounds (Vegas night vibe), cream/warm-white rounded content cards, bright magenta/pink headers with LARGE circled page numbers in top-right. Code in large monospace on light gray rounded boxes.
+
+Characters (use EXACT same designs in ALL 4 images — consistency is critical):
+- Shin Lim: young man, East Asian, short styled black hair, all-black dress shirt + pants, confident smirk, deck of cards
+- Chip the Casino Chip: ROUND GOLD poker chip with "$", cool/smooth face, warm glow — label "(stack)"
+- Snap the Polaroid Camera: BOXY WHITE camera with RAINBOW stripe, eager face, cool glow — label "(visited)"
+- 7 Vegas Venues: The Strip (neon sign), Bellagio (fountains), Caesars Palace (Roman columns), Venetian (gondola), The Sphere (LED sphere), Fremont St (LED canopy), High Roller (observation wheel)
+- NEON GLOW on a venue = unvisited
+- POLAROID pinned + dimmed on a venue = visited
+- Vegas neon lights and night sky atmosphere
+
+Stack 3 sections vertically:
+
+PAGE 1 — "DEPTH-FIRST SEARCH" (LARGE circled 1 top-right):
+BIG bold title "DEPTH-FIRST SEARCH (DFS)"
+Left side: Shin Lim (large, confident pose, fanning a deck of cards dramatically) with speech bubble: "Vegas is my stage. Pick one direction. Go ALL the way. Dead end? Come back. Try the next."
+Right side: Show the 7 venues arranged as a GRAPH with edges:
+  The Strip —— Bellagio —— Caesars Palace
+      |             |
+      |         Venetian —— The Sphere
+      |             |
+      +—— Fremont St —— High Roller
+  All venues have NEON GLOW (unvisited). Make this visual take up significant space.
+Below: Two LARGE character cards side by side:
+  Chip the Casino Chip (stack) — "Follow the gold chips back to the last fork."
+  Snap the Polaroid Camera (visited) — "Already got the pic? Skip!"
+Bottom magenta banner: ENTER VENUE → SNAP A PIC → GO DEEP → DEAD END? → FOLLOW CHIPS BACK
+
+PAGE 2 — "ARRIVING IN VEGAS" (LARGE circled 2 top-right):
+Header: "ARRIVING IN VEGAS" — "Shin Lim starts at The Strip."
+
+Show the graph LARGE. The Strip now has a POLAROID pinned and is dimmed. All others still neon.
+Shin Lim steps onto The Strip. Snap takes a polaroid photo — it slides out showing The Strip. Label: "Snap takes a pic FIRST. Before exploring ANY venues."
+Chip is dropped at The Strip: one gold casino chip on the ground. Label: "Chip dropped. Path so far: [The Strip]."
+
+Code block:
+  def dfs(venue):
+      if venue in visited: return   # already got the pic? Turn back!
+      visited.add(venue)            # Snap takes a pic — BEFORE exploring!
+
+Shin Lim looks at the map: "Two directions: Bellagio and Fremont St. Pick one. Go ALL the way."
+
+PAGE 3 — "GOING DEEP" (LARGE circled 3 top-right):
+Header: "GOING DEEP" — "One direction. All the way."
+Show the first deep dive clearly:
+
+Shin Lim at The Strip. Picks Bellagio (first neighbor).
+  → Enters Bellagio (fountains!). Snap takes a pic. Chip dropped.
+  → From Bellagio, picks Caesars Palace (first neighbor).
+  → Enters Caesars Palace (Roman columns!). Snap takes a pic. Chip dropped.
+  → Caesars Palace: only neighbor is Bellagio... already has a polaroid! No unvisited venues.
+  → DEAD END! (Nothing new to see from here)
+
+Show the trail of gold chips: The Strip → Bellagio → Caesars Palace (3 gold chips in a row).
+Shin Lim: "Dead end! Already got the Bellagio pic. Time to come back."
+
+COME BACK: Shin Lim follows the chips back. Picks up the Caesars Palace chip. Returns to Bellagio.
+Show: the chip at Caesars Palace is picked up. Two chips remain. Caesars stays polaroid-pinned.
+
+Code:
+  for nei in graph[venue]:    # check each connected venue
+      dfs(nei)                # go DEEP into that venue
+  # all venues tried → come back (function returns)
+
+Label: "Each dfs() call goes one venue deeper. Each return comes back one venue."
+Graph state: The Strip (polaroid), Bellagio (polaroid), Caesars Palace (polaroid). Others still neon.
+Chip trail: [The Strip, Bellagio]. 3/7 visited.
+
+
+PROMPT 2 OF 4 — Branching + The Visited Trap (Pages 4-5)
+============================================================
+
+Continue the DFS tutorial. Tall portrait (1024x1792). SAME exact style. SAME exact character designs. ALL text HUGE (titles 60pt+, body 32pt+, code 26pt+). Show don't tell. Max 15 words per explanation. Only 2 pages, give each LOTS of space.
+
+SAME characters:
+- Shin Lim: East Asian, short styled black hair, all-black outfit, confident smirk, deck of cards
+- Chip: round gold casino chip, cool face
+- Snap: boxy white polaroid camera with rainbow stripe, eager face
+- Visited venues have polaroid pinned + dimmed
+
+CURRENT STATE entering this page:
+  Visited (polaroid): The Strip, Bellagio, Caesars Palace
+  Unvisited (neon): Venetian, The Sphere, Fremont St, High Roller
+  Chip trail: [The Strip, Bellagio]
+
+Stack 2 sections vertically (use the FULL height):
+
+PAGE 4 — "VEGAS BRANCHES" (LARGE circled 4 top-right):
+Header: "VEGAS BRANCHES" — "Back at Bellagio. Try the next direction."
+
+Shin Lim is back at Bellagio. Caesars Palace is done. What's next?
+Bellagio's neighbors: Caesars Palace (polaroid!), Venetian (no pic!). Go to Venetian!
+
+Show the branching clearly:
+  → Enter Venetian (gondola ride!). Snap takes a pic. Chip dropped.
+  → Venetian neighbors: The Sphere (no pic!), Fremont St (no pic!). Pick The Sphere first.
+  → Enter The Sphere (LED show!). Snap takes a pic. Dead end! Come back to Venetian.
+  → Now try Fremont St. Enter Fremont St (neon canopy!). Snap takes a pic.
+  → Fremont St neighbors: Venetian (polaroid!), The Strip (???), High Roller (no pic!).
+  → Pick High Roller. Enter (observation wheel!). Snap takes a pic. Dead end! Come back to Fremont St.
+
+Chip trail grew and shrank as Shin Lim went deep and came back:
+  [The Strip, Bellagio, Venetian, The Sphere] → come back
+  [The Strip, Bellagio, Venetian, Fremont St, High Roller] → come back
+  [The Strip, Bellagio, Venetian, Fremont St]
+
+Graph state: 6/7 visited. Only... wait, The Strip was already visited!
+
+PAGE 5 — "THE VISITED TRAP" (LARGE circled 5 top-right):
+Header: "THE VISITED TRAP" — "Without Snap, Shin Lim would loop FOREVER."
+Make this DRAMATIC — this is THE key DFS teaching moment.
+
+Shin Lim is at Fremont St. He checks neighbors:
+  Venetian — has polaroid. Skip.
+  High Roller — has polaroid. Skip.
+  The Strip — has polaroid!!! Already visited!
+
+Show Snap proudly waving the polaroid of The Strip:
+Snap: "I took this pic at the VERY START. Already visited. SKIP!"
+
+BIG highlighted callout (red border):
+"Without Snap's photos, Shin Lim would go: Fremont St → The Strip → Bellagio → Venetian → Fremont St → The Strip → ... INFINITE LOOP!"
+
+Show the dangerous cycle visually:
+The Strip → Bellagio → Venetian → Fremont St → The Strip → ... (circular arrows, scary!)
+Label: "Cycles in graphs cause infinite loops. Snap (visited set) prevents this!"
+
+Code:
+  if venue in visited: return   # already got the pic? TURN BACK!
+  # This one line prevents infinite loops in ANY graph with cycles.
+
+ALL 7 VENUES VISITED! Show the full graph with every venue having a polaroid pinned.
+Shin Lim with all 7 polaroids fanned out in his hand like a deck of cards, victorious pose.
+Shin Lim: "Every venue visited. Go deep, come back, try the next. Vegas is conquered!"
+
+No chips on the ground. Back at The Strip.
+Label: "No chips left = DFS complete. Every venue reached, every path tried."
+
+
+PROMPT 3 OF 4 — Snap Before Exploring + Grid DFS (Pages 6-7)
+================================================================
+
+Continue the DFS tutorial. Tall portrait (1024x1792). SAME exact style. SAME exact character designs. ALL text HUGE (titles 60pt+, body 32pt+, code 26pt+). Show don't tell. Max 15 words per explanation. Only 2 pages, give each LOTS of space.
+
+SAME characters:
+- Shin Lim: East Asian, short styled black hair, all-black outfit, confident smirk, deck of cards
+- Chip: round gold casino chip, cool face
+- Snap: boxy white polaroid camera, eager face
+
+Stack 2 sections vertically (use the FULL height):
+
+PAGE 6 — "SNAP BEFORE YOU EXPLORE" (LARGE circled 6 top-right):
+Header: "THE GOLDEN RULE OF DFS"
+This is the most common DFS mistake. Give it LOTS of visual space.
+
+Visual comparison — two panels side by side, each panel LARGE:
+
+LEFT panel (red border, big X): "WRONG: Snap AFTER exploring neighbors"
+  Shin Lim enters Bellagio. Does NOT take a pic. Goes to Caesars Palace.
+  Caesars Palace goes back to Bellagio. No pic? Enters AGAIN!
+  Bellagio goes to Caesars Palace again. No pic? Enters AGAIN!
+  INFINITE LOOP! Show Shin Lim going back and forth, cards scattering everywhere in panic.
+  Code (LARGE):
+    def dfs(venue):
+        for nei in graph[venue]:
+            dfs(nei)             # explore first
+        visited.add(venue)       # snap AFTER — TOO LATE!
+
+RIGHT panel (green border, big checkmark): "RIGHT: Snap BEFORE exploring neighbors"
+  Shin Lim enters Bellagio. Snap takes a pic IMMEDIATELY. Then explores.
+  Caesars Palace goes back to Bellagio. Sees polaroid. Already visited!
+  No loop. Clean exploration.
+  Code (LARGE):
+    def dfs(venue):
+        if venue in visited: return    # pic exists? Turn back!
+        visited.add(venue)             # Snap takes pic FIRST
+        for nei in graph[venue]:
+            dfs(nei)                   # then explore
+
+Shin Lim: "Take the pic BEFORE going deeper. If you snap on the way out, you might never get out."
+Bold rule in gold box: "Snap BEFORE exploring = visited.add(venue) BEFORE the for loop. Always."
+
+PAGE 7 — "DFS ON A GRID" (LARGE circled 7 top-right):
+Header: "DFS ON A GRID" — "Same thing. Four directions instead of connected venues."
+
+Show a 4x4 grid representing a Vegas floor plan from above. Some cells are WALLS (blocked, dark), others are ROOMS (open, neon). Classic "Number of Islands" setup.
+
+The grid:
+  R R W R
+  R W W R
+  W W R R
+  R R R W
+(R = room/open, W = wall/blocked)
+
+Shin Lim explores from top-left. DFS goes: right, right... wall! Come back. Down... wall! Come back. Eventually explores all connected rooms.
+
+KEY DIFFERENCE from venue map: 4 neighbors are DIRECTIONS (up, down, left, right), not a list.
+Show the 4 directions as arrows: up, down, left, right.
+
+Code (LARGE):
+  def dfs(r, c):
+      if r < 0 or r >= R or c < 0 or c >= C:
+          return                    # off the map!
+      if grid[r][c] == 'W':
+          return                    # wall! Can't pass.
+      if (r,c) in visited:
+          return                    # already got the pic!
+      visited.add((r,c))           # Snap takes pic FIRST
+      dfs(r+1, c)                  # go down
+      dfs(r-1, c)                  # go up
+      dfs(r, c+1)                  # go right
+      dfs(r, c-1)                  # go left
+
+THREE reasons to turn back, shown as big icons:
+  1. OFF THE MAP — Shin Lim at the edge of Vegas. Turn back!
+  2. WALL — Shin Lim hits a wall. Can't pass. Turn back!
+  3. POLAROID EXISTS — Shin Lim already has the pic. Already visited. Turn back!
+Label: "Three reasons to turn back. Check ALL THREE before exploring."
+
+
+PROMPT 4 OF 4 — Connected Components + Code + Recap (Pages 8-10)
+===================================================================
+
+Final panel of the DFS tutorial. Tall portrait (1024x1792). SAME exact style. SAME exact character designs. ALL text HUGE.
+
+SAME characters: Shin Lim (East Asian, all-black outfit, deck of cards), Chip (gold casino chip), Snap (white polaroid camera).
+
+Stack 3 sections vertically:
+
+PAGE 8 — "CONNECTED COMPONENTS" (LARGE circled 8 top-right):
+Header: "WHAT IF VEGAS HAS SEPARATE AREAS?"
+
+Show TWO separate venue clusters (disconnected graph):
+  Cluster 1: The Strip — Bellagio — Caesars Palace — Venetian
+  Cluster 2: Fremont St — The Sphere — High Roller
+  (No walkways between the clusters! Need a taxi/rideshare to get there.)
+
+Shin Lim finishes DFS on Cluster 1. All 4 venues have polaroids.
+But Fremont St, The Sphere, High Roller have NO polaroids! They were unreachable on foot from The Strip.
+
+Solution: loop through ALL venues. If no polaroid, start a NEW DFS there!
+  Code:
+    components = 0
+    for venue in all_venues:
+        if venue not in visited:
+            dfs(venue)           # new area found!
+            components += 1      # count it!
+
+Shin Lim: "One DFS explores one connected area. To see ALL of Vegas, check every venue."
+
+Callout: "This is how you solve Number of Islands, Connected Components, Flood Fill."
+  "Loop through every cell. If no pic, DFS it. Each DFS call = one component."
+
+PAGE 9 — "THE CODE" (LARGE circled 9 top-right):
+Header: "SHIN LEE'S VEGAS PROTOCOL"
+
+Show the 4 steps as a LARGE flow:
+  1 Enter venue. Snap TAKES A PIC. Already have the pic? Turn back!
+  → 2 Look at all connected venues (neighbors).
+  → 3 For each unvisited neighbor: go DEEP (call dfs again). Drop a Chip.
+  → 4 All neighbors done? Come back (function returns). Pick up Chip.
+
+LARGE monospace code block — ADJACENCY LIST VERSION:
+   1  def dfs(venue, graph, visited):
+   2      if venue in visited:
+   3          return                  # already got the pic? Turn back!
+   4      visited.add(venue)         # Snap takes pic FIRST
+   5      for nei in graph[venue]:
+   6          dfs(nei, graph, visited) # go DEEP
+   7      # all neighbors done → come back
+
+Line annotations:
+  Lines 2-3: "Polaroid exists? Already visited. Turn back!"
+  Line 4: "Snap takes pic BEFORE exploring. Not after!"
+  Lines 5-6: "Try each connected venue. Go DEEP into each one."
+  Line 7: "All venues tried. Come back."
+
+LARGE monospace code block — GRID VERSION:
+   1  def dfs(r, c, grid, visited):
+   2      if r < 0 or r >= R or c < 0 or c >= C:
+   3          return                  # off the map!
+   4      if grid[r][c] == '0':
+   5          return                  # wall!
+   6      if (r,c) in visited:
+   7          return                  # already got the pic!
+   8      visited.add((r,c))         # Snap takes pic FIRST
+   9      for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:
+  10          dfs(r+dr, c+dc, grid, visited)
+
+Label: "Same algorithm. Grid just has 4 fixed directions instead of a venue map."
+
+PAGE 10 — "THREE GOLDEN RULES" (LARGE circled 10 top-right):
+Three golden cards side by side:
+  1. "SNAP BEFORE EXPLORING" — visited.add(venue) BEFORE the for loop. Not after! Prevents infinite loops. (Snap icon)
+  2. "GO DEEP, THEN COME BACK" — Each dfs() call goes one venue deeper. Each return comes back one venue. The chip trail IS the path. (Chip icon)
+  3. "CHECK ALL BASE CASES" — Already have the pic? Off the map? Wall? Turn back FIRST. (Shin Lim icon doing a "stop" hand gesture)
+
+"TIME COMPLEXITY":
+Large neon-pink box. Shin Lim holding all 7 polaroids fanned out like a card trick reveal, dramatic pose under Vegas neon:
+  O(V + E) — visit every venue once, check every connection once
+  V = number of venues (nodes), E = number of connections (edges)
+  "Every venue visited exactly once. Every connection checked exactly once."
+  Shin Lim: "Vegas conquered. Every venue, every path. What happens in DFS stays in DFS."

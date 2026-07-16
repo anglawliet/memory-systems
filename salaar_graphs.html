@@ -305,19 +305,22 @@ When Deva conquers a fortress, he <strong>slashes war paint</strong> on the gate
 <!-- ============ SCENE 1 ============ -->
 <div style="background:var(--card);border:2px solid var(--crimson);border-radius:12px;padding:20px;margin-bottom:24px">
 
-<div style="color:var(--crimson);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 1: Deva's Lone Raid</div>
-<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">DFS &mdash; charge deep, backtrack, repeat</div>
+<div style="color:var(--crimson);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 1: Shin Lim's Vegas Adventure</div>
+<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">DFS: Shin Lim, Chip (stack), Snap (visited)</div>
 
-<img src="graphs/images/scene_1.png" alt="Scene 1 comic strip — Deva's Lone Raid (DFS)" class="scene-img">
+<img src="graphs/images/scene_1_A.png" alt="Scene 1 character reference — Shin Lim with Chip and Snap (DFS)" class="scene-img">
+<img src="graphs/images/scene_1_C_1.png" alt="Scene 1 page 1 — DFS intro, Arriving in Vegas, Going Deep" class="scene-img">
+<img src="graphs/images/scene_1_C_2.png" alt="Scene 1 page 2 — Vegas Branches, The Visited Trap" class="scene-img">
+<img src="graphs/images/scene_1_C_3.png" alt="Scene 1 page 3 — Golden Rule (snap before exploring), DFS on a Grid" class="scene-img">
 
 <div style="background:rgba(220,38,38,.08);border:2px solid var(--crimson);border-radius:10px;padding:18px;margin-bottom:16px">
 <div style="color:var(--crimson);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL (Adjacency List)</div>
 <div style="font-size:.95em;color:var(--text);line-height:1.9">
-<strong style="color:var(--crimson);font-size:1.05em">&#10102;</strong> Deva arrives at a fortress gate. <strong>War paint on the wall?</strong> Already conquered &mdash; <strong>turn back</strong>.<br>
-<strong style="color:var(--crimson);font-size:1.05em">&#10103;</strong> Kicks the gate open. <strong>Slashes war paint</strong> on the wall &mdash; this fortress is MINE.<br>
-<strong style="color:var(--crimson);font-size:1.05em">&#10104;</strong> Grabs the <strong>map scroll</strong> inside &mdash; sees all roads leading out.<br>
-<strong style="color:var(--crimson);font-size:1.05em">&#10105;</strong> <strong>Charges down each road</strong> one by one &rarr; same ritual starts at the next fortress.<br>
-<strong style="color:var(--crimson);font-size:1.05em">&#10106;</strong> All roads explored. <strong>Walks back</strong> the way he came.
+<strong style="color:var(--crimson);font-size:1.05em">&#10102;</strong> Shin Lim arrives at a venue. <strong>Already got a polaroid?</strong> Already visited, <strong>turn back</strong>.<br>
+<strong style="color:var(--crimson);font-size:1.05em">&#10103;</strong> Enters the venue. <strong>Snap takes a pic</strong> FIRST, before exploring.<br>
+<strong style="color:var(--crimson);font-size:1.05em">&#10104;</strong> Checks the map for all <strong>connected venues</strong>.<br>
+<strong style="color:var(--crimson);font-size:1.05em">&#10105;</strong> <strong>Goes DEEP into each venue</strong> one by one. Drops a <strong>Chip</strong> at each stop.<br>
+<strong style="color:var(--crimson);font-size:1.05em">&#10106;</strong> All venues explored. <strong>Follows chips back</strong> to the last fork.
 </div>
 </div>
 
@@ -325,27 +328,27 @@ When Deva conquers a fortress, he <strong>slashes war paint</strong> on the gate
 <div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
 <div class="ritual-step">
 <div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10102;</div>
-<div style="background:#dc262612;font-size:.9em"><strong>War paint?</strong> Already conquered &mdash; turn back.</div>
+<div style="background:#dc262612;font-size:.9em"><strong>Polaroid exists?</strong> Already visited, turn back.</div>
 <div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>if node in visited: return</code></div>
 </div>
 <div class="ritual-step">
 <div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10103;</div>
-<div style="background:#dc262612;font-size:.9em"><strong>Slash war paint.</strong> This fortress is mine.</div>
+<div style="background:#dc262612;font-size:.9em"><strong>Snap takes a pic.</strong> Before exploring!</div>
 <div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>visited.add(node)</code></div>
 </div>
 <div class="ritual-step">
 <div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10104;&#10105;</div>
-<div style="background:#dc262612;font-size:.9em"><strong>Map scroll</strong> &mdash; charge down each road.</div>
+<div style="background:#dc262612;font-size:.9em"><strong>Check map</strong>, go DEEP into each venue.</div>
 <div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>for nei in graph[node]: dfs(nei)</code></div>
 </div>
 </div>
 
 <div style="background:rgba(220,38,38,.08);border:2px solid var(--crimson);border-radius:10px;padding:18px;margin:16px 0">
-<div style="color:var(--crimson);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL (Village Grid)</div>
+<div style="color:var(--crimson);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL (Grid)</div>
 <div style="font-size:.95em;color:var(--text);line-height:1.9">
-<strong style="color:var(--crimson);font-size:1.05em">&#10102;</strong> Deva steps into a village. <strong>Off the map?</strong> Turn back. <strong>Water?</strong> Turn back. <strong>War paint?</strong> Turn back.<br>
-<strong style="color:var(--crimson);font-size:1.05em">&#10103;</strong> Slashes war paint on the ground.<br>
-<strong style="color:var(--crimson);font-size:1.05em">&#10104;</strong> Steps <strong>North, South, East, West</strong> &mdash; same ritual at each neighbor.
+<strong style="color:var(--crimson);font-size:1.05em">&#10102;</strong> Shin Lim steps into a room. <strong>Off the map?</strong> Turn back. <strong>Wall?</strong> Turn back. <strong>Polaroid exists?</strong> Turn back.<br>
+<strong style="color:var(--crimson);font-size:1.05em">&#10103;</strong> Snap takes a pic of the room.<br>
+<strong style="color:var(--crimson);font-size:1.05em">&#10104;</strong> Steps <strong>up, down, left, right</strong>, same ritual at each neighbor.
 </div>
 </div>
 
@@ -353,17 +356,17 @@ When Deva conquers a fortress, he <strong>slashes war paint</strong> on the gate
 <div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
 <div class="ritual-step">
 <div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10102;</div>
-<div style="background:#dc262612;font-size:.9em"><strong>Off the map? Water? War paint?</strong> Turn back.</div>
+<div style="background:#dc262612;font-size:.9em"><strong>Off the map? Wall? Polaroid?</strong> Turn back.</div>
 <div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>if r&lt;0 or r&gt;=R or c&lt;0 or c&gt;=C or grid[r][c]=='0': return</code></div>
 </div>
 <div class="ritual-step">
 <div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10103;</div>
-<div style="background:#dc262612;font-size:.9em"><strong>Slash war paint</strong> on the ground.</div>
+<div style="background:#dc262612;font-size:.9em"><strong>Snap takes a pic</strong> of the room.</div>
 <div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>grid[r][c] = '0'  # or visited.add((r,c))</code></div>
 </div>
 <div class="ritual-step">
 <div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10104;</div>
-<div style="background:#dc262612;font-size:.9em"><strong>Step N/S/E/W</strong> &mdash; same ritual each direction.</div>
+<div style="background:#dc262612;font-size:.9em"><strong>Step up/down/left/right</strong>, same ritual each direction.</div>
 <div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>for dr,dc in [(1,0),(-1,0),(0,1),(0,-1)]: dfs(r+dr,c+dc)</code></div>
 </div>
 </div>
@@ -372,33 +375,33 @@ When Deva conquers a fortress, he <strong>slashes war paint</strong> on the gate
 <div style="color:var(--crimson);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 <div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
-<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; war paint AFTER charging down roads</div>
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG: Snap AFTER exploring</div>
 <pre style="font-size:.82em;margin:0"><code>for nei in graph[node]:
     dfs(nei)
 visited.add(node)  # TOO LATE!
-# Deva revisits same fortress = infinite loop</code></pre>
+# Revisits same venue = infinite loop</code></pre>
 </div>
 <div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
-<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; war paint BEFORE charging</div>
-<pre style="font-size:.82em;margin:0"><code>visited.add(node)     # paint FIRST
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT: Snap BEFORE exploring</div>
+<pre style="font-size:.82em;margin:0"><code>visited.add(node)     # snap FIRST
 for nei in graph[node]:
-    dfs(nei)           # then charge</code></pre>
+    dfs(nei)           # then explore</code></pre>
 </div>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 <div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
-<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; forgetting boundary check on grid</div>
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG: forgetting boundary check on grid</div>
 <pre style="font-size:.82em;margin:0"><code>def dfs(r, c):
     grid[r][c] = '0'
     # IndexError when r or c is out of bounds!</code></pre>
 </div>
 <div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
-<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; check boundaries FIRST</div>
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT: check ALL three base cases FIRST</div>
 <pre style="font-size:.82em;margin:0"><code>def dfs(r, c):
     if r<0 or r>=R or c<0 or c>=C:
         return    # off the map!
     if grid[r][c] == '0':
-        return    # water or painted</code></pre>
+        return    # wall or visited</code></pre>
 </div>
 </div>
 </div>

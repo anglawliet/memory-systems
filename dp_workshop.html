@@ -519,40 +519,10 @@ dp[i][j] = max(grab, skip)</code></pre>
 </div>
 </div>
 
-<!-- Visual: Filling a Cell -->
-<img src="dp/images/family1_C_6.png" alt="Filling a cell: dp[2][7] step by step with arrows showing GRAB (up and left) vs SKIP (straight up)" class="scene-img">
-
-<!-- Q6: Walk through one cell -->
-<div class="walkthrough-section" style="border-left-color:var(--amber)">
-<h3 style="color:var(--amber)">Q: Show me one cell being filled. Step by step.</h3>
-
-<p>Let's fill <code>dp[2][7]</code>: first 2 items (Gold 4/$10K, Ruby 3/$7K), capacity 7.</p>
-
-<div style="background:var(--card2);border-radius:8px;padding:14px;margin:12px 0;font-size:.95em;line-height:1.8">
-<strong>Item:</strong> Ruby (i=2), weight = 3, value = $7K<br>
-<strong>Capacity:</strong> j = 7<br>
-<strong>Does it fit?</strong> weight 3 &lt;= capacity 7? <strong style="color:var(--green)">YES.</strong> So we have a choice.<br><br>
-
-<strong style="color:var(--green)">GRAB Ruby:</strong><br>
-&nbsp;&nbsp;Ruby's value + best without Ruby at reduced capacity<br>
-&nbsp;&nbsp;= $7K + dp[1][7-3] = $7K + dp[1][4]<br>
-&nbsp;&nbsp;dp[1][4] = $10K (from row above: Gold fits in capacity 4)<br>
-&nbsp;&nbsp;= $7K + $10K = <strong>$17K</strong><br><br>
-
-<strong style="color:var(--red)">SKIP Ruby:</strong><br>
-&nbsp;&nbsp;Best without Ruby, same capacity<br>
-&nbsp;&nbsp;= dp[1][7] = $10K (from row above: just Gold with capacity 7)<br>
-&nbsp;&nbsp;= <strong>$10K</strong><br><br>
-
-<strong>dp[2][7] = max($17K, $10K) = $17K</strong> &#x2713;
-</div>
-<p style="font-size:.9em;color:var(--muted)">Every cell asks the exact same question the recursion asked. It just reads previous answers from the table instead of recursing.</p>
-</div>
-
-<!-- Visual: The Copy Pattern -->
+<!-- Visual: The Copy Pattern (THE SIMPLE CASE — learn this first) -->
 <img src="dp/images/family1_C_7.png" alt="Copy pattern: Gold row, too heavy at W=1,2,3 (copy from above), fits at W=4 (value jumps)" class="scene-img">
 
-<!-- Q7: Why do some cells just copy from above? -->
+<!-- Q6: Why do cells copy from above? (Gold's row) -->
 <div class="walkthrough-section" style="border-left-color:var(--amber)">
 <h3 style="color:var(--amber)">Q: Why do some cells just copy the value from the row above?</h3>
 
@@ -570,6 +540,90 @@ dp[1][2] = dp[0][2] = <strong>0</strong> (copy from row above)
 <p>This is why you see many cells with the same value as the cell above. It means: <strong>"this item was too heavy for this capacity, so adding it to the available items changed nothing."</strong></p>
 
 <p style="font-size:.9em;color:var(--muted)">Look at Gold's row (i=1): columns W=0 through W=3 are all 0, copied from row 0. Gold weighs 4kg, so it doesn't fit until capacity 4. At W=4, Gold finally fits, and the value jumps to $10K.</p>
+</div>
+
+<!-- Visual: Ruby's Row Step by Step (THE FULL ALGORITHM) -->
+<img src="dp/images/family1_C_6.png" alt="Ruby row step by step: at each column, check weight vs capacity, too heavy copies from above, fits means compute GRAB vs SKIP" class="scene-img">
+
+<!-- Q7: Walk through Ruby's entire row -->
+<div class="walkthrough-section" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">Q: Walk me through a full row. Step by step.</h3>
+
+<p>Gold's row (i=1) is done. Now let's fill Ruby's row (i=2). Ruby weighs <strong>3kg</strong>, worth <strong>$7K</strong>.</p>
+<p>At every cell, the same question: <strong>does Ruby's weight (3) fit in this column's capacity?</strong></p>
+
+<div style="overflow-x:auto;margin:12px 0">
+<table style="font-size:.82em;text-align:center">
+<tr><th></th><th>W=0</th><th>W=1</th><th>W=2</th><th>W=3</th><th>W=4</th><th>W=5</th><th>W=6</th><th>W=7</th></tr>
+<tr><td style="color:var(--gold2)">i=1 (Gold)</td><td>0</td><td>0</td><td>0</td><td>0</td><td>10</td><td>10</td><td>10</td><td>10</td></tr>
+<tr><td style="color:var(--crimson)">i=2 (Ruby)</td><td>0</td><td style="color:var(--muted)">?</td><td style="color:var(--muted)">?</td><td style="color:var(--muted)">?</td><td style="color:var(--muted)">?</td><td style="color:var(--muted)">?</td><td style="color:var(--muted)">?</td><td style="color:var(--muted)">?</td></tr>
+</table>
+</div>
+
+<!-- Cell: dp[2][2] — TOO HEAVY -->
+<div style="background:rgba(239,68,68,.06);border:1px solid var(--red);border-radius:10px;padding:16px;margin:12px 0">
+<div style="color:var(--red);font-weight:700;margin-bottom:8px">dp[2][2]: Ruby (3kg) vs capacity 2</div>
+<div style="font-size:.95em;line-height:1.8">
+<strong>Does it fit?</strong> 3 &lt;= 2? <strong style="color:var(--red)">NO.</strong> Ruby is too heavy.<br>
+No choice. Copy from Gold's row above: dp[1][2] = 0.<br>
+<strong>dp[2][2] = 0</strong> (copied from above)
+</div>
+</div>
+
+<!-- Cell: dp[2][3] — FITS, GRAB WINS -->
+<div style="background:rgba(34,197,94,.06);border:1px solid var(--green);border-radius:10px;padding:16px;margin:12px 0">
+<div style="color:var(--green);font-weight:700;margin-bottom:8px">dp[2][3]: Ruby (3kg) vs capacity 3 — first time Ruby fits!</div>
+<div style="font-size:.95em;line-height:1.8">
+<strong>Does it fit?</strong> 3 &lt;= 3? <strong style="color:var(--green)">YES!</strong> Kit has a choice.<br><br>
+<strong style="color:var(--green)">GRAB:</strong> Ruby's value + best from row above at <em>remaining</em> capacity<br>
+&nbsp;&nbsp;Remaining capacity = 3 - 3 = 0. Look up: dp[1][0] = 0.<br>
+&nbsp;&nbsp;$7K + $0 = <strong>$7K</strong><br>
+<strong style="color:var(--red)">SKIP:</strong> Just copy from Gold's row above, same column<br>
+&nbsp;&nbsp;dp[1][3] = <strong>$0</strong> (Gold didn't fit at capacity 3 either)<br><br>
+max($7K, $0) = <strong style="color:var(--green)">$7K. GRAB wins.</strong><br>
+<span style="color:var(--muted);font-size:.9em">Ruby is the only item that fits at capacity 3. Grab it.</span>
+</div>
+</div>
+
+<!-- Cell: dp[2][4] — FITS, BUT SKIP WINS! -->
+<div style="background:rgba(245,158,11,.06);border:2px solid var(--amber);border-radius:10px;padding:16px;margin:12px 0">
+<div style="color:var(--amber);font-weight:700;margin-bottom:8px">dp[2][4]: Ruby (3kg) vs capacity 4 — SKIP wins! Why?</div>
+<div style="font-size:.95em;line-height:1.8">
+<strong>Does it fit?</strong> 3 &lt;= 4? <strong style="color:var(--green)">YES!</strong> Kit has a choice.<br><br>
+<strong style="color:var(--green)">GRAB:</strong> Remaining capacity = 4 - 3 = 1. Look up: dp[1][1] = 0.<br>
+&nbsp;&nbsp;$7K + $0 = <strong>$7K</strong><br>
+&nbsp;&nbsp;<span style="color:var(--muted);font-size:.9em">(After grabbing Ruby, only 1kg left. Gold needs 4kg. Nothing else fits.)</span><br>
+<strong style="color:var(--red)">SKIP:</strong> dp[1][4] = <strong>$10K</strong><br>
+&nbsp;&nbsp;<span style="color:var(--muted);font-size:.9em">(Skip Ruby, keep full 4kg. Gold fits! $10K is better.)</span><br><br>
+max($7K, $10K) = <strong style="color:var(--red)">$10K. SKIP wins.</strong><br>
+<span style="color:var(--amber);font-size:.9em">Ruby fits, but taking it leaves too little room for Gold. Better to skip Ruby and take Gold instead.</span>
+</div>
+</div>
+
+<!-- Cell: dp[2][7] — FITS, GRAB WINS (room for both!) -->
+<div style="background:rgba(34,197,94,.06);border:1px solid var(--green);border-radius:10px;padding:16px;margin:12px 0">
+<div style="color:var(--green);font-weight:700;margin-bottom:8px">dp[2][7]: Ruby (3kg) vs capacity 7 — GRAB wins! Room for both.</div>
+<div style="font-size:.95em;line-height:1.8">
+<strong>Does it fit?</strong> 3 &lt;= 7? <strong style="color:var(--green)">YES!</strong> Kit has a choice.<br><br>
+<strong style="color:var(--green)">GRAB:</strong> Remaining capacity = 7 - 3 = 4. Look up: dp[1][4] = $10K.<br>
+&nbsp;&nbsp;$7K + $10K = <strong>$17K</strong><br>
+&nbsp;&nbsp;<span style="color:var(--muted);font-size:.9em">(Grab Ruby, 4kg left, Gold fits too! Both items.)</span><br>
+<strong style="color:var(--red)">SKIP:</strong> dp[1][7] = <strong>$10K</strong><br>
+&nbsp;&nbsp;<span style="color:var(--muted);font-size:.9em">(Skip Ruby, just Gold = $10K.)</span><br><br>
+max($17K, $10K) = <strong style="color:var(--green)">$17K. GRAB wins.</strong><br>
+<span style="color:var(--muted);font-size:.9em">Enough capacity for Ruby AND Gold. Take both.</span>
+</div>
+</div>
+
+<div class="hi">
+<strong style="color:var(--amber)">The pattern at every cell:</strong><br>
+1. <strong>Does the item's weight fit in this column's capacity?</strong> (weight &lt;= column)<br>
+2. <strong style="color:var(--red)">NO</strong> &rarr; copy from the row above. No choice, nothing changes.<br>
+3. <strong style="color:var(--green)">YES</strong> &rarr; compute GRAB and SKIP, pick the bigger one.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;GRAB = item's value + row above at (column minus item's weight)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SKIP = row above at same column<br>
+That's it. Every cell, same logic.
+</div>
 </div>
 
 <!-- The full table -->

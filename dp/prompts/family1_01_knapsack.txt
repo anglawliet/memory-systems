@@ -162,7 +162,7 @@ LARGE code block:
       ("Emerald", 1, 3), ("Platinum", 2, 5)
   ]
 
-  def best_haul(treasures, bag_limit, count):
+  def max_value(treasures, bag_limit, count):
       # BASE CASE: no items left OR no capacity
       if count == 0 or bag_limit == 0:
           return 0
@@ -173,12 +173,12 @@ LARGE code block:
       # Does this item fit?
       if weight <= bag_limit:
           # CHOICE! Grab or skip, take the better one
-          grab = value + best_haul(treasures, bag_limit - weight, count - 1)
-          skip = best_haul(treasures, bag_limit, count - 1)
+          grab = value + max_value(treasures, bag_limit - weight, count - 1)
+          skip = max_value(treasures, bag_limit, count - 1)
           return max(grab, skip)
       else:
           # Doesn't fit. Skip only.
-          return best_haul(treasures, bag_limit, count - 1)
+          return max_value(treasures, bag_limit, count - 1)
 
 Annotate each section with arrows from the choice diagram:
   "if count == 0 or bag_limit == 0" ← "No items or no capacity = $0"
@@ -211,7 +211,7 @@ Stack 2 sections vertically (use the FULL height):
 PAGE 4, "THE RECURSIVE TREE" (LARGE circled 4 top-right):
 Header: "DRAW THE TREE" + "Watch what happens when you call the recursion."
 
-Show a PARTIAL recursive tree for best_haul(treasures, bag_limit=7, count=3) using just the first 3 items (Gold=4/$10K, Ruby=3/$7K, Diamond=5/$12K) to keep it readable.
+Show a PARTIAL recursive tree for max_value(treasures, bag_limit=7, count=3) using just the first 3 items (Gold=4/$10K, Ruby=3/$7K, Diamond=5/$12K) to keep it readable.
 
 Each node shows (count, bag_limit):
 
@@ -256,7 +256,7 @@ Big highlighted callout (gold border):
   3. Each subproblem has the SAME answer every time"
 
 MEMOIZATION, show it's just 3 extra lines:
-  def best_haul(treasures, bag_limit, count, memo):
+  def max_value(treasures, bag_limit, count, memo):
       if (count, bag_limit) in memo:           # ALREADY SOLVED? Return it!
           return memo[(count, bag_limit)]
       # ... same recursive code as before ...
@@ -284,7 +284,7 @@ Subtitle: "The table isn't magic. It comes directly from the recursion."
 This is Aditya Verma's key teaching: the table dimensions come from the CHANGING VARIABLES in the recursive function.
 
 Show the recursive function signature:
-  best_haul(treasures, bag_limit, count)
+  max_value(treasures, bag_limit, count)
 
 Circle the variables that CHANGE across recursive calls:
   treasures: SAME every call (constant) ✗
@@ -350,7 +350,7 @@ Show arrows in the table tracing how table[5][7] = 18 was computed:
 Kit: "Every cell asks the same question the recursion asked. Just reads from the table instead of recursing."
 
 Code block, TABULATION:
-  def best_haul(treasures, bag_limit):
+  def max_value(treasures, bag_limit):
       table = [[0] * (bag_limit + 1) for _ in range(len(treasures) + 1)]
       for row in range(1, len(treasures) + 1):
           name, weight, value = treasures[row - 1]
@@ -378,35 +378,35 @@ Subtitle: "Same logic, three forms."
 Show 3 code blocks side by side (or stacked), with DIFF HIGHLIGHTS showing what changes:
 
 VERSION 1, RECURSION (label: "correct but SLOW, O(2^count)"):
-  def best_haul(treasures, bag_limit, count):
+  def max_value(treasures, bag_limit, count):
       if count == 0 or bag_limit == 0:
           return 0
       name, weight, value = treasures[count - 1]
       if weight <= bag_limit:
-          grab = value + best_haul(treasures, bag_limit - weight, count - 1)
-          skip = best_haul(treasures, bag_limit, count - 1)
+          grab = value + max_value(treasures, bag_limit - weight, count - 1)
+          skip = max_value(treasures, bag_limit, count - 1)
           return max(grab, skip)
       else:
-          return best_haul(treasures, bag_limit, count - 1)
+          return max_value(treasures, bag_limit, count - 1)
 
 VERSION 2, MEMOIZATION (label: "add 3 lines, O(count * bag_limit)"):
   Highlight the 3 NEW lines in GREEN:
-  def best_haul(treasures, bag_limit, count, memo={}):
+  def max_value(treasures, bag_limit, count, memo={}):
       if (count, bag_limit) in memo: return memo[(count, bag_limit)]   # CHECK cache
       if count == 0 or bag_limit == 0:
           return 0
       name, weight, value = treasures[count - 1]
       if weight <= bag_limit:
-          grab = value + best_haul(treasures, bag_limit - weight, count - 1, memo)
-          skip = best_haul(treasures, bag_limit, count - 1, memo)
+          grab = value + max_value(treasures, bag_limit - weight, count - 1, memo)
+          skip = max_value(treasures, bag_limit, count - 1, memo)
           result = max(grab, skip)
       else:
-          result = best_haul(treasures, bag_limit, count - 1, memo)
+          result = max_value(treasures, bag_limit, count - 1, memo)
       memo[(count, bag_limit)] = result                                # STORE result
       return result
 
 VERSION 3, TABULATION (label: "bottom-up, O(count * bag_limit), no recursion"):
-  def best_haul(treasures, bag_limit):
+  def max_value(treasures, bag_limit):
       table = [[0] * (bag_limit + 1) for _ in range(len(treasures) + 1)]
       for row in range(1, len(treasures) + 1):
           name, weight, value = treasures[row - 1]

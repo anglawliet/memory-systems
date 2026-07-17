@@ -119,7 +119,7 @@ Big highlighted callout (gold border):
     3. Each subproblem has the SAME answer every time"
 
 MEMOIZATION, show it's just 3 extra lines:
-  def best_haul(treasures, bag_limit, count, memo):
+  def max_value(treasures, bag_limit, count, memo):
       if (count, bag_limit) in memo:        # ALREADY SOLVED? Return it!
           return memo[(count, bag_limit)]
       # ... same recursive code as before ...
@@ -152,7 +152,7 @@ Subtitle: "The table comes from the recursion. Nothing is invented."
 SECTION 1, CROSSING OUT CONSTANTS:
 Show the recursive function signature in HUGE text:
 
-  best_haul( treasures, bag_limit, count )
+  max_value( treasures, bag_limit, count )
 
 Show each parameter with a visual verdict:
   treasures → Same list every call → RED X through it, faded out
@@ -325,7 +325,7 @@ SECTION 4, THE RULE (bottom callout, gold border):
    Where does 'row above' come from? The PREVIOUS row you already filled."
 
   Show the complete algorithm in code:
-  def best_haul(treasures, bag_limit):
+  def max_value(treasures, bag_limit):
       table = [[0] * (bag_limit + 1) for _ in range(len(treasures) + 1)]
       for row in range(1, len(treasures) + 1):
           name, weight, value = treasures[row - 1]

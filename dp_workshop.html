@@ -247,18 +247,18 @@ td{padding:10px 12px;border:1px solid var(--border)}
 
 <pre><code>treasures = [('Gold',4,10), ('Ruby',3,7), ('Diamond',5,12), ('Emerald',1,3), ('Platinum',2,5)]
 
-def best_haul(treasures, bag_limit, count):
+def max_value(treasures, bag_limit, count):
     if count == 0 or bag_limit == 0:
         return 0
 
     name, weight, value = treasures[count - 1]
 
     if weight <= bag_limit:
-        grab = value + best_haul(treasures, bag_limit - weight, count - 1)
-        skip = best_haul(treasures, bag_limit, count - 1)
+        grab = value + max_value(treasures, bag_limit - weight, count - 1)
+        skip = max_value(treasures, bag_limit, count - 1)
         return max(grab, skip)
     else:
-        return best_haul(treasures, bag_limit, count - 1)</code></pre>
+        return max_value(treasures, bag_limit, count - 1)</code></pre>
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
 <div style="background:var(--card2);border-radius:6px;padding:10px;font-size:.88em">
@@ -342,18 +342,18 @@ When <code>count = 3</code>, we want the 3rd item (Diamond), which is at index 2
 <h3>Step 4: Memoize (3 extra lines)</h3>
 <p>Same recursive code. Just add a cache. That's it.</p>
 
-<pre><code>def best_haul(treasures, bag_limit, count, memo={}):
+<pre><code>def max_value(treasures, bag_limit, count, memo={}):
     if (count, bag_limit) in memo:
         return memo[(count, bag_limit)]          # ALREADY SOLVED? Return it!
     if count == 0 or bag_limit == 0:
         return 0
     name, weight, value = treasures[count - 1]
     if weight <= bag_limit:
-        grab = value + best_haul(treasures, bag_limit - weight, count - 1, memo)
-        skip = best_haul(treasures, bag_limit, count - 1, memo)
+        grab = value + max_value(treasures, bag_limit - weight, count - 1, memo)
+        skip = max_value(treasures, bag_limit, count - 1, memo)
         result = max(grab, skip)
     else:
-        result = best_haul(treasures, bag_limit, count - 1, memo)
+        result = max_value(treasures, bag_limit, count - 1, memo)
     memo[(count, bag_limit)] = result            # STORE result
     return result</code></pre>
 
@@ -387,7 +387,7 @@ Every unique (n, W) pair solved at most once.
 <h3 style="color:var(--amber)">Q: Why a table? Why 2D?</h3>
 
 <p>Look at your recursive function signature:</p>
-<pre><code>def best_haul(treasures, bag_limit, count):</code></pre>
+<pre><code>def max_value(treasures, bag_limit, count):</code></pre>
 
 <p>Cross out what stays the same across every recursive call:</p>
 <div style="display:grid;grid-template-columns:auto 1fr auto;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:12px 0">
@@ -423,7 +423,7 @@ Every unique (n, W) pair solved at most once.
 </div>
 </div>
 
-<p>So <code>table[row][cap]</code> answers: <strong>"What's the best haul using the first <code>row</code> treasures with a bag that holds <code>cap</code> kg?"</strong></p>
+<p>So <code>table[row][cap]</code> answers: <strong>"What's the best value using the first <code>row</code> treasures with a bag that holds <code>cap</code> kg?"</strong></p>
 <p style="color:var(--muted);font-size:.9em">This is exactly what the recursion computes. The table just stores every answer so you don't recompute.</p>
 </div>
 
@@ -436,7 +436,7 @@ Every unique (n, W) pair solved at most once.
     return 0</code></pre>
 
 <p><code>count == 0</code> means "no items to consider." Row 0 in the table is exactly that: zero items available.</p>
-<p>With zero items, no matter how much capacity you have (0 kg, 1 kg, ... 7 kg), the best haul is always <strong>$0</strong>. You have nothing to grab.</p>
+<p>With zero items, no matter how much capacity you have (0 kg, 1 kg, ... 7 kg), the best value is always <strong>$0</strong>. You have nothing to grab.</p>
 
 <div style="overflow-x:auto;margin:12px 0">
 <table style="font-size:.82em;text-align:center">
@@ -485,7 +485,7 @@ Every unique (n, W) pair solved at most once.
 <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center">
 <div>
 <div style="font-size:.8em;color:var(--muted);margin-bottom:4px">RECURSION SAYS:</div>
-<pre style="margin:0;font-size:.85em"><code>return best_haul(treasures, bag_limit, count - 1)</code></pre>
+<pre style="margin:0;font-size:.85em"><code>return max_value(treasures, bag_limit, count - 1)</code></pre>
 <div style="font-size:.85em;margin-top:6px">"This item doesn't fit. Pretend it doesn't exist. Solve with one fewer item, same capacity."</div>
 </div>
 <div style="font-size:1.5em;color:var(--muted)">&rarr;</div>
@@ -502,8 +502,8 @@ Every unique (n, W) pair solved at most once.
 <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center">
 <div>
 <div style="font-size:.8em;color:var(--muted);margin-bottom:4px">RECURSION SAYS:</div>
-<pre style="margin:0;font-size:.85em"><code>grab = value + best_haul(bag_limit - weight, count - 1)
-skip = best_haul(bag_limit, count - 1)
+<pre style="margin:0;font-size:.85em"><code>grab = value + max_value(bag_limit - weight, count - 1)
+skip = max_value(bag_limit, count - 1)
 return max(grab, skip)</code></pre>
 </div>
 <div style="font-size:1.5em;color:var(--muted)">&rarr;</div>
@@ -515,10 +515,10 @@ table[row][cap] = max(grab, skip)</code></pre>
 </div>
 </div>
 <div style="margin-top:12px;font-size:.9em">
-<strong style="color:var(--green)">GRAB</strong> = this item's value + best haul with <em>remaining capacity</em> from <em>earlier items</em><br>
+<strong style="color:var(--green)">GRAB</strong> = this item's value + best value with <em>remaining capacity</em> from <em>earlier items</em><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<code>without_this</code> = the row above (the world before this item existed)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<code>[cap - weight]</code> = column shifted left by this item's weight (capacity used up)<br><br>
-<strong style="color:var(--red)">SKIP</strong> = best haul without this item, same capacity<br>
+<strong style="color:var(--red)">SKIP</strong> = best value without this item, same capacity<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<code>without_this[cap]</code> = row above, same column (just ignore this item entirely)<br><br>
 <strong>Pick whichever is better.</strong>
 </div>
@@ -657,7 +657,7 @@ That's it. Every cell, same logic.
 <h3 style="color:var(--amber)">The Tabulation Code</h3>
 <p>Every line maps to something we just derived:</p>
 
-<pre><code>def best_haul(treasures, bag_limit):
+<pre><code>def max_value(treasures, bag_limit):
     table = [[0] * (bag_limit + 1)                  # first row + col = all zeros (base case)
              for _ in range(len(treasures) + 1)]
     for row in range(1, len(treasures) + 1):         # row by row (each item)

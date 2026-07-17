@@ -1,0 +1,330 @@
+FAMILY 1: 0/1 KNAPSACK — CORRECTED TREE + TABULATION VISUALS
+==============================================================
+4 prompts total: 1 corrected replacement for family1_C_2 + 3 new visuals.
+These supplement family1_01_knapsack.txt. Generate in the same style.
+
+WHY THE ORIGINAL PROMPT 2 WAS WRONG:
+The original prompt used only 3 items (Gold 4kg, Ruby 3kg, Diamond 5kg) and
+claimed (n=1, W=2) appeared twice in the tree. But tracing the actual tree:
+  - GRAB Diamond, SKIP Ruby → (1, W=2)    (only appears ONCE)
+  - SKIP Diamond, GRAB Ruby → (1, W=4)    (different!)
+  - SKIP Diamond, SKIP Ruby → (1, W=7)    (different!)
+All three level-1 nodes are unique. No overlap exists with 3 items at
+these weights. ChatGPT hallucinated the duplicate.
+
+THE FIX: Use 4 items where overlap ACTUALLY occurs.
+Items: Gold (4kg/$10K), Ruby (3kg/$7K), Emerald (1kg/$3K), Platinum (2kg/$5K)
+The recursion processes them in reverse order:
+  n=4 → Platinum, n=3 → Emerald, n=2 → Ruby, n=1 → Gold
+
+Two different paths both reach (n=1, W=4):
+  Path A: GRAB Plat(2) + GRAB Emer(1) + SKIP Ruby → used 3kg → (1, 4)
+  Path B: SKIP Plat + SKIP Emer + GRAB Ruby(3) → used 3kg → (1, 4)
+
+Both ask: "Only Gold left (4kg/$10K), bag has 4kg space. What's the max?"
+Answer: $10K. Gold weighs 4, fits exactly. REAL overlap.
+
+
+CORRECTED PROMPT 2 — Recursive Tree with REAL Overlap (replaces family1_C_2)
+===============================================================================
+
+Create a tall portrait infographic (1024x1792) for 0/1 Knapsack DP tutorial.
+
+CRITICAL DESIGN RULES:
+- ALL text must be HUGE — section titles 60pt+, body text 32pt+, code 26pt+
+- SHOW don't tell. Use big diagrams, arrows, branching paths.
+- Every element must be readable on a phone held vertically WITHOUT zooming
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram.
+
+Style: soft 3D cartoon characters, dark navy/charcoal section backgrounds (heist
+atmosphere), cream/warm-white rounded content cards, bright blue headers with
+LARGE circled page numbers in top-right. Code in large monospace on light gray
+rounded boxes.
+
+Characters (use EXACT same designs as the character reference image):
+- Kit: short dark hair, black tactical suit, blue utility belt, goggles on forehead
+- Sack the Duffel Bag: black bag with glowing BLUE weight gauge, worried face
+- Branch the Holographic Projector: chrome cylinder projecting GREEN + RED paths
+
+Stack 2 sections vertically (use the FULL height):
+
+
+PAGE 4 — "DRAW THE TREE" (LARGE circled 4 top-right):
+Header: "DRAW THE TREE" — "Watch what happens when you call the recursion."
+
+IMPORTANT: Use 4 items (NOT 3!) to show a REAL overlapping subproblem.
+
+Show the items being used:
+  1. Gold Bars      4kg / $10K
+  2. Ruby           3kg / $7K
+  3. Emerald Ring   1kg / $3K
+  4. Platinum Watch 2kg / $5K
+  Capacity: W = 7
+
+Show a PARTIAL recursive tree starting at (n=4, W=7).
+
+DO NOT show the full tree (too complex). Show TWO highlighted paths that converge
+at the SAME subproblem. Show other branches as "..." or faded/dashed.
+
+PATH A (left side of tree, highlighted in BLUE):
+  (n=4, W=7) → GRAB Platinum (wt=2)
+    → (n=3, W=5) → GRAB Emerald (wt=1)
+      → (n=2, W=4) → SKIP Ruby
+        → (n=1, W=4) ★
+
+Explain path: "Used Platinum (2kg) + Emerald (1kg) = 3kg. Ruby skipped. 4kg left."
+
+PATH B (right side of tree, highlighted in ORANGE):
+  (n=4, W=7) → SKIP Platinum
+    → (n=3, W=7) → SKIP Emerald
+      → (n=2, W=7) → GRAB Ruby (wt=3)
+        → (n=1, W=4) ★
+
+Explain path: "Skipped Platinum and Emerald. Used Ruby (3kg). 4kg left."
+
+CRITICAL VISUAL: Both paths arrive at (n=1, W=4). Circle BOTH nodes with
+BRIGHT YELLOW GLOW. Draw a dashed line connecting them.
+
+Label between them: "SAME SUBPROBLEM! Only Gold left, 4kg capacity. Appears TWICE.
+Different items chosen, same question remaining!"
+
+Kit looking at the tree, surprised: "Wait... GRAB Plat+Emer or GRAB Ruby...
+different choices, but the SAME question left over!"
+
+
+PAGE 5 — "OVERLAPPING SUBPROBLEMS" (LARGE circled 5 top-right):
+Header: "OVERLAPPING SUBPROBLEMS" — "Same question, same answer. Don't solve it twice."
+
+Top section — zoom in on the overlapping subproblem:
+  Show (n=1, W=4) expanded:
+    "Only Gold left (4kg, $10K). Capacity = 4kg."
+    GRAB Gold: 4 <= 4? YES! → val = $10K + dp(0, 0) = $10K
+    SKIP Gold: dp(0, 4) = $0
+    Answer: max($10K, $0) = $10K
+
+  Show both paths converging on this same answer:
+    "Path A arrived here. Answer = $10K."
+    "Path B arrived here. Answer = $10K."
+    "Same question. Same answer. Solved TWICE without caching."
+
+Big highlighted callout (gold border):
+  "A problem is DP when:
+    1. You make CHOICES (grab or skip)
+    2. The SAME subproblem appears MULTIPLE times in the recursive tree
+    3. Each subproblem has the SAME answer every time"
+
+MEMOIZATION — show it's just 3 extra lines:
+  def knapsack(wt, val, W, n, memo):
+      if (n, W) in memo:           # ALREADY SOLVED? Return it!
+          return memo[(n, W)]
+      # ... same recursive code as before ...
+      memo[(n, W)] = result         # STORE the result
+      return result
+
+Show Sack (duffel bag) with two panels:
+  WITHOUT CACHING: sweating, solving (1,4) TWICE. "Waste time!"
+  WITH CACHING: relaxed, cache shows (1,4) = $10K. "Solve ONCE. Look up the second time."
+
+Kit: "Memoization = recursion + a dictionary. That's it. Same code, just cache the answers."
+
+Label: "Memoization turns exponential O(2^n) into polynomial O(n * W).
+Every unique (n, W) pair solved at most once."
+
+
+NEW PROMPT 5 — "Why This Table?" (single page, family1_C_5)
+=============================================================
+
+Create a tall portrait infographic (1024x1792). SAME exact style and character
+designs as the other images.
+
+CRITICAL: ALL text HUGE (titles 60pt+, body 32pt+). Phone-readable without zooming.
+
+This is ONE page. Use the FULL vertical space. Don't cram.
+
+Header: "WHY THIS TABLE?" — "The table comes from the recursion. Nothing is invented."
+
+SECTION 1 — CROSSING OUT CONSTANTS:
+Show the recursive function signature in HUGE text:
+
+  knapsack( wt, val, W, n )
+
+Show each parameter with a visual verdict:
+  wt  → Same array every call → RED X through it, faded out
+  val → Same array every call → RED X through it, faded out
+  W   → Goes DOWN when you grab → GREEN CHECK, highlighted, circled
+  n   → Goes DOWN as you move to next item → GREEN CHECK, highlighted, circled
+
+Kit crossing out wt and val with a marker: "Constants don't need storage. Only track what CHANGES."
+
+Arrow pointing down: "2 variables change → 2D table"
+
+SECTION 2 — THE EMPTY TABLE:
+Show a clear, large, empty grid:
+  Rows labeled on the left: n = 0, 1, 2, 3, 4, 5 (0 items → 5 items)
+  Columns labeled on top: W = 0, 1, 2, 3, 4, 5, 6, 7
+
+  Row labels also show the item:
+    Row 0: "(no items)"
+    Row 1: "Gold (4kg)"
+    Row 2: "Ruby (3kg)"
+    Row 3: "Diamond (5kg)"
+    Row 4: "Emerald (1kg)"
+    Row 5: "Platinum (2kg)"
+
+  Label: "dp[i][j] = max value using first i items with j kg capacity"
+
+  Two annotation arrows:
+    Arrow along rows: "n goes 0 to 5 → 6 rows (one per item + zero)"
+    Arrow along columns: "W goes 0 to 7 → 8 columns (each possible capacity)"
+
+SECTION 3 — BASE CASES FILL THE EDGES:
+Show the SAME grid, now with the first row and first column filled with zeros.
+
+  Show the recursive base case in a code box:
+    if n == 0 or W == 0: return 0
+
+  Two arrows connecting code to table:
+    "n == 0" → arrow to first row → "Row 0: no items available → $0 everywhere"
+    "W == 0" → arrow to first column → "Column 0: bag holds 0kg → $0 everywhere"
+
+  First row highlighted in BLUE with all zeros.
+  First column highlighted in ORANGE with all zeros.
+
+  Sack (duffel bag) at capacity 0, panicked: "Zero capacity means zero value. Nothing fits!"
+
+Gold box at bottom:
+  "ADITYA VERMA'S RULE: Base case in recursion = initialization in table.
+   Whatever the recursion returns at the boundary, fill that into the table first."
+
+
+NEW PROMPT 6 — "Filling a Cell" (single page, family1_C_6)
+=============================================================
+
+Create a tall portrait infographic (1024x1792). SAME exact style and character
+designs.
+
+CRITICAL: ALL text HUGE. Phone-readable without zooming.
+
+This is ONE page teaching how to fill a SINGLE cell using arrows in the table.
+This is THE most important visual for understanding tabulation.
+
+Header: "FILLING A CELL" — "Every cell asks: GRAB or SKIP? Then looks UP in the table."
+
+Show a PARTIALLY FILLED table (rows 0 and 1 complete, row 2 in progress):
+
+         W=0  W=1  W=2  W=3  W=4  W=5  W=6  W=7
+  i=0     0    0    0    0    0    0    0    0
+  i=1(G)  0    0    0    0   10   10   10   10
+  i=2(R)  0    0    0    ?    ?    ?    ?    ?    ← filling this row
+
+ZOOM IN on cell dp[2][7] with a LARGE magnifying glass or spotlight effect.
+
+The cell dp[2][7] is HIGHLIGHTED (big, glowing border).
+
+Current item: Ruby (i=2), weight = 3kg, value = $7K
+Current capacity: j = 7
+
+Step 1 — "Does Ruby fit?"
+  Show: weight 3 <= capacity 7? YES (green check)
+  "Ruby fits! Kit has a CHOICE."
+
+Step 2 — Show TWO arrows emanating from dp[2][7]:
+
+  GREEN ARROW (GRAB Ruby):
+    Arrow goes UP one row and LEFT by 3 columns (Ruby's weight).
+    From dp[2][7] → dp[1][4] (which contains 10).
+    Label on the arrow: "GRAB: go UP 1 row, LEFT by weight (3)"
+    Calculation shown: "$7K (Ruby's value) + dp[1][4] ($10K) = $17K"
+    The arrow is thick, green, with the number $17K at the end.
+
+  RED ARROW (SKIP Ruby):
+    Arrow goes STRAIGHT UP one row, same column.
+    From dp[2][7] → dp[1][7] (which contains 10).
+    Label on the arrow: "SKIP: go straight UP"
+    Calculation shown: "dp[1][7] = $10K"
+    The arrow is thick, red, with the number $10K at the end.
+
+Step 3 — "Pick the better one"
+  Show: max($17K, $10K) = $17K
+  The cell dp[2][7] is now filled with 17, glowing green (GRAB won).
+
+Kit: "GRAB means: this item's value + the best I could do WITHOUT this item and
+with LESS capacity. SKIP means: pretend this item doesn't exist."
+
+Bottom callout:
+  "EVERY cell does the same thing:
+   1. Does the item fit? (weight <= capacity?)
+   2. If YES: compute GRAB and SKIP, pick the MAX
+   3. If NO: just copy from above (next visual explains this)"
+
+Show the source cells dp[1][4] and dp[1][7] clearly highlighted in row 1 so the
+reader can verify the numbers.
+
+
+NEW PROMPT 7 — "The Copy Pattern" (single page, family1_C_7)
+===============================================================
+
+Create a tall portrait infographic (1024x1792). SAME exact style and character
+designs.
+
+CRITICAL: ALL text HUGE. Phone-readable without zooming.
+
+This is ONE page explaining why many cells just copy the value from the row above.
+
+Header: "TOO HEAVY → COPY FROM ABOVE" — "When the item doesn't fit, nothing changes."
+
+Show Gold's row (i=1) being filled, with row 0 above it:
+
+         W=0  W=1  W=2  W=3  W=4  W=5  W=6  W=7
+  i=0     0    0    0    0    0    0    0    0
+  i=1(G)  0    ?    ?    ?    ?    ?    ?    ?
+
+Gold: weight = 4kg, value = $10K
+
+Show 4 cells being filled at W=1, W=2, W=3 (TOO HEAVY) and W=4 (FITS):
+
+CELL dp[1][1] — capacity 1:
+  Show Gold Bar (big, heavy looking) next to tiny bag (capacity 1).
+  "Gold weighs 4kg. Bag holds 1kg. 4 > 1? TOO HEAVY."
+  RED DOWN-ARROW from dp[0][1] (=0) to dp[1][1] (=0).
+  "No choice. Copy from above: 0"
+
+CELL dp[1][2] — capacity 2:
+  Same pattern. "4 > 2? TOO HEAVY." Arrow down. Copy 0.
+
+CELL dp[1][3] — capacity 3:
+  Same pattern. "4 > 3? TOO HEAVY." Arrow down. Copy 0.
+
+Show these 3 cells as a group with a bracket:
+  "At capacities 1, 2, 3: Gold (4kg) NEVER fits. Every cell copies from above.
+   Adding Gold to the available items changed NOTHING at these capacities."
+
+CELL dp[1][4] — capacity 4 (THE TURNING POINT):
+  Show with DRAMATIC change. Gold Bar next to bag that JUST fits.
+  "Gold weighs 4kg. Bag holds 4kg. 4 <= 4? IT FITS!"
+  GREEN highlight. Branch projects two paths:
+    GRAB: $10K + dp[0][0] = $10K + $0 = $10K
+    SKIP: dp[0][4] = $0
+    max($10K, $0) = $10K
+  "Finally! Gold fits. The value JUMPS from $0 to $10K."
+
+Show the COMPLETED row:
+         W=0  W=1  W=2  W=3  W=4  W=5  W=6  W=7
+  i=0     0    0    0    0    0    0    0    0
+  i=1(G)  0    0↑   0↑   0↑   10   10   10   10
+
+The ↑ arrows show "copied from above." The cells without arrows are where Gold fit.
+
+Kit: "When you see a value repeated from the row above, it means that item was too
+heavy at that capacity. The moment the item fits, the value changes."
+
+Sack (duffel bag) with weight gauge at different levels:
+  At W=1,2,3: gauge shows red, barely any space. Worried face.
+  At W=4: gauge shows green, just enough. Relieved face.
+
+Bottom callout:
+  "In the recursion:
+     if wt[i-1] > j:              # item too heavy
+         dp[i][j] = dp[i-1][j]    # copy from above
+   This is the 'else' branch. No choice = no change."

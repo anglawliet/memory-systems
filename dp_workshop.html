@@ -283,22 +283,44 @@ Base case = smallest valid input
 
 <div class="walkthrough-section">
 <h3>Step 3: Draw the Tree, Spot the Overlap</h3>
-<p>Expand the recursion into a tree (using just the first 3 items to keep it readable):</p>
+<p>Using 4 treasures: Gold (4kg), Ruby (3kg), Emerald (1kg), Platinum (2kg), W=7.</p>
+<p style="font-size:.9em;color:var(--muted)">The recursion processes items in reverse: Platinum (n=4), Emerald (n=3), Ruby (n=2), Gold (n=1).</p>
 
-<pre style="font-size:.8em;line-height:1.4;overflow-x:auto"><code>                    (n=3, W=7)
-                   /          \
-            GRAB Diamond    SKIP Diamond
-            (n=2, W=2)      (n=2, W=7)
-            /      \         /      \
-      GRAB Ruby  SKIP Ruby  GRAB Ruby  SKIP Ruby
-      TOO HEAVY  (n=1,W=2)  (n=1,W=4)  (n=1,W=7)
-                  /    \      /    \      /    \
-               GRAB  SKIP  GRAB  SKIP  GRAB  SKIP
-               Gold  Gold  Gold  Gold  Gold  Gold</code></pre>
+<p style="margin-top:12px"><strong>Two different paths through the tree arrive at the SAME subproblem:</strong></p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0">
+<div style="background:rgba(59,130,246,.08);border:2px solid var(--blue);border-radius:10px;padding:14px">
+<div style="color:var(--blue);font-weight:700;font-size:1em;margin-bottom:8px">Path A</div>
+<div style="font-size:.9em;line-height:1.8">
+(4, 7) start<br>
+&rarr; <strong style="color:var(--green)">GRAB</strong> Platinum (2kg)<br>
+&rarr; (3, 5)<br>
+&rarr; <strong style="color:var(--green)">GRAB</strong> Emerald (1kg)<br>
+&rarr; (2, 4)<br>
+&rarr; <strong style="color:var(--red)">SKIP</strong> Ruby<br>
+&rarr; <strong style="color:var(--gold2)">(1, 4)</strong>
+</div>
+<div style="font-size:.85em;color:var(--muted);margin-top:6px">Used 2+1 = 3kg. Ruby skipped. 4kg left for Gold.</div>
+</div>
+<div style="background:rgba(245,158,11,.08);border:2px solid var(--amber);border-radius:10px;padding:14px">
+<div style="color:var(--amber);font-weight:700;font-size:1em;margin-bottom:8px">Path B</div>
+<div style="font-size:.9em;line-height:1.8">
+(4, 7) start<br>
+&rarr; <strong style="color:var(--red)">SKIP</strong> Platinum<br>
+&rarr; (3, 7)<br>
+&rarr; <strong style="color:var(--red)">SKIP</strong> Emerald<br>
+&rarr; (2, 7)<br>
+&rarr; <strong style="color:var(--green)">GRAB</strong> Ruby (3kg)<br>
+&rarr; <strong style="color:var(--gold2)">(1, 4)</strong>
+</div>
+<div style="font-size:.85em;color:var(--muted);margin-top:6px">Used 3kg (Ruby). Plat and Emer skipped. 4kg left for Gold.</div>
+</div>
+</div>
 
 <div style="background:rgba(251,191,36,.12);border:2px solid var(--gold2);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
-<div style="font-size:1.2em;font-weight:800;color:var(--gold2);margin-bottom:8px">THAT'S WHY IT'S DP!</div>
-<div style="font-size:.95em">The SAME subproblem (same items remaining, same capacity) appears in DIFFERENT branches.<br>Same inputs, same answer. <strong>Why solve it twice?</strong></div>
+<div style="font-size:1.2em;font-weight:800;color:var(--gold2);margin-bottom:8px">SAME SUBPROBLEM: (n=1, W=4)</div>
+<div style="font-size:.95em;margin-bottom:8px">Both paths ask: <strong>"Only Gold left (4kg/$10K), bag has 4kg. What's the max?"</strong></div>
+<div style="font-size:.95em">Gold fits exactly. Answer = <strong>$10K</strong>. Both paths, same answer. <strong>Why solve it twice?</strong></div>
 </div>
 
 <div style="font-size:.95em;margin-bottom:12px">A problem is DP when:</div>
@@ -347,6 +369,9 @@ Every unique (n, W) pair solved at most once.
 <h3 style="color:var(--amber)">Step 5: From Recursion to Table (one question at a time)</h3>
 <p>Every part of the table comes from a specific line in the recursion. Nothing is invented. Let's derive it question by question.</p>
 </div>
+
+<!-- Visual: Why This Table? -->
+<img src="dp/images/family1_C_5.png" alt="Why This Table: crossing out constants, 2 changing variables become 2D table, base cases fill edges" class="scene-img">
 
 <!-- Q1: Why is it a table at all? -->
 <div class="walkthrough-section" style="border-left-color:var(--amber)">
@@ -494,6 +519,9 @@ dp[i][j] = max(grab, skip)</code></pre>
 </div>
 </div>
 
+<!-- Visual: Filling a Cell -->
+<img src="dp/images/family1_C_6.png" alt="Filling a cell: dp[2][7] step by step with arrows showing GRAB (up and left) vs SKIP (straight up)" class="scene-img">
+
 <!-- Q6: Walk through one cell -->
 <div class="walkthrough-section" style="border-left-color:var(--amber)">
 <h3 style="color:var(--amber)">Q: Show me one cell being filled. Step by step.</h3>
@@ -520,6 +548,9 @@ dp[i][j] = max(grab, skip)</code></pre>
 </div>
 <p style="font-size:.9em;color:var(--muted)">Every cell asks the exact same question the recursion asked. It just reads previous answers from the table instead of recursing.</p>
 </div>
+
+<!-- Visual: The Copy Pattern -->
+<img src="dp/images/family1_C_7.png" alt="Copy pattern: Gold row, too heavy at W=1,2,3 (copy from above), fits at W=4 (value jumps)" class="scene-img">
 
 <!-- Q7: Why do some cells just copy from above? -->
 <div class="walkthrough-section" style="border-left-color:var(--amber)">

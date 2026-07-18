@@ -7,7 +7,7 @@
 <style>
 :root{--bg:#1a1916;--card:#252320;--card2:#2d2a26;--gold:#d4a843;--gold2:#fbbf24;--amber:#f59e0b;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;--red:#ef4444;--crimson:#dc2626;--emerald:#059669;--violet:#7c3aed;--teal:#14b8a6;--text:#e8e2d6;--muted:#9b9484;--border:#3d3930}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;padding:0 0 80px}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;padding:0 0 80px;overflow-x:hidden}
 .hdr{background:linear-gradient(135deg,#1f1a0e,#1a1916);border-bottom:3px solid var(--amber);padding:40px 20px;text-align:center}
 .hdr h1{font-size:2em;color:var(--amber)}.hdr p{color:var(--muted)}
 .wrap{max-width:920px;margin:0 auto;padding:20px}
@@ -58,7 +58,9 @@ td{padding:10px 12px;border:1px solid var(--border)}
   .wrap{padding:12px}
   .hdr h1{font-size:1.5em}
   h2{font-size:1.2em}
-  pre{font-size:.78em;padding:10px}
+  pre{font-size:.75em;padding:10px;white-space:pre-wrap;word-break:break-word}
+  code{word-break:break-word}
+  .card,.walkthrough-section,.hi,.deriv-b,.sbox{overflow-x:hidden}
   .walkthrough-section{padding:14px}
   table{font-size:.8em;display:block;overflow-x:auto}
   [style*="grid-template-columns:1fr 1fr"],[style*="grid-template-columns: 1fr 1fr"],

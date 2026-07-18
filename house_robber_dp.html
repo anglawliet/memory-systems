@@ -7,7 +7,7 @@
 <style>
 :root{--bg:#1a1916;--card:#252320;--card2:#2d2a26;--gold:#d4a843;--gold2:#fbbf24;--amber:#f59e0b;--green:#22c55e;--blue:#3b82f6;--red:#ef4444;--text:#e8e2d6;--muted:#9b9484;--border:#3d3930;--sand:#c2956a}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;padding:0 0 80px}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;padding:0 0 80px;overflow-x:hidden}
 .hdr{background:linear-gradient(135deg,#1f1a0e,#1a1916);border-bottom:3px solid var(--sand);padding:40px 20px;text-align:center}
 .hdr h1{font-size:2em;color:var(--sand)}.hdr p{color:var(--muted)}
 .wrap{max-width:920px;margin:0 auto;padding:20px}
@@ -48,7 +48,9 @@ code{font-family:'Fira Code','Courier New',monospace}
   .code-ann code{display:block;margin-bottom:2px}
   .arr-cell{padding:8px 10px;min-width:40px;font-size:.92em}
   .arr-label span{min-width:40px;padding:0 10px;font-size:.65em}
-  pre{font-size:.78em;padding:10px}
+  pre{font-size:.75em;padding:10px;white-space:pre-wrap;word-break:break-word}
+  code{word-break:break-word}
+  .card,.ws,.hi{overflow-x:hidden}
   .cell-walk{padding:12px}
   .ws{padding:14px}
 }

@@ -85,14 +85,14 @@ td{padding:10px 12px;border:1px solid var(--border);text-align:center}
 <div style="background:rgba(194,149,106,.08);border:2px solid var(--sand);border-radius:10px;padding:18px;margin:12px 0">
 <div style="color:var(--sand);font-weight:700;font-size:1.1em;margin-bottom:12px">THE CHOICE DIAGRAM</div>
 <div style="font-size:.95em;line-height:1.9">
-<strong>Standing at step <code>remaining</code>. How do I get here?</strong><br><br>
+<strong>Standing on a step. How did I get here?</strong><br><br>
 I could have come from <strong>1 step below</strong> (climbed 1)<br>
 I could have come from <strong>2 steps below</strong> (climbed 2)<br><br>
 So: <strong>ways to reach this step = ways to reach (step - 1) + ways to reach (step - 2)</strong>
 </div>
 </div>
 
-<p style="color:var(--muted);font-size:.9em">Two choices at each step. Each choice leads to a smaller problem (fewer steps remaining). That's exactly the pattern for recursion.</p>
+<p style="color:var(--muted);font-size:.9em">Two choices at each step. Each choice leads to a smaller problem (fewer steps to go). That's exactly the pattern for recursion.</p>
 </div>
 
 <!-- ==================== STEP 2: RECURSION ==================== -->
@@ -101,22 +101,22 @@ So: <strong>ways to reach this step = ways to reach (step - 1) + ways to reach (
 <div class="walkthrough-section" style="border-left-color:var(--sand)">
 <h3 style="color:var(--sand)">The code writes itself from the choices</h3>
 
-<pre><code>def count_ways(remaining):
-    if remaining == 0: return 1
-    if remaining == 1: return 1
-    return count_ways(remaining - 1) + count_ways(remaining - 2)</code></pre>
+<pre><code>def count_ways(step):
+    if step == 0: return 1
+    if step == 1: return 1
+    return count_ways(step - 1) + count_ways(step - 2)</code></pre>
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
 <div style="background:var(--card2);border-radius:6px;padding:10px;font-size:.88em">
 <div style="color:var(--sand);font-weight:700;margin-bottom:4px">From the choices</div>
-<code style="color:var(--green)">count_ways(remaining - 1)</code> &rarr; came from 1 below<br>
-<code style="color:var(--green)">count_ways(remaining - 2)</code> &rarr; came from 2 below<br>
+<code style="color:var(--green)">count_ways(step - 1)</code> &rarr; came from 1 below<br>
+<code style="color:var(--green)">count_ways(step - 2)</code> &rarr; came from 2 below<br>
 <code>+</code> &rarr; add them (we want TOTAL ways, not the best)
 </div>
 <div style="background:var(--card2);border-radius:6px;padding:10px;font-size:.88em">
 <div style="color:var(--sand);font-weight:700;margin-bottom:4px">Base cases</div>
-<code>remaining == 0</code> &rarr; already at the top. 1 way (do nothing).<br>
-<code>remaining == 1</code> &rarr; 1 step left. 1 way (climb 1).
+<code>step == 0</code> &rarr; already at the top. 1 way (do nothing).<br>
+<code>step == 1</code> &rarr; 1 step left. 1 way (climb 1).
 </div>
 </div>
 
@@ -162,22 +162,22 @@ So: <strong>ways to reach this step = ways to reach (step - 1) + ways to reach (
 <div class="walkthrough-section" style="border-left-color:var(--sand)">
 <h3 style="color:var(--sand)">Same code, just cache the answers</h3>
 
-<pre><code>def count_ways(remaining, memo={}):
-    if remaining in memo: return memo[remaining]      # CHECK: already solved?
-    if remaining == 0: return 1
-    if remaining == 1: return 1
-    result = count_ways(remaining - 1, memo) + count_ways(remaining - 2, memo)
-    memo[remaining] = result                           # STORE the answer
+<pre><code>def count_ways(step, memo={}):
+    if step in memo: return memo[step]      # CHECK: already solved?
+    if step == 0: return 1
+    if step == 1: return 1
+    result = count_ways(step - 1, memo) + count_ways(step - 2, memo)
+    memo[step] = result                           # STORE the answer
     return result</code></pre>
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
 <div style="background:rgba(239,68,68,.08);border-radius:6px;padding:10px;font-size:.88em">
-<div style="color:var(--red);font-weight:700;margin-bottom:4px">Without cache: O(2<sup>remaining</sup>)</div>
+<div style="color:var(--red);font-weight:700;margin-bottom:4px">Without cache: O(2<sup>n</sup>)</div>
 Every branch explored, including duplicates.
 </div>
 <div style="background:rgba(34,197,94,.08);border-radius:6px;padding:10px;font-size:.88em">
-<div style="color:var(--green);font-weight:700;margin-bottom:4px">With cache: O(remaining)</div>
-Each value of <code>remaining</code> solved at most once.
+<div style="color:var(--green);font-weight:700;margin-bottom:4px">With cache: O(n)</div>
+Each value of <code>step</code> solved at most once.
 </div>
 </div>
 </div>
@@ -196,12 +196,12 @@ Each value of <code>remaining</code> solved at most once.
 <h3 style="color:var(--amber)">Q: Why an array? Why not a table with rows and columns?</h3>
 
 <p>Look at your recursive function:</p>
-<pre><code>def count_ways(remaining):</code></pre>
+<pre><code>def count_ways(step):</code></pre>
 
 <p>How many parameters <strong>change</strong> across recursive calls?</p>
 
 <div style="display:grid;grid-template-columns:auto 1fr auto;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:12px 0">
-<div style="padding:10px 14px;background:var(--card2);font-weight:700"><code>remaining</code></div>
+<div style="padding:10px 14px;background:var(--card2);font-weight:700"><code>step</code></div>
 <div style="padding:10px 14px">Goes down by 1 or 2 each call</div>
 <div style="padding:10px 14px;color:var(--green);font-weight:700">CHANGES &#x2713;</div>
 </div>
@@ -247,11 +247,11 @@ Each value of <code>remaining</code> solved at most once.
 <h3 style="color:var(--amber)">Q: Which cells can I fill immediately? (Base cases)</h3>
 
 <p>Look at the recursive base cases:</p>
-<pre><code>if remaining == 0: return 1
-if remaining == 1: return 1</code></pre>
+<pre><code>if step == 0: return 1
+if step == 1: return 1</code></pre>
 
-<p><code>remaining == 0</code> means "standing at step 0." There's 1 way to be at the ground: do nothing. So <code>ways[0] = 1</code>.</p>
-<p><code>remaining == 1</code> means "standing at step 1." There's 1 way: take a single step from the ground. So <code>ways[1] = 1</code>.</p>
+<p><code>step == 0</code> means "standing at step 0." There's 1 way to be at the ground: do nothing. So <code>ways[0] = 1</code>.</p>
+<p><code>step == 1</code> means "standing at step 1." There's 1 way: take a single step from the ground. So <code>ways[1] = 1</code>.</p>
 
 <div style="margin:16px 0">
 <div class="arr-label">
@@ -279,7 +279,7 @@ if remaining == 1: return 1</code></pre>
 <h3 style="color:var(--amber)">Q: How do I fill the rest? Which direction?</h3>
 
 <p>The recursive formula:</p>
-<pre><code>count_ways(remaining) = count_ways(remaining - 1) + count_ways(remaining - 2)</code></pre>
+<pre><code>count_ways(step) = count_ways(step - 1) + count_ways(step - 2)</code></pre>
 
 <p>In table language:</p>
 <pre><code>ways[step] = ways[step - 1] + ways[step - 2]</code></pre>
@@ -479,8 +479,8 @@ Look <strong>2 left</strong>: <code>ways[4] = 5</code><br><br>
 
 <div style="display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin-top:14px;font-size:.9em">
 <code style="color:var(--amber)">ways = [0] * ...</code><div>Create the empty array (7 cells for 6 steps)</div>
-<code style="color:var(--gold2)">ways[0] = 1</code><div>Base case from recursion: <code>remaining == 0 &rarr; return 1</code></div>
-<code style="color:var(--gold2)">ways[1] = 1</code><div>Base case from recursion: <code>remaining == 1 &rarr; return 1</code></div>
+<code style="color:var(--gold2)">ways[0] = 1</code><div>Base case from recursion: <code>step == 0 &rarr; return 1</code></div>
+<code style="color:var(--gold2)">ways[1] = 1</code><div>Base case from recursion: <code>step == 1 &rarr; return 1</code></div>
 <code style="color:var(--green)">for step in range(2, ...)</code><div>Fill left to right, starting after the base cases</div>
 <code style="color:var(--green)">ways[step - 1] + ways[step - 2]</code><div>Same formula as the recursion, reading from the array</div>
 <code style="color:var(--sand)">return ways[steps_to_top]</code><div>The last cell holds the answer to the original question</div>
@@ -496,19 +496,19 @@ Look <strong>2 left</strong>: <code>ways[4] = 5</code><br><br>
 <div style="display:grid;gap:12px">
 <div style="background:var(--card2);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;font-size:.9em;margin-bottom:6px">RECURSION (correct but slow, O(2<sup>n</sup>))</div>
-<pre style="margin:0;font-size:.82em"><code>def count_ways(remaining):
-    if remaining == 0: return 1
-    if remaining == 1: return 1
-    return count_ways(remaining - 1) + count_ways(remaining - 2)</code></pre>
+<pre style="margin:0;font-size:.82em"><code>def count_ways(step):
+    if step == 0: return 1
+    if step == 1: return 1
+    return count_ways(step - 1) + count_ways(step - 2)</code></pre>
 </div>
 <div style="background:var(--card2);border-radius:8px;padding:14px">
 <div style="color:var(--blue);font-weight:700;font-size:.9em;margin-bottom:6px">MEMOIZATION (add a cache, O(n))</div>
-<pre style="margin:0;font-size:.82em"><code>def count_ways(remaining, memo={}):
-    if remaining in memo: return memo[remaining]
-    if remaining == 0: return 1
-    if remaining == 1: return 1
-    result = count_ways(remaining - 1, memo) + count_ways(remaining - 2, memo)
-    memo[remaining] = result
+<pre style="margin:0;font-size:.82em"><code>def count_ways(step, memo={}):
+    if step in memo: return memo[step]
+    if step == 0: return 1
+    if step == 1: return 1
+    result = count_ways(step - 1, memo) + count_ways(step - 2, memo)
+    memo[step] = result
     return result</code></pre>
 </div>
 <div style="background:var(--card2);border-radius:8px;padding:14px">
@@ -538,7 +538,7 @@ Look <strong>2 left</strong>: <code>ways[4] = 5</code><br><br>
 <div style="background:rgba(194,149,106,.08);border:2px solid var(--sand);border-radius:10px;padding:16px">
 <div style="color:var(--sand);font-weight:700;font-size:1.05em;margin-bottom:8px">Staircase (1D)</div>
 <div style="font-size:.9em;line-height:1.8">
-<strong>1 changing variable:</strong> <code>remaining</code><br>
+<strong>1 changing variable:</strong> <code>step</code><br>
 <strong>Table shape:</strong> 1D array<br>
 <strong>Each cell:</strong> <code>ways[step]</code><br>
 <strong>Looks at:</strong> the 2 cells to the left<br>

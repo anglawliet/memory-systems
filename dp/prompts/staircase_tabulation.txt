@@ -16,7 +16,7 @@ At each step: climb 1 or climb 2.
 How many different ways to reach the top?
 
 Descriptive names:
-  count_ways(remaining)     not   climbStairs(n)
+  count_ways(step)     not   climbStairs(n)
   ways[step]                not   dp[i]
   steps_to_top              not   n
   ways[step - 1]            not   dp[i-1]
@@ -149,17 +149,17 @@ Two panels side by side:
   RIGHT (WITH cache): Smaller tree, duplicate "2" pulled from cache. "5 function calls."
 
 The cache shown as a simple notepad/clipboard:
-  remaining = 0 -> 1 way
-  remaining = 1 -> 1 way
-  remaining = 2 -> 2 ways  (solved once, looked up the second time)
+  step = 0 -> 1 way
+  step = 1 -> 1 way
+  step = 2 -> 2 ways  (solved once, looked up the second time)
 
 Code in a box:
-  def count_ways(remaining, memo={}):
-      if remaining in memo: return memo[remaining]
-      if remaining == 0: return 1
-      if remaining == 1: return 1
-      result = count_ways(remaining - 1, memo) + count_ways(remaining - 2, memo)
-      memo[remaining] = result
+  def count_ways(step, memo={}):
+      if step in memo: return memo[step]
+      if step == 0: return 1
+      if step == 1: return 1
+      result = count_ways(step - 1, memo) + count_ways(step - 2, memo)
+      memo[step] = result
       return result
 
 Maya: "Same recursion. Just check the notepad before computing. That's memoization."
@@ -187,10 +187,10 @@ Header: "THE TABLE IS JUST THE CACHE, LAID OUT FLAT"
 Subtitle: "Every cell answers one question."
 
 Show the recursive function signature:
-  count_ways(remaining)
+  count_ways(step)
 
 "How many parameters CHANGE across calls?"
-  remaining: goes down by 1 or 2 -> CHANGES! (green check, circled)
+  step: goes down by 1 or 2 -> CHANGES! (green check, circled)
 
 "1 changing variable -> 1D array. That's it."
 
@@ -231,8 +231,8 @@ SECTION 3, "BASE CASES":
 Header: "START WITH WHAT YOU KNOW"
 
 Show the recursive base cases:
-  if remaining == 0: return 1    -> "1 way to be at ground: do nothing"
-  if remaining == 1: return 1    -> "1 way to reach step 1: climb 1"
+  if step == 0: return 1    -> "1 way to be at ground: do nothing"
+  if step == 1: return 1    -> "1 way to reach step 1: climb 1"
 
 Show the array with the first two cells filled in GOLDEN color:
   [ 1 ]  [ 1 ]  [ ? ]  [ ? ]  [ ? ]  [ ? ]  [ ? ]
@@ -241,8 +241,8 @@ Show the array with the first two cells filled in GOLDEN color:
 The golden cells have a warm glow. Maya kneels at the bottom of the staircase,
 tracing her finger over golden numbers "1" already chalked on steps 0 and 1.
 
-Maya: "These two values were always there. The recursion says remaining == 0 or
-remaining == 1, return 1. So ways[0] = 1 and ways[1] = 1. Golden chalk."
+Maya: "These two values were always there. The recursion says step == 0 or
+step == 1, return 1. So ways[0] = 1 and ways[1] = 1. Golden chalk."
 
 Highlighted box:
   "Base case in recursion = first cells in the array.
@@ -335,7 +335,7 @@ Subtitle: "You just learned tabulation. Knapsack is the same idea."
 LEFT SIDE (warm sandstone color scheme, labeled "STAIRCASE"):
 Show the 1D array:
   [1, 1, 2, 3, 5, 8, 13]
-  "1 changing variable (remaining) -> 1 dimension"
+  "1 changing variable (step) -> 1 dimension"
   "Each cell: ways[step]"
   "Base cases: first 2 cells"
   "Fill: left to right"

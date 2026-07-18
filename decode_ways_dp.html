@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Decode Ways: Conditional Look-backs</title>
+<style>
+:root{--bg:#1a1916;--card:#252320;--card2:#2d2a26;--gold:#d4a843;--gold2:#fbbf24;--amber:#f59e0b;--green:#22c55e;--blue:#3b82f6;--red:#ef4444;--text:#e8e2d6;--muted:#9b9484;--border:#3d3930;--sand:#c2956a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;padding:0 0 80px;overflow-x:hidden}
+.hdr{background:linear-gradient(135deg,#1f1a0e,#1a1916);border-bottom:3px solid var(--sand);padding:40px 20px;text-align:center}
+.hdr h1{font-size:2em;color:var(--sand)}.hdr p{color:var(--muted)}
+.wrap{max-width:920px;margin:0 auto;padding:20px}
+h2{color:var(--sand);font-size:1.4em;margin:32px 0 12px;border-bottom:2px solid var(--border);padding-bottom:8px}
+h3{color:var(--sand);margin:20px 0 8px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin:16px 0}
+.scene-img{width:100%;border-radius:10px;margin:12px 0;border:1px solid var(--border)}
+pre{background:#0d0d0b;border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;font-size:.85em;line-height:1.6;margin:10px 0}
+code{font-family:'Fira Code','Courier New',monospace}
+.hi{background:rgba(194,149,106,.1);border:1px solid rgba(194,149,106,.3);border-radius:6px;padding:12px 16px;margin:12px 0}
+.ws{background:var(--card);border-radius:12px;padding:20px;margin:20px 0;border-left:4px solid var(--blue)}
+.ws h3{color:var(--blue);margin-top:0}
+.arr{display:flex;gap:0;margin:12px 0;flex-wrap:wrap;justify-content:center}
+.arr-cell{border:2px solid var(--border);padding:10px 14px;min-width:48px;text-align:center;font-weight:700;font-size:1.05em;background:var(--card)}
+.arr-cell.base{border-color:var(--gold2);background:rgba(251,191,36,.08);color:var(--gold2)}
+.arr-cell.filled{border-color:var(--green);background:rgba(34,197,94,.08);color:var(--green)}
+.arr-cell.current{border-color:var(--amber);background:rgba(245,158,11,.15);color:var(--amber);box-shadow:0 0 12px rgba(245,158,11,.3)}
+.arr-cell.empty{color:var(--muted)}
+.arr-label{display:flex;gap:0;margin:0 0 2px;flex-wrap:wrap;justify-content:center}
+.arr-label span{min-width:48px;text-align:center;font-size:.72em;color:var(--muted);padding:0 14px}
+.cell-walk{border-radius:10px;padding:16px;margin:12px 0;font-size:.95em;line-height:1.8}
+.cell-base{background:rgba(251,191,36,.06);border:2px solid var(--gold2)}
+.cell-fill{background:rgba(34,197,94,.06);border:1px solid var(--green)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.code-ann{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:.9em}
+.nav-link{display:inline-block;background:var(--card);border:1px solid var(--border);padding:10px 20px;border-radius:8px;color:var(--sand);text-decoration:none;font-weight:700;margin:8px 4px;transition:.2s}
+.nav-link:hover{background:var(--sand);color:#000;border-color:var(--sand)}
+.door-card{border-radius:8px;padding:14px;font-size:.92em}
+.door-open{background:rgba(34,197,94,.06);border:2px solid var(--green)}
+.door-locked{background:rgba(239,68,68,.06);border:2px solid var(--red)}
+.door-check{background:rgba(245,158,11,.06);border:2px solid var(--amber)}
+.digit-box{display:inline-block;border:2px solid var(--border);border-radius:6px;padding:4px 12px;margin:2px;font-weight:700;font-size:1.1em;background:var(--card)}
+.digit-box.valid{border-color:var(--green);color:var(--green)}
+.digit-box.invalid{border-color:var(--red);color:var(--red)}
+.digit-box.highlight{border-color:var(--amber);color:var(--amber)}
+@media(max-width:600px){
+  .wrap{padding:12px}
+  .hdr h1{font-size:1.5em}
+  h2{font-size:1.2em}
+  .two-col{grid-template-columns:1fr}
+  .code-ann{grid-template-columns:1fr}
+  .code-ann code{display:block;margin-bottom:2px}
+  .arr-cell{padding:8px 10px;min-width:40px;font-size:.92em}
+  .arr-label span{min-width:40px;padding:0 10px;font-size:.65em}
+  pre{font-size:.75em;padding:10px;white-space:pre-wrap;word-break:break-word}
+  code{word-break:break-word}
+  .card,.ws,.hi{overflow-x:hidden}
+  .cell-walk{padding:12px}
+  .ws{padding:14px}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+<h1>Decode Ways</h1>
+<p>Same 1D array, but check the digits before each look-back.</p>
+</div>
+
+<div class="wrap">
+
+<div style="margin-bottom:24px">
+<a href="staircase_dp.html" class="nav-link">&larr; Staircase</a>
+<a href="house_robber_dp.html" class="nav-link">House Robber</a>
+<a href="min_cost_dp.html" class="nav-link">Min Cost</a>
+</div>
+
+<!-- ==================== THE PROBLEM ==================== -->
+<img src="dp/images/decode_ways_1.png" alt="The question: decoder ring, digit string 226, three possible splits, Door 1 and Door 2 choices" class="scene-img">
+
+<h2>The Problem</h2>
+
+<div class="ws" style="border-left-color:var(--sand)">
+<h3 style="color:var(--sand);margin-bottom:12px">Decode Ways (LeetCode #91)</h3>
+
+<p style="margin-bottom:12px">A message was encoded by replacing each letter with its number: A=1, B=2, ... Z=26. Given a string of digits, return how many ways to decode it.</p>
+
+<div style="text-align:center;margin:16px 0">
+<span class="digit-box highlight">2</span>
+<span class="digit-box highlight">2</span>
+<span class="digit-box highlight">6</span>
+</div>
+
+<div style="margin:16px 0">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0">
+<strong style="color:var(--green)">Split 1:</strong> <span class="digit-box valid">2</span> | <span class="digit-box valid">2</span> | <span class="digit-box valid">6</span> = B, B, F
+</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0">
+<strong style="color:var(--green)">Split 2:</strong> <span class="digit-box valid" style="border-color:var(--amber);color:var(--amber)">22</span> | <span class="digit-box valid">6</span> = V, F
+</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0">
+<strong style="color:var(--green)">Split 3:</strong> <span class="digit-box valid">2</span> | <span class="digit-box valid" style="border-color:var(--amber);color:var(--amber)">26</span> = B, Z
+</div>
+</div>
+
+<div style="text-align:center;font-size:1.2em;font-weight:700;color:var(--gold2)">3 ways to decode "226"</div>
+
+<div class="hi">
+<strong style="color:var(--sand)">How is this different from Climbing Stairs?</strong> Staircase ALWAYS looks back 1 and 2 steps. Decode Ways has to CHECK the digits first. A "0" can't be a letter. "37" can't be a letter. You only look back when the digits are valid.
+</div>
+</div>
+
+<!-- ==================== THE CHOICES ==================== -->
+<h2>Step 1: What Are My Choices?</h2>
+
+<div class="ws" style="border-left-color:var(--sand)">
+<h3 style="color:var(--sand)">At each position: one or two ways to read</h3>
+
+<p style="margin-bottom:12px">Standing at position 3 (digit "6" in "226"). Two doors to check:</p>
+
+<div class="two-col" style="margin:12px 0">
+<div class="door-open">
+<div style="color:var(--green);font-weight:700;margin-bottom:6px">DOOR 1: Read 1 digit</div>
+Take just "6" &rarr; F (valid letter, 1 through 9).<br>
+If this single digit is 1 through 9, it's a letter.<br><br>
+<code style="color:var(--green)">+= ways[position - 1]</code>
+</div>
+<div class="door-check">
+<div style="color:var(--amber);font-weight:700;margin-bottom:6px">DOOR 2: Read 2 digits</div>
+Take "26" &rarr; Z (valid letter, 10 through 26).<br>
+If these two digits form 10 through 26, it's a letter.<br><br>
+<code style="color:var(--amber)">+= ways[position - 2]</code>
+</div>
+</div>
+
+<pre><code>ways[position] = 0
+IF single digit valid (1-9):   add ways[position - 1]
+IF double digit valid (10-26): add ways[position - 2]</code></pre>
+
+<div class="hi">
+<strong style="color:var(--sand)">Three possible states:</strong><br>
+<span style="color:var(--green)">Both doors open</span> &rarr; two look-backs (like staircase)<br>
+<span style="color:var(--amber)">One door open</span> &rarr; one look-back<br>
+<span style="color:var(--red)">Both doors locked</span> &rarr; dead end (ways = 0)
+</div>
+</div>
+
+<!-- ==================== RECURSION ==================== -->
+<img src="dp/images/decode_ways_2.png" alt="Recursive code, call tree, Door 1 and Door 2 checks, tricky cases with 0 and 30" class="scene-img">
+
+<h2>Step 2: Choices &rarr; Recursion</h2>
+
+<div class="ws" style="border-left-color:var(--sand)">
+<h3 style="color:var(--sand)">The code writes itself from the choices</h3>
+
+<pre><code>digits = "226"
+
+def decode_ways(position):
+    if position == 0: return 1   # empty string = 1 way
+    total = 0
+
+    single_digit = int(digits[position - 1])
+    if single_digit >= 1:               # Door 1: valid letter?
+        total += decode_ways(position - 1)
+
+    if position >= 2:
+        double_digit = int(digits[position - 2:position])
+        if 10 <= double_digit <= 26:    # Door 2: valid pair?
+            total += decode_ways(position - 2)
+
+    return total
+
+decode_ways(3)</code></pre>
+
+<div class="two-col" style="margin-top:12px">
+<div style="background:var(--card2);border-radius:6px;padding:10px;font-size:.88em">
+<div style="color:var(--green);font-weight:700;margin-bottom:4px">Door 1: single_digit &gt;= 1</div>
+If this single digit is a valid letter (A through I), open the door and look back 1.
+</div>
+<div style="background:var(--card2);border-radius:6px;padding:10px;font-size:.88em">
+<div style="color:var(--amber);font-weight:700;margin-bottom:4px">Door 2: 10 &lt;= double_digit &lt;= 26</div>
+If this pair of digits is a valid letter (J through Z), open the door and look back 2.
+</div>
+</div>
+</div>
+
+<!-- ==================== TREE ==================== -->
+<h2>Step 3: Draw the Tree, Spot the Overlap</h2>
+
+<div class="ws" style="border-left-color:var(--sand)">
+<h3 style="color:var(--sand)">decode_ways(3) for "226"</h3>
+
+<pre style="font-size:.82em;line-height:1.8"><code>decode_ways(3)
+├── read "6" (F)  &rarr; decode_ways(2)
+│   ├── read "2" (B)   &rarr; decode_ways(1)  ─ ─ ┐
+│   │   └── read "2" (B) &rarr; decode_ways(0) = 1│
+│   └── read "22" (V)  &rarr; decode_ways(0) = 1  │ SAME!
+└── read "26" (Z) &rarr; decode_ways(1)  ─ ─ ─ ─ ─ ┘
+    └── read "2" (B)    &rarr; decode_ways(0) = 1</code></pre>
+
+<div style="background:rgba(251,191,36,.12);border:2px solid var(--gold2);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
+<div style="font-size:1.1em;font-weight:800;color:var(--gold2);margin-bottom:8px">decode_ways(1) appears TWICE</div>
+<div style="font-size:.95em">Same question, same answer. Same overlap pattern as staircase and house robber.</div>
+</div>
+
+<p style="font-size:.9em;color:var(--muted)">Left branches read 1 digit (Door 1, green). Right branches read 2 digits (Door 2, orange). Base case: decode_ways(0) = 1 (empty string, one way to do nothing).</p>
+</div>
+
+<!-- ==================== THE TRICKY CASES ==================== -->
+<h2 style="color:var(--red);border-bottom-color:var(--red)">The Tricky Cases: When Does Each Door Open?</h2>
+
+<div class="ws" style="border-left-color:var(--red)">
+<h3 style="color:var(--red)">This is the KEY section for Decode Ways</h3>
+
+<div style="margin:16px 0">
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:12px 0">
+<div style="color:var(--green);font-weight:700;margin-bottom:8px">DOOR 1: Single Digit Check</div>
+<div style="margin:8px 0">
+<span class="digit-box invalid">0</span> <span style="color:var(--red);font-weight:700">LOCKED.</span> <span style="color:var(--muted)">0 is NOT a letter.</span>
+</div>
+<div style="margin:8px 0">
+<span class="digit-box valid">1</span>
+<span class="digit-box valid">2</span>
+<span class="digit-box valid">3</span>
+<span class="digit-box valid">4</span>
+<span class="digit-box valid">5</span>
+<span class="digit-box valid">6</span>
+<span class="digit-box valid">7</span>
+<span class="digit-box valid">8</span>
+<span class="digit-box valid">9</span>
+<span style="color:var(--green);font-weight:700">OPEN.</span> <span style="color:var(--muted)">A through I.</span>
+</div>
+</div>
+
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:12px 0">
+<div style="color:var(--amber);font-weight:700;margin-bottom:8px">DOOR 2: Double Digit Check</div>
+<div style="margin:8px 0">
+<span style="color:var(--red)">00 through 09:</span> <span style="color:var(--red);font-weight:700">LOCKED.</span> <span style="color:var(--muted)">Leading zero. Not a valid encoding.</span>
+</div>
+<div style="margin:8px 0">
+<span style="color:var(--green)">10 through 26:</span> <span style="color:var(--green);font-weight:700">OPEN.</span> <span style="color:var(--muted)">J through Z.</span>
+</div>
+<div style="margin:8px 0">
+<span style="color:var(--red)">27 through 99:</span> <span style="color:var(--red);font-weight:700">LOCKED.</span> <span style="color:var(--muted)">Past Z (26). No letter there.</span>
+</div>
+</div>
+</div>
+</div>
+
+<!-- EXAMPLE: 106 -->
+<div class="ws" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">Example: "106"</h3>
+
+<div style="text-align:center;margin:12px 0">
+<span class="digit-box highlight">1</span>
+<span class="digit-box highlight">0</span>
+<span class="digit-box highlight">6</span>
+</div>
+
+<div style="margin:12px 0">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.92em">
+<strong>Position 1 (digit "1"):</strong> Door 1 <span style="color:var(--green)">OPEN</span> (A). Door 2: only 1 digit, N/A. <strong>ways = 1</strong>
+</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.92em">
+<strong>Position 2 (digit "0"):</strong> Door 1 <span style="color:var(--red)">LOCKED</span> (0 is not a letter!). Door 2 <span style="color:var(--green)">OPEN</span> (10 = J). <strong>ways = 1</strong>
+</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.92em">
+<strong>Position 3 (digit "6"):</strong> Door 1 <span style="color:var(--green)">OPEN</span> (F). Door 2 <span style="color:var(--red)">LOCKED</span> (06 has a leading zero). <strong>ways = 1</strong>
+</div>
+</div>
+
+<p><strong>Answer: 1 way.</strong> Only: J, F. The "0" forces "10" to be read as a pair.</p>
+</div>
+
+<!-- EXAMPLE: 30 -->
+<div class="ws" style="border-left-color:var(--red)">
+<h3 style="color:var(--red)">Example: "30" (the dead end)</h3>
+
+<div style="text-align:center;margin:12px 0">
+<span class="digit-box" style="border-color:var(--red);color:var(--red)">3</span>
+<span class="digit-box" style="border-color:var(--red);color:var(--red)">0</span>
+</div>
+
+<div style="margin:12px 0">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.92em">
+<strong>Position 1 (digit "3"):</strong> Door 1 <span style="color:var(--green)">OPEN</span> (C). <strong>ways = 1</strong>
+</div>
+<div style="background:rgba(239,68,68,.08);border:1px solid var(--red);border-radius:8px;padding:12px;margin:8px 0;font-size:.92em">
+<strong>Position 2 (digit "0"):</strong> Door 1 <span style="color:var(--red)">LOCKED</span> (0 invalid). Door 2 <span style="color:var(--red)">LOCKED</span> (30 > 26). <strong style="color:var(--red)">ways = 0</strong>
+</div>
+</div>
+
+<p><strong style="color:var(--red)">Answer: 0 ways. DEAD END.</strong> "30" cannot be decoded at all. Both doors locked.</p>
+
+<div class="hi">
+<strong style="color:var(--red)">"0" is the trap.</strong> It locks Door 1 always. Door 2 only opens if the pair is 10 or 20. Any other digit before 0 (like 30, 40, 50...) means the string can't be decoded.
+</div>
+</div>
+
+<!-- ==================== MEMOIZE ==================== -->
+<h2>Step 4: Memoize</h2>
+
+<div class="ws" style="border-left-color:var(--sand)">
+<h3 style="color:var(--sand)">Same code, just cache the answers</h3>
+
+<pre><code>def decode_ways(position, memo={}):
+    if position in memo: return memo[position]
+    if position == 0: return 1
+    total = 0
+
+    single_digit = int(digits[position - 1])
+    if single_digit >= 1:
+        total += decode_ways(position - 1, memo)
+
+    if position >= 2:
+        double_digit = int(digits[position - 2:position])
+        if 10 <= double_digit <= 26:
+            total += decode_ways(position - 2, memo)
+
+    memo[position] = total
+    return total</code></pre>
+
+<p style="color:var(--muted);font-size:.9em;margin-top:8px">The cache for "226": position 0 &rarr; 1, position 1 &rarr; 1, position 2 &rarr; 2, position 3 &rarr; 3.</p>
+</div>
+
+<!-- ==================== TABULATION ==================== -->
+<h2 style="color:var(--amber);border-bottom-color:var(--amber)">Step 5: From Recursion to Table</h2>
+
+<img src="dp/images/decode_ways_3.png" alt="1D array, base case at position 0, door checks at each position, completed array, tabulation code" class="scene-img">
+
+<!-- What does each cell mean? -->
+<div class="ws" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">What does each cell mean?</h3>
+
+<p><code>ways[position]</code> = <strong>"How many ways to decode the first <code>position</code> digits."</strong></p>
+
+<div style="margin:16px 0">
+<div class="arr-label">
+<span>empty</span><span>"2"</span><span>"22"</span><span>"226"</span>
+</div>
+<div class="arr">
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+</div>
+<div class="arr-label" style="margin-top:4px">
+<span>pos 0</span><span>pos 1</span><span>pos 2</span><span>pos 3</span>
+</div>
+<div style="text-align:center;font-size:.85em;color:var(--muted);margin-top:4px"><code>ways[3]</code> is the answer: total decodings for the whole string.</div>
+</div>
+</div>
+
+<!-- Base case -->
+<div class="ws" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">Base case: the empty string</h3>
+
+<p><strong>ways[0] = 1.</strong> One way to decode nothing: do nothing. (This may feel odd, but it's essential for the math to work.)</p>
+
+<div style="margin:16px 0">
+<div class="arr-label">
+<span>empty</span><span>"2"</span><span>"22"</span><span>"226"</span>
+</div>
+<div class="arr">
+<div class="arr-cell base">1</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+</div>
+<div style="text-align:center;font-size:.85em;color:var(--gold2);margin-top:4px">One base case. The rest come from checking the doors.</div>
+</div>
+</div>
+
+<!-- ==================== FILLING EVERY CELL ==================== -->
+<h2 style="color:var(--amber);border-bottom-color:var(--amber)">Filling Every Cell: Check the Doors, Then Fill</h2>
+
+<p style="margin-bottom:8px">digits = <span class="digit-box highlight">2</span> <span class="digit-box highlight">2</span> <span class="digit-box highlight">6</span></p>
+
+<!-- CELL: ways[1] -->
+<div class="cell-walk cell-fill">
+<div style="color:var(--green);font-weight:700;margin-bottom:8px;font-size:1.05em">ways[1]: First digit "2"</div>
+
+<div style="margin:12px 0">
+<div class="arr-label">
+<span>empty</span><span>"2"</span><span>"22"</span><span>"226"</span>
+</div>
+<div class="arr">
+<div class="arr-cell base">1</div>
+<div class="arr-cell current">?</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+</div>
+</div>
+
+<div class="two-col">
+<div class="door-open">
+<div style="color:var(--green);font-weight:700">Door 1: "2"</div>
+Valid (B). <span style="color:var(--green)">OPEN.</span><br>
++= ways[0] = 1
+</div>
+<div class="door-locked" style="opacity:.5">
+<div style="color:var(--red);font-weight:700">Door 2: N/A</div>
+Only 1 digit. No pair to check.
+</div>
+</div>
+
+<code>ways[1] = <strong style="color:var(--green)">1</strong></code><br>
+<span style="color:var(--muted);font-size:.88em">One way: B</span>
+</div>
+
+<!-- CELL: ways[2] -->
+<div class="cell-walk cell-fill">
+<div style="color:var(--green);font-weight:700;margin-bottom:8px;font-size:1.05em">ways[2]: First two digits "22"</div>
+
+<div style="margin:12px 0">
+<div class="arr-label">
+<span>empty</span><span>"2"</span><span>"22"</span><span>"226"</span>
+</div>
+<div class="arr">
+<div class="arr-cell base">1</div>
+<div class="arr-cell filled">1</div>
+<div class="arr-cell current">?</div>
+<div class="arr-cell empty">?</div>
+</div>
+</div>
+
+<div class="two-col">
+<div class="door-open">
+<div style="color:var(--green);font-weight:700">Door 1: "2"</div>
+Valid (B). <span style="color:var(--green)">OPEN.</span><br>
++= ways[1] = 1
+</div>
+<div class="door-open" style="border-color:var(--amber)">
+<div style="color:var(--amber);font-weight:700">Door 2: "22"</div>
+Valid (V, 10 &lt;= 22 &lt;= 26). <span style="color:var(--green)">OPEN.</span><br>
++= ways[0] = 1
+</div>
+</div>
+
+<code>ways[2] = 1 + 1 = <strong style="color:var(--green)">2</strong></code><br>
+<span style="color:var(--muted);font-size:.88em">Two ways: B,B or V</span>
+</div>
+
+<!-- CELL: ways[3] -->
+<div class="cell-walk" style="background:rgba(194,149,106,.08);border:2px solid var(--sand)">
+<div style="color:var(--sand);font-weight:700;margin-bottom:8px;font-size:1.1em">ways[3]: All three digits "226". THE ANSWER</div>
+
+<div style="margin:12px 0">
+<div class="arr-label">
+<span>empty</span><span>"2"</span><span>"22"</span><span>"226"</span>
+</div>
+<div class="arr">
+<div class="arr-cell base">1</div>
+<div class="arr-cell filled">1</div>
+<div class="arr-cell filled">2</div>
+<div class="arr-cell current">?</div>
+</div>
+</div>
+
+<div class="two-col">
+<div class="door-open">
+<div style="color:var(--green);font-weight:700">Door 1: "6"</div>
+Valid (F). <span style="color:var(--green)">OPEN.</span><br>
++= ways[2] = 2
+</div>
+<div class="door-open" style="border-color:var(--amber)">
+<div style="color:var(--amber);font-weight:700">Door 2: "26"</div>
+Valid (Z, 10 &lt;= 26 &lt;= 26). <span style="color:var(--green)">OPEN.</span><br>
++= ways[1] = 1
+</div>
+</div>
+
+<code>ways[3] = 2 + 1 = <strong style="color:var(--green)">3</strong></code><br>
+<span style="color:var(--muted);font-size:.88em">Three ways: B,B,F or V,F or B,Z</span>
+</div>
+
+<!-- Complete array -->
+<div class="ws" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">The Complete Array</h3>
+
+<div style="margin:16px 0">
+<div class="arr-label">
+<span>empty</span><span>"2"</span><span>"22"</span><span>"226"</span>
+</div>
+<div class="arr">
+<div class="arr-cell base">1</div>
+<div class="arr-cell filled">1</div>
+<div class="arr-cell filled">2</div>
+<div class="arr-cell filled" style="border-color:var(--sand);color:var(--sand);font-size:1.3em;background:rgba(194,149,106,.12)">3</div>
+</div>
+</div>
+
+<div style="text-align:center;margin:12px 0">
+<span style="display:inline-block;border:2px solid var(--gold2);background:rgba(251,191,36,.08);border-radius:4px;padding:2px 10px;font-size:.82em;color:var(--gold2);margin:2px">base case</span>
+<span style="display:inline-block;border:2px solid var(--green);background:rgba(34,197,94,.08);border-radius:4px;padding:2px 10px;font-size:.82em;color:var(--green);margin:2px">computed</span>
+<span style="display:inline-block;border:2px solid var(--sand);background:rgba(194,149,106,.12);border-radius:4px;padding:2px 10px;font-size:.82em;color:var(--sand);margin:2px">answer</span>
+</div>
+
+<p><strong>All three decodings:</strong></p>
+<div style="margin:8px 0;font-size:.92em">
+<div style="margin:4px 0"><span style="color:var(--green)">Path 1:</span> 2|2|6 = B, B, F (three single-digit hops)</div>
+<div style="margin:4px 0"><span style="color:var(--amber)">Path 2:</span> 22|6 = V, F (one double hop + one single)</div>
+<div style="margin:4px 0"><span style="color:var(--amber)">Path 3:</span> 2|26 = B, Z (one single + one double)</div>
+</div>
+</div>
+
+<!-- ==================== THE CODE ==================== -->
+<h2 style="color:var(--amber);border-bottom-color:var(--amber)">The Tabulation Code</h2>
+
+<div class="ws" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">Every line maps to something we just did</h3>
+
+<pre><code>def decode_ways(digits):
+    length = len(digits)
+    ways = [0] * (length + 1)
+    ways[0] = 1
+
+    for position in range(1, length + 1):
+        single_digit = int(digits[position - 1])
+        if single_digit >= 1:
+            ways[position] += ways[position - 1]
+
+        if position >= 2:
+            double_digit = int(digits[position - 2:position])
+            if 10 <= double_digit <= 26:
+                ways[position] += ways[position - 2]
+
+    return ways[length]</code></pre>
+
+<div class="code-ann" style="margin-top:14px">
+<code style="color:var(--gold2)">ways[0] = 1</code><div>Empty string = 1 way (do nothing)</div>
+<code style="color:var(--green)">single_digit &gt;= 1</code><div>Door 1: valid letter?</div>
+<code style="color:var(--amber)">10 &lt;= double_digit &lt;= 26</code><div>Door 2: valid pair?</div>
+<code style="color:var(--green)">+= ways[position - 1]</code><div>Open Door 1: add from one back</div>
+<code style="color:var(--amber)">+= ways[position - 2]</code><div>Open Door 2: add from two back</div>
+<code style="color:var(--sand)">return ways[length]</code><div>Last cell = total decodings</div>
+</div>
+</div>
+
+<!-- ==================== COMPARE ==================== -->
+<h2>Staircase vs Decode Ways</h2>
+
+<div class="ws" style="border-left-color:var(--blue)">
+<h3 style="color:var(--blue)">Same structure, conditional look-backs</h3>
+
+<div class="two-col" style="margin:12px 0">
+<div style="background:rgba(194,149,106,.08);border:2px solid var(--sand);border-radius:10px;padding:16px">
+<div style="color:var(--sand);font-weight:700;margin-bottom:8px">Climbing Stairs</div>
+<div style="font-size:.9em;line-height:1.8">
+<code>ways[step] = ways[step-1] + ways[step-2]</code><br>
+<strong>Look-backs:</strong> ALWAYS both<br>
+<strong>No conditions.</strong> Just add.
+</div>
+</div>
+<div style="background:rgba(34,197,94,.08);border:2px solid var(--green);border-radius:10px;padding:16px">
+<div style="color:var(--green);font-weight:700;margin-bottom:8px">Decode Ways</div>
+<div style="font-size:.9em;line-height:1.8">
+<code>ways[pos] = (if valid) + (if valid)</code><br>
+<strong>Look-backs:</strong> CHECK first<br>
+<strong>Conditional.</strong> Digit must be valid.
+</div>
+</div>
+</div>
+
+<div class="hi">
+<strong style="color:var(--amber)">Same 1D array. Same left-to-right fill. The difference: conditional look-backs.</strong><br>
+Staircase: always look back 1 and 2.<br>
+Decode Ways: check each digit before looking back.<br>
+"0" is the trap. It locks Door 1 and might lock Door 2.
+</div>
+</div>
+
+<div style="text-align:center;margin-top:32px">
+<a href="staircase_dp.html" class="nav-link">&larr; Staircase</a>
+<a href="house_robber_dp.html" class="nav-link">House Robber</a>
+<a href="min_cost_dp.html" class="nav-link">Min Cost</a>
+</div>
+
+</div>
+
+</body>
+</html>

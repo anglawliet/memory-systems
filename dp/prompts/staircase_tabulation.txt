@@ -1,0 +1,375 @@
+STAIRCASE: YOUR FIRST DP TABLE (1D Tabulation)
+================================================
+Goal: Teach tabulation visually using the simplest DP problem.
+One changing variable, one array, fill left to right.
+The student already understands recursion and memoization.
+The focus is entirely on: WHY is this an array? WHAT does each cell mean?
+HOW do I fill it?
+
+Character: Maya, a young rock climber with a chalk bag on her hip.
+She writes numbers on the steps with chalk.
+Golden chalk = base cases (already there before she starts).
+White chalk = values she computes.
+
+Problem: Climbing Stairs, n = 6 steps.
+At each step: climb 1 or climb 2.
+How many different ways to reach the top?
+
+Descriptive names:
+  count_ways(remaining)     not   climbStairs(n)
+  ways[step]                not   dp[i]
+  steps_to_top              not   n
+  ways[step - 1]            not   dp[i-1]
+
+Array for n=6: ways = [1, 1, 2, 3, 5, 8, 13]
+Answer: ways[6] = 13
+
+Images produced:
+  Prompt 1 -> staircase_1.png  (Problem + Choices)
+  Prompt 2 -> staircase_2.png  (Recursive tree + overlap)
+  Prompt 3 -> staircase_3.png  (The 1D array: what it is, base cases, fill direction)
+  Prompt 4 -> staircase_4.png  (Filling every cell, step by step)
+  Prompt 5 -> staircase_5.png  (Bridge: 1D array vs 2D table)
+
+
+================================================================================
+PROMPT 1: Problem + Choices -> staircase_1.png
+================================================================================
+
+Create a tall portrait infographic (1024x1792) for a DP tutorial.
+
+CRITICAL DESIGN RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+
+- Every element must be readable on a phone held vertically WITHOUT zooming
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram.
+
+Style: soft 3D cartoon character (Pixar energy), warm sandstone colors, bright and
+cheerful (not dark). Clean white background between sections. Rounded content cards.
+
+Character: Maya, a confident young rock climber, mid-20s. Athletic build, chalk-dusted
+hands, climbing harness, fingerless gloves, a CHALK BAG clipped to her hip. Short
+dark ponytail. She writes chalk numbers on steps. Expressive (fierce focus while
+climbing, excited grin when the pattern clicks).
+
+Stack 2 sections vertically with lots of space:
+
+SECTION 1, "THE PROBLEM":
+Header: "CLIMBING STAIRS"
+Subtitle: "At each step: climb 1 or climb 2."
+
+Show a grand stone staircase with 6 numbered steps (1 through 6) stretching upward.
+Step 0 is the ground (labeled "ground"). Maya stands at the bottom, chalk bag on hip,
+looking up at the staircase.
+
+Maya's speech bubble: "6 steps to the top. I can climb 1 or 2 at a time. How many
+different ways can I get there?"
+
+Show two small figures of Maya mid-climb:
+  LEFT: Maya taking ONE step up (label: "climb 1")
+  RIGHT: Maya leaping TWO steps up (label: "climb 2")
+
+Big text: "That's it. Two choices at every step."
+
+SECTION 2, "THE CHOICES":
+Header: "THE CHOICE DIAGRAM"
+
+Show Maya standing on step 4, looking back down. Two paths led here:
+
+  Step 4
+    ^       ^
+    |       |
+  Step 3   Step 2
+  (climb 1) (climb 2)
+
+"I'm on step 4. How did I get here?"
+"I came from step 3 (climbed 1), OR step 2 (climbed 2)."
+"So: ways to reach step 4 = ways to reach step 3 + ways to reach step 2."
+
+Show this as a FORMULA in a highlighted box:
+  ways[step] = ways[step - 1] + ways[step - 2]
+  "Ways to reach HERE = ways to reach ONE BELOW + ways to reach TWO BELOW"
+
+Color coding:
+  ways[step - 1] in GREEN with label "climb 1 from here"
+  ways[step - 2] in BLUE with label "climb 2 from here"
+  + sign in GOLD
+
+Bottom callout:
+  "The choices give you the formula. The formula gives you the code.
+   That's how every DP problem works."
+
+
+================================================================================
+PROMPT 2: Recursive Tree + Overlap -> staircase_2.png
+================================================================================
+
+Continue the tutorial. Tall portrait (1024x1792). SAME exact style and character.
+ALL text HUGE. Phone-readable.
+
+Stack 2 sections vertically:
+
+SECTION 1, "THE TREE":
+Header: "DRAW THE RECURSIVE TREE"
+Subtitle: "count_ways(4), expanded."
+
+Show a tree diagram. Each node is a circle with the number inside.
+The tree shows count_ways(4):
+
+                    4
+                  /   \
+                3       2
+              /   \   /   \
+            2      1  1    0
+          /   \
+        1      0
+
+Label the branches: left branches say "climb 1", right branches say "climb 2".
+Label the leaf nodes: "1" and "0" nodes have a gold glow and say "base case = 1 way"
+
+NOW THE KEY VISUAL: Circle both "2" nodes (the one under 3, and the one under 4)
+with a BRIGHT YELLOW GLOW. Draw a dashed line connecting them.
+
+Big label between them:
+  "SAME QUESTION! 'How many ways to reach step 2?'"
+  "Appears TWICE. Same answer both times."
+
+Maya looking at the tree, surprised:
+  "Wait... I'm computing 'ways to reach step 2' TWICE. Same question, same answer.
+   Why do the work twice?"
+
+SECTION 2, "THAT'S WHY IT'S DP":
+Header: "OVERLAPPING SUBPROBLEMS"
+
+Show the tree again, but now with the duplicate "2" node CROSSED OUT (red X) and
+replaced with a cache lookup.
+
+Two panels side by side:
+  LEFT (WITHOUT cache): Full tree, all nodes computed. "7 function calls."
+  RIGHT (WITH cache): Smaller tree, duplicate "2" pulled from cache. "5 function calls."
+
+The cache shown as a simple notepad/clipboard:
+  remaining = 0 -> 1 way
+  remaining = 1 -> 1 way
+  remaining = 2 -> 2 ways  (solved once, looked up the second time)
+
+Code in a box:
+  def count_ways(remaining, memo={}):
+      if remaining in memo: return memo[remaining]
+      if remaining == 0: return 1
+      if remaining == 1: return 1
+      result = count_ways(remaining - 1, memo) + count_ways(remaining - 2, memo)
+      memo[remaining] = result
+      return result
+
+Maya: "Same recursion. Just check the notepad before computing. That's memoization."
+
+Bottom callout (gold border):
+  "A problem is DP when:
+   1. You make CHOICES (climb 1 or climb 2)
+   2. The SAME subproblem appears MULTIPLE times
+   3. Same question = same answer. Cache it."
+
+
+================================================================================
+PROMPT 3: The 1D Array (what it is, base cases, direction) -> staircase_3.png
+================================================================================
+
+THIS IS THE MOST IMPORTANT IMAGE. Give it maximum visual clarity.
+
+Continue the tutorial. Tall portrait (1024x1792). SAME exact style and character.
+ALL text HUGE. Phone-readable.
+
+Stack 3 sections vertically:
+
+SECTION 1, "WHY AN ARRAY?":
+Header: "THE TABLE IS JUST THE CACHE, LAID OUT FLAT"
+Subtitle: "Every cell answers one question."
+
+Show the recursive function signature:
+  count_ways(remaining)
+
+"How many parameters CHANGE across calls?"
+  remaining: goes down by 1 or 2 -> CHANGES! (green check, circled)
+
+"1 changing variable -> 1D array. That's it."
+
+Show a comparison:
+  LEFT: The memo dictionary from memoization
+    {0: 1, 1: 1, 2: 2, 3: 3, 4: 5, ...}
+  RIGHT: The same data as an array
+    [1, 1, 2, 3, 5, ...]
+  Arrow between them: "SAME DATA. Different shape."
+
+Maya: "The dictionary and the array store the same thing. The array just puts them
+in order so I can fill left to right."
+
+Small comparison box:
+  "Staircase: 1 changing variable -> 1D array"
+  "Knapsack: 2 changing variables -> 2D table"
+  "The number of changing variables = dimensions. Always."
+
+SECTION 2, "WHAT DOES EACH CELL MEAN?":
+Header: "EVERY CELL ANSWERS A QUESTION"
+
+Show a large, clear 1D array with 7 cells (step 0 through step 6).
+Each cell has a label ABOVE it explaining what it means:
+
+  "ways to     "ways to     "ways to     ... through step 6
+   reach        reach        reach
+   step 0"      step 1"      step 2"
+
+  [  ?  ]      [  ?  ]      [  ?  ]      [  ?  ]  [  ?  ]  [  ?  ]  [  ?  ]
+  step 0       step 1       step 2       step 3   step 4   step 5   step 6
+
+"ways[step] = how many different ways can Maya reach step 'step'?"
+
+Maya pointing at the last cell: "ways[6] is the answer to my original question.
+I just need to fill everything before it first."
+
+SECTION 3, "BASE CASES":
+Header: "START WITH WHAT YOU KNOW"
+
+Show the recursive base cases:
+  if remaining == 0: return 1    -> "1 way to be at ground: do nothing"
+  if remaining == 1: return 1    -> "1 way to reach step 1: climb 1"
+
+Show the array with the first two cells filled in GOLDEN color:
+  [ 1 ]  [ 1 ]  [ ? ]  [ ? ]  [ ? ]  [ ? ]  [ ? ]
+  step 0  step 1  step 2  step 3  step 4  step 5  step 6
+
+The golden cells have a warm glow. Maya kneels at the bottom of the staircase,
+tracing her finger over golden numbers "1" already chalked on steps 0 and 1.
+
+Maya: "These two values were always there. The recursion says remaining == 0 or
+remaining == 1, return 1. So ways[0] = 1 and ways[1] = 1. Golden chalk."
+
+Highlighted box:
+  "Base case in recursion = first cells in the array.
+   Whatever the recursion returns at the base, fill that in first."
+
+
+================================================================================
+PROMPT 4: Filling Every Cell -> staircase_4.png
+================================================================================
+
+Continue the tutorial. Tall portrait (1024x1792). SAME exact style and character.
+ALL text HUGE. Phone-readable.
+
+This shows the cell-by-cell walkthrough. Each cell gets its own visual panel.
+
+Header: "FILL LEFT TO RIGHT, ONE CELL AT A TIME"
+Subtitle: "Each cell looks back at the two cells before it."
+
+Show 5 mini-panels vertically, one for each cell being filled (step 2 through step 6).
+Each panel shows:
+  - The array with all previous cells filled and the current cell highlighted
+  - TWO ARROWS pointing backward from the current cell to the two cells it reads
+  - The calculation
+  - Maya on that step of the staircase, looking back
+
+PANEL: STEP 2 (first computation):
+Array: [1 (gold), 1 (gold), ? (highlighted), ?, ?, ?, ?]
+Arrow from step 2 back to step 1 (green, "climb 1"): value 1
+Arrow from step 2 back to step 0 (blue, "climb 2"): value 1
+Calculation: ways[2] = 1 + 1 = 2
+Maya on step 2 of the staircase, head turned back, looking at steps 0 and 1.
+She writes "2" in white chalk.
+Note: "Two ways: (1+1) or (2)"
+
+PANEL: STEP 3:
+Array: [1 (gold), 1 (gold), 2 (green), ? (highlighted), ?, ?, ?]
+Arrow back to step 2 (value 2) and step 1 (value 1)
+Calculation: ways[3] = 2 + 1 = 3
+Maya on step 3, looking back.
+Note: "Three ways: (1+1+1), (1+2), (2+1)"
+
+PANEL: STEP 4:
+Array: [1, 1, 2, 3, ? (highlighted), ?, ?]
+Arrow back to step 3 (value 3) and step 2 (value 2)
+Calculation: ways[4] = 3 + 2 = 5
+Maya on step 4, looking back. She's getting faster, speed lines.
+
+PANEL: STEP 5:
+Array: [1, 1, 2, 3, 5, ? (highlighted), ?]
+Arrow back to step 4 (value 5) and step 3 (value 3)
+Calculation: ways[5] = 5 + 3 = 8
+
+PANEL: STEP 6 (THE ANSWER):
+Array: [1, 1, 2, 3, 5, 8, ? (highlighted with GOLD BORDER)]
+Arrow back to step 5 (value 8) and step 4 (value 5)
+Calculation: ways[6] = 8 + 5 = 13
+Maya at the TOP of the staircase, arms raised in triumph!
+The final cell glows GOLD.
+BIG TEXT: "13 ways to climb 6 steps!"
+
+Bottom: The tabulation code:
+  def count_ways(steps_to_top):
+      ways = [0] * (steps_to_top + 1)
+      ways[0] = 1
+      ways[1] = 1
+      for step in range(2, steps_to_top + 1):
+          ways[step] = ways[step - 1] + ways[step - 2]
+      return ways[steps_to_top]
+
+Annotate each line:
+  ways[0] = 1, ways[1] = 1  ->  "Golden chalk (base cases)"
+  for step in range(2, ...)  ->  "Left to right, after the base cases"
+  ways[step-1] + ways[step-2] -> "Look back 1 + look back 2"
+  return ways[steps_to_top]  ->  "Last cell = the answer"
+
+
+================================================================================
+PROMPT 5: Bridge to 2D -> staircase_5.png
+================================================================================
+
+Continue the tutorial. Tall portrait (1024x1792). SAME exact style and character.
+ALL text HUGE. Phone-readable.
+
+This is a COMPARISON page. Side by side: 1D (staircase) vs 2D (knapsack).
+Show that the process is IDENTICAL, just one more dimension.
+
+Header: "SAME PATTERN, ONE MORE DIMENSION"
+Subtitle: "You just learned tabulation. Knapsack is the same idea."
+
+LEFT SIDE (warm sandstone color scheme, labeled "STAIRCASE"):
+Show the 1D array:
+  [1, 1, 2, 3, 5, 8, 13]
+  "1 changing variable (remaining) -> 1 dimension"
+  "Each cell: ways[step]"
+  "Base cases: first 2 cells"
+  "Fill: left to right"
+  "Answer: last cell"
+  "Looks at: 2 cells to the left"
+  Show arrows from one cell back to its 2 predecessors
+
+RIGHT SIDE (dark blue/navy color scheme, labeled "KNAPSACK"):
+Show the 2D table (small, 3 rows x 4 columns, simplified):
+               0 kg   1 kg   2 kg   3 kg
+  No items     [ 0 ]  [ 0 ]  [ 0 ]  [ 0 ]
+  Gold         [ 0 ]  [ 0 ]  [ 0 ]  [ 0 ]
+  Gold+Ruby    [ 0 ]  [  ?  ] [  ?  ] [  ?  ]
+
+  "2 changing variables (count, bag_limit) -> 2 dimensions"
+  "Each cell: table[row][cap]"
+  "Base cases: first row and first column"
+  "Fill: top to bottom, left to right"
+  "Answer: bottom-right cell"
+  "Looks at: the row above"
+  Show arrows from one cell up to the row above
+
+BOTTOM SECTION, "THE PATTERN (same every time)":
+A numbered checklist that applies to BOTH:
+  1. Count changing variables -> that's your dimensions
+  2. Base case in recursion -> fill the edges
+  3. Recursive formula -> cell formula (same math)
+  4. Fill so every cell you need is already there
+  5. The answer is at the end
+
+Maya in the center between both sides, chalk bag on hip:
+"Same five steps. The staircase is a 1D array. Knapsack is a 2D table. The process
+is identical."
+
+Gold box at bottom:
+  "If you understood the staircase array, you already understand tabulation.
+   The knapsack table is the SAME THING with one more dimension."

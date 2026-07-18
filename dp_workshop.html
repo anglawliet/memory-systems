@@ -147,7 +147,7 @@ td{padding:10px 12px;border:1px solid var(--border)}
 <tr><td><span class="ftag ftag-knap">0/1 Knapsack</span></td><td>Knapsack (take/skip, capacity limit)</td><td>GRAB it or SKIP it</td><td>6</td><td style="color:var(--green)">&#10003; Done</td></tr>
 <tr><td><span class="ftag ftag-uknap">Unbounded Knapsack</span></td><td>Coin Change (items reusable)</td><td>Use it AGAIN or move on</td><td>3</td><td style="color:var(--muted)">Coming</td></tr>
 <tr><td><span class="ftag ftag-lcs">LCS</span></td><td>Longest Common Subsequence</td><td>Match, skip from A, skip from B</td><td>10</td><td style="color:var(--muted)">Coming</td></tr>
-<tr><td><span class="ftag ftag-lin">Linear/Fibonacci</span></td><td>Climbing Stairs</td><td>Step 1 or step 2</td><td>4</td><td style="color:var(--muted)">Coming</td></tr>
+<tr><td><span class="ftag ftag-lin">Linear/Fibonacci</span></td><td><a href="staircase_dp.html" style="color:var(--crimson)">Climbing Stairs</a></td><td>Step 1 or step 2</td><td>4</td><td style="color:var(--green)">&#10003; Done</td></tr>
 <tr><td><span class="ftag ftag-pal">Palindrome</span></td><td>Longest Palindromic Substring</td><td>Expand or stop</td><td>2</td><td style="color:var(--muted)">Coming</td></tr>
 <tr><td><span class="ftag ftag-sm">State Machine</span></td><td>Buy & Sell Stock</td><td>Buy, sell, or rest</td><td>3</td><td style="color:var(--muted)">Coming</td></tr>
 <tr><td><span class="ftag ftag-int">Interval/MCM</span></td><td>Matrix Chain Multiplication</td><td>Where to split</td><td>5</td><td style="color:var(--muted)">Coming</td></tr>
@@ -373,6 +373,11 @@ Every unique (n, W) pair solved at most once.
 <img src="dp/images/family1_C_3.png" alt="Pages 6-7: Changing variables become table dimensions, base cases become first row/column, filled table" class="scene-img">
 
 <!-- ======== TABULATION: Q&A, one question at a time ======== -->
+
+<div style="background:rgba(194,149,106,.1);border:2px solid #c2956a;border-radius:10px;padding:18px;margin:20px 0">
+<div style="color:#c2956a;font-weight:800;font-size:1.05em;margin-bottom:8px">New to tabulation?</div>
+<div style="font-size:.95em">The table below has 2 dimensions (rows and columns). If that feels like too much at once, <a href="staircase_dp.html" style="color:var(--gold2);font-weight:700">start with Maya's Staircase</a>, which teaches tabulation using a simple 1D array. Same idea, just one dimension. Come back here after.</div>
+</div>
 
 <div class="walkthrough-section" style="border-left-color:var(--amber)">
 <h3 style="color:var(--amber)">Step 5: From Recursion to Table (one question at a time)</h3>

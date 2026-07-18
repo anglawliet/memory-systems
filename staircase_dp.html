@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maya's Staircase: Your First DP Table</title>
+<style>
+:root{--bg:#1a1916;--card:#252320;--card2:#2d2a26;--gold:#d4a843;--gold2:#fbbf24;--amber:#f59e0b;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;--red:#ef4444;--crimson:#dc2626;--emerald:#059669;--teal:#14b8a6;--text:#e8e2d6;--muted:#9b9484;--border:#3d3930;--sand:#c2956a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;padding:0 0 80px}
+.hdr{background:linear-gradient(135deg,#1f1a0e,#1a1916);border-bottom:3px solid var(--sand);padding:40px 20px;text-align:center}
+.hdr h1{font-size:2em;color:var(--sand)}.hdr p{color:var(--muted)}
+.wrap{max-width:920px;margin:0 auto;padding:20px}
+h2{color:var(--sand);font-size:1.4em;margin:32px 0 12px;border-bottom:2px solid var(--border);padding-bottom:8px}
+h3{color:var(--sand);margin:20px 0 8px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin:16px 0}
+.scene-img{width:100%;border-radius:10px;margin:12px 0;border:1px solid var(--border)}
+pre{background:#0d0d0b;border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;font-size:.85em;line-height:1.6;margin:10px 0}
+code{font-family:'Fira Code','Courier New',monospace}
+.hi{background:rgba(194,149,106,.1);border:1px solid rgba(194,149,106,.3);border-radius:6px;padding:12px 16px;margin:12px 0}
+.walkthrough-section{background:var(--card);border-radius:12px;padding:20px;margin:20px 0;border-left:4px solid var(--blue)}
+.walkthrough-section h3{color:var(--blue);margin-top:0}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+th{background:var(--card2);color:var(--sand);text-align:center;padding:10px 12px;border:1px solid var(--border)}
+td{padding:10px 12px;border:1px solid var(--border);text-align:center}
+.cell-walk{border-radius:10px;padding:16px;margin:12px 0;font-size:.95em;line-height:1.8}
+.cell-base{background:rgba(251,191,36,.06);border:2px solid var(--gold2)}
+.cell-fill{background:rgba(34,197,94,.06);border:1px solid var(--green)}
+.arr{display:flex;gap:0;margin:12px 0;flex-wrap:wrap;justify-content:center}
+.arr-cell{border:2px solid var(--border);padding:10px 16px;min-width:54px;text-align:center;font-weight:700;font-size:1.1em;background:var(--card)}
+.arr-cell.base{border-color:var(--gold2);background:rgba(251,191,36,.08);color:var(--gold2)}
+.arr-cell.filled{border-color:var(--green);background:rgba(34,197,94,.08);color:var(--green)}
+.arr-cell.current{border-color:var(--amber);background:rgba(245,158,11,.15);color:var(--amber);box-shadow:0 0 12px rgba(245,158,11,.3)}
+.arr-cell.empty{color:var(--muted)}
+.arr-label{display:flex;gap:0;margin:0 0 2px;flex-wrap:wrap;justify-content:center}
+.arr-label span{min-width:54px;text-align:center;font-size:.75em;color:var(--muted);padding:0 16px}
+.nav-link{display:inline-block;background:var(--card);border:1px solid var(--border);padding:10px 20px;border-radius:8px;color:var(--sand);text-decoration:none;font-weight:700;margin:8px 4px;transition:.2s}
+.nav-link:hover{background:var(--sand);color:#000;border-color:var(--sand)}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+<h1>Maya's Staircase</h1>
+<p>Your first DP table. One variable, one array. If you get this, you get tabulation.</p>
+</div>
+
+<div class="wrap">
+
+<div style="margin-bottom:24px">
+<a href="dp_workshop.html" class="nav-link">&larr; Back to DP Workshop</a>
+</div>
+
+<!-- ==================== THE PROBLEM ==================== -->
+<img src="dp/images/staircase_1.png" alt="Problem + Choices: Maya at a 6-step staircase, climb 1 or climb 2, the choice diagram gives the formula" class="scene-img">
+
+<h2>The Problem</h2>
+
+<div class="walkthrough-section" style="border-left-color:var(--sand)">
+<h3 style="color:var(--sand);margin-bottom:12px">Climbing Stairs</h3>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+<div style="background:var(--card2);border-radius:8px;padding:14px;text-align:center">
+<div style="font-size:1.5em">&#x1F9D7;</div>
+<div style="color:var(--sand);font-weight:700;font-size:.95em">Maya</div>
+<div style="font-size:.82em;color:var(--muted)">Rock climber. Chalk bag on her hip. Writes numbers on each step.</div>
+</div>
+<div style="background:var(--card2);border-radius:8px;padding:14px">
+<div style="color:var(--sand);font-weight:700;margin-bottom:6px">The Question</div>
+<div style="font-size:.95em">A staircase has <strong>6 steps</strong>. At each step, Maya can climb <strong>1 step</strong> or <strong>2 steps</strong>. How many different ways can she reach the top?</div>
+</div>
+</div>
+
+<div class="hi">
+<strong style="color:var(--sand)">Why start here?</strong> This problem has <strong>ONE</strong> changing variable (which step you're on). That means the table is just <strong>one array</strong>. No rows and columns to worry about. Learn tabulation here, then add the second dimension in knapsack.
+</div>
+</div>
+
+<!-- ==================== STEP 1: CHOICES ==================== -->
+<h2>Step 1: What Are My Choices?</h2>
+
+<div class="walkthrough-section" style="border-left-color:var(--sand)">
+<h3 style="color:var(--sand)">At each step: climb 1 or climb 2</h3>
+
+<div style="background:rgba(194,149,106,.08);border:2px solid var(--sand);border-radius:10px;padding:18px;margin:12px 0">
+<div style="color:var(--sand);font-weight:700;font-size:1.1em;margin-bottom:12px">THE CHOICE DIAGRAM</div>
+<div style="font-size:.95em;line-height:1.9">
+<strong>Standing at step <code>remaining</code>. How do I get here?</strong><br><br>
+I could have come from <strong>1 step below</strong> (climbed 1)<br>
+I could have come from <strong>2 steps below</strong> (climbed 2)<br><br>
+So: <strong>ways to reach this step = ways to reach (step - 1) + ways to reach (step - 2)</strong>
+</div>
+</div>
+
+<p style="color:var(--muted);font-size:.9em">Two choices at each step. Each choice leads to a smaller problem (fewer steps remaining). That's exactly the pattern for recursion.</p>
+</div>
+
+<!-- ==================== STEP 2: RECURSION ==================== -->
+<h2>Step 2: Choices &rarr; Recursion</h2>
+
+<div class="walkthrough-section" style="border-left-color:var(--sand)">
+<h3 style="color:var(--sand)">The code writes itself from the choices</h3>
+
+<pre><code>def count_ways(remaining):
+    if remaining == 0: return 1
+    if remaining == 1: return 1
+    return count_ways(remaining - 1) + count_ways(remaining - 2)</code></pre>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+<div style="background:var(--card2);border-radius:6px;padding:10px;font-size:.88em">
+<div style="color:var(--sand);font-weight:700;margin-bottom:4px">From the choices</div>
+<code style="color:var(--green)">count_ways(remaining - 1)</code> &rarr; came from 1 below<br>
+<code style="color:var(--green)">count_ways(remaining - 2)</code> &rarr; came from 2 below<br>
+<code>+</code> &rarr; add them (we want TOTAL ways, not the best)
+</div>
+<div style="background:var(--card2);border-radius:6px;padding:10px;font-size:.88em">
+<div style="color:var(--sand);font-weight:700;margin-bottom:4px">Base cases</div>
+<code>remaining == 0</code> &rarr; already at the top. 1 way (do nothing).<br>
+<code>remaining == 1</code> &rarr; 1 step left. 1 way (climb 1).
+</div>
+</div>
+
+<div class="hi" style="margin-top:12px">
+<strong style="color:var(--sand)">Notice:</strong> Knapsack used <code>max(grab, skip)</code> because it wanted the BEST value. Stairs uses <code>+</code> because it wants the TOTAL count of ways. Different question, same structure.
+</div>
+</div>
+
+<!-- ==================== STEP 3: TREE + OVERLAP ==================== -->
+<img src="dp/images/staircase_2.png" alt="Recursive tree for count_ways(4) with overlap highlighted, memoization with cache, why it's DP" class="scene-img">
+
+<h2>Step 3: Draw the Tree, Spot the Overlap</h2>
+
+<div class="walkthrough-section" style="border-left-color:var(--sand)">
+<h3 style="color:var(--sand)">count_ways(4) expanded</h3>
+
+<pre style="font-size:.82em;line-height:1.8"><code>count_ways(4)
+├── count_ways(3)                         # climb 1 from step 3
+│   ├── count_ways(2)  ─ ─ ─ ┐           # climb 1 from step 2
+│   │   ├── count_ways(1) = 1 │
+│   │   └── count_ways(0) = 1 │  SAME!
+│   └── count_ways(1) = 1     │
+└── count_ways(2)  ─ ─ ─ ─ ─ ┘           # climb 2 from step 2
+    ├── count_ways(1) = 1
+    └── count_ways(0) = 1</code></pre>
+
+<div style="background:rgba(251,191,36,.12);border:2px solid var(--gold2);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
+<div style="font-size:1.1em;font-weight:800;color:var(--gold2);margin-bottom:8px">count_ways(2) appears TWICE</div>
+<div style="font-size:.95em">Both times the answer is 2. Same question, same answer. Solved twice without caching.</div>
+</div>
+
+<p style="font-size:.95em;margin-bottom:12px">A problem is DP when:</p>
+<div style="display:grid;grid-template-columns:auto 1fr;gap:8px 12px;font-size:.95em;margin-bottom:12px">
+<div style="color:var(--gold2);font-weight:700">1.</div><div>You make <strong>CHOICES</strong> (climb 1 or climb 2)</div>
+<div style="color:var(--gold2);font-weight:700">2.</div><div>The <strong>SAME subproblem</strong> appears MULTIPLE times in the tree</div>
+<div style="color:var(--gold2);font-weight:700">3.</div><div>Each subproblem has the <strong>SAME answer</strong> every time</div>
+</div>
+</div>
+
+<!-- ==================== STEP 4: MEMOIZE ==================== -->
+<h2>Step 4: Memoize (3 extra lines)</h2>
+
+<div class="walkthrough-section" style="border-left-color:var(--sand)">
+<h3 style="color:var(--sand)">Same code, just cache the answers</h3>
+
+<pre><code>def count_ways(remaining, memo={}):
+    if remaining in memo: return memo[remaining]      # CHECK: already solved?
+    if remaining == 0: return 1
+    if remaining == 1: return 1
+    result = count_ways(remaining - 1, memo) + count_ways(remaining - 2, memo)
+    memo[remaining] = result                           # STORE the answer
+    return result</code></pre>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+<div style="background:rgba(239,68,68,.08);border-radius:6px;padding:10px;font-size:.88em">
+<div style="color:var(--red);font-weight:700;margin-bottom:4px">Without cache: O(2<sup>remaining</sup>)</div>
+Every branch explored, including duplicates.
+</div>
+<div style="background:rgba(34,197,94,.08);border-radius:6px;padding:10px;font-size:.88em">
+<div style="color:var(--green);font-weight:700;margin-bottom:4px">With cache: O(remaining)</div>
+Each value of <code>remaining</code> solved at most once.
+</div>
+</div>
+</div>
+
+<!-- ==================== STEP 5: TABULATION ==================== -->
+<h2 style="color:var(--amber);border-bottom-color:var(--amber)">Step 5: From Recursion to Table</h2>
+
+<div class="hi" style="border-color:var(--amber);margin-bottom:24px">
+<strong style="color:var(--amber)">This is the section that matters.</strong> Everything above (choices, recursion, tree, memo) you already know. The table is what trips people up. We'll go slow, one question at a time.
+</div>
+
+<img src="dp/images/staircase_3.png" alt="Why an array: 1 changing variable = 1D, what each cell means, base cases fill first 2 cells" class="scene-img">
+
+<!-- Q1: Why an array? -->
+<div class="walkthrough-section" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">Q: Why an array? Why not a table with rows and columns?</h3>
+
+<p>Look at your recursive function:</p>
+<pre><code>def count_ways(remaining):</code></pre>
+
+<p>How many parameters <strong>change</strong> across recursive calls?</p>
+
+<div style="display:grid;grid-template-columns:auto 1fr auto;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:12px 0">
+<div style="padding:10px 14px;background:var(--card2);font-weight:700"><code>remaining</code></div>
+<div style="padding:10px 14px">Goes down by 1 or 2 each call</div>
+<div style="padding:10px 14px;color:var(--green);font-weight:700">CHANGES &#x2713;</div>
+</div>
+
+<p><strong>1 changing variable &rarr; 1D array.</strong> That's it.</p>
+
+<p style="color:var(--muted);font-size:.9em">Compare: knapsack had 2 changing variables (<code>count</code> and <code>bag_limit</code>), so it needed a 2D table. Stairs has just 1, so a simple array is enough.</p>
+
+<div class="hi">
+<strong style="color:var(--gold2)">The rule:</strong> Count the parameters that change across recursive calls. That count = number of dimensions.<br>
+1 variable &rarr; 1D array. 2 variables &rarr; 2D table. 3 variables &rarr; 3D (rare). Always.
+</div>
+</div>
+
+<!-- Q2: What does each cell mean? -->
+<div class="walkthrough-section" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">Q: What does each cell in the array mean?</h3>
+
+<p><code>ways[step]</code> = <strong>"How many different ways can Maya reach step <code>step</code>?"</strong></p>
+<p>This is exactly what the recursion computes. The array just stores every answer.</p>
+
+<div style="margin:16px 0">
+<div class="arr-label">
+<span>step 0</span><span>step 1</span><span>step 2</span><span>step 3</span><span>step 4</span><span>step 5</span><span>step 6</span>
+</div>
+<div class="arr">
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+</div>
+<div style="text-align:center;font-size:.85em;color:var(--muted);margin-top:4px">7 cells: one for each step (0 through 6)</div>
+</div>
+
+<p style="font-size:.9em;color:var(--muted)">Step 0 = the ground (starting point). Step 6 = the top. We want <code>ways[6]</code>, the answer to the original question.</p>
+</div>
+
+<!-- Q3: Base cases -->
+<div class="walkthrough-section" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">Q: Which cells can I fill immediately? (Base cases)</h3>
+
+<p>Look at the recursive base cases:</p>
+<pre><code>if remaining == 0: return 1
+if remaining == 1: return 1</code></pre>
+
+<p><code>remaining == 0</code> means "standing at step 0." There's 1 way to be at the ground: do nothing. So <code>ways[0] = 1</code>.</p>
+<p><code>remaining == 1</code> means "standing at step 1." There's 1 way: take a single step from the ground. So <code>ways[1] = 1</code>.</p>
+
+<div style="margin:16px 0">
+<div class="arr-label">
+<span>step 0</span><span>step 1</span><span>step 2</span><span>step 3</span><span>step 4</span><span>step 5</span><span>step 6</span>
+</div>
+<div class="arr">
+<div class="arr-cell base">1</div>
+<div class="arr-cell base">1</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+</div>
+<div style="text-align:center;font-size:.85em;color:var(--gold2);margin-top:4px">Base cases filled. Golden values, always there before we start.</div>
+</div>
+
+<div class="hi">
+<strong style="color:var(--gold2)">Aditya Verma's rule:</strong> Whatever the recursion returns at the base case, fill that into the array first. Recursive base case = array initialization. Always.
+</div>
+</div>
+
+<!-- Q4: How do I fill the rest? -->
+<div class="walkthrough-section" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">Q: How do I fill the rest? Which direction?</h3>
+
+<p>The recursive formula:</p>
+<pre><code>count_ways(remaining) = count_ways(remaining - 1) + count_ways(remaining - 2)</code></pre>
+
+<p>In table language:</p>
+<pre><code>ways[step] = ways[step - 1] + ways[step - 2]</code></pre>
+
+<p>Each cell needs the <strong>two cells before it</strong>. So fill <strong>left to right</strong>, starting from step 2 (the first cell after the base cases).</p>
+
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:12px 0;font-size:.95em">
+<strong style="color:var(--amber)">Where does each piece come from?</strong><br><br>
+<code>ways[step - 1]</code> = the cell <strong>one spot to the left</strong> (reached this step by climbing 1)<br>
+<code>ways[step - 2]</code> = the cell <strong>two spots to the left</strong> (reached this step by climbing 2)<br>
+<code>+</code> = add them (total number of ways)
+</div>
+
+<p style="color:var(--muted);font-size:.9em">This is why we fill left to right: when we get to step 3, steps 1 and 2 are already filled. When we get to step 4, steps 2 and 3 are already filled. Each cell can always look back at cells that already have values.</p>
+</div>
+
+<!-- ==================== THE WALKTHROUGH ==================== -->
+<img src="dp/images/staircase_4.png" alt="Filling every cell left to right: step 2 through step 6 with arrows showing lookback, tabulation code" class="scene-img">
+
+<h2 style="color:var(--amber);border-bottom-color:var(--amber)">Filling Every Cell</h2>
+
+<p style="margin-bottom:8px">Base cases are filled. Now, left to right, one cell at a time.</p>
+
+<!-- CELL: step 2 -->
+<div class="cell-walk cell-fill">
+<div style="color:var(--green);font-weight:700;margin-bottom:8px;font-size:1.05em">ways[2]: How many ways to reach step 2?</div>
+
+<div style="margin:12px 0">
+<div class="arr-label">
+<span>step 0</span><span>step 1</span><span>step 2</span><span>step 3</span><span>step 4</span><span>step 5</span><span>step 6</span>
+</div>
+<div class="arr">
+<div class="arr-cell base">1</div>
+<div class="arr-cell base">1</div>
+<div class="arr-cell current">?</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+</div>
+</div>
+
+<code>ways[2] = ways[1] + ways[0]</code><br>
+Look <strong>1 left</strong>: <code>ways[1] = 1</code> (climb 1 step from step 1)<br>
+Look <strong>2 left</strong>: <code>ways[0] = 1</code> (climb 2 steps from step 0)<br><br>
+<code>ways[2] = 1 + 1 = <strong>2</strong></code><br>
+<span style="color:var(--muted);font-size:.9em">Two ways: (1+1) or (2). Either take two single steps, or one double step.</span>
+</div>
+
+<!-- CELL: step 3 -->
+<div class="cell-walk cell-fill">
+<div style="color:var(--green);font-weight:700;margin-bottom:8px;font-size:1.05em">ways[3]: How many ways to reach step 3?</div>
+
+<div style="margin:12px 0">
+<div class="arr-label">
+<span>step 0</span><span>step 1</span><span>step 2</span><span>step 3</span><span>step 4</span><span>step 5</span><span>step 6</span>
+</div>
+<div class="arr">
+<div class="arr-cell base">1</div>
+<div class="arr-cell base">1</div>
+<div class="arr-cell filled">2</div>
+<div class="arr-cell current">?</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+</div>
+</div>
+
+<code>ways[3] = ways[2] + ways[1]</code><br>
+Look <strong>1 left</strong>: <code>ways[2] = 2</code> (we just computed this!)<br>
+Look <strong>2 left</strong>: <code>ways[1] = 1</code><br><br>
+<code>ways[3] = 2 + 1 = <strong>3</strong></code><br>
+<span style="color:var(--muted);font-size:.9em">Three ways: (1+1+1), (1+2), or (2+1).</span>
+</div>
+
+<!-- CELL: step 4 -->
+<div class="cell-walk cell-fill">
+<div style="color:var(--green);font-weight:700;margin-bottom:8px;font-size:1.05em">ways[4]: How many ways to reach step 4?</div>
+
+<div style="margin:12px 0">
+<div class="arr-label">
+<span>step 0</span><span>step 1</span><span>step 2</span><span>step 3</span><span>step 4</span><span>step 5</span><span>step 6</span>
+</div>
+<div class="arr">
+<div class="arr-cell base">1</div>
+<div class="arr-cell base">1</div>
+<div class="arr-cell filled">2</div>
+<div class="arr-cell filled">3</div>
+<div class="arr-cell current">?</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+</div>
+</div>
+
+<code>ways[4] = ways[3] + ways[2]</code><br>
+Look <strong>1 left</strong>: <code>ways[3] = 3</code><br>
+Look <strong>2 left</strong>: <code>ways[2] = 2</code><br><br>
+<code>ways[4] = 3 + 2 = <strong>5</strong></code><br>
+<span style="color:var(--muted);font-size:.9em">The rhythm: look back at the two cells you already filled, add them. Write the answer. Move right.</span>
+</div>
+
+<!-- CELL: step 5 -->
+<div class="cell-walk cell-fill">
+<div style="color:var(--green);font-weight:700;margin-bottom:8px;font-size:1.05em">ways[5]: How many ways to reach step 5?</div>
+
+<div style="margin:12px 0">
+<div class="arr-label">
+<span>step 0</span><span>step 1</span><span>step 2</span><span>step 3</span><span>step 4</span><span>step 5</span><span>step 6</span>
+</div>
+<div class="arr">
+<div class="arr-cell base">1</div>
+<div class="arr-cell base">1</div>
+<div class="arr-cell filled">2</div>
+<div class="arr-cell filled">3</div>
+<div class="arr-cell filled">5</div>
+<div class="arr-cell current">?</div>
+<div class="arr-cell empty">?</div>
+</div>
+</div>
+
+<code>ways[5] = ways[4] + ways[3]</code><br>
+Look <strong>1 left</strong>: <code>ways[4] = 5</code><br>
+Look <strong>2 left</strong>: <code>ways[3] = 3</code><br><br>
+<code>ways[5] = 5 + 3 = <strong>8</strong></code>
+</div>
+
+<!-- CELL: step 6 -->
+<div class="cell-walk" style="background:rgba(194,149,106,.08);border:2px solid var(--sand)">
+<div style="color:var(--sand);font-weight:700;margin-bottom:8px;font-size:1.1em">ways[6]: How many ways to reach step 6? THE ANSWER</div>
+
+<div style="margin:12px 0">
+<div class="arr-label">
+<span>step 0</span><span>step 1</span><span>step 2</span><span>step 3</span><span>step 4</span><span>step 5</span><span>step 6</span>
+</div>
+<div class="arr">
+<div class="arr-cell base">1</div>
+<div class="arr-cell base">1</div>
+<div class="arr-cell filled">2</div>
+<div class="arr-cell filled">3</div>
+<div class="arr-cell filled">5</div>
+<div class="arr-cell filled">8</div>
+<div class="arr-cell current">?</div>
+</div>
+</div>
+
+<code>ways[6] = ways[5] + ways[4]</code><br>
+Look <strong>1 left</strong>: <code>ways[5] = 8</code><br>
+Look <strong>2 left</strong>: <code>ways[4] = 5</code><br><br>
+<code>ways[6] = 8 + 5 = <strong style="font-size:1.2em">13</strong></code><br><br>
+<strong style="color:var(--sand)">There are 13 different ways for Maya to climb 6 steps.</strong>
+</div>
+
+<!-- Complete array -->
+<div class="walkthrough-section" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">The Complete Array</h3>
+
+<div style="margin:16px 0">
+<div class="arr-label">
+<span>step 0</span><span>step 1</span><span>step 2</span><span>step 3</span><span>step 4</span><span>step 5</span><span>step 6</span>
+</div>
+<div class="arr">
+<div class="arr-cell base">1</div>
+<div class="arr-cell base">1</div>
+<div class="arr-cell filled">2</div>
+<div class="arr-cell filled">3</div>
+<div class="arr-cell filled">5</div>
+<div class="arr-cell filled">8</div>
+<div class="arr-cell filled" style="border-color:var(--sand);color:var(--sand);font-size:1.3em;background:rgba(194,149,106,.12)">13</div>
+</div>
+</div>
+
+<div style="text-align:center;margin:12px 0">
+<span style="display:inline-block;border:2px solid var(--gold2);background:rgba(251,191,36,.08);border-radius:4px;padding:2px 10px;font-size:.82em;color:var(--gold2);margin:2px">base case</span>
+<span style="display:inline-block;border:2px solid var(--green);background:rgba(34,197,94,.08);border-radius:4px;padding:2px 10px;font-size:.82em;color:var(--green);margin:2px">computed</span>
+<span style="display:inline-block;border:2px solid var(--sand);background:rgba(194,149,106,.12);border-radius:4px;padding:2px 10px;font-size:.82em;color:var(--sand);margin:2px">answer</span>
+</div>
+
+<p><strong>Why is the answer at the end?</strong> Because <code>ways[6]</code> means "how many ways to reach step 6," and 6 is the last cell. That's the original question. We filled left to right until we reached it.</p>
+</div>
+
+<!-- ==================== THE TABULATION CODE ==================== -->
+<h2 style="color:var(--amber);border-bottom-color:var(--amber)">The Tabulation Code</h2>
+
+<div class="walkthrough-section" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">Every line maps to something we just did</h3>
+
+<pre><code>def count_ways(steps_to_top):
+    ways = [0] * (steps_to_top + 1)        # empty array, one cell per step
+
+    ways[0] = 1                             # base case: 1 way to stand at ground
+    ways[1] = 1                             # base case: 1 way to reach step 1
+
+    for step in range(2, steps_to_top + 1): # fill left to right, starting at step 2
+        ways[step] = ways[step - 1] + ways[step - 2]   # look back 1 + look back 2
+
+    return ways[steps_to_top]               # last cell = the answer</code></pre>
+
+<div style="display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin-top:14px;font-size:.9em">
+<code style="color:var(--amber)">ways = [0] * ...</code><div>Create the empty array (7 cells for 6 steps)</div>
+<code style="color:var(--gold2)">ways[0] = 1</code><div>Base case from recursion: <code>remaining == 0 &rarr; return 1</code></div>
+<code style="color:var(--gold2)">ways[1] = 1</code><div>Base case from recursion: <code>remaining == 1 &rarr; return 1</code></div>
+<code style="color:var(--green)">for step in range(2, ...)</code><div>Fill left to right, starting after the base cases</div>
+<code style="color:var(--green)">ways[step - 1] + ways[step - 2]</code><div>Same formula as the recursion, reading from the array</div>
+<code style="color:var(--sand)">return ways[steps_to_top]</code><div>The last cell holds the answer to the original question</div>
+</div>
+</div>
+
+<!-- ==================== COMPARE: RECURSION vs TABLE ==================== -->
+<h2>The Whole Picture: Same Logic, Three Forms</h2>
+
+<div class="walkthrough-section" style="border-left-color:var(--blue)">
+<h3 style="color:var(--blue)">Recursion &rarr; Memoization &rarr; Tabulation</h3>
+
+<div style="display:grid;gap:12px">
+<div style="background:var(--card2);border-radius:8px;padding:14px">
+<div style="color:var(--red);font-weight:700;font-size:.9em;margin-bottom:6px">RECURSION (correct but slow, O(2<sup>n</sup>))</div>
+<pre style="margin:0;font-size:.82em"><code>def count_ways(remaining):
+    if remaining == 0: return 1
+    if remaining == 1: return 1
+    return count_ways(remaining - 1) + count_ways(remaining - 2)</code></pre>
+</div>
+<div style="background:var(--card2);border-radius:8px;padding:14px">
+<div style="color:var(--blue);font-weight:700;font-size:.9em;margin-bottom:6px">MEMOIZATION (add a cache, O(n))</div>
+<pre style="margin:0;font-size:.82em"><code>def count_ways(remaining, memo={}):
+    if remaining in memo: return memo[remaining]
+    if remaining == 0: return 1
+    if remaining == 1: return 1
+    result = count_ways(remaining - 1, memo) + count_ways(remaining - 2, memo)
+    memo[remaining] = result
+    return result</code></pre>
+</div>
+<div style="background:var(--card2);border-radius:8px;padding:14px">
+<div style="color:var(--green);font-weight:700;font-size:.9em;margin-bottom:6px">TABULATION (no recursion, O(n))</div>
+<pre style="margin:0;font-size:.82em"><code>def count_ways(steps_to_top):
+    ways = [0] * (steps_to_top + 1)
+    ways[0] = 1
+    ways[1] = 1
+    for step in range(2, steps_to_top + 1):
+        ways[step] = ways[step - 1] + ways[step - 2]
+    return ways[steps_to_top]</code></pre>
+</div>
+</div>
+
+<p style="font-size:.9em;color:var(--muted);margin-top:12px">Same answer (13 for 6 steps). Recursion is the clearest to write. Memoization makes it fast. Tabulation removes the recursion entirely.</p>
+</div>
+
+<!-- ==================== THE BRIDGE TO 2D ==================== -->
+<img src="dp/images/staircase_5.png" alt="Bridge: staircase 1D array vs knapsack 2D table, same 5-step pattern with one more dimension" class="scene-img">
+
+<h2 style="color:var(--amber);border-bottom-color:var(--amber)">The Bridge to Knapsack</h2>
+
+<div class="walkthrough-section" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">You just learned tabulation. Knapsack is the same idea, one more dimension.</h3>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0">
+<div style="background:rgba(194,149,106,.08);border:2px solid var(--sand);border-radius:10px;padding:16px">
+<div style="color:var(--sand);font-weight:700;font-size:1.05em;margin-bottom:8px">Staircase (1D)</div>
+<div style="font-size:.9em;line-height:1.8">
+<strong>1 changing variable:</strong> <code>remaining</code><br>
+<strong>Table shape:</strong> 1D array<br>
+<strong>Each cell:</strong> <code>ways[step]</code><br>
+<strong>Looks at:</strong> the 2 cells to the left<br>
+<strong>Base cases:</strong> first 2 cells<br>
+<strong>Answer:</strong> last cell
+</div>
+</div>
+<div style="background:rgba(59,130,246,.08);border:2px solid var(--blue);border-radius:10px;padding:16px">
+<div style="color:var(--blue);font-weight:700;font-size:1.05em;margin-bottom:8px">Knapsack (2D)</div>
+<div style="font-size:.9em;line-height:1.8">
+<strong>2 changing variables:</strong> <code>count</code>, <code>bag_limit</code><br>
+<strong>Table shape:</strong> 2D table (rows &times; columns)<br>
+<strong>Each cell:</strong> <code>table[row][cap]</code><br>
+<strong>Looks at:</strong> the row above<br>
+<strong>Base cases:</strong> first row and first column<br>
+<strong>Answer:</strong> bottom-right cell
+</div>
+</div>
+</div>
+
+<div class="hi">
+<strong style="color:var(--amber)">The pattern is identical:</strong><br>
+1. Count changing variables &rarr; that's your dimensions<br>
+2. Base case in recursion &rarr; fill the edges of the array/table<br>
+3. Recursive formula &rarr; cell formula (same math, reads from the table)<br>
+4. Fill in order so every cell you need is already computed<br>
+5. The answer is at the end (last cell, or bottom-right corner)
+</div>
+
+<div style="text-align:center;margin-top:16px">
+<a href="dp_workshop.html" class="nav-link">Go to Knapsack (2D tabulation) &rarr;</a>
+</div>
+</div>
+
+<!-- ==================== LINEAR DP FAMILY ==================== -->
+<h2>The Linear DP Family</h2>
+
+<div class="walkthrough-section" style="border-left-color:var(--sand)">
+<h3 style="color:var(--sand)">Same pattern, small tweaks</h3>
+<p style="margin-bottom:12px">Every problem below uses the same 1D tabulation structure. The only thing that changes is what each cell stores and which cells it looks back at.</p>
+
+<div style="display:grid;gap:10px">
+<div style="background:var(--card2);border-radius:8px;padding:14px">
+<div style="color:var(--sand);font-weight:700;margin-bottom:4px">Climbing Stairs (#70)</div>
+<div style="font-size:.88em;color:var(--muted)"><code>ways[step] = ways[step - 1] + ways[step - 2]</code></div>
+<div style="font-size:.85em">Cell stores: number of ways. Looks back: 2 cells. Operation: add.</div>
+</div>
+<div style="background:var(--card2);border-radius:8px;padding:14px">
+<div style="color:var(--sand);font-weight:700;margin-bottom:4px">Min Cost Climbing Stairs (#746)</div>
+<div style="font-size:.88em;color:var(--muted)"><code>cost_to[step] = min(cost_to[step-1] + cost[step-1], cost_to[step-2] + cost[step-2])</code></div>
+<div style="font-size:.85em">Cell stores: minimum cost. Looks back: 2 cells. Operation: min (cheapest path).</div>
+</div>
+<div style="background:var(--card2);border-radius:8px;padding:14px">
+<div style="color:var(--sand);font-weight:700;margin-bottom:4px">House Robber (#198)</div>
+<div style="font-size:.88em;color:var(--muted)"><code>best[house] = max(best[house-1], best[house-2] + money[house])</code></div>
+<div style="font-size:.85em">Cell stores: max money. Looks back: 2 cells. Operation: max (rob or skip, like knapsack!).</div>
+</div>
+<div style="background:var(--card2);border-radius:8px;padding:14px">
+<div style="color:var(--sand);font-weight:700;margin-bottom:4px">Decode Ways (#91)</div>
+<div style="font-size:.88em;color:var(--muted)"><code>ways[i] = (ways[i-1] if valid single) + (ways[i-2] if valid pair)</code></div>
+<div style="font-size:.85em">Cell stores: number of ways. Looks back: 1 or 2 cells (conditional). Operation: add.</div>
+</div>
+</div>
+</div>
+
+<div style="text-align:center;margin-top:32px">
+<a href="dp_workshop.html" class="nav-link">&larr; Back to DP Workshop</a>
+</div>
+
+</div>
+
+</body>
+</html>

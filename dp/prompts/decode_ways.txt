@@ -1,0 +1,427 @@
+DECODE WAYS: Full Walkthrough
+===============================
+The student already knows Climbing Stairs and House Robber.
+Decode Ways is the CONDITIONAL look-back problem. Teach fully:
+question, choices, recursion, tree, array, fill, code.
+
+The core idea: staircase ALWAYS looks back 1 and 2. Decode Ways
+checks IF the digits are valid BEFORE each look-back.
+
+Example: digits = "226"
+  "2|2|6" = B,B,F    "22|6" = V,F    "2|26" = B,Z
+  Answer: 3 ways
+
+Descriptive names:
+  ways[position]     not  dp[i]
+  single_digit       not  s[i]
+  double_digit       not  s[i-1:i+1]
+  digits             not  s
+
+Images produced:
+  Prompt 1 -> decode_ways_1.png  (The Question + The Choices)
+  Prompt 2 -> decode_ways_2.png  (Recursion + Tree + The Tricky Cases)
+  Prompt 3 -> decode_ways_3.png  (The Array + Filling Every Cell + Code)
+
+
+================================================================================
+STYLE BIBLE (copy into every prompt)
+================================================================================
+
+PASTE THIS BLOCK AT THE TOP OF EVERY DECODE WAYS PROMPT.
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Maya):
+- Young woman, mid-20s, athletic build, medium-brown skin (warm undertone).
+- Hair: jet-black, pulled into a SHORT LOW PONYTAIL with a few loose strands
+  framing her face. Never a bun, never loose, never long.
+- Face: round cheeks, big expressive dark-brown eyes, thick eyebrows,
+  small nose, confident smirk or grin.
+- Outfit (EVERY image, no exceptions):
+  * Fitted dark-olive-green cargo pants (slightly dusty at the knees).
+  * Snug black tank top.
+  * A brown leather CHALK BAG clipped to her right hip.
+  * Fingerless black climbing gloves on both hands.
+  * Dark-gray low-top sneakers.
+  * A playful black headband on her forehead.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+  Soft ambient occlusion shadows. No photorealism.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat illustration,
+  NOT photorealistic, NOT anime, NOT watercolor.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE (use ONLY these colors):
+- Background: solid warm cream (#FFF8F0). No textures, no gradients,
+  no chalkboard, no paper grain. Just flat warm cream everywhere.
+- Section cards: white (#FFFFFF) with a thin 2px border in warm gray (#D4C5B2)
+  and 8px rounded corners. Subtle drop shadow (2px, 10% opacity black).
+- Section number badges: solid circle, burnt orange (#E8722A), white number inside.
+- Headers: dark charcoal (#2D2D2D), bold.
+- Body text: dark gray (#4A4A4A).
+- Code blocks: dark navy background (#1E293B), white monospace text,
+  8px rounded corners.
+- VALID / open / yes: leaf green (#4CAF50).
+- CONDITIONAL / check: warm orange (#FF9800).
+- INVALID / locked / dead end: red (#E53935).
+- Highlights / key insight boxes: pale gold fill (#FFF3D4) with
+  gold border (#F5C542), 8px rounded corners.
+- Array cells: white fill, charcoal border, charcoal text.
+- Base-case cells: pale gold fill (#FFF3D4), gold border (#F5C542).
+- Current/highlighted cell: pale green fill (#E8F5E9), green border (#4CAF50).
+
+DECODER RING (appears in images that show the encoding):
+- A circular cipher wheel showing A=1, B=2, ... Z=26.
+- Warm sandstone color (#D4B896) with charcoal letters and numbers.
+- About 150px diameter, used as a decorative prop.
+
+DIGIT BOXES:
+- Each digit of the input string shown in its own rounded box:
+  * Normal digit: white fill, charcoal border.
+  * Grouped digits (valid pair): connected boxes with a colored bracket below.
+  * Invalid digit/pair: red border, red X overlay.
+
+DOOR METAPHOR:
+- "Door 1" (single digit check): a small cartoon door icon, green when open,
+  red with a padlock when locked.
+- "Door 2" (double digit check): same door icon but wider (double door),
+  green when open, red with padlock when locked.
+
+LAYOUT:
+- Sections stacked vertically, separated by 20px of cream background.
+- Each section inside a white card with the styling described above.
+- Section number in a burnt-orange circle badge at the top-left of each card.
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: The Question + The Choices -> decode_ways_1.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Stack 2 sections vertically:
+
+
+SECTION 1 (badge: "1"), "THE QUESTION":
+Header: "DECODE WAYS"
+Subtitle: "LeetCode #91"
+
+Show the decoder ring (from style bible) as a decorative element.
+
+Problem statement in a white card:
+  "A message was encoded by replacing each letter with its number.
+   'A' -> 1, 'B' -> 2, ..., 'Z' -> 26.
+   Given a string of digits, return how many ways to decode it."
+
+Show the example "226" with three colored split lines:
+  The digits "2", "2", "6" in separate digit boxes.
+
+  Split 1: "2 | 2 | 6" = B, B, F
+    (each digit in its own green-bordered box)
+  Split 2: "22 | 6" = V, F
+    (first two digits grouped with green bracket, last separate)
+  Split 3: "2 | 26" = B, Z
+    (first separate, last two grouped with green bracket)
+
+  "3 ways to split '226' into valid letters."
+
+Maya holding the decoder ring, looking at the digits. Speech bubble:
+  "How do I count all valid splits without listing them all?"
+
+
+SECTION 2 (badge: "2"), "THE CHOICES":
+Header: "AT EACH POSITION, ONE OR TWO WAYS TO READ"
+Subtitle: "How did I figure out the choices? Look at the digits."
+
+Show Maya at position 3 (digit "6" in "226"). Two options:
+
+  OPTION A (green card, green arrow pointing back 1):
+    Header: "READ 1 DIGIT"
+    Take just "6" -> F (valid letter, 1-9)
+    "If this single digit is 1 through 9, it's a letter."
+    Arrow points back to ways[position - 1]
+
+  OPTION B (orange card, orange arrow pointing back 2):
+    Header: "READ 2 DIGITS"
+    Take "26" -> Z (valid letter, 10-26)
+    "If these two digits form 10 through 26, it's a letter."
+    Arrow points back to ways[position - 2]
+
+Formula in a gold highlight box:
+  ways[position] = 0
+  IF single digit valid (1-9):    add ways[position - 1]
+  IF double digit valid (10-26):  add ways[position - 2]
+
+BIG comparison card (the key insight):
+
+  LEFT (Climbing Stairs, smaller, faded):
+    "ALWAYS look back 1 AND 2."
+    Two solid green arrows always pointing back.
+
+  RIGHT (Decode Ways, larger, bright):
+    "CHECK before each look-back."
+    Two arrows, each with a DOOR icon on it.
+    Door 1: "1-9?" (single digit check)
+    Door 2: "10-26?" (double digit check)
+    "Valid digit? Door OPENS. Invalid? Door LOCKED."
+
+Maya speech bubble:
+  "Same structure as staircase. But I check the digits before looking back."
+
+Gold highlight box at bottom:
+  "THREE POSSIBLE STATES:
+   Both doors open -> two look-backs (like staircase)
+   One door open -> one look-back
+   Both doors locked -> DEAD END (ways = 0)"
+
+Show 3 small icons:
+  Green traffic light: "BOTH OPEN"
+  Yellow traffic light: "ONE OPEN"
+  Red traffic light: "BOTH LOCKED"
+
+
+================================================================================
+PROMPT 2: Recursion + Tree + Tricky Cases -> decode_ways_2.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Stack 3 sections vertically:
+
+
+SECTION 1 (badge: "3"), "THE RECURSIVE CODE":
+Header: "TURN THE CHOICES INTO CODE"
+
+Base case in a small white card:
+  decode_ways(0) = 1   "Empty string = 1 way (do nothing)."
+
+Code in a dark navy code block:
+  digits = "226"
+
+  def decode_ways(position):
+      if position == 0: return 1
+      total = 0
+
+      single_digit = int(digits[position - 1])
+      if single_digit >= 1:
+          total += decode_ways(position - 1)
+
+      if position >= 2:
+          double_digit = int(digits[position - 2:position])
+          if 10 <= double_digit <= 26:
+              total += decode_ways(position - 2)
+
+      return total
+
+  decode_ways(3)
+
+Annotations:
+  single_digit >= 1   -> green door icon: "Door 1: valid letter?"
+  10 <= double <= 26  -> orange door icon: "Door 2: valid pair?"
+  total += ...        -> "Only add if the door is open"
+
+
+SECTION 2 (badge: "4"), "THE TREE":
+Header: "DRAW THE CALLS"
+Subtitle: "decode_ways(3) for '226'"
+
+Tree diagram:
+                3
+              /   \
+            2       1
+          /   \     |
+        1      0    0
+        |    (base) (base)
+        0
+      (base)
+
+Left branches: "read 1 digit" in green, labeled with the digit read.
+Right branches: "read 2 digits" in orange, labeled with the pair read.
+
+At node 3: left reads "6" (F), right reads "26" (Z)
+At node 2: left reads "2" (B), right reads "22" (V)
+At node 1: left reads "2" (B), no right (only 1 digit available)
+
+Base nodes (0) have gold fill. Label: "1 way"
+
+Circle both paths that reach node "1" in yellow.
+"decode_ways(1) asked from two different paths."
+
+Maya speech bubble:
+  "Same tree pattern. Overlap at position 1."
+
+
+SECTION 3 (badge: "5"), "THE TRICKY CASES":
+Header: "WHEN DOES EACH DOOR OPEN?"
+
+This is the KEY section for Decode Ways. Show clearly when each check passes.
+
+DOOR 1 (single digit check):
+  Show digits 0 through 9 in small boxes:
+    Digit 0: red box, red X. "0 is NOT a letter. Door 1 LOCKED."
+    Digits 1-9: green boxes, green check. "Valid (A through I). Door 1 OPEN."
+
+DOOR 2 (double digit check):
+  Show ranges:
+    00-09: red, "Leading zero. LOCKED."
+    10-26: green, "J through Z. OPEN."
+    27-99: red, "Past Z (26). LOCKED."
+
+Show two concrete examples in white cards:
+
+  EXAMPLE "106":
+    Position 1 (digit "1"): Door 1 open (A). Door 2: N/A. ways = 1
+    Position 2 (digit "0"): Door 1 LOCKED (0 invalid!). Door 2 open (10 = J). ways = 1
+    Position 3 (digit "6"): Door 1 open (F). Door 2 LOCKED (06 invalid). ways = 1
+    "Answer: 1 way. Only J, F."
+
+  EXAMPLE "30":
+    Position 1 (digit "3"): Door 1 open (C). ways = 1
+    Position 2 (digit "0"): Door 1 LOCKED. Door 2 LOCKED (30 > 26). ways = 0
+    "Answer: 0 ways. DEAD END. '30' can't be decoded at all!"
+    Show both doors with red padlocks. Red X over "30".
+
+Maya speech bubble:
+  "'0' is the trap. It locks Door 1 always. And Door 2 only
+   opens if the pair is 10 or 20."
+
+
+================================================================================
+PROMPT 3: Array + Fill + Code -> decode_ways_3.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Stack 3 sections vertically:
+
+
+SECTION 1 (badge: "6"), "THE ARRAY":
+Header: "WHAT DOES EACH CELL MEAN?"
+
+Show a 1D array with 4 cells. Labels ABOVE each cell:
+
+  "ways to       "ways to       "ways to       "ways to
+   decode         decode         decode         decode
+   empty"         '2'"           '22'"          '226'"
+
+  [   ?   ]      [   ?   ]      [   ?   ]      [   ?   ]
+   pos 0          pos 1          pos 2          pos 3
+   (empty)        (first digit)  (first 2)      (all 3)
+
+"ways[position] = how many ways to decode the first 'position' digits"
+
+Base case in gold:
+  ways = [ 1 (gold) ,  ? ,  ? ,  ? ]
+  "ways[0] = 1. One way to decode nothing: do nothing."
+
+Maya speech bubble:
+  "ways[3] is the answer. Total decodings for the whole string."
+
+
+SECTION 2 (badge: "7"), "FILL IT STEP BY STEP":
+Header: "CHECK THE DOORS, THEN FILL"
+
+Show digits = "2", "2", "6" in digit boxes at the top.
+
+PANEL: ways[1] (first digit "2"):
+  Array: [ 1 (gold), ? (green highlight), ?, ? ]
+
+  Door 1 (single "2"): green door OPEN. Valid (B).
+    += ways[0] = 1
+  Door 2 (double): no previous digit. N/A.
+
+  ways[1] = 1
+  "One way: B"
+
+PANEL: ways[2] (second digit "2"):
+  Array: [ 1, 1, ? (green highlight), ? ]
+
+  Door 1 (single "2"): green door OPEN. Valid (B).
+    += ways[1] = 1
+  Door 2 (double "22"): green double-door OPEN. Valid (V, 10 <= 22 <= 26).
+    += ways[0] = 1
+
+  ways[2] = 1 + 1 = 2
+  "Two ways: B,B or V"
+
+PANEL: ways[3] (third digit "6"):
+  Array: [ 1, 1, 2, ? (green highlight with gold border) ]
+
+  Door 1 (single "6"): green door OPEN. Valid (F).
+    += ways[2] = 2
+  Door 2 (double "26"): green double-door OPEN. Valid (Z, 10 <= 26 <= 26).
+    += ways[1] = 1
+
+  ways[3] = 2 + 1 = 3
+  "Three ways: B,B,F or V,F or B,Z"
+
+COMPLETED ARRAY (gold highlight box):
+  ways = [ 1 ,  1 ,  2 ,  3 ]
+          empty  "2"  "22"  "226"
+
+Show all three decodings as paths:
+  Path 1: 2|2|6 = B,B,F (three single-digit hops, green arrows)
+  Path 2: 22|6 = V,F (one double hop + one single, orange + green arrows)
+  Path 3: 2|26 = B,Z (one single + one double, green + orange arrows)
+
+Maya arms raised: "3 ways!"
+
+
+SECTION 3 (badge: "8"), "THE CODE":
+Header: "THE SOLUTION"
+
+Code in a dark navy code block:
+  def decode_ways(digits):
+      length = len(digits)
+      ways = [0] * (length + 1)
+      ways[0] = 1
+
+      for position in range(1, length + 1):
+          single_digit = int(digits[position - 1])
+          if single_digit >= 1:
+              ways[position] += ways[position - 1]
+
+          if position >= 2:
+              double_digit = int(digits[position - 2:position])
+              if 10 <= double_digit <= 26:
+                  ways[position] += ways[position - 2]
+
+      return ways[length]
+
+Annotations:
+  ways[0] = 1                   ->  "Empty string = 1 way (do nothing)"
+  single_digit >= 1             ->  green door: "Door 1: valid letter?"
+  10 <= double_digit <= 26      ->  orange door: "Door 2: valid pair?"
+  += ways[position - 1]         ->  "Open Door 1: add from one back"
+  += ways[position - 2]         ->  "Open Door 2: add from two back"
+  return ways[length]           ->  "Last cell = total decodings"
+
+Gold highlight box at the bottom:
+  "STAIRCASE vs DECODE WAYS:
+   Staircase: ALWAYS look back 1 and 2.
+   Decode:    CHECK each digit before looking back.
+
+   Same 1D array. Same left-to-right fill.
+   The difference: conditional look-backs.
+   '0' is the trap. It locks Door 1 and might lock Door 2."

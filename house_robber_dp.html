@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>House Robber: Skip or Take</title>
+<style>
+:root{--bg:#1a1916;--card:#252320;--card2:#2d2a26;--gold:#d4a843;--gold2:#fbbf24;--amber:#f59e0b;--green:#22c55e;--blue:#3b82f6;--red:#ef4444;--text:#e8e2d6;--muted:#9b9484;--border:#3d3930;--sand:#c2956a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;padding:0 0 80px}
+.hdr{background:linear-gradient(135deg,#1f1a0e,#1a1916);border-bottom:3px solid var(--sand);padding:40px 20px;text-align:center}
+.hdr h1{font-size:2em;color:var(--sand)}.hdr p{color:var(--muted)}
+.wrap{max-width:920px;margin:0 auto;padding:20px}
+h2{color:var(--sand);font-size:1.4em;margin:32px 0 12px;border-bottom:2px solid var(--border);padding-bottom:8px}
+h3{color:var(--sand);margin:20px 0 8px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin:16px 0}
+.scene-img{width:100%;border-radius:10px;margin:12px 0;border:1px solid var(--border)}
+pre{background:#0d0d0b;border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;font-size:.85em;line-height:1.6;margin:10px 0}
+code{font-family:'Fira Code','Courier New',monospace}
+.hi{background:rgba(194,149,106,.1);border:1px solid rgba(194,149,106,.3);border-radius:6px;padding:12px 16px;margin:12px 0}
+.ws{background:var(--card);border-radius:12px;padding:20px;margin:20px 0;border-left:4px solid var(--blue)}
+.ws h3{color:var(--blue);margin-top:0}
+.arr{display:flex;gap:0;margin:12px 0;flex-wrap:wrap;justify-content:center}
+.arr-cell{border:2px solid var(--border);padding:10px 14px;min-width:48px;text-align:center;font-weight:700;font-size:1.05em;background:var(--card)}
+.arr-cell.base{border-color:var(--gold2);background:rgba(251,191,36,.08);color:var(--gold2)}
+.arr-cell.filled{border-color:var(--green);background:rgba(34,197,94,.08);color:var(--green)}
+.arr-cell.current{border-color:var(--amber);background:rgba(245,158,11,.15);color:var(--amber);box-shadow:0 0 12px rgba(245,158,11,.3)}
+.arr-cell.empty{color:var(--muted)}
+.arr-label{display:flex;gap:0;margin:0 0 2px;flex-wrap:wrap;justify-content:center}
+.arr-label span{min-width:48px;text-align:center;font-size:.72em;color:var(--muted);padding:0 14px}
+.cell-walk{border-radius:10px;padding:16px;margin:12px 0;font-size:.95em;line-height:1.8}
+.cell-base{background:rgba(251,191,36,.06);border:2px solid var(--gold2)}
+.cell-fill{background:rgba(34,197,94,.06);border:1px solid var(--green)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.code-ann{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:.9em}
+.nav-link{display:inline-block;background:var(--card);border:1px solid var(--border);padding:10px 20px;border-radius:8px;color:var(--sand);text-decoration:none;font-weight:700;margin:8px 4px;transition:.2s}
+.nav-link:hover{background:var(--sand);color:#000;border-color:var(--sand)}
+.rob-skip{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.rob-card,.skip-card{border-radius:8px;padding:14px;font-size:.92em}
+.rob-card{background:rgba(34,197,94,.06);border:2px solid var(--green)}
+.skip-card{background:rgba(245,158,11,.06);border:2px solid var(--amber)}
+@media(max-width:600px){
+  .wrap{padding:12px}
+  .hdr h1{font-size:1.5em}
+  h2{font-size:1.2em}
+  .two-col,.rob-skip{grid-template-columns:1fr}
+  .code-ann{grid-template-columns:1fr}
+  .code-ann code{display:block;margin-bottom:2px}
+  .arr-cell{padding:8px 10px;min-width:40px;font-size:.92em}
+  .arr-label span{min-width:40px;padding:0 10px;font-size:.65em}
+  pre{font-size:.78em;padding:10px}
+  .cell-walk{padding:12px}
+  .ws{padding:14px}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+<h1>House Robber</h1>
+<p>Skip or take. Same 1D array, but max() instead of +.</p>
+</div>
+
+<div class="wrap">
+
+<div style="margin-bottom:24px">
+<a href="staircase_dp.html" class="nav-link">&larr; Back to Staircase</a>
+<a href="dp_workshop.html" class="nav-link">DP Workshop</a>
+</div>
+
+<!-- ==================== THE PROBLEM ==================== -->
+<img src="dp/images/house_robber_1.png" alt="The Problem: 5 houses with money, alarm constraint, two choices at each house (rob or skip), formula derived from choices" class="scene-img">
+
+<h2>The Problem</h2>
+
+<div class="ws" style="border-left-color:var(--sand)">
+<h3 style="color:var(--sand);margin-bottom:12px">House Robber (LeetCode #198)</h3>
+
+<p style="margin-bottom:12px">A row of houses, each with some money. Adjacent houses have connected alarms. If you collect from two houses next to each other, the alarm triggers. Find the maximum money without setting off alarms.</p>
+
+<div class="arr-label">
+<span>house 0</span><span>house 1</span><span>house 2</span><span>house 3</span><span>house 4</span>
+</div>
+<div class="arr">
+<div class="arr-cell" style="color:var(--green)">$2</div>
+<div class="arr-cell" style="color:var(--green)">$7</div>
+<div class="arr-cell" style="color:var(--green)">$9</div>
+<div class="arr-cell" style="color:var(--green)">$3</div>
+<div class="arr-cell" style="color:var(--green)">$1</div>
+</div>
+
+<div class="hi">
+<strong style="color:var(--sand)">The constraint:</strong> Can't collect from two houses next to each other. So at each house, you're asking one question: <strong>do I take this house, or skip it?</strong>
+</div>
+</div>
+
+<!-- ==================== STEP 1: CHOICES ==================== -->
+<h2>Step 1: What Are My Choices?</h2>
+
+<div class="ws" style="border-left-color:var(--sand)">
+<h3 style="color:var(--sand)">At each house: take or skip</h3>
+
+<p style="margin-bottom:12px">Standing at house 2 ($9). Two paths:</p>
+
+<div class="rob-skip">
+<div class="rob-card">
+<div style="color:var(--green);font-weight:700;margin-bottom:6px">TAKE house 2</div>
+I grab the $9. But house 1 is <strong style="color:var(--red)">off limits</strong> (adjacent!).<br>
+So I can only add $9 to whatever I got from house 0 and earlier.<br><br>
+<code style="color:var(--green)">money[house] + best_haul(house - 2)</code>
+</div>
+<div class="skip-card">
+<div style="color:var(--amber);font-weight:700;margin-bottom:6px">SKIP house 2</div>
+I take nothing. House 1 is still available.<br>
+I keep whatever the best haul was through house 1.<br><br>
+<code style="color:var(--amber)">best_haul(house - 1)</code>
+</div>
+</div>
+
+<p style="margin-top:12px">Pick whichever gives more money:</p>
+<pre><code>best_haul(house) = max(
+    best_haul(house - 1),           # skip: keep previous best
+    best_haul(house - 2) + money[house]  # take: grab cash, skip neighbor
+)</code></pre>
+
+<div class="hi">
+<strong style="color:var(--sand)">How to find the choices (works for every DP problem):</strong><br>
+1. Read the constraint (can't take adjacent)<br>
+2. At each step, ask: what can I do? (take or skip)<br>
+3. Write what happens in each case<br>
+4. The formula writes itself
+</div>
+</div>
+
+<!-- ==================== STEP 2: RECURSION ==================== -->
+<img src="dp/images/house_robber_2.png" alt="Recursive code, call tree with overlapping subproblems highlighted, memoization with cache notepad" class="scene-img">
+
+<h2>Step 2: Choices &rarr; Recursion</h2>
+
+<div class="ws" style="border-left-color:var(--sand)">
+<h3 style="color:var(--sand)">The code writes itself from the choices</h3>
+
+<pre><code>money = [2, 7, 9, 3, 1]
+
+def best_haul(house):
+    if house < 0: return 0            # no house, no money
+    if house == 0: return money[0]    # one house? take it
+    rob_this  = money[house] + best_haul(house - 2)
+    skip_this = best_haul(house - 1)
+    return max(rob_this, skip_this)
+
+best_haul(4)   # start from the last house</code></pre>
+
+<div class="two-col" style="margin-top:12px">
+<div style="background:var(--card2);border-radius:6px;padding:10px;font-size:.88em">
+<div style="color:var(--green);font-weight:700;margin-bottom:4px">rob_this</div>
+Grab the cash. Skip the neighbor. Add the best from 2 houses back.
+</div>
+<div style="background:var(--card2);border-radius:6px;padding:10px;font-size:.88em">
+<div style="color:var(--amber);font-weight:700;margin-bottom:4px">skip_this</div>
+Walk past. Keep whatever was best through the previous house.
+</div>
+</div>
+</div>
+
+<!-- ==================== STEP 3: TREE + OVERLAP ==================== -->
+<h2>Step 3: Draw the Tree, Spot the Overlap</h2>
+
+<div class="ws" style="border-left-color:var(--sand)">
+<h3 style="color:var(--sand)">best_haul(4) expanded</h3>
+
+<pre style="font-size:.82em;line-height:1.8"><code>best_haul(4)
+├── best_haul(3)              # skip house 4
+│   ├── best_haul(2)          # skip house 3
+│   │   ├── best_haul(1) ─ ─ ─ ─ ┐
+│   │   └── best_haul(0) = $2 │   │
+│   └── best_haul(1) ─ ─ ─ ─ ─ ─ ┤ SAME!
+│       ├── best_haul(0) = $2 │   │
+│       └── best_haul(-1) = 0 │   │
+└── best_haul(2)              │   │ # take house 4
+    ├── best_haul(1) ─ ─ ─ ─ ─ ─ ┘
+    └── best_haul(0) = $2</code></pre>
+
+<div style="background:rgba(251,191,36,.12);border:2px solid var(--gold2);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
+<div style="font-size:1.1em;font-weight:800;color:var(--gold2);margin-bottom:8px">best_haul(1) appears 3 times</div>
+<div style="font-size:.95em">Same question, same answer every time. That's overlapping subproblems.</div>
+</div>
+</div>
+
+<!-- ==================== STEP 4: MEMOIZE ==================== -->
+<h2>Step 4: Memoize</h2>
+
+<div class="ws" style="border-left-color:var(--sand)">
+<h3 style="color:var(--sand)">Same code, just cache the answers</h3>
+
+<pre><code>def best_haul(house, memo={}):
+    if house in memo: return memo[house]
+    if house < 0: return 0
+    if house == 0: return money[0]
+    rob_this  = money[house] + best_haul(house - 2, memo)
+    skip_this = best_haul(house - 1, memo)
+    memo[house] = max(rob_this, skip_this)
+    return memo[house]</code></pre>
+
+<p style="color:var(--muted);font-size:.9em;margin-top:8px">The cache (notepad): house 0 &rarr; $2, house 1 &rarr; $7, house 2 &rarr; $11, house 3 &rarr; $11, house 4 &rarr; $12.</p>
+</div>
+
+<!-- ==================== STEP 5: TABULATION ==================== -->
+<h2 style="color:var(--amber);border-bottom-color:var(--amber)">Step 5: From Recursion to Table</h2>
+
+<img src="dp/images/house_robber_3.png" alt="Notepad to array: same data different shape, what each cell means, base cases fill first cells" class="scene-img">
+
+<!-- What does each cell mean? -->
+<div class="ws" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">What does each cell mean?</h3>
+
+<p><code>best[house]</code> = <strong>"Maximum money considering houses 0 through <code>house</code>."</strong></p>
+
+<p style="color:var(--red);font-size:.92em;margin:8px 0"><strong>NOT</strong> "money in this house." It's the <strong>best total</strong> considering all houses up to this point.</p>
+
+<div style="margin:16px 0">
+<div class="arr-label">
+<span>house 0</span><span>house 1</span><span>house 2</span><span>house 3</span><span>house 4</span>
+</div>
+<div class="arr">
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+</div>
+<div style="text-align:center;font-size:.85em;color:var(--muted);margin-top:4px"><code>best[4]</code> is the answer: best across ALL 5 houses.</div>
+</div>
+</div>
+
+<!-- Base cases -->
+<div class="ws" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">Base cases: start with what you know</h3>
+
+<p><strong>best[0]:</strong> Only house 0 ($2). Take it. <code>best[0] = 2</code></p>
+<p><strong>best[1]:</strong> Houses 0 and 1. Take house 0 ($2) or house 1 ($7)? Can't take both (adjacent!). <code>max($2, $7) = $7</code>. Take house 1.</p>
+
+<div style="margin:16px 0">
+<div class="arr-label">
+<span>house 0</span><span>house 1</span><span>house 2</span><span>house 3</span><span>house 4</span>
+</div>
+<div class="arr">
+<div class="arr-cell base">2</div>
+<div class="arr-cell base">7</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+</div>
+<div style="text-align:center;font-size:.85em;color:var(--gold2);margin-top:4px">Base cases filled. Same rule: whatever the recursion returns at the bottom, fill those first.</div>
+</div>
+</div>
+
+<!-- ==================== FILLING EVERY CELL ==================== -->
+<img src="dp/images/house_robber_4.png" alt="Filling cells left to right: skip vs take decision at each house, completed array, winning path, code" class="scene-img">
+
+<h2 style="color:var(--amber);border-bottom-color:var(--amber)">Filling Every Cell: Take or Skip?</h2>
+
+<p style="margin-bottom:8px">Base cases are filled. Now, left to right. At each house, compare two paths. Pick the bigger one.</p>
+
+<!-- CELL: house 2 -->
+<div class="cell-walk cell-fill">
+<div style="color:var(--green);font-weight:700;margin-bottom:8px;font-size:1.05em">best[2]: Houses 0, 1, 2. money[2] = $9</div>
+
+<div style="margin:12px 0">
+<div class="arr-label">
+<span>h0</span><span>h1</span><span>h2</span><span>h3</span><span>h4</span>
+</div>
+<div class="arr">
+<div class="arr-cell base">2</div>
+<div class="arr-cell base">7</div>
+<div class="arr-cell current">?</div>
+<div class="arr-cell empty">?</div>
+<div class="arr-cell empty">?</div>
+</div>
+</div>
+
+<div class="rob-skip">
+<div class="skip-card">
+<div style="color:var(--amber);font-weight:700">SKIP</div>
+best[1] = $7. Keep $7.
+</div>
+<div class="rob-card">
+<div style="color:var(--green);font-weight:700">TAKE</div>
+best[0] + $9 = $2 + $9 = $11
+</div>
+</div>
+
+<code>max($7, $11) = <strong style="color:var(--green)">$11. TAKE!</strong></code><br>
+<span style="color:var(--muted);font-size:.88em">Take houses 0 and 2. $2 + $9 = $11.</span>
+</div>
+
+<!-- CELL: house 3 -->
+<div class="cell-walk cell-fill">
+<div style="color:var(--green);font-weight:700;margin-bottom:8px;font-size:1.05em">best[3]: Houses 0, 1, 2, 3. money[3] = $3</div>
+
+<div style="margin:12px 0">
+<div class="arr-label">
+<span>h0</span><span>h1</span><span>h2</span><span>h3</span><span>h4</span>
+</div>
+<div class="arr">
+<div class="arr-cell base">2</div>
+<div class="arr-cell base">7</div>
+<div class="arr-cell filled">11</div>
+<div class="arr-cell current">?</div>
+<div class="arr-cell empty">?</div>
+</div>
+</div>
+
+<div class="rob-skip">
+<div class="skip-card">
+<div style="color:var(--amber);font-weight:700">SKIP</div>
+best[2] = $11. Keep $11.
+</div>
+<div class="rob-card">
+<div style="color:var(--green);font-weight:700">TAKE</div>
+best[1] + $3 = $7 + $3 = $10
+</div>
+</div>
+
+<code>max($11, $10) = <strong style="color:var(--amber)">$11. SKIP!</strong></code><br>
+<span style="color:var(--muted);font-size:.88em">$3 isn't worth giving up $11.</span>
+</div>
+
+<!-- CELL: house 4 -->
+<div class="cell-walk" style="background:rgba(194,149,106,.08);border:2px solid var(--sand)">
+<div style="color:var(--sand);font-weight:700;margin-bottom:8px;font-size:1.1em">best[4]: All 5 houses. money[4] = $1. THE ANSWER</div>
+
+<div style="margin:12px 0">
+<div class="arr-label">
+<span>h0</span><span>h1</span><span>h2</span><span>h3</span><span>h4</span>
+</div>
+<div class="arr">
+<div class="arr-cell base">2</div>
+<div class="arr-cell base">7</div>
+<div class="arr-cell filled">11</div>
+<div class="arr-cell filled">11</div>
+<div class="arr-cell current">?</div>
+</div>
+</div>
+
+<div class="rob-skip">
+<div class="skip-card">
+<div style="color:var(--amber);font-weight:700">SKIP</div>
+best[3] = $11. Keep $11.
+</div>
+<div class="rob-card">
+<div style="color:var(--green);font-weight:700">TAKE</div>
+best[2] + $1 = $11 + $1 = $12
+</div>
+</div>
+
+<code>max($11, $12) = <strong style="color:var(--green)">$12. TAKE!</strong></code><br>
+<span style="color:var(--muted);font-size:.88em">Take house 4 for $1 extra. $12 total!</span>
+</div>
+
+<!-- Complete array -->
+<div class="ws" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">The Complete Array</h3>
+
+<div style="margin:16px 0">
+<div class="arr-label">
+<span>house 0</span><span>house 1</span><span>house 2</span><span>house 3</span><span>house 4</span>
+</div>
+<div class="arr">
+<div class="arr-cell base">2</div>
+<div class="arr-cell base">7</div>
+<div class="arr-cell filled">11</div>
+<div class="arr-cell filled">11</div>
+<div class="arr-cell filled" style="border-color:var(--sand);color:var(--sand);font-size:1.3em;background:rgba(194,149,106,.12)">12</div>
+</div>
+</div>
+
+<div style="text-align:center;margin:12px 0">
+<span style="display:inline-block;border:2px solid var(--gold2);background:rgba(251,191,36,.08);border-radius:4px;padding:2px 10px;font-size:.82em;color:var(--gold2);margin:2px">base case</span>
+<span style="display:inline-block;border:2px solid var(--green);background:rgba(34,197,94,.08);border-radius:4px;padding:2px 10px;font-size:.82em;color:var(--green);margin:2px">computed</span>
+<span style="display:inline-block;border:2px solid var(--sand);background:rgba(194,149,106,.12);border-radius:4px;padding:2px 10px;font-size:.82em;color:var(--sand);margin:2px">answer</span>
+</div>
+
+<p><strong>Winning path:</strong> Houses <span style="color:var(--green)">0</span>, <span style="color:var(--muted)">1 (skip)</span>, <span style="color:var(--green)">2</span>, <span style="color:var(--muted)">3 (skip)</span>, <span style="color:var(--green)">4</span>. Total: $2 + $9 + $1 = <strong>$12</strong>. No neighbors!</p>
+</div>
+
+<!-- ==================== THE CODE ==================== -->
+<h2 style="color:var(--amber);border-bottom-color:var(--amber)">The Tabulation Code</h2>
+
+<div class="ws" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">Every line maps to something we just did</h3>
+
+<pre><code>def max_robbery(money):
+    house_count = len(money)
+    if house_count == 0: return 0
+    if house_count == 1: return money[0]
+
+    best = [0] * house_count
+    best[0] = money[0]
+    best[1] = max(money[0], money[1])
+
+    for house in range(2, house_count):
+        skip_this = best[house - 1]
+        rob_this  = best[house - 2] + money[house]
+        best[house] = max(skip_this, rob_this)
+
+    return best[house_count - 1]</code></pre>
+
+<div class="code-ann" style="margin-top:14px">
+<code style="color:var(--gold2)">best[0] = money[0]</code><div>One house? Take it.</div>
+<code style="color:var(--gold2)">best[1] = max(...)</code><div>Two houses? Take the richer one.</div>
+<code style="color:var(--amber)">skip_this = best[house-1]</code><div>Walk past, keep previous best</div>
+<code style="color:var(--green)">rob_this = best[house-2] + money[house]</code><div>Grab cash, skip neighbor</div>
+<code>max(skip_this, rob_this)</code><div>Pick the better deal</div>
+<code style="color:var(--sand)">return best[house_count-1]</code><div>Last cell = maximum haul</div>
+</div>
+</div>
+
+<!-- ==================== COMPARE TO STAIRCASE ==================== -->
+<h2>Staircase vs House Robber</h2>
+
+<div class="ws" style="border-left-color:var(--blue)">
+<h3 style="color:var(--blue)">Same structure, different operation</h3>
+
+<div class="two-col" style="margin:12px 0">
+<div style="background:rgba(194,149,106,.08);border:2px solid var(--sand);border-radius:10px;padding:16px">
+<div style="color:var(--sand);font-weight:700;margin-bottom:8px">Climbing Stairs</div>
+<div style="font-size:.9em;line-height:1.8">
+<code>ways[step] = ways[step-1] + ways[step-2]</code><br>
+<strong>Operation:</strong> add (+)<br>
+<strong>Question:</strong> count ALL ways<br>
+<strong>Both look-backs:</strong> always used
+</div>
+</div>
+<div style="background:rgba(34,197,94,.08);border:2px solid var(--green);border-radius:10px;padding:16px">
+<div style="color:var(--green);font-weight:700;margin-bottom:8px">House Robber</div>
+<div style="font-size:.9em;line-height:1.8">
+<code>best[h] = max(best[h-1], best[h-2]+money[h])</code><br>
+<strong>Operation:</strong> max()<br>
+<strong>Question:</strong> find the MOST money<br>
+<strong>Look-backs:</strong> pick one (skip or take)
+</div>
+</div>
+</div>
+
+<div class="hi">
+<strong style="color:var(--amber)">The pattern (same every time):</strong><br>
+1. Read the constraint &rarr; find the choices<br>
+2. Choices &rarr; formula<br>
+3. Base cases &rarr; first cells<br>
+4. Fill left to right<br>
+5. Last cell = the answer
+</div>
+</div>
+
+<div style="text-align:center;margin-top:32px">
+<a href="staircase_dp.html" class="nav-link">&larr; Staircase (1D)</a>
+<a href="dp_workshop.html" class="nav-link">Knapsack (2D) &rarr;</a>
+</div>
+
+</div>
+
+</body>
+</html>

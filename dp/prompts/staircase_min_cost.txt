@@ -1,0 +1,375 @@
+MIN COST CLIMBING STAIRS: Full Walkthrough
+=============================================
+The student already did the Climbing Stairs page.
+Min Cost is the SECOND problem. Teach it fully from scratch:
+question, DP triggers, choices, recursion, array, fill, code.
+
+Example: cost = [10, 15, 20]
+  Answer: $15 (start at step 1, pay $15, climb 2 to top)
+
+Descriptive names:
+  cost_to[step]        not  dp[i]
+  cost[step]           not  cost[i]
+  from_one_below       not  dp[i-1] + cost[i-1]
+  from_two_below       not  dp[i-2] + cost[i-2]
+
+Images produced:
+  Prompt 1 -> min_cost_1.png  (The Question + Spot the DP Triggers)
+  Prompt 2 -> min_cost_2.png  (Choices + Recursion + Tree)
+  Prompt 3 -> min_cost_3.png  (The Array + Filling Every Cell + Code)
+
+
+================================================================================
+STYLE BIBLE (copy into every prompt)
+================================================================================
+
+PASTE THIS BLOCK AT THE TOP OF EVERY MIN COST PROMPT.
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Maya):
+- Young woman, mid-20s, athletic build, medium-brown skin (warm undertone).
+- Hair: jet-black, pulled into a SHORT LOW PONYTAIL with a few loose strands
+  framing her face. Never a bun, never loose, never long.
+- Face: round cheeks, big expressive dark-brown eyes, thick eyebrows,
+  small nose, confident smirk or grin.
+- Outfit (EVERY image, no exceptions):
+  * Fitted dark-olive-green cargo pants (slightly dusty at the knees).
+  * Snug black tank top.
+  * A brown leather CHALK BAG clipped to her right hip.
+  * Fingerless black climbing gloves on both hands.
+  * Dark-gray low-top sneakers.
+  * A playful black headband on her forehead.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+  Soft ambient occlusion shadows. No photorealism.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat illustration,
+  NOT photorealistic, NOT anime, NOT watercolor.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE (use ONLY these colors):
+- Background: solid warm cream (#FFF8F0). No textures, no gradients,
+  no chalkboard, no paper grain. Just flat warm cream everywhere.
+- Section cards: white (#FFFFFF) with a thin 2px border in warm gray (#D4C5B2)
+  and 8px rounded corners. Subtle drop shadow (2px, 10% opacity black).
+- Section number badges: solid circle, burnt orange (#E8722A), white number inside.
+- Headers: dark charcoal (#2D2D2D), bold.
+- Body text: dark gray (#4A4A4A).
+- Code blocks: dark navy background (#1E293B), white monospace text,
+  8px rounded corners.
+- POSITIVE / chosen / cheaper: leaf green (#4CAF50).
+- ALTERNATIVE / other path: warm orange (#FF9800).
+- DANGER / wrong / expensive: red (#E53935).
+- Highlights / key insight boxes: pale gold fill (#FFF3D4) with
+  gold border (#F5C542), 8px rounded corners.
+- Array cells: white fill, charcoal border, charcoal text.
+- Base-case cells: pale gold fill (#FFF3D4), gold border (#F5C542).
+- Current/highlighted cell: pale green fill (#E8F5E9), green border (#4CAF50).
+
+STAIRCASE (appears in every image):
+- A grand stone staircase with 3 numbered steps (0, 1, 2) plus a TOP platform.
+- Each step has a TOLL SIGN (small wooden sign post) showing the cost:
+  Step 0: toll "$10"
+  Step 1: toll "$15"
+  Step 2: toll "$20"
+  Top: a small green flag (destination, no toll).
+- Staircase uses warm sandstone/beige color (#D4B896).
+- Steps are wide, with clear numbers on the front face of each step.
+
+LAYOUT:
+- Sections stacked vertically, separated by 20px of cream background.
+- Each section inside a white card with the styling described above.
+- Section number in a burnt-orange circle badge at the top-left of each card.
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: The Question + DP Triggers -> min_cost_1.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Stack 2 sections vertically:
+
+
+SECTION 1 (badge: "1"), "THE QUESTION":
+Header: "MIN COST CLIMBING STAIRS"
+Subtitle: "LeetCode #746"
+
+Show the staircase (from style bible) with Maya at the bottom looking up.
+Each step has its toll sign clearly visible.
+
+Problem statement in a white card:
+  "You are given an array cost where cost[i] is the price to step FROM step i.
+   Once you pay the cost, you can climb 1 or 2 steps.
+   You can start from step 0 or step 1 (both free to start on).
+   Return the minimum total cost to reach the top."
+
+Show the example visually below the staircase:
+  cost = [10, 15, 20]
+
+  Two paths shown with arrows on the staircase:
+
+  PATH A (orange, more expensive):
+    Start at step 0 (pay $10) -> climb 2 to step 2 (pay $20) -> top
+    Total: $10 + $20 = $30
+
+  PATH B (green, cheaper):
+    Start at step 1 (pay $15) -> climb 2 to top
+    Total: $15
+
+  Label Path B as "CHEAPER!" with a green check.
+
+Maya speech bubble:
+  "Each step has a toll. I pay the toll, then climb 1 or 2 steps.
+   What's the cheapest way to the top?"
+
+
+SECTION 2 (badge: "2"), "SPOT THE DP TRIGGERS":
+Header: "HOW DO I KNOW THIS IS DP?"
+
+Show 3 items in a visual checklist, each with a GREEN check icon:
+
+TRIGGER 1: "CHOICES AT EACH STEP" (green check)
+  Show Maya on step 1 with two arrows:
+    Green arrow up 1 step: "climb 1 (go to step 2)"
+    Orange arrow up 2 steps: "climb 2 (jump to top)"
+  "At each step: climb 1 or climb 2. Same choices as Climbing Stairs."
+
+TRIGGER 2: "BEST ANSWER NEEDS BEST PREVIOUS ANSWERS" (green check)
+  Show step 2 with two arrows pointing DOWN to step 1 and step 0:
+    "Cheapest to step 2 = cheaper of:
+     (cheapest to step 1) + toll at step 1, OR
+     (cheapest to step 0) + toll at step 0"
+  "I can't solve step 2 without FIRST solving step 1 and step 0."
+
+TRIGGER 3: "SAME SUBPROBLEM ASKED MORE THAN ONCE" (green check)
+  Show a diagram:
+    Top (step 3) points back to: step 2 AND step 1
+    Step 2 points back to: step 1 AND step 0
+
+  Circle "cheapest to step 1" in YELLOW (#F5C542). Draw lines showing
+  both step 2 and top need it.
+
+  "See? 'Cheapest to step 1' is asked by step 2 AND by the top.
+   Same question, asked twice. Overlapping subproblems."
+
+Maya speech bubble:
+  "All three triggers checked. It's DP."
+
+Gold highlight box at the bottom:
+  "WHEN YOU SEE A NEW PROBLEM, ASK:
+   1. Do I have CHOICES at each step?
+   2. Does the best answer need the best PREVIOUS answers?
+   3. Is the same sub-question asked more than once?
+   All three? It's DP."
+
+
+================================================================================
+PROMPT 2: Choices + Recursion + Tree -> min_cost_2.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Stack 3 sections vertically:
+
+
+SECTION 1 (badge: "3"), "THE CHOICES":
+Header: "AT EACH STEP, TWO WAYS TO ARRIVE"
+Subtitle: "Think BACKWARDS. How did I get here?"
+
+Show Maya on step 2. Two arrows point BACKWARDS (down) from step 2:
+
+  GREEN arrow down to step 1:
+    "Came from step 1. Paid toll at step 1 ($15)."
+    cost_to[step 1] + cost[step 1]
+
+  ORANGE arrow down to step 0:
+    "Came from step 0. Paid toll at step 0 ($10)."
+    cost_to[step 0] + cost[step 0]
+
+  "I pick whichever path was CHEAPER:"
+
+Formula in a gold highlight box:
+  cheapest_to(step) = min(
+      cheapest_to(step - 1) + cost[step - 1],
+      cheapest_to(step - 2) + cost[step - 2]
+  )
+
+Maya speech bubble:
+  "Same as Climbing Stairs, but min() instead of +, and each step has a toll."
+
+
+SECTION 2 (badge: "4"), "THE RECURSIVE CODE":
+Header: "TURN THE CHOICES INTO CODE"
+
+Base cases in a small white card:
+  cheapest_to(0) = 0   "Start on step 0 for free."
+  cheapest_to(1) = 0   "Start on step 1 for free."
+
+Code in a dark navy code block:
+  cost = [10, 15, 20]
+
+  def cheapest_to(step):
+      if step == 0: return 0
+      if step == 1: return 0
+      from_one_below = cheapest_to(step - 1) + cost[step - 1]
+      from_two_below = cheapest_to(step - 2) + cost[step - 2]
+      return min(from_one_below, from_two_below)
+
+  cheapest_to(3)   # top = past the last step
+
+Annotations:
+  from_one_below -> green label: "came from one step back + its toll"
+  from_two_below -> orange label: "came from two steps back + its toll"
+  min(...)       -> "pick the cheaper path"
+
+
+SECTION 3 (badge: "5"), "THE TREE":
+Header: "DRAW THE CALLS"
+Subtitle: "cheapest_to(3), expanded"
+
+Tree diagram:
+              3
+            /   \
+          2       1
+        /   \
+      1       0
+    (base)  (base)
+
+Left branches: "from 1 below" in green.
+Right branches: "from 2 below" in orange.
+Base nodes (0 and 1) have gold fill.
+
+Circle both "1" nodes in yellow. Dashed line between them.
+"cheapest_to(1) asked TWICE. Same answer both times."
+
+Maya speech bubble:
+  "Overlap again. Time to cache, then turn it into an array."
+
+Gold highlight box:
+  "Next: fill an array left to right. That's tabulation."
+
+
+================================================================================
+PROMPT 3: The Array + Fill + Code -> min_cost_3.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Stack 3 sections vertically:
+
+
+SECTION 1 (badge: "6"), "THE ARRAY":
+Header: "WHAT DOES EACH CELL MEAN?"
+
+Show a 1D array with 4 cells. Labels ABOVE each cell:
+
+  "cheapest      "cheapest      "cheapest      "cheapest
+   to reach       to reach       to reach       to reach
+   step 0"        step 1"        step 2"        TOP"
+
+  [   ?   ]      [   ?   ]      [   ?   ]      [   ?   ]
+   step 0         step 1         step 2         step 3 (top)
+
+"cost_to[step] = cheapest total cost to reach step 'step'"
+
+Base cases in gold-fill cells:
+  cost_to = [ 0 (gold) , 0 (gold) ,  ?  ,  ?  ]
+            step 0      step 1      step 2  TOP
+
+"Start at step 0 or step 1 for FREE. Base cases = $0."
+
+Maya pointing at the last cell. Speech bubble:
+  "cost_to[3] is the answer. Cheapest total to reach the top."
+
+
+SECTION 2 (badge: "7"), "FILL IT STEP BY STEP":
+Header: "FILL LEFT TO RIGHT"
+
+Show cost = [10, 15, 20] and the staircase with toll signs.
+
+PANEL: cost_to[2]:
+  Array: [ 0 (gold), 0 (gold), ? (green highlight), ? ]
+
+  Two arrows pointing backward from step 2:
+    GREEN arrow to step 1:
+      from_one_below = cost_to[1] + cost[1] = $0 + $15 = $15
+    ORANGE arrow to step 0:
+      from_two_below = cost_to[0] + cost[0] = $0 + $10 = $10
+
+  min($15, $10) = $10. Came from step 0, paid $10 toll.
+  cost_to[2] = 10 (green wins for orange path here, mark $10 in green)
+
+PANEL: cost_to[3] (TOP):
+  Array: [ 0, 0, 10, ? (green highlight with gold border) ]
+
+  Two arrows pointing backward from top:
+    GREEN arrow to step 2:
+      from_one_below = cost_to[2] + cost[2] = $10 + $20 = $30
+    ORANGE arrow to step 1:
+      from_two_below = cost_to[1] + cost[1] = $0 + $15 = $15
+
+  min($30, $15) = $15. Came from step 1, paid $15 toll.
+  cost_to[3] = 15
+
+COMPLETED ARRAY (gold highlight box):
+  cost_to = [ 0 ,  0 , 10 , 15 ]
+             step 0  step 1  step 2  TOP
+
+  "Answer: $15. Start at step 1, pay $15, climb 2 to top."
+
+Show the optimal path on the staircase in GREEN: step 1 -> top.
+Maya at the top, arms raised.
+
+
+SECTION 3 (badge: "8"), "THE CODE":
+Header: "THE SOLUTION"
+
+Code in a dark navy code block:
+  def min_cost_stairs(cost):
+      steps_to_top = len(cost)
+      cost_to = [0] * (steps_to_top + 1)
+
+      cost_to[0] = 0
+      cost_to[1] = 0
+
+      for step in range(2, steps_to_top + 1):
+          from_one_below = cost_to[step - 1] + cost[step - 1]
+          from_two_below = cost_to[step - 2] + cost[step - 2]
+          cost_to[step] = min(from_one_below, from_two_below)
+
+      return cost_to[steps_to_top]
+
+Annotations:
+  cost_to[0] = 0, cost_to[1] = 0  ->  "Free starting points (base cases)"
+  for step in range(2, ...)        ->  "Left to right, after base cases"
+  cost[step - 1]                   ->  "The toll at the step you came FROM"
+  min(...)                         ->  "Pick the cheaper path"
+  return cost_to[steps_to_top]     ->  "Last cell = cheapest total cost"
+
+Gold highlight box at the bottom:
+  "CLIMBING STAIRS vs MIN COST:
+   Stairs:    ways[step] = ways[step-1] + ways[step-2]       (ADD all ways)
+   Min Cost:  cost_to[step] = min(path_A, path_B)            (PICK cheapest)
+   Same array. Same left-to-right fill. Different operation."

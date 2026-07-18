@@ -36,6 +36,20 @@ td{padding:10px 12px;border:1px solid var(--border);text-align:center}
 .arr-label span{min-width:54px;text-align:center;font-size:.75em;color:var(--muted);padding:0 16px}
 .nav-link{display:inline-block;background:var(--card);border:1px solid var(--border);padding:10px 20px;border-radius:8px;color:var(--sand);text-decoration:none;font-weight:700;margin:8px 4px;transition:.2s}
 .nav-link:hover{background:var(--sand);color:#000;border-color:var(--sand)}
+@media(max-width:600px){
+  .wrap{padding:12px}
+  .hdr h1{font-size:1.5em}
+  h2{font-size:1.2em}
+  pre{font-size:.78em;padding:10px}
+  .arr-cell{padding:8px 10px;min-width:40px;font-size:.92em}
+  .arr-label span{min-width:40px;padding:0 10px;font-size:.65em}
+  .walkthrough-section{padding:14px}
+  table{font-size:.8em;display:block;overflow-x:auto}
+  [style*="grid-template-columns:1fr 1fr"],[style*="grid-template-columns: 1fr 1fr"]{grid-template-columns:1fr !important}
+  [style*="grid-template-columns:auto 1fr auto"]{grid-template-columns:1fr !important}
+  [style*="grid-template-columns:auto 1fr;"],
+  [style*="grid-template-columns: auto 1fr;"]{grid-template-columns:1fr !important}
+}
 </style>
 </head>
 <body>
@@ -592,9 +606,9 @@ Look <strong>2 left</strong>: <code>ways[4] = 5</code><br><br>
 <div style="font-size:.85em">Cell stores: minimum cost. Looks back: 2 cells. Operation: min (cheapest path).</div>
 </div>
 <div style="background:var(--card2);border-radius:8px;padding:14px">
-<div style="color:var(--sand);font-weight:700;margin-bottom:4px">House Robber (#198)</div>
+<div style="color:var(--sand);font-weight:700;margin-bottom:4px"><a href="house_robber_dp.html" style="color:var(--sand)">House Robber (#198)</a></div>
 <div style="font-size:.88em;color:var(--muted)"><code>best[house] = max(best[house-1], best[house-2] + money[house])</code></div>
-<div style="font-size:.85em">Cell stores: max money. Looks back: 2 cells. Operation: max (rob or skip, like knapsack!).</div>
+<div style="font-size:.85em">Cell stores: max money. Looks back: 2 cells. Operation: max (skip or take).</div>
 </div>
 <div style="background:var(--card2);border-radius:8px;padding:14px">
 <div style="color:var(--sand);font-weight:700;margin-bottom:4px">Decode Ways (#91)</div>

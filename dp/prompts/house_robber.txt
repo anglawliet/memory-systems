@@ -1,0 +1,506 @@
+HOUSE ROBBER: Full Walkthrough
+================================
+The student has done the staircase page but needs House Robber
+explained from scratch. No "twist" comparisons. Teach it on its own:
+question, choices, recursion, tree, overlap, array, fill, code.
+
+Example: money = [2, 7, 9, 3, 1]
+
+Descriptive names:
+  money[house]        not  nums[i]
+  best[house]         not  dp[i]
+  best_haul(house)    not  rob(i) (recursive function)
+  rob_this            not  dp[i-2] + nums[i]
+  skip_this           not  dp[i-1]
+
+Images produced:
+  Prompt 1 -> house_robber_1.png  (The Problem + The Choices)
+  Prompt 2 -> house_robber_2.png  (Recursion + Tree + Overlap)
+  Prompt 3 -> house_robber_3.png  (The 1D Array: what it means, base cases)
+  Prompt 4 -> house_robber_4.png  (Filling every cell, step by step)
+
+
+================================================================================
+STYLE BIBLE (copy into every prompt)
+================================================================================
+
+PASTE THIS BLOCK AT THE TOP OF EVERY HOUSE ROBBER PROMPT.
+It locks down every visual element so all 4 images look like
+they came from the same artist, same scene, same world.
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Maya):
+- Young woman, mid-20s, athletic build, medium-brown skin (warm undertone).
+- Hair: jet-black, pulled into a SHORT LOW PONYTAIL with a few loose strands
+  framing her face. Never a bun, never loose, never long.
+- Face: round cheeks, big expressive dark-brown eyes, thick eyebrows,
+  small nose, confident smirk or grin.
+- Outfit (EVERY image, no exceptions):
+  * Fitted dark-olive-green cargo pants (slightly dusty at the knees).
+  * Snug black tank top.
+  * A brown leather CHALK BAG clipped to her right hip.
+  * Fingerless black climbing gloves on both hands.
+  * Dark-gray low-top sneakers.
+  * A playful black headband on her forehead.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+  Soft ambient occlusion shadows. No photorealism.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat illustration,
+  NOT photorealistic, NOT anime, NOT watercolor.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE (use ONLY these colors):
+- Background: solid warm cream (#FFF8F0). No textures, no gradients,
+  no chalkboard, no paper grain. Just flat warm cream everywhere.
+- Section cards: white (#FFFFFF) with a thin 2px border in warm gray (#D4C5B2)
+  and 8px rounded corners. Subtle drop shadow (2px, 10% opacity black).
+- Section number badges: solid circle, burnt orange (#E8722A), white number inside.
+- Headers: dark charcoal (#2D2D2D), bold.
+- Body text: dark gray (#4A4A4A).
+- Code blocks: dark navy background (#1E293B), white monospace text,
+  8px rounded corners.
+- ROB / positive / yes: leaf green (#4CAF50).
+- SKIP / neutral / alternative: warm orange (#FF9800).
+- DANGER / alarm / off-limits: red (#E53935).
+- Highlights / key insight boxes: pale gold fill (#FFF3D4) with
+  gold border (#F5C542), 8px rounded corners.
+- Array cells: white fill, charcoal border, charcoal text.
+- Base-case cells: pale gold fill (#FFF3D4), gold border (#F5C542).
+- Current/highlighted cell: pale green fill (#E8F5E9), green border (#4CAF50).
+
+HOUSES (appear in every image):
+- Row of 5 simple cartoon houses, each a different pastel color:
+  House 0: pastel pink (#F8BBD0)
+  House 1: pastel blue (#BBDEFB)
+  House 2: pastel orange (#FFCC80)
+  House 3: pastel purple (#CE93D8)
+  House 4: pastel yellow (#FFF59D)
+- Each house: simple rectangle body, triangle roof (slightly darker
+  shade of the same color), one square window, one rectangular door.
+- Dollar amounts shown on small white circle signs in front of each house:
+  $2, $7, $9, $3, $1.
+- Houses sit on a thin dark-gray ground line.
+
+LAYOUT:
+- Sections stacked vertically, separated by 20px of cream background.
+- Each section inside a white card with the styling described above.
+- Section number in a burnt-orange circle badge at the top-left of each card.
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: The Problem + The Choices -> house_robber_1.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Stack 3 sections vertically:
+
+
+SECTION 1 (badge: "1"), "THE PROBLEM":
+Header: "HOUSE ROBBER"
+Subtitle: "LeetCode #198"
+
+Show the row of 5 houses (exact colors from style bible) on the cream
+background. Each house has the dollar sign on its white circle sign.
+
+Between house 1 and house 2: a RED alarm bell icon.
+A red wire connects house 1's roof to house 2's roof.
+Label below the bell: "Pick both? ALARM!"
+
+Problem statement in a white card below the houses:
+  "You are collecting treasure from houses along a street.
+   Each house has some money.
+   Adjacent houses have connected alarms.
+   Collect from TWO houses next to each other and the alarm goes off.
+   Find the maximum money you can collect without setting off alarms."
+
+Maya stands to the right of the problem card. Speech bubble:
+  "I can't pick neighbors. So what CAN I do at each house?"
+
+
+SECTION 2 (badge: "2"), "THE CHOICES":
+Header: "AT EACH HOUSE, TWO CHOICES"
+Subtitle: "How did I figure them out? Read the constraint."
+
+Numbered reasoning flow inside the card:
+
+  STEP 1: "The rule says: can't rob ADJACENT houses."
+  Show houses 1 and 2 (pastel blue + pastel orange from the palette)
+  with a red X between them.
+
+  STEP 2: Big text in a gold highlight box:
+  "Do I ROB this house, or SKIP it?"
+
+  STEP 3: Maya stands at house 2 (pastel orange, $9).
+  Two branching paths with arrows:
+
+    LEFT PATH (green border card, green arrow):
+      Header in green: "ROB house 2"
+      House 2 glows green. House 1 has a red X over it (grayed out).
+      "I take the $9. But house 1 is OFF LIMITS."
+      "I can only add $9 to whatever I got from house 0 and earlier."
+
+    RIGHT PATH (orange border card, orange arrow):
+      Header in orange: "SKIP house 2"
+      House 2 is grayed out. House 1 stays bright.
+      "I take nothing. House 1 is still an option."
+      "I keep whatever the best haul was through house 1."
+
+
+SECTION 3 (badge: "3"), "THE FORMULA":
+Header: "CHOICES GIVE YOU THE FORMULA"
+
+"At house 2, I pick whichever path gives MORE money:"
+
+Show the formula building up in a code block:
+  best_haul(house) = max(rob_this, skip_this)
+
+  rob_this  = money[house] + best_haul(house - 2)
+  (label in green: "Take the cash. Skip the neighbor. Add best from 2 back.")
+
+  skip_this = best_haul(house - 1)
+  (label in orange: "Walk past. Keep the best from the previous house.")
+
+Full formula in a gold highlight box:
+  best_haul(house) = max(
+      best_haul(house - 1),
+      best_haul(house - 2) + money[house]
+  )
+
+Maya to the right, pointing at the formula. Speech bubble:
+  "The constraint told me the choices. The choices gave me the formula."
+
+Bottom gold highlight box:
+  "HOW TO FIND THE CHOICES:
+   1. Read the constraint (can't rob adjacent)
+   2. At each step, ask: what can I do? (rob or skip)
+   3. Write what happens in each case
+   4. The formula writes itself"
+
+
+================================================================================
+PROMPT 2: Recursion + Tree + Overlap -> house_robber_2.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Stack 3 sections vertically:
+
+
+SECTION 1 (badge: "4"), "THE RECURSIVE CODE":
+Header: "TURN THE FORMULA INTO CODE"
+
+Show the formula from the previous image in a gold highlight box:
+  best_haul(house) = max(
+      best_haul(house - 1),
+      best_haul(house - 2) + money[house]
+  )
+
+"When does it stop? When there are no houses left."
+Base cases in a small white card:
+  best_haul(-1) = 0           "No house here. $0."
+  best_haul(0)  = money[0]    "One house. Rob it."
+
+Full code in a dark navy code block:
+  money = [2, 7, 9, 3, 1]
+
+  def best_haul(house):
+      if house < 0: return 0
+      if house == 0: return money[0]
+      rob_this  = money[house] + best_haul(house - 2)
+      skip_this = best_haul(house - 1)
+      return max(rob_this, skip_this)
+
+  best_haul(4)   # start from the last house
+
+Annotations to the right of the code block (small colored labels):
+  rob_this  -> green label: "grab cash, skip neighbor"
+  skip_this -> orange label: "walk past, keep previous best"
+  max(...)  -> charcoal label: "pick whichever is more"
+
+Maya to the right of the code, finger pointing up. Speech bubble:
+  "Same formula, now it's code."
+
+
+SECTION 2 (badge: "5"), "THE TREE":
+Header: "DRAW THE CALLS"
+Subtitle: "best_haul(4), expanded"
+
+Draw a tree diagram on the cream background.
+Each node is a circle: white fill, charcoal border, charcoal number inside.
+The tree:
+
+                        4
+                      /    \
+                   3          2
+                 /   \      /   \
+               2      1   1      0
+              / \    / \  / \
+            1    0  0  -1 0  -1
+           / \
+          0   -1
+
+Left branches labeled "skip" in orange.
+Right branches labeled "rob" in green.
+Leaf nodes (0 and -1) have gold fill (base case cells from palette).
+
+KEY VISUAL: All nodes labeled "1" are circled with a bright yellow
+glow (#F5C542, 4px border). Dashed yellow lines connect them.
+Similarly, all nodes labeled "0" also get a lighter yellow highlight.
+
+Text below the tree:
+  "best_haul(1) is asked 3 times. Same question, same answer."
+  "best_haul(0) is asked even more. Wasted work!"
+
+Maya to the right, surprised expression. Speech bubble:
+  "Same sub-questions over and over. I should save the answers."
+
+
+SECTION 3 (badge: "6"), "MEMOIZE":
+Header: "CACHE THE ANSWERS"
+
+Show the cache as a white card styled like a spiral notepad:
+  house 0  -> $2
+  house 1  -> $7
+  house 2  -> $11
+  house 3  -> $11
+  house 4  -> $12
+
+Code in a dark navy code block:
+  def best_haul(house, memo={}):
+      if house in memo: return memo[house]
+      if house < 0: return 0
+      if house == 0: return money[0]
+      rob_this  = money[house] + best_haul(house - 2, memo)
+      skip_this = best_haul(house - 1, memo)
+      memo[house] = max(rob_this, skip_this)
+      return memo[house]
+
+Maya next to the notepad. Speech bubble:
+  "Same function. Just check the notepad first. That's memoization."
+
+Gold highlight box at the bottom:
+  "Next: the notepad becomes an array. Fill left to right.
+   That's tabulation."
+
+
+================================================================================
+PROMPT 3: The 1D Array (what it means, base cases) -> house_robber_3.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Stack 3 sections vertically:
+
+
+SECTION 1 (badge: "7"), "FROM NOTEPAD TO ARRAY":
+Header: "THE ARRAY IS THE CACHE, LAID OUT FLAT"
+
+LEFT: the memo dictionary in a notepad card:
+  {0: 2, 1: 7, 2: 11, 3: 11, 4: 12}
+
+RIGHT: the same data as array cells (white fill, charcoal border):
+  [ 2 , 7 , 11 , 11 , 12 ]
+
+A large charcoal arrow between them. Label: "SAME DATA. Different shape."
+
+Below, in a gold highlight box:
+  "How many parameters CHANGE in best_haul(house)?"
+  "house: goes from 0 to 4 -> CHANGES!" (green check icon)
+  "1 changing variable -> 1D array."
+
+Maya below, pointing. Speech bubble:
+  "The notepad and the array store the same answers. The array just
+   lays them out in order."
+
+
+SECTION 2 (badge: "8"), "EVERY CELL ANSWERS A QUESTION":
+Header: "WHAT DOES EACH CELL MEAN?"
+
+Show a large 1D array of 5 cells (white fill, charcoal border).
+ABOVE each cell, a small label in dark gray italics:
+
+  "best haul       "best haul       "best haul       "best haul       "best haul
+   considering      considering      considering      considering      considering
+   house 0          houses 0-1       houses 0-2       houses 0-3       houses 0-4
+   only"            only"            only"            only"            (ALL)"
+
+  [   ?   ]        [   ?   ]        [   ?   ]        [   ?   ]        [   ?   ]
+   house 0          house 1          house 2          house 3          house 4
+
+Below the array, a red highlight box (pale red fill, red border):
+  "NOT 'money in this house.' It's the BEST TOTAL
+   considering all houses up to this point."
+
+Maya to the right, pointing at the last cell. Speech bubble:
+  "best[4] is my answer. The best across ALL 5 houses.
+   I just need to fill everything before it."
+
+
+SECTION 3 (badge: "9"), "BASE CASES":
+Header: "START WITH WHAT YOU KNOW"
+
+Show the recursive base cases in a small code block:
+  if house < 0: return 0       -> "No house, no money."
+  if house == 0: return money[0]  -> "One house? Rob it. $2."
+
+"For the array, I need best[0] and best[1]."
+
+best[0]: small white card:
+  "Only house 0 ($2). Rob it."
+  best[0] = 2
+
+best[1]: small white card:
+  "Houses 0 and 1. Rob house 0 ($2) or house 1 ($7)?
+   Can't rob both (adjacent!). max($2, $7) = $7."
+  best[1] = 7
+
+Show the array with first two cells in gold fill (base case color):
+  [ 2 (gold) ]  [ 7 (gold) ]  [ ? ]  [ ? ]  [ ? ]
+   house 0       house 1       house 2 house 3 house 4
+
+Below, the row of 5 houses from the palette. Houses 0 and 1 have
+small gold stars above them.
+
+Gold highlight box at the bottom:
+  "Base cases from the recursion -> first cells in the array.
+   Whatever the recursion returns at the bottom, fill those first."
+
+Maya kneeling at the left, chalking "2" on house 0.
+
+
+================================================================================
+PROMPT 4: Filling Every Cell -> house_robber_4.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+This image has more content. Use the full height.
+
+At the very top (not inside a card):
+  Header: "FILL LEFT TO RIGHT: ROB OR SKIP?"
+  Subtitle: "At each house, compare two paths. Pick the bigger one."
+  Show the row of 5 houses (from palette) with money labels.
+
+Then 3 section cards (one per remaining cell), then completed array + code.
+
+
+SECTION CARD: "HOUSE 2" (money = $9):
+Show array: [ 2 (gold), 7 (gold), ? (green highlight), ?, ? ]
+
+Two side-by-side mini-cards inside:
+
+  LEFT mini-card (orange border):
+    "SKIP house 2"
+    Orange arrow pointing to best[1] = $7
+    "Walk past. Keep $7."
+
+  RIGHT mini-card (green border):
+    "ROB house 2"
+    Green arrow pointing to best[0] = $2
+    "$2 + $9 = $11"
+    Show house 1 with red X (off limits).
+
+  Result: max($7, $11) = $11. "ROB!" in green.
+  best[2] = 11
+
+
+SECTION CARD: "HOUSE 3" (money = $3):
+Show array: [ 2, 7, 11, ? (green highlight), ? ]
+
+Two side-by-side mini-cards:
+
+  LEFT (orange border):
+    "SKIP house 3" -> best[2] = $11. "Keep $11."
+
+  RIGHT (green border):
+    "ROB house 3" -> best[1] = $7, + $3 = $10.
+    House 2 with red X.
+
+  Result: max($11, $10) = $11. "SKIP!" in orange.
+  best[3] = 11
+  Maya walks past, hands in pockets. "$3 isn't worth giving up $11."
+
+
+SECTION CARD: "HOUSE 4" (money = $1):
+Show array: [ 2, 7, 11, 11, ? (green highlight with gold border) ]
+
+Two side-by-side mini-cards:
+
+  LEFT (orange border):
+    "SKIP house 4" -> best[3] = $11. "Keep $11."
+
+  RIGHT (green border):
+    "ROB house 4" -> best[2] = $11, + $1 = $12.
+    House 3 with red X.
+
+  Result: max($11, $12) = $12. "ROB!" in green.
+  best[4] = 12
+
+
+COMPLETED ARRAY (gold highlight box):
+  best = [ 2 ,  7 , 11 , 11 , 12 ]
+          h0    h1   h2   h3   h4
+
+Show the 5 houses. Houses 0, 2, 4 glow GREEN. Houses 1, 3 are grayed out.
+"Rob 0, 2, 4. Total: $2 + $9 + $1 = $12. No neighbors!"
+
+Maya at the right end, grinning, arms raised in triumph.
+
+
+THE CODE (dark navy code block):
+  def max_robbery(money):
+      house_count = len(money)
+      if house_count == 0: return 0
+      if house_count == 1: return money[0]
+
+      best = [0] * house_count
+      best[0] = money[0]
+      best[1] = max(money[0], money[1])
+
+      for house in range(2, house_count):
+          skip_this = best[house - 1]
+          rob_this  = best[house - 2] + money[house]
+          best[house] = max(skip_this, rob_this)
+
+      return best[house_count - 1]
+
+Annotations (small colored labels to the right of each line):
+  best[0] = money[0]                ->  "One house? Rob it."
+  best[1] = max(money[0], money[1]) ->  "Two houses? Rob richer one."
+  skip_this = best[house - 1]       ->  orange: "Walk past"
+  rob_this = best[house - 2] + ...  ->  green: "Grab cash, skip neighbor"
+  max(skip_this, rob_this)          ->  "Pick the better deal"
+  return best[house_count - 1]      ->  "Last cell = maximum haul"
+
+Bottom gold highlight box:
+  "THE PATTERN (same every time):
+   1. Read the constraint -> find the choices
+   2. Choices -> formula: max(skip, rob)
+   3. Base cases -> first cells
+   4. Fill left to right
+   5. Last cell = the answer"

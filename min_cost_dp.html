@@ -78,28 +78,28 @@ code{font-family:'Fira Code','Courier New',monospace}
 <div class="ws" style="border-left-color:var(--sand)">
 <h3 style="color:var(--sand);margin-bottom:12px">Min Cost Climbing Stairs (LeetCode #746)</h3>
 
-<p style="margin-bottom:12px">A staircase where each step has a toll. You pay the toll at a step, then climb 1 or 2 steps. You can start from step 0 or step 1 (both free to stand on). Find the minimum total cost to reach the top.</p>
+<p style="margin-bottom:12px">Each step has a toll. You pay the toll when you LEAVE a step (standing on it is free). From any step, climb 1 or 2 steps up. You can start on step 0 or step 1. Find the minimum total cost to reach the top.</p>
 
 <div style="margin:16px 0;text-align:center">
 <div style="display:inline-block;text-align:center;margin:0 16px">
-<div style="font-size:1.8em;margin-bottom:4px">&#x1F9F1;</div>
 <div style="font-weight:700">Step 0</div>
-<div style="color:var(--amber)">toll $10</div>
+<div style="color:var(--amber);font-weight:700;font-size:1.1em">$10</div>
+<div style="font-size:.8em;color:var(--muted)">toll to leave</div>
 </div>
 <div style="display:inline-block;text-align:center;margin:0 16px">
-<div style="font-size:1.8em;margin-bottom:4px">&#x1F9F1;</div>
 <div style="font-weight:700">Step 1</div>
-<div style="color:var(--amber)">toll $15</div>
+<div style="color:var(--amber);font-weight:700;font-size:1.1em">$15</div>
+<div style="font-size:.8em;color:var(--muted)">toll to leave</div>
 </div>
 <div style="display:inline-block;text-align:center;margin:0 16px">
-<div style="font-size:1.8em;margin-bottom:4px">&#x1F9F1;</div>
 <div style="font-weight:700">Step 2</div>
-<div style="color:var(--amber)">toll $20</div>
+<div style="color:var(--amber);font-weight:700;font-size:1.1em">$20</div>
+<div style="font-size:.8em;color:var(--muted)">toll to leave</div>
 </div>
 <div style="display:inline-block;text-align:center;margin:0 16px">
-<div style="font-size:1.8em;margin-bottom:4px">&#x1F6A9;</div>
 <div style="font-weight:700">Top</div>
-<div style="color:var(--green)">no toll</div>
+<div style="color:var(--green);font-weight:700;font-size:1.1em">FREE</div>
+<div style="font-size:.8em;color:var(--muted)">destination</div>
 </div>
 </div>
 
@@ -108,74 +108,94 @@ code{font-family:'Fira Code','Courier New',monospace}
 <div class="two-col" style="margin:12px 0">
 <div class="path-orange">
 <div style="color:var(--amber);font-weight:700;margin-bottom:6px">PATH A: $30</div>
-Start at step 0 (pay $10) &rarr; climb 2 to step 2 (pay $20) &rarr; top<br>
+Start on step 0 (pay $10 to leave) &rarr; climb 2 to step 2 (pay $20 to leave) &rarr; top<br>
 <code>$10 + $20 = $30</code>
 </div>
 <div class="path-green">
 <div style="color:var(--green);font-weight:700;margin-bottom:6px">PATH B: $15</div>
-Start at step 1 (pay $15) &rarr; climb 2 to top<br>
+Start on step 1 (pay $15 to leave) &rarr; climb 2 to top<br>
 <code>$15</code>
 </div>
 </div>
 
 <div class="hi">
-<strong style="color:var(--sand)">Key difference from Climbing Stairs:</strong> Staircase counted ALL ways to reach the top. Min Cost asks for the CHEAPEST way. Same structure, different question.
+<strong style="color:var(--sand)">Key difference from Climbing Stairs:</strong> Staircase counted ALL ways to reach the top (+). Min Cost picks the CHEAPEST way (min). Same structure, different question.
 </div>
 </div>
 
-<!-- ==================== DP TRIGGERS ==================== -->
-<h2>Spot the DP Triggers</h2>
+<!-- ==================== HOW TO FIND THE CHOICES ==================== -->
+<img src="dp/images/min_cost_2.png" alt="How to find choices: pick a step, ask how you got there, two backward arrows, formula writes itself" class="scene-img">
 
-<div class="ws" style="border-left-color:var(--sand)">
-<h3 style="color:var(--sand)">Three green checks = it's DP</h3>
+<h2>Step 1: How Do I Find the Choices?</h2>
 
-<div style="margin:12px 0">
-<div style="background:var(--card2);border-radius:8px;padding:14px;margin:8px 0">
-<div style="color:var(--green);font-weight:700;margin-bottom:4px">1. CHOICES AT EACH STEP</div>
-<div style="font-size:.92em">At each step: climb 1 or climb 2. Same choices as Climbing Stairs.</div>
-</div>
-<div style="background:var(--card2);border-radius:8px;padding:14px;margin:8px 0">
-<div style="color:var(--green);font-weight:700;margin-bottom:4px">2. BEST ANSWER NEEDS BEST PREVIOUS ANSWERS</div>
-<div style="font-size:.92em">Cheapest to step 2 = cheaper of (cheapest to step 1 + toll at step 1) or (cheapest to step 0 + toll at step 0). Can't solve step 2 without first solving steps 0 and 1.</div>
-</div>
-<div style="background:var(--card2);border-radius:8px;padding:14px;margin:8px 0">
-<div style="color:var(--green);font-weight:700;margin-bottom:4px">3. SAME SUBPROBLEM ASKED MORE THAN ONCE</div>
-<div style="font-size:.92em">"Cheapest to step 1" is asked by both step 2 and the top. Same question, asked twice. Overlapping subproblems.</div>
-</div>
+<div class="ws" style="border-left-color:var(--gold2)">
+<h3 style="color:var(--gold2)">A simple trick that works for every DP problem</h3>
+
+<p style="margin-bottom:16px">Don't think about the whole problem. Follow these three steps:</p>
+
+<!-- Step A -->
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0">
+<div style="color:var(--gold2);font-weight:700;margin-bottom:6px">A. Pick any step in the middle</div>
+<div style="font-size:.92em">
+Let's pick <strong>step 2</strong>. Don't worry about the whole staircase. Just focus on this one step.
 </div>
 </div>
 
-<!-- ==================== STEP 1: CHOICES ==================== -->
-<img src="dp/images/min_cost_2.png" alt="Choices at each step, think backwards, recursive code, call tree with overlap" class="scene-img">
+<!-- Step B -->
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0">
+<div style="color:var(--gold2);font-weight:700;margin-bottom:6px">B. Ask: "How could I have gotten here?"</div>
+<div style="font-size:.92em;margin-bottom:10px">
+Standing on step 2, look BACKWARDS. Only two ways I could have arrived:
+</div>
 
-<h2>Step 1: What Are My Choices?</h2>
-
-<div class="ws" style="border-left-color:var(--sand)">
-<h3 style="color:var(--sand)">At each step, two ways to arrive</h3>
-
-<p style="margin-bottom:12px">Think BACKWARDS. Standing at step 2, asking: how did I get here?</p>
-
-<div class="two-col" style="margin:12px 0">
+<div class="two-col" style="margin:8px 0">
 <div class="path-green">
-<div style="color:var(--green);font-weight:700;margin-bottom:6px">FROM ONE BELOW</div>
-Came from step 1. Paid toll at step 1 ($15).<br><br>
-<code style="color:var(--green)">cost_to[step - 1] + cost[step - 1]</code>
+<div style="color:var(--green);font-weight:700;margin-bottom:4px">Climbed 1 from step 1</div>
+I was on step 1, paid the <strong>$15 toll</strong> to leave it, and climbed 1 step up to step 2.
 </div>
 <div class="path-orange">
-<div style="color:var(--amber);font-weight:700;margin-bottom:6px">FROM TWO BELOW</div>
-Came from step 0. Paid toll at step 0 ($10).<br><br>
-<code style="color:var(--amber)">cost_to[step - 2] + cost[step - 2]</code>
+<div style="color:var(--amber);font-weight:700;margin-bottom:4px">Climbed 2 from step 0</div>
+I was on step 0, paid the <strong>$10 toll</strong> to leave it, and climbed 2 steps up to step 2.
 </div>
 </div>
 
-<p style="margin-top:12px">Pick whichever was cheaper:</p>
-<pre><code>cheapest_to(step) = min(
-    cheapest_to(step - 1) + cost[step - 1],   # came from one below
-    cheapest_to(step - 2) + cost[step - 2]    # came from two below
+<p style="font-size:.92em;color:var(--muted)">That's it. Those are the ONLY two ways. No other step can reach step 2.</p>
+</div>
+
+<!-- Step C -->
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0">
+<div style="color:var(--gold2);font-weight:700;margin-bottom:6px">C. The formula writes itself</div>
+<div style="font-size:.92em;margin-bottom:10px">
+For each way, write down the total cost. Then pick the cheaper one:
+</div>
+
+<div class="two-col" style="margin:8px 0">
+<div class="path-green">
+<div style="color:var(--green);font-weight:700">From step 1</div>
+<code>cost_to[step - 1] + cost[step - 1]</code><br>
+<span style="font-size:.85em;color:var(--muted)">"cheapest to get to step 1" + "toll to leave step 1"</span>
+</div>
+<div class="path-orange">
+<div style="color:var(--amber);font-weight:700">From step 0</div>
+<code>cost_to[step - 2] + cost[step - 2]</code><br>
+<span style="font-size:.85em;color:var(--muted)">"cheapest to get to step 0" + "toll to leave step 0"</span>
+</div>
+</div>
+
+<pre><code>cost_to[step] = min(
+    cost_to[step - 1] + cost[step - 1],
+    cost_to[step - 2] + cost[step - 2]
 )</code></pre>
+</div>
 
-<div class="hi">
-<strong style="color:var(--sand)">Same as Climbing Stairs, but min() instead of +, and each step has a toll.</strong> Stairs added ALL ways. Min Cost picks the CHEAPEST path.
+<div class="hi" style="background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.4)">
+<strong style="color:var(--gold2)">This recipe works for EVERY DP problem:</strong><br>
+1. Pick any element in the middle<br>
+2. Ask "how could I have gotten here?"<br>
+3. List the ways (those are your choices)<br>
+4. Write the cost of each way<br>
+5. Combine: min for cheapest, max for most, + for count<br>
+6. That's your formula
 </div>
 </div>
 

@@ -134,28 +134,46 @@ ON that step.
 Problem statement in a white card:
   "Each step has a toll. You pay the toll when you LEAVE that step.
    From any step, you can climb 1 or 2 steps up.
-   You can start on step 0 or step 1 (free to start).
    Goal: reach the top with minimum total cost."
 
-Show the example visually ON the staircase.
+RIGHT BELOW the problem statement, show a BIG gold highlight box:
+
+  "FREE START: You choose where to begin."
+
+  Show Maya with two starting options side by side:
+
+  LEFT option (green border):
+    Maya standing on step 0. Label: "Start here FREE"
+    Arrow pointing at step 0. "No cost to STAND on step 0."
+    "You only pay $10 when you LEAVE."
+
+  RIGHT option (green border):
+    Maya standing on step 1. Label: "Or start here FREE"
+    Arrow pointing at step 1. "No cost to STAND on step 1."
+    "You only pay $15 when you LEAVE."
+
+  Bottom of the box: "Pick whichever starting point leads to
+  the cheapest total path."
+
+Below the gold box, show the example visually ON the staircase.
 Draw two different colored paths with arrows going UP:
 
   PATH A (orange arrows, more expensive):
     Orange arrow from step 0 up to step 2 (skip step 1).
     Orange arrow from step 2 up to TOP.
-    Label on step 0: "pay $10"
-    Label on step 2: "pay $20"
+    Label on step 0: "pay $10 to leave"
+    Label on step 2: "pay $20 to leave"
     Total shown: "$10 + $20 = $30"
     Small red "X" or faded style.
 
   PATH B (green arrows, cheaper):
     Green arrow from step 1 up to TOP (skip step 2 entirely).
-    Label on step 1: "pay $15"
+    Label on step 1: "pay $15 to leave"
     Total shown: "$15"
     Green check mark. Label: "CHEAPEST!"
 
 Maya speech bubble:
-  "Same staircase, but now each step has a price."
+  "Starting at step 1 and jumping straight to the top costs only $15!"
 
 
 SECTION 2 (badge: "2"), "HOW DO I FIND THE CHOICES?":

@@ -78,7 +78,7 @@ code{font-family:'Fira Code','Courier New',monospace}
 <div class="ws" style="border-left-color:var(--sand)">
 <h3 style="color:var(--sand);margin-bottom:12px">Min Cost Climbing Stairs (LeetCode #746)</h3>
 
-<p style="margin-bottom:12px">Each step has a toll. You pay the toll when you LEAVE a step (standing on it is free). From any step, climb 1 or 2 steps up. You can start on step 0 or step 1. Find the minimum total cost to reach the top.</p>
+<p style="margin-bottom:12px">Each step has a toll. You pay the toll when you LEAVE a step. From any step, climb 1 or 2 steps up. Find the minimum total cost to reach the top.</p>
 
 <div style="margin:16px 0;text-align:center">
 <div style="display:inline-block;text-align:center;margin:0 16px">
@@ -104,6 +104,24 @@ code{font-family:'Fira Code','Courier New',monospace}
 </div>
 
 <pre><code>cost = [10, 15, 20]</code></pre>
+
+<!-- FREE START: the key rule -->
+<div style="background:rgba(251,191,36,.1);border:2px solid var(--gold2);border-radius:10px;padding:16px;margin:16px 0">
+<div style="color:var(--gold2);font-weight:800;font-size:1.1em;margin-bottom:10px">FREE START: You choose where to begin</div>
+
+<div class="two-col" style="margin:8px 0">
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:12px;text-align:center">
+<div style="color:var(--green);font-weight:700;margin-bottom:4px">Start on Step 0</div>
+<div style="font-size:.9em">Standing here is <strong>free</strong>.<br>You only pay <strong>$10 when you leave</strong>.</div>
+</div>
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:12px;text-align:center">
+<div style="color:var(--green);font-weight:700;margin-bottom:4px">Start on Step 1</div>
+<div style="font-size:.9em">Standing here is <strong>free</strong>.<br>You only pay <strong>$15 when you leave</strong>.</div>
+</div>
+</div>
+
+<p style="font-size:.9em;color:var(--muted);margin-top:8px;text-align:center">Pick whichever starting point leads to the cheapest total path.</p>
+</div>
 
 <div class="two-col" style="margin:12px 0">
 <div class="path-orange">

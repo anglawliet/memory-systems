@@ -197,7 +197,7 @@ IMPORTANT: Use 4 items (NOT 3!) to show a REAL overlapping subproblem.
 Items: Gold (4 kg/$10K), Ruby (3 kg/$7K), Emerald (1 kg/$3K), Platinum (2 kg/$5K)
 The recursion processes them in reverse: count=4 is Platinum, count=3 is Emerald, count=2 is Ruby, count=1 is Gold.
 
-Two different paths both reach (n=1, W=4), meaning "only Gold left, 4 kg capacity":
+Two different paths both reach (count=1, cap=4), meaning "only Gold left, 4 kg capacity":
   Path A: GRAB Plat (2 kg) + GRAB Emer (1 kg) + SKIP Ruby, used 3 kg, 4 kg left
   Path B: SKIP Plat + SKIP Emer + GRAB Ruby (3 kg), used 3 kg, 4 kg left
 
@@ -216,28 +216,28 @@ Show the items being used:
   4. Platinum Watch 2 kg / $5K
   Bag limit: 7 kg
 
-Show a PARTIAL recursive tree starting at (n=4, W=7).
+Show a PARTIAL recursive tree starting at (count=4, cap=7).
 
 DO NOT show the full tree (too complex). Show TWO highlighted paths that converge
 at the SAME subproblem. Show other branches as "..." or faded/dashed.
 
 PATH A (left side of tree, highlighted in BLUE):
-  (n=4, W=7) -> GRAB Platinum (2 kg)
-    -> (n=3, W=5) -> GRAB Emerald (1 kg)
-      -> (n=2, W=4) -> SKIP Ruby
-        -> (n=1, W=4) * "Only Gold left, 4 kg capacity"
+  (count=4, cap=7) -> GRAB Platinum (2 kg)
+    -> (count=3, cap=5) -> GRAB Emerald (1 kg)
+      -> (count=2, cap=4) -> SKIP Ruby
+        -> (count=1, cap=4) * "Only Gold left, 4 kg capacity"
 
 Explain path: "Used Platinum (2 kg) + Emerald (1 kg) = 3 kg. Ruby skipped. 4 kg left."
 
 PATH B (right side of tree, highlighted in ORANGE):
-  (n=4, W=7) -> SKIP Platinum
-    -> (n=3, W=7) -> SKIP Emerald
-      -> (n=2, W=7) -> GRAB Ruby (3 kg)
-        -> (n=1, W=4) * "Only Gold left, 4 kg capacity"
+  (count=4, cap=7) -> SKIP Platinum
+    -> (count=3, cap=7) -> SKIP Emerald
+      -> (count=2, cap=7) -> GRAB Ruby (3 kg)
+        -> (count=1, cap=4) * "Only Gold left, 4 kg capacity"
 
 Explain path: "Skipped Platinum and Emerald. Used Ruby (3 kg). 4 kg left."
 
-CRITICAL VISUAL: Both paths arrive at (n=1, W=4), meaning "only Gold left, 4 kg
+CRITICAL VISUAL: Both paths arrive at (count=1, cap=4), meaning "only Gold left, 4 kg
 capacity." Circle BOTH nodes with BRIGHT YELLOW GLOW. Draw a dashed line connecting them.
 
 Label between them: "SAME SUBPROBLEM! Only Gold left, 4 kg capacity. Appears TWICE.
@@ -251,7 +251,7 @@ Header: "OVERLAPPING SUBPROBLEMS"
 Subtitle: "Same question, same answer. Don't solve it twice."
 
 Top section, zoom in on the overlapping subproblem:
-  Show (n=1, W=4) expanded:
+  Show (count=1, cap=4) expanded:
     "Only Gold left (4 kg, $10K). Capacity = 4 kg."
     GRAB Gold: 4 <= 4? YES! $10K + (no items left, 0 kg remaining) = $10K + $0 = $10K
     SKIP Gold: (no items left, 4 kg remaining) = $0

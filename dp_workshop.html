@@ -240,11 +240,57 @@ td{padding:10px 12px;border:1px solid var(--border)}
 <img src="dp/images/family1_C_1.png" alt="Pages 1-3: The problem setup, choice diagram, and recursion from choices" class="scene-img">
 
 <div class="walkthrough-section">
-<h3>Step 1: What Are My Choices?</h3>
-<p>This is how EVERY knapsack problem starts. At each treasure, Kit has two choices:</p>
+<h3>Step 1: How Do I Find the Choices?</h3>
+<p>You don't need creativity. You need <strong>one question</strong>.</p>
+
+<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:12px 0">
+<div style="color:var(--gold2);font-weight:700;font-size:1.1em;margin-bottom:12px">THE TRICK: "HOW DID I GET HERE?"</div>
+
+<div style="display:grid;gap:14px">
+
+<div style="background:var(--card2);border-radius:8px;padding:14px">
+<div style="color:var(--blue);font-weight:700;margin-bottom:6px">A. Pick any item in the middle</div>
+<div style="font-size:.93em">Don't think about all 5 treasures at once. Just look at ONE: <strong>Ruby</strong> (3 kg, $7K). Kit is standing at Ruby with 5 kg of capacity left.</div>
+</div>
+
+<div style="background:var(--card2);border-radius:8px;padding:14px;border:2px solid var(--gold2)">
+<div style="color:var(--gold2);font-weight:700;margin-bottom:6px">B. Ask: "How could I have gotten this result?"</div>
+<div style="font-size:.93em;line-height:1.8">
+There are only two possibilities:<br>
+<strong style="color:var(--green)">I grabbed Ruby</strong> &rarr; I used 3 kg and gained $7K. Before Ruby, I had fewer items and less capacity.<br>
+<strong style="color:var(--red)">I skipped Ruby</strong> &rarr; I used 0 kg and gained $0. Before Ruby, I had fewer items, same capacity.<br><br>
+But what if Ruby doesn't fit? (<code>weight &gt; bag_limit</code>?) Then there's only ONE possibility: I skipped it. No choice at all.
+</div>
+</div>
+
+<div style="background:var(--card2);border-radius:8px;padding:14px">
+<div style="color:var(--green);font-weight:700;margin-bottom:6px">C. The formula writes itself</div>
+<div style="font-size:.93em;line-height:1.7">
+<code style="color:var(--green)">grab = value + max_value(count - 1, bag_limit - weight)</code><br>
+<code style="color:var(--red)">skip = max_value(count - 1, bag_limit)</code><br>
+Pick the better one: <code>max(grab, skip)</code>
+</div>
+</div>
+
+</div>
+</div>
+
+<div style="background:rgba(251,191,36,.12);border:2px solid var(--gold2);border-radius:10px;padding:16px;margin:12px 0">
+<div style="color:var(--gold2);font-weight:700;font-size:1.05em;margin-bottom:10px">This recipe works for EVERY DP problem:</div>
+<div style="font-size:.93em;line-height:1.8">
+1. Pick any state in the middle<br>
+2. Ask: <strong>"how could I have arrived here?"</strong><br>
+3. List the ways (those are your CHOICES)<br>
+4. For each way, write what it costs or gains<br>
+5. Combine them (<code>max</code> for best, <code>min</code> for cheapest, <code>+</code> for count)<br>
+6. That's your formula. The code writes itself.
+</div>
+</div>
+
+<p style="font-size:.93em">Now the choice diagram is just a picture of what we just derived:</p>
 
 <div style="background:rgba(59,130,246,.08);border:2px solid var(--blue);border-radius:10px;padding:18px;margin:12px 0">
-<div style="color:var(--blue);font-weight:700;font-size:1.1em;margin-bottom:12px">THE CHOICE DIAGRAM</div>
+<div style="color:var(--blue);font-weight:700;font-size:1.05em;margin-bottom:12px">THE CHOICE DIAGRAM</div>
 <div style="font-size:.95em;line-height:1.9">
 <strong>At each item:</strong> Does it FIT in the bag? (<code>weight &lt;= remaining capacity</code>?)<br><br>
 <strong style="color:var(--green)">IF IT FITS</strong> (two branches):<br>
@@ -254,10 +300,6 @@ td{padding:10px 12px;border:1px solid var(--border)}
 <strong style="color:var(--red)">IF IT DOESN'T FIT</strong> (one branch only):<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&#x274C; <strong>SKIP:</strong> move to next item (no choice!)
 </div>
-</div>
-
-<div class="hi">
-<strong style="color:var(--gold2)">Aditya Verma's Rule:</strong> Every DP problem has CHOICES. Find the choices FIRST. The recursion follows.
 </div>
 </div>
 

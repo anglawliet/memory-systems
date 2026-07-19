@@ -122,23 +122,64 @@ Below: Two LARGE character cards side by side:
 
 Bottom blue banner: "0/1 means: each item, AT MOST ONCE. Grab it or skip it. No taking half. No taking twice."
 
-PAGE 2, "THE CHOICE DIAGRAM" (LARGE circled 2 top-right):
-Header: "WHAT ARE MY CHOICES?" + "This is how EVERY knapsack problem starts."
+PAGE 2, "HOW DO I FIND THE CHOICES?" (LARGE circled 2 top-right):
+Header: "ONE TRICK THAT WORKS FOR EVERY DP PROBLEM"
+Subtitle: "You don't need creativity. You need ONE question."
 
-Show Branch projecting the choice diagram as a large holographic tree:
+Show a 3-step process in 3 stacked cards:
 
-At EACH treasure, Kit has TWO choices:
-  1. Does it FIT in the bag? (weight <= remaining capacity?)
+STEP A (white card, blue border):
+  Header: "PICK ANY ITEM IN THE MIDDLE"
+  Show the 5 treasures on pedestals. Circle RUBY (item 2) with a dotted highlight.
+  Kit pointing at Ruby. Sack shows "5 kg remaining."
+  Kit: "Don't think about all 5 items at once. Just look at ONE item: Ruby."
 
-  IF IT FITS, TWO BRANCHES:
-    GREEN path: GRAB IT → add value, reduce capacity, move to next item
-    RED path: SKIP IT → keep capacity, move to next item
-    → Take the MAX of both paths
+STEP B (white card, gold border, THIS IS THE KEY CARD, make it BIG):
+  Header: "ASK: HOW COULD I HAVE GOTTEN THIS RESULT?"
+  Show Ruby zoomed in (3 kg, $7K). Kit looks at Ruby and asks the question.
 
-  IF IT DOESN'T FIT, ONE BRANCH:
-    RED path only: SKIP IT → move to next item (no choice!)
+  TWO BACKWARD arrows pointing to what could have happened BEFORE Ruby:
 
-Show this as a LARGE branching diagram:
+  GREEN arrow (GRAB path):
+    "I grabbed Ruby. So I used 3 kg and gained $7K."
+    "Before Ruby, I had MORE capacity (5 + 3 = 8 kg... wait, but bag_limit is 7)."
+    "Before Ruby, I had count - 1 items and bag_limit - weight capacity."
+    Show: "grab = Ruby's value + best from earlier items with less capacity"
+
+  RED arrow (SKIP path):
+    "I skipped Ruby. So I used 0 kg and gained $0."
+    "Before Ruby, I had the same capacity, just one fewer item."
+    Show: "skip = best from earlier items with SAME capacity"
+
+  Bottom: "Those are the ONLY two possibilities. That's it. The choices found themselves."
+
+  But WAIT, one more check:
+  "What if Ruby doesn't fit? (weight > bag_limit?)"
+  "Then there's only ONE arrow: SKIP. No choice at all."
+
+STEP C (white card, green border):
+  Header: "THE FORMULA WRITES ITSELF"
+
+  Show both paths side by side:
+
+  Green path card:
+    "GRAB: value + max_value(count - 1, bag_limit - weight)"
+
+  Red path card:
+    "SKIP: max_value(count - 1, bag_limit)"
+
+  "Pick the better one: max(grab, skip)"
+
+  Gold highlight box with the formula:
+    if weight <= bag_limit:
+        return max(value + max_value(count-1, bag_limit-weight),
+                   max_value(count-1, bag_limit))
+    else:
+        return max_value(count-1, bag_limit)
+
+Kit: "I didn't invent this formula. I asked HOW DID I GET HERE, and the formula showed up."
+
+Show Branch projecting the choice diagram as a holographic summary:
   Current item, capacity bag_limit
       |-- weight <= bag_limit? YES -> BRANCH!
       |       |-- GRAB: value + solve(count - 1, bag_limit - weight)   [GREEN]
@@ -146,9 +187,14 @@ Show this as a LARGE branching diagram:
       |       -> take MAX
       +-- weight > bag_limit? -> SKIP only: solve(count - 1, bag_limit) [RED]
 
-Kit: "The choice diagram IS the recursion. Once you see the choices, the code writes itself."
-
-Label in gold box: "ADITYA VERMA'S RULE: Every DP problem has CHOICES. Find the choices FIRST. The recursion follows."
+Gold box at the bottom:
+  "THE RECIPE (works for EVERY DP problem):
+    1. Pick any state in the middle
+    2. Ask: how could I have arrived here?
+    3. List the ways (those are your CHOICES)
+    4. For each way, write what it costs or gains
+    5. Combine them (max for best, min for cheapest, + for count)
+    6. That's your formula. The code writes itself."
 
 PAGE 3, "RECURSION FROM CHOICES" (LARGE circled 3 top-right):
 Header: "THE CODE WRITES ITSELF" + "Choice diagram = recursive function."

@@ -26,28 +26,28 @@ The 5 Vault Treasures:
   Optimal: Gold (4,$10K) + Emerald (1,$3K) + Platinum (2,$5K) = weight 7, value $18K
 
 Teaching pipeline (Aditya Verma style):
-  1. See the problem → What CHOICES do you have at each item?
+  1. See the problem -> What CHOICES do you have at each item?
   2. Draw the CHOICE DIAGRAM (branching tree)
   3. Write RECURSION directly from the choice diagram
-  4. Draw the RECURSIVE TREE → notice the SAME subproblems appear multiple times
+  4. Draw the RECURSIVE TREE -> notice the SAME subproblems appear multiple times
   5. THAT'S WHY IT'S DP! Same subproblem, same answer, why compute twice?
   6. MEMOIZE: just add a cache (store results, check before computing)
-  7. TABULATE: changing variables → table dimensions, base cases → first row/col
+  7. TABULATE: changing variables -> table dimensions, base cases -> first row/col
   8. Fill table bottom-up using the same formula from recursion
 
 Images generated from these prompts:
-  Prompt 0 → family1_A.png    (character reference)
-  Prompt 1 → family1_C_1.png  (pages 1-3: problem, choices, recursion)
-  Prompt 2 → family1_C_2.png  (pages 4-5: recursive tree, overlap, memoization)
-  Prompt 3 → family1_C_3.png  (pages 6-7: changing vars → table, filling table)
-  Prompt 4 → family1_C_4.png  (pages 8-10: three code versions, family tree, rules)
-  Prompt 5 → family1_C_5.png  (Why This Table? crossing out constants)
-  Prompt 6 → family1_C_7.png  (Too Heavy → Copy From Above, Gold's row)
-  Prompt 7 → family1_C_6.png  (Ruby's Row step by step)
+  Prompt 0 -> family1_A.png    (character reference)
+  Prompt 1 -> family1_C_1.png  (pages 1-3: problem, choices, recursion)
+  Prompt 2 -> family1_C_2.png  (pages 4-5: recursive tree, overlap, memoization)
+  Prompt 3 -> family1_C_3.png  (pages 6-7: changing vars -> table, filling table)
+  Prompt 4 -> family1_C_4.png  (pages 8-10: three code versions, family tree, rules)
+  Prompt 5 -> family1_C_5.png  (Why This Table? crossing out constants)
+  Prompt 6 -> family1_C_7.png  (Too Heavy -> Copy From Above, Gold's row)
+  Prompt 7 -> family1_C_6.png  (Ruby's Row step by step)
 
 
 ================================================================================
-PROMPT 0: CHARACTER REFERENCE → family1_A.png
+PROMPT 0: CHARACTER REFERENCE -> family1_A.png
 ================================================================================
 Generate first, then use as style reference for all other prompts.
 
@@ -78,7 +78,7 @@ Below the characters, a bold banner reads:
 
 
 ================================================================================
-PROMPT 1: Problem + Choices + Recursion (Pages 1-3) → family1_C_1.png
+PROMPT 1: Problem + Choices + Recursion (Pages 1-3) -> family1_C_1.png
 ================================================================================
 
 Create a tall portrait infographic (1024x1792) for 0/1 Knapsack DP tutorial.
@@ -237,7 +237,7 @@ Highlighted callout: "BASE CASE = smallest valid input. No items (count=0) or no
 
 
 ================================================================================
-PROMPT 2: Recursive Tree + Overlap + Memoization (Pages 4-5) → family1_C_2.png
+PROMPT 2: Recursive Tree + Overlap + Memoization (Pages 4-5) -> family1_C_2.png
 ================================================================================
 IMPORTANT: Use 4 items (NOT 3!) to show a REAL overlapping subproblem.
 Items: Gold (4 kg/$10K), Ruby (3 kg/$7K), Emerald (1 kg/$3K), Platinum (2 kg/$5K)
@@ -333,7 +333,7 @@ Every unique (count, bag_limit) pair solved at most once."
 
 
 ================================================================================
-PROMPT 3: Changing Variables -> Table + Filling the Table (Pages 6-7) → family1_C_3.png
+PROMPT 3: Changing Variables -> Table + Filling the Table (Pages 6-7) -> family1_C_3.png
 ================================================================================
 
 Continue the tutorial. Tall portrait (1024x1792). SAME exact style. SAME exact character designs. ALL text HUGE. Only 2 pages, give each LOTS of space.
@@ -404,7 +404,7 @@ Kit: "Every cell asks the same question the recursion asked. Just reads from the
 
 
 ================================================================================
-PROMPT 4: Three Versions + Knapsack Family (Pages 8-10) → family1_C_4.png
+PROMPT 4: Three Versions + Knapsack Family (Pages 8-10) -> family1_C_4.png
 ================================================================================
 
 Final panel. Tall portrait (1024x1792). SAME exact style. SAME exact character designs. ALL text HUGE.
@@ -527,7 +527,7 @@ Kit with Sack (full, gauge at max) and Branch (projecting the family tree):
 
 
 ================================================================================
-PROMPT 5: "Why This Table?" → family1_C_5.png
+PROMPT 5: "Why This Table?" -> family1_C_5.png
 ================================================================================
 
 Create a tall portrait infographic (1024x1792). SAME exact style and character
@@ -593,7 +593,7 @@ Gold box at bottom:
 
 
 ================================================================================
-PROMPT 6: "Too Heavy -> Copy From Above" (Gold's row) → family1_C_7.png
+PROMPT 6: "Too Heavy -> Copy From Above" (Gold's row) -> family1_C_7.png
 ================================================================================
 
 Create a tall portrait infographic (1024x1792). SAME exact style and character designs.
@@ -662,7 +662,7 @@ Bottom callout:
 
 
 ================================================================================
-PROMPT 7: "Ruby's Row Step by Step" → family1_C_6.png
+PROMPT 7: "Ruby's Row Step by Step" -> family1_C_6.png
 ================================================================================
 
 Create a tall portrait infographic (1024x1792). SAME exact style and character

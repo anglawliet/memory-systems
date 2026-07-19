@@ -47,6 +47,73 @@ Images generated from these prompts:
 
 
 ================================================================================
+STYLE BIBLE (copy into every prompt)
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+COMPANION 1 (Sack the Duffel Bag, appears in most images):
+- A sleek BLACK DUFFEL BAG (rectangular, gym-bag shaped, soft fabric).
+- GLOWING BLUE DIGITAL WEIGHT GAUGE on the side strap (bar from 0 to 7 kg).
+- Has a WORRIED FACE on the digital display (wide nervous eyes, small mouth).
+- COOL BLUE GLOW around him. Label nearby: "(knapsack)"
+
+COMPANION 2 (Branch the Holographic Projector, appears in most images):
+- A small CYLINDRICAL CHROME DEVICE (like a flashlight).
+- Projects HOLOGRAPHIC BRANCHING PATHS from the top.
+- LEFT beam: GREEN with a checkmark (GRAB/TAKE).
+- RIGHT beam: RED with an X (SKIP/LEAVE).
+- Has a MISCHIEVOUS FACE on the chrome body (bright eyes, cheeky grin).
+- WARM GREEN + RED GLOW from the projections. Label nearby: "(choices)"
+
+THE 5 VAULT TREASURES (on lit pedestals with spotlights):
+  1. Gold Bar Stack: 3 stacked gold bars, tag "4 kg / $10K"
+  2. Ruby Collection: open case of red rubies, tag "3 kg / $7K"
+  3. Diamond Display: large sparkling diamond on stand, tag "5 kg / $12K"
+  4. Emerald Ring Box: small green ring box, tag "1 kg / $3K"
+  5. Platinum Watches: display of silver watches, tag "2 kg / $5K"
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: dark navy/charcoal (#1a1a2e). Heist atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: bright blue (#3B82F6) with LARGE circled page numbers in top-right.
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for GRAB paths. Red: (#EF4444) for SKIP paths.
+- Blue accent lighting throughout (neon heist feel).
+
+---END STYLE BIBLE---
+
+
+================================================================================
 PROMPT 0: CHARACTER REFERENCE -> family1_A.png
 ================================================================================
 Generate first, then use as style reference for all other prompts.
@@ -81,23 +148,9 @@ Below the characters, a bold banner reads:
 PROMPT 1: Problem + Choices + Recursion (Pages 1-3) -> family1_C_1.png
 ================================================================================
 
-Create a tall portrait infographic (1024x1792) for 0/1 Knapsack DP tutorial.
-
-CRITICAL DESIGN RULES:
-- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+
-- SHOW don't tell. Use big diagrams, arrows, branching paths. If a picture can say it, don't write a sentence.
-- Every single element must be readable on a phone held vertically WITHOUT zooming
-- Maximum 15 words per explanation. Let the visuals carry the meaning.
-- White space is OK. Don't cram. Better to be clear than dense.
-
-Style: soft 3D cartoon characters, dark navy/charcoal section backgrounds (heist atmosphere), cream/warm-white rounded content cards, bright blue headers with LARGE circled page numbers in top-right. Code in large monospace on light gray rounded boxes.
-
-Characters (use EXACT same designs in ALL images):
-- Kit: short dark hair, black tactical suit, blue utility belt, goggles on forehead, confident
-- Sack the Duffel Bag: black bag with glowing BLUE weight gauge, worried face, label "(knapsack)"
-- Branch the Holographic Projector: chrome cylinder projecting GREEN (take) + RED (skip) paths, mischievous face, label "(choices)"
-- 5 treasures on pedestals with weight/value tags
-- Dark vault atmosphere with blue accent lighting
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
 
 Stack 3 sections vertically:
 
@@ -123,78 +176,51 @@ Below: Two LARGE character cards side by side:
 Bottom blue banner: "0/1 means: each item, AT MOST ONCE. Grab it or skip it. No taking half. No taking twice."
 
 PAGE 2, "HOW DO I FIND THE CHOICES?" (LARGE circled 2 top-right):
-Header: "ONE TRICK THAT WORKS FOR EVERY DP PROBLEM"
-Subtitle: "You don't need creativity. You need ONE question."
+Header: "STOP. LOOK AT ONE ITEM. WHAT CAN YOU DO?"
+Subtitle: "Don't think about all 5 items. Just ONE."
 
-Show a 3-step process in 3 stacked cards:
+This page must be VERY visual and VERY simple. Minimal text. Big pictures.
 
-STEP A (white card, blue border):
-  Header: "PICK ANY ITEM IN THE MIDDLE"
-  Show the 5 treasures on pedestals. Circle RUBY (item 2) with a dotted highlight.
-  Kit pointing at Ruby. Sack shows "5 kg remaining."
-  Kit: "Don't think about all 5 items at once. Just look at ONE item: Ruby."
+STEP 1 (big visual, takes up 40% of this page):
+  Header in blue: "LOOK AT JUST RUBY"
+  Show Kit standing in front of Ruby's pedestal (3 kg, $7K) in the vault.
+  The other 4 treasures are FADED/DIMMED in the background. Only Ruby is lit.
+  Sack (duffel bag) is next to Kit, gauge shows 7 kg capacity.
+  Kit is looking at Ruby, thinking.
+  Kit's speech bubble: "Forget the others. Right now, it's just me and Ruby."
 
-STEP B (white card, gold border, THIS IS THE KEY CARD, make it BIG):
-  Header: "ASK: HOW COULD I HAVE GOTTEN THIS RESULT?"
-  Show Ruby zoomed in (3 kg, $7K). Kit looks at Ruby and asks the question.
+STEP 2 (big visual, takes up 40% of this page):
+  Header in gold: "YOU HAVE EXACTLY TWO OPTIONS"
+  Show Kit in the CENTER. From Kit, TWO big arrows branch out:
 
-  TWO BACKWARD arrows pointing to what could have happened BEFORE Ruby:
+  LEFT ARROW (GREEN, big, bold, pointing left and down):
+    Show Kit GRABBING Ruby, putting it in Sack.
+    Sack's gauge moves from 7 to 4 (used 3 kg).
+    Label: "GRAB Ruby"
+    Below: "+$7K value, -3 kg capacity"
+    Below: "Now solve the REST with 4 kg left"
+    Small text: "grab = $7K + best(remaining items, 4 kg)"
 
-  GREEN arrow (GRAB path):
-    "I grabbed Ruby. So I used 3 kg and gained $7K."
-    "Before Ruby, I had MORE capacity (5 + 3 = 8 kg... wait, but bag_limit is 7)."
-    "Before Ruby, I had count - 1 items and bag_limit - weight capacity."
-    Show: "grab = Ruby's value + best from earlier items with less capacity"
+  RIGHT ARROW (RED, big, bold, pointing right and down):
+    Show Kit WALKING PAST Ruby, leaving it on the pedestal.
+    Sack's gauge stays at 7.
+    Label: "SKIP Ruby"
+    Below: "+$0 value, capacity unchanged"
+    Below: "Now solve the REST with 7 kg left"
+    Small text: "skip = best(remaining items, 7 kg)"
 
-  RED arrow (SKIP path):
-    "I skipped Ruby. So I used 0 kg and gained $0."
-    "Before Ruby, I had the same capacity, just one fewer item."
-    Show: "skip = best from earlier items with SAME capacity"
+  At the BOTTOM, both arrows converge:
+    "Pick whichever is better: max(grab, skip)"
 
-  Bottom: "Those are the ONLY two possibilities. That's it. The choices found themselves."
+  Small note at very bottom:
+    "But what if Ruby is TOO HEAVY to grab? (3 kg > bag_limit?)"
+    "Then there's only ONE arrow: SKIP. No choice at all."
 
-  But WAIT, one more check:
-  "What if Ruby doesn't fit? (weight > bag_limit?)"
-  "Then there's only ONE arrow: SKIP. No choice at all."
-
-STEP C (white card, green border):
-  Header: "THE FORMULA WRITES ITSELF"
-
-  Show both paths side by side:
-
-  Green path card:
-    "GRAB: value + max_value(count - 1, bag_limit - weight)"
-
-  Red path card:
-    "SKIP: max_value(count - 1, bag_limit)"
-
-  "Pick the better one: max(grab, skip)"
-
-  Gold highlight box with the formula:
-    if weight <= bag_limit:
-        return max(value + max_value(count-1, bag_limit-weight),
-                   max_value(count-1, bag_limit))
-    else:
-        return max_value(count-1, bag_limit)
-
-Kit: "I didn't invent this formula. I asked HOW DID I GET HERE, and the formula showed up."
-
-Show Branch projecting the choice diagram as a holographic summary:
-  Current item, capacity bag_limit
-      |-- weight <= bag_limit? YES -> BRANCH!
-      |       |-- GRAB: value + solve(count - 1, bag_limit - weight)   [GREEN]
-      |       +-- SKIP: solve(count - 1, bag_limit)                    [RED]
-      |       -> take MAX
-      +-- weight > bag_limit? -> SKIP only: solve(count - 1, bag_limit) [RED]
-
-Gold box at the bottom:
-  "THE RECIPE (works for EVERY DP problem):
-    1. Pick any state in the middle
-    2. Ask: how could I have arrived here?
-    3. List the ways (those are your CHOICES)
-    4. For each way, write what it costs or gains
-    5. Combine them (max for best, min for cheapest, + for count)
-    6. That's your formula. The code writes itself."
+Below, a gold highlight box:
+  "THAT'S IT. At every item, the same two options:
+   GRAB it (use capacity, gain value, solve the rest)
+   or SKIP it (keep capacity, solve the rest).
+   This works for EVERY take-or-skip DP problem."
 
 PAGE 3, "RECURSION FROM CHOICES" (LARGE circled 3 top-right):
 Header: "THE CODE WRITES ITSELF" + "Choice diagram = recursive function."
@@ -239,6 +265,10 @@ Highlighted callout: "BASE CASE = smallest valid input. No items (count=0) or no
 ================================================================================
 PROMPT 2: Recursive Tree + Overlap + Memoization (Pages 4-5) -> family1_C_2.png
 ================================================================================
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
 IMPORTANT: Use 4 items (NOT 3!) to show a REAL overlapping subproblem.
 Items: Gold (4 kg/$10K), Ruby (3 kg/$7K), Emerald (1 kg/$3K), Platinum (2 kg/$5K)
 The recursion processes them in reverse: count=4 is Platinum, count=3 is Emerald, count=2 is Ruby, count=1 is Gold.
@@ -247,7 +277,7 @@ Two different paths both reach (count=1, cap=4), meaning "only Gold left, 4 kg c
   Path A: GRAB Plat (2 kg) + GRAB Emer (1 kg) + SKIP Ruby, used 3 kg, 4 kg left
   Path B: SKIP Plat + SKIP Emer + GRAB Ruby (3 kg), used 3 kg, 4 kg left
 
-Continue the tutorial. Tall portrait (1024x1792). SAME exact style. SAME exact character designs. ALL text HUGE (titles 60pt+, body 32pt+, code 26pt+). Only 2 pages, give each LOTS of space.
+Only 2 pages, give each LOTS of space.
 
 Stack 2 sections vertically (use the FULL height):
 
@@ -336,7 +366,11 @@ Every unique (count, bag_limit) pair solved at most once."
 PROMPT 3: Changing Variables -> Table + Filling the Table (Pages 6-7) -> family1_C_3.png
 ================================================================================
 
-Continue the tutorial. Tall portrait (1024x1792). SAME exact style. SAME exact character designs. ALL text HUGE. Only 2 pages, give each LOTS of space.
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Only 2 pages, give each LOTS of space.
 
 Stack 2 sections vertically (use the FULL height):
 
@@ -407,7 +441,9 @@ Kit: "Every cell asks the same question the recursion asked. Just reads from the
 PROMPT 4: Three Versions + Knapsack Family (Pages 8-10) -> family1_C_4.png
 ================================================================================
 
-Final panel. Tall portrait (1024x1792). SAME exact style. SAME exact character designs. ALL text HUGE.
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
 
 Stack 3 sections vertically:
 
@@ -530,10 +566,9 @@ Kit with Sack (full, gauge at max) and Branch (projecting the family tree):
 PROMPT 5: "Why This Table?" -> family1_C_5.png
 ================================================================================
 
-Create a tall portrait infographic (1024x1792). SAME exact style and character
-designs as the other images.
-
-CRITICAL: ALL text HUGE (titles 60pt+, body 32pt+). Phone-readable without zooming.
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
 
 This is ONE page. Use the FULL vertical space. Don't cram.
 
@@ -596,9 +631,9 @@ Gold box at bottom:
 PROMPT 6: "Too Heavy -> Copy From Above" (Gold's row) -> family1_C_7.png
 ================================================================================
 
-Create a tall portrait infographic (1024x1792). SAME exact style and character designs.
-
-CRITICAL: ALL text HUGE. Phone-readable without zooming.
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
 
 This is ONE page explaining why many cells just copy the value from the row above.
 
@@ -665,16 +700,12 @@ Bottom callout:
 PROMPT 7: "Ruby's Row Step by Step" -> family1_C_6.png
 ================================================================================
 
-Create a tall portrait infographic (1024x1792). SAME exact style and character
-designs as all other images in this series.
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
 
-CRITICAL DESIGN RULES:
-- ALL text HUGE (titles 60pt+, body 32pt+). Phone-readable without zooming.
-- Use BIG arrows in the table. The arrows are the KEY visual element.
-- White space is OK. Don't cram. Give each cell walkthrough its own space.
-
-Style: soft 3D cartoon characters, dark navy/charcoal backgrounds, cream/warm-white
-content cards, bright blue headers.
+Use BIG arrows in the table. The arrows are the KEY visual element.
+Give each cell walkthrough its own space.
 
 Header: "RUBY'S ROW: STEP BY STEP"
 Subtitle: "At every cell, ONE question: does the item's weight fit in this column's capacity?"

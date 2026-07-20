@@ -1,9 +1,12 @@
-UNBOUNDED KNAPSACK CHILDREN: FULL PIPELINE FROM SCRATCH
+UNBOUNDED KNAPSACK CHILDREN: INTUITIVE PIPELINE FROM SCRATCH
 ==============================================================
-Child 1: Coin Change min (3 images)
-Child 2: Coin Change 2 count (2 images)
-Child 3: Word Break (2 images)
-Total: 7 images.
+Child 1: Coin Change (minimum coins) - 2 images
+Child 2: Coin Change 2 (count ways) - 2 images
+Child 3: Word Break - 2 images
+Total: 6 images.
+
+Each child is taught FROM SCRATCH. No "same as parent but with min."
+For each: problem, choices (from zero), state discovery, base cases, code.
 
 ================================================================================
 STYLE BIBLE
@@ -52,7 +55,7 @@ COLOR PALETTE:
 
 
 ================================================================================
-PROMPT 1: Coin Change (minimum) - Problem + Choices -> family2_child1_A.png
+PROMPT 1: Coin Change - Problem + Choices -> family2_child1_A.png
 ================================================================================
 
 ---BEGIN STYLE BIBLE---
@@ -61,69 +64,81 @@ PROMPT 1: Coin Change (minimum) - Problem + Choices -> family2_child1_A.png
 
 Create a tall portrait infographic (1024x1792). Three sections.
 
-SECTION 1, "THE PROBLEM" (teal header, about 35%):
+SECTION 1, "THE PROBLEM" (teal header, about 30%):
 
 Big header: "COIN CHANGE"
-Subtitle: "What's the FEWEST coins I need to make this amount?"
+Subtitle: "What's the FEWEST coins to make this amount?"
 
-Show Kit at a vending machine. The machine shows: "INSERT $11"
-Kit has piles of coins (unlimited supply of each):
+Show Kit at a vending machine. The machine displays: "INSERT $11"
+Kit has PILES of coins (unlimited supply of each type):
   [1c] [1c] [1c]...   pile of 1-cent coins
   [5c] [5c] [5c]...   pile of 5-cent coins
   [6c] [6c] [6c]...   pile of 6-cent coins
 
 Show two attempts:
-  BAD: 11 x [1c] = 11 coins. Works but... 11 coins?!
-  GOOD: [5c] + [6c] = 2 coins! Much better.
-  BEST: [5c] + [6c] = 2 coins. That's the minimum.
+  BAD: 11 x [1c] = 11 coins. Red X. "Works but... 11 coins?!"
+  GOOD: [5c] + [6c] = 2 coins. Green check. "That's the minimum."
 
-Kit: "I can use any coin as many times as I want.
-What's the FEWEST coins to reach exactly $11?"
+Kit: "Unlimited coins. I need EXACTLY $11. Fewest coins possible."
 
-Warning box: "GREEDY DOESN'T WORK! Picking the biggest coin first:
-[6c] + [5c] = 11. Lucky! But for amount 10:
-Greedy: [6c] + [1c] + [1c] + [1c] + [1c] = 5 coins.
-Optimal: [5c] + [5c] = 2 coins. Greedy fails!"
+SECTION 2, "THE CHOICES" (gold header, about 40%):
 
-SECTION 2, "THE CHOICES" (gold header, about 35%):
+Header: "Look at ONE coin type. What can I do?"
 
-Header: "Same unbounded choice: USE AGAIN or MOVE ON"
+Kit at a fork. The [5c] coin is in front of him. Amount left = $11.
 
-Kit at a fork with coin [5c], amount = 11:
-  GREEN: "USE [5c]. Amount: 11 -> 6. Stay at [5c]. Might use again."
-  RED: "MOVE ON. Done with [5c] forever. Try [6c] next."
+GREEN PATH: "USE THIS COIN"
+  Kit takes a [5c]. Another [5c] appears (unlimited supply).
+  "Used [5c]. Amount: $11 -> $6. Coins used: +1."
+  "The [5c] pile is still here. I might want ANOTHER one."
+  "I STAY at [5c]."
 
-"If I USE a coin: amount shrinks by coin value. I STAY (can use it again)."
-"If I MOVE ON: amount stays. I advance to the next coin type."
+RED PATH: "MOVE ON"
+  Kit walks past the [5c] pile. It fades behind him.
+  "Done with [5c] forever. Try [6c] next."
+  "Amount stays $11. Coins used: +0."
 
-Show the chain:
-  At [5c], amount=11: USE. amount=6. Stay.
-  At [5c], amount=6: USE. amount=1. Stay.
-  At [5c], amount=1: 5>1, can't use. Forced to MOVE ON.
-  At [6c], amount=1: 6>1, can't use. MOVE ON.
-  At [1c], amount=1: USE. amount=0. DONE! 3 coins total (5+5+1).
+BIG CHOICE DIAGRAM (centered, gold card):
 
-SECTION 3, "THE COMBINE STEP" (amber header, about 30%):
+  +----------------------------------------+
+  | At coins[index], amount remaining      |
+  | "What can I do with this coin type?"   |
+  +-------------------+--------------------+
+  | USE IT            | MOVE ON            |
+  | (stay)            | (advance)          |
+  |                   |                    |
+  | Amount shrinks    | Amount stays same  |
+  | Coins used: +1   | Coins used: +0     |
+  | index STAYS       | index advances     |
+  | "might use again" | "done forever"     |
+  +-------------------+--------------------+
 
-Header: "min() instead of max()"
+"Why are these the ONLY choices?"
+"I either use this coin or I skip it."
+"Use it? Amount shrinks, I stay (might use again)."
+"Skip? Move to next coin type."
 
-  "Parent unbounded: max(take_again, move_on)  -> maximize VALUE"
-  "Coin Change:      min(use_again, move_on)   -> minimize COINS"
+SECTION 3, "THE STATE" (amber header, about 30%):
 
-  use_again = 1 + min_coins(coins, amount - coin, index)
-  move_on = min_coins(coins, amount, index + 1)
-  return min(use_again, move_on)
+Header: "What do I need to track?"
 
-  "The '1 +' counts each coin I use."
-  "min() picks the path with fewer coins."
+"After USE: amount changed, index same."
+"After MOVE ON: index changed, amount same."
 
-Base cases:
-  amount == 0: return 0. "No more money needed. Zero coins."
-  no coins left, amount > 0: return infinity. "Can't make it. Impossible."
+Variable checklist:
+  [checkmark] index: which coin type am I considering?
+  [checkmark] amount: how much money do I still need?
+  [X] coins_used_so_far: accumulates through "+1" in return values
+
+"My function: min_coins(coins, amount, index)"
+
+BASE CASES (two small cards):
+  GREEN: "amount == 0: Exact change! 0 more coins needed."
+  RED: "No coin types left, amount > 0: Impossible. Return infinity."
 
 
 ================================================================================
-PROMPT 2: Coin Change - The Tree -> family2_child1_B.png
+PROMPT 2: Coin Change - Tree + Code -> family2_child1_B.png
 ================================================================================
 
 ---BEGIN STYLE BIBLE---
@@ -132,116 +147,78 @@ PROMPT 2: Coin Change - The Tree -> family2_child1_B.png
 
 Create a tall portrait infographic (1024x1792). Two sections.
 
-SECTION 1, "THE TREE" (teal header, about 65%):
+SECTION 1, "THE TREE" (teal header, about 45%):
 
-Header: "WATCH THE MINIMUM COINS"
+Header: "WATCH THE CHOICES"
 Subtitle: "Coins = [5, 1], amount = 7"
 
-Draw the recursion tree. Show (coin being considered, remaining amount).
-Green = USE AGAIN, Red = MOVE ON.
+Tree with Green = USE, Red = MOVE ON.
+Each node: (coin, amount left).
 
-Start: (coin=5, amount=7)
+                    (coin=5, amt=7)
+                   /                \
+             USE [5]            MOVE ON
+            amt 7->2          (go to [1])
+            coins:+1               |
+                |            (coin=1, amt=7)
+          (coin=5, amt=2)    USE [1] x7 times
+          5>2, won't fit     amt 7->6->5->4->3->2->1->0
+          forced MOVE ON     coins: 7
+                |
+          (coin=1, amt=2)
+          USE [1] x2 times
+          amt 2->1->0
+          coins: 1+2 = 3
 
-  USE 5: (coin=5, amount=2). 5>2, forced MOVE ON.
-    (coin=1, amount=2). USE 1: (coin=1, amount=1). USE 1: (coin=1, amount=0).
-    0! Return 0. Path: 5+1+1 = 3 coins.
+Highlight the two completed paths:
+  Path A: [5] + [1] + [1] = 3 coins. GREEN highlight. BEST.
+  Path B: [1] x 7 = 7 coins. Dimmed.
+  "min(3, 7) = 3. Answer: 3 coins."
 
-  MOVE ON: (coin=1, amount=7). USE 1 seven times.
-    1+1+1+1+1+1+1 = 7 coins.
+Gold warning box:
+  "GREEDY TRAP: coins = [1, 5, 6], amount = 10."
+  "Greedy picks [6] first -> [6]+[1]+[1]+[1]+[1] = 5 coins."
+  "DP finds [5]+[5] = 2 coins. Greedy fails!"
+  "Always use recursion, not greedy."
 
-Show both paths:
-  Path 1: [5] + [1] + [1] = 3 coins. GREEN highlight.
-  Path 2: [1] x 7 = 7 coins. Dimmed.
+SECTION 2, "THE CODE" (gray header, about 55%):
 
-"min(3, 7) = 3. Answer: 3 coins."
+Header: "FROM REASONING TO CODE"
 
-Show that (coin=1, amount=2) appears in BOTH branches:
-"Same subproblem! Memoize to avoid re-solving."
+Show code with annotations:
 
-SECTION 2, "THE CODE" (gray header, about 35%):
+  def min_coins(coins, amount, index):
 
-Header: "THE OPTIMIZED 1D CODE"
+      if amount == 0:                           <- "Exact change! Done.
+          return 0                                  0 more coins needed."
 
-  def coin_change(coins, amount):
-      dp = [float('inf')] * (amount + 1)
-      dp[0] = 0
+      if index == len(coins):                   <- "No coins left.
+          return float('inf')                       Impossible."
 
-      for coin in coins:
-          for a in range(coin, amount + 1):
-              dp[a] = min(dp[a], dp[a - coin] + 1)
+      if coins[index] > amount:                 <- "This coin is too big.
+          return min_coins(                         Forced to move on."
+              coins, amount, index + 1)
 
-      if dp[amount] == float('inf'):
-          return -1
-      return dp[amount]
+      use_again = 1 + min_coins(                <- "USE this coin.
+          coins,                                    +1 coin used.
+          amount - coins[index],                    Amount shrinks.
+          index)                                    STAY (might use again)."
 
-Annotate:
-  dp[0] = 0 <- "0 coins to make amount 0"
-  float('inf') <- "Impossible until proven otherwise"
-  range(coin, amount + 1) <- "LEFT to RIGHT! Allows reuse."
-  dp[a - coin] + 1 <- "Use this coin (+1) on top of best for remainder"
-  min() <- "Keep the fewer coins"
+      move_on = min_coins(                      <- "MOVE ON.
+          coins,                                    No coin used.
+          amount,                                   Amount stays.
+          index + 1)                                Next coin type."
 
-Gold box: "LEFT TO RIGHT loop = unbounded (reuse allowed).
-Compare to 0/1 Subset Sum which loops RIGHT TO LEFT (no reuse)."
+      return min(use_again, move_on)            <- "Fewest coins wins."
 
-
-================================================================================
-PROMPT 3: Coin Change - Greedy vs DP -> family2_child1_C.png
-================================================================================
-
----BEGIN STYLE BIBLE---
-[Paste the full style bible from above here]
----END STYLE BIBLE---
-
-Create a tall portrait infographic (1024x1792). Two sections.
-
-SECTION 1, "WHY GREEDY FAILS" (red header, about 50%):
-
-Header: "THE GREEDY TRAP"
-Subtitle: "Coins = [1, 5, 6], amount = 10"
-
-Show GREEDY approach:
-  "Always pick the BIGGEST coin that fits."
-  Step 1: 6 fits in 10. Take [6]. Remaining: 4.
-  Step 2: 6 > 4. Skip. 5 > 4. Skip. Take [1]. Remaining: 3.
-  Step 3: Take [1]. Remaining: 2.
-  Step 4: Take [1]. Remaining: 1.
-  Step 5: Take [1]. Remaining: 0.
-  GREEDY: [6] + [1] + [1] + [1] + [1] = 5 coins. Red X.
-
-Show DP approach:
-  "Try ALL combinations. Find the minimum."
-  [5] + [5] = 2 coins. Green checkmark. OPTIMAL!
-
-Kit: "Greedy picks what LOOKS best right now.
-DP explores EVERY path and picks what IS best."
-
-Visual: Show a fork where greedy takes the wrong path.
-  At amount=10: Greedy goes to [6] (looks bigger = looks better).
-  But the path through [5]+[5] is shorter (2 coins vs 5).
-
-SECTION 2, "WHEN TO USE DP OVER GREEDY" (gold header, about 50%):
-
-Header: "GREEDY WORKS ONLY FOR SPECIAL COIN SETS"
-
-Show examples:
-  US coins [1, 5, 10, 25]: Greedy WORKS.
-  (Each larger coin is a multiple or near-multiple of smaller ones.)
-
-  Arbitrary coins [1, 5, 6]: Greedy FAILS.
-  (6 is NOT a multiple of 5. They interfere.)
-
-  "Unless the coins have a special mathematical property,
-  you NEED DP to guarantee the minimum."
-
-Kit: "When in doubt, use DP. Greedy is a gamble."
-
-Gold box: "INTERVIEW TIP: If the problem says 'minimum coins',
-think Unbounded Knapsack with min(). Not greedy."
+PATTERN CARD (gold border, small):
+  "CLUE: 'fewest coins', 'minimum number', unlimited supply."
+  "COMBINE: min(). Each use adds +1 to the count."
+  "BASE: amount=0 -> 0, no coins -> infinity."
 
 
 ================================================================================
-PROMPT 4: Coin Change 2 (count) - Problem + Choices -> family2_child2_A.png
+PROMPT 3: Coin Change 2 - Problem + Choices -> family2_child2_A.png
 ================================================================================
 
 ---BEGIN STYLE BIBLE---
@@ -250,67 +227,83 @@ PROMPT 4: Coin Change 2 (count) - Problem + Choices -> family2_child2_A.png
 
 Create a tall portrait infographic (1024x1792). Three sections.
 
-SECTION 1, "THE PROBLEM" (teal header, about 35%):
+SECTION 1, "THE PROBLEM" (teal header, about 30%):
 
 Big header: "COIN CHANGE 2"
-Subtitle: "HOW MANY different combinations make the amount?"
+Subtitle: "HOW MANY different ways to make the amount?"
 
 Coins = [1, 2, 5], amount = 5
 
 Show ALL valid combinations:
-  [5]             = 5   Way 1
-  [2] + [2] + [1] = 5   Way 2
-  [2] + [1] + [1] + [1] = 5   Way 3
-  [1] x 5         = 5   Way 4
-  "4 combinations."
+  [5]                     = 5   Way 1
+  [2] + [2] + [1]        = 5   Way 2
+  [2] + [1] + [1] + [1]  = 5   Way 3
+  [1] x 5                = 5   Way 4
+  "Answer: 4 ways."
 
-Kit: "Not the fewest coins. Not the most coins. HOW MANY WAYS."
+Kit: "Not the fewest coins. HOW MANY different combinations."
 
-Note: "[2]+[1]+[1]+[1] and [1]+[2]+[1]+[1] are the SAME combination.
-Order doesn't matter. {2,1,1,1} counted once."
+Important note (amber box):
+  "[2]+[1]+[1]+[1] and [1]+[2]+[1]+[1] are the SAME way."
+  "Order doesn't matter. Each combination counted ONCE."
 
-SECTION 2, "SAME CHOICES, DIFFERENT COMBINE" (gold header, about 35%):
+SECTION 2, "THE CHOICES" (gold header, about 40%):
 
-Header: "USE AGAIN or MOVE ON. Combine with +"
+Header: "Look at ONE coin type. What can I do?"
 
-At coin [2], amount = 5:
-  USE [2]: "How many ways to make 3 with [2] and remaining coins?"
-  MOVE ON: "How many ways to make 5 with remaining coins only?"
+Kit at a fork with the [2c] coin. Amount = 5.
 
-  ways = use_again + move_on
-  "Add ALL the ways. Same as Count Subsets, but with reuse."
+GREEN PATH: "USE [2c]"
+  "Amount: 5 -> 3. Stay at [2c] (might use again)."
+  "How many ways can [2c] and remaining coins make 3?"
 
-Compare three siblings:
-  PARENT:        max(take_again, move_on)  "Best value"
-  COIN CHANGE:   min(use_again, move_on)   "Fewest coins"
-  COIN CHANGE 2: use_again + move_on       "Total ways"
+RED PATH: "MOVE ON"
+  "Done with [2c]. Amount stays 5."
+  "How many ways can remaining coins (only) make 5?"
 
-  "SAME choice. DIFFERENT combine."
+CHOICE DIAGRAM (gold card):
 
-SECTION 3, "WHY OUTER LOOP = COINS" (amber header, about 30%):
+  +----------------------------------------+
+  | At coins[index], amount remaining      |
+  | "Use this coin type or move on?"       |
+  +-------------------+--------------------+
+  | USE IT            | MOVE ON            |
+  | (stay)            | (advance)          |
+  |                   |                    |
+  | Amount shrinks    | Amount stays same  |
+  | index STAYS       | index advances     |
+  | Returns: # of    | Returns: # of      |
+  | ways from here    | ways from here     |
+  +-------------------+--------------------+
 
-Header: "Avoiding duplicate counting"
+"COMBINE: ways = use + move_on"
+"ADD all the ways from both choices. I want the TOTAL count."
 
-"If we loop amount first, then coins, we'd count
-[1,2] and [2,1] as DIFFERENT. But they're the same combination!"
+Compare three combine steps (small, clean):
+  "Max value?  -> max(use, move_on)"
+  "Min coins?  -> min(use, move_on)"
+  "Count ways? -> use + move_on"
+  "Same choices. Different combine."
 
-Show:
-  WRONG (inner = coins): at amount 3, tries [1]+[2] AND [2]+[1]. Counts twice!
-  RIGHT (outer = coins): process [1] fully, then [2], then [5].
-    When processing [2], all [1]s are already counted. No going back.
-    [2]+[1] is counted but [1]+[2] can't happen (1 was processed earlier).
+SECTION 3, "STATE + BASE CASES" (amber header, about 30%):
 
-  "Outer loop = coins means we process coins IN ORDER.
-  Once we move past a coin, we never go back to it.
-  This ensures each combination is counted exactly once."
+Variable checklist:
+  [checkmark] index: which coin type?
+  [checkmark] amount: how much left to make?
 
-Gold box: "This is the COMBINATIONS vs PERMUTATIONS distinction.
-Outer=coins gives COMBINATIONS (order doesn't matter).
-Outer=amounts would give PERMUTATIONS (order matters)."
+BASE CASES:
+  GREEN: "amount == 0: Made the exact amount! That's 1 valid way."
+  RED: "No coins left, amount > 0: Can't make it. 0 ways."
+
+"My function: count_ways(coins, amount, index)"
+
+Kit: "Same structure as coin change.
+Replace min() with +. Replace 'infinity' with 0.
+Replace '0 coins' with '1 way'."
 
 
 ================================================================================
-PROMPT 5: Coin Change 2 - Code + Comparison -> family2_child2_B.png
+PROMPT 4: Coin Change 2 - Code + Key Insight -> family2_child2_B.png
 ================================================================================
 
 ---BEGIN STYLE BIBLE---
@@ -321,62 +314,64 @@ Create a tall portrait infographic (1024x1792). Two sections.
 
 SECTION 1, "THE CODE" (gray header, about 50%):
 
-  def count_ways(coins, amount):
-      dp = [0] * (amount + 1)
-      dp[0] = 1
+Header: "FROM REASONING TO CODE"
 
-      for coin in coins:
-          for a in range(coin, amount + 1):
-              dp[a] += dp[a - coin]
+  def count_ways(coins, amount, index):
 
-      return dp[amount]
+      if amount == 0:                           <- "Exact amount!
+          return 1                                  That's 1 valid way."
 
-Annotate:
-  dp[0] = 1 <- "One way to make 0: use no coins."
-  for coin in coins <- "OUTER loop = coins. Process each coin fully."
-  range(coin, amount + 1) <- "LEFT to RIGHT. Allows reuse."
-  dp[a] += dp[a - coin] <- "Add ways: using this coin + remaining."
+      if index == len(coins):                   <- "No coins left.
+          return 0                                  0 ways."
 
-Show the dp array being filled for coins=[1,2], amount=4:
+      if coins[index] > amount:                 <- "Coin too big.
+          return count_ways(                        Move on."
+              coins, amount, index + 1)
 
-  After processing coin=1:
-  dp = [1, 1, 1, 1, 1]
-  "Only one way with just 1s: [1,1,...,1]"
+      use_again = count_ways(                   <- "USE this coin.
+          coins,                                    Amount shrinks.
+          amount - coins[index],                    STAY (might use again)."
+          index)
 
-  After processing coin=2:
-  dp = [1, 1, 2, 2, 3]
-  "Amount 4: {1,1,1,1}, {2,1,1}, {2,2}. Three ways."
+      move_on = count_ways(                     <- "MOVE ON.
+          coins,                                    Amount stays.
+          amount,                                   Next coin type."
+          index + 1)
 
-SECTION 2, "THE UNBOUNDED FAMILY TREE" (teal header, about 50%):
+      return use_again + move_on                <- "Add ALL the ways."
 
-Header: "ALL CHILDREN, ONE PATTERN"
+SECTION 2, "WHY ORDER DOESN'T MATTER" (gold header, about 50%):
 
-Tree diagram:
-  UNBOUNDED KNAPSACK (parent)
-  "Use again (STAY) or move on (ADVANCE)"
-    |
-    +-- COIN CHANGE (min coins)
-    |   combine: min(). base: 0 / infinity.
-    |   "Fewest coins to make amount"
-    |
-    +-- COIN CHANGE 2 (count ways)
-    |   combine: +. base: 1 / 0.
-    |   "How many combinations make amount"
-    |
-    +-- WORD BREAK
-        "Words are reusable items, positions are capacity"
+Header: "THE COMBINATION TRICK"
 
-Show the pattern:
-  "The choice NEVER changes: use again or move on."
-  "What changes: max (value), min (coins), + (ways)"
-  "And the loop: always LEFT TO RIGHT (allows reuse)."
+"By processing ONE coin type at a time, order is forced."
 
-Kit: "Same family structure as 0/1 knapsack.
-The core choice is the same. Only the combine step differs."
+Show the recursion order for coins = [1, 2], amount = 3:
+  Process [1] first. Then [2].
+  When considering [2], all [1]s are already decided.
+
+  [1]+[1]+[1] = 3   (only 1s)
+  [1]+[2]     = 3   (some 1s, then 2)
+  "No [2]+[1] path because by the time we use [2],
+   we already moved past [1]. Can't go back."
+
+  "This is what 'move on forever' gives us:
+   each combination counted exactly ONCE."
+
+Visual: Show coins in a line. An arrow moves LEFT to RIGHT.
+  [1] -> [2] -> [5]
+  "Once you move past a coin, you never go back."
+  "That prevents counting [1,2] and [2,1] as different."
+
+PATTERN CARD (teal border):
+  "CLUE: 'how many ways', 'count combinations', unlimited supply."
+  "COMBINE: + (add all ways)."
+  "BASE: amount=0 -> 1 way, no coins -> 0 ways."
+  "KEY: process coins in order. Combinations, not permutations."
 
 
 ================================================================================
-PROMPT 6: Word Break - Problem + Insight -> family2_child3_A.png
+PROMPT 5: Word Break - Problem + Choices -> family2_child3_A.png
 ================================================================================
 
 ---BEGIN STYLE BIBLE---
@@ -385,68 +380,79 @@ PROMPT 6: Word Break - Problem + Insight -> family2_child3_A.png
 
 Create a tall portrait infographic (1024x1792). Three sections.
 
-SECTION 1, "THE PROBLEM" (teal header, about 35%):
+SECTION 1, "THE PROBLEM" (teal header, about 30%):
 
 Big header: "WORD BREAK"
 Subtitle: "Can I split this string into dictionary words?"
 
-Show Kit with a long string: "leetcode"
-And a dictionary (shown as a book or word cards):
-  ["leet", "code", "lee", "t"]
+Show Kit with a long string displayed on a screen: "leetcode"
+Below, dictionary words shown as cards: ["leet", "code", "lee", "t"]
 
-Show: "leet" + "code" = "leetcode". Green check! "Can be segmented."
+Show the split:
+  "leet" + "code" = "leetcode"
+  Green check: "Can be segmented!"
 
 Another example: "catsandog"
 Dictionary: ["cats", "dog", "sand", "and", "cat"]
-  "cats" + "and" + "og"? "og" not in dictionary. Red X.
+  "cats" + "and" + "og"? "og" not a word. Red X.
   "cat" + "sand" + "og"? Same problem. Red X.
-  "No valid segmentation. Return False."
+  "No valid split. Return False."
 
-SECTION 2, "THE INSIGHT" (gold header, about 35%):
+SECTION 2, "THE CHOICES" (gold header, about 45%):
 
-Header: "WORDS ARE REUSABLE COINS"
+Header: "At each POSITION: which word fits here?"
 
-Show the analogy (big, clear):
-  COIN CHANGE:             WORD BREAK:
-  Coins: [1, 5, 6]        Words: ["leet", "code"]
-  Amount: 11               String length: 8
-  "Can I make 11?"         "Can I cover all 8 characters?"
-
-  Coins are REUSABLE       Words are REUSABLE
-  (use same coin again)    (use same word again)
-
-  "leetleetcode" with ["leet","code"]:
-  "leet" + "leet" + "code" = used "leet" TWICE!
-
-Kit: "The string is like a number line. Each word covers
-some positions. Can I tile the entire string with words?"
-
-Show the string as a ROW OF BOXES (like the dp array):
+Kit looking at position 0 of "leetcode".
+The string shown as boxes:
   [l][e][e][t][c][o][d][e]
    0  1  2  3  4  5  6  7
 
-  "leet" covers positions 0 to 3. Checkmark at position 4.
-  "code" covers positions 4 to 7. Checkmark at position 8.
-  "Both words tile the string perfectly!"
+"I'm at position 0. Which words START here?"
 
-SECTION 3, "THE CHOICES" (amber header, about 30%):
+Try each word (shown as a decision list):
+  "leet": s[0:4] = "leet". MATCH! Jump to position 4.
+  "code": s[0:4] = "leet" != "code". NO MATCH. Skip.
+  "lee":  s[0:3] = "lee". MATCH! Jump to position 3.
+  "t":    s[0:1] = "l" != "t". NO MATCH. Skip.
 
-Header: "At each position: which word fits here?"
+CHOICE DIAGRAM (gold card):
 
-At position 0 of "leetcode":
-  Try "leet": matches s[0:4]! Jump to position 4.
-  Try "code": "code" != "leet". Doesn't match at position 0. Skip.
-  Try "lee":  matches s[0:3]! Jump to position 3.
-  Try "t":    "t" != "l". Doesn't match at position 0. Skip.
+  +----------------------------------------+
+  | At position in string                  |
+  | "Which word fits starting here?"       |
+  +----------------------------------------+
+  | Try word 1: does it match?             |
+  |   Yes -> jump ahead by word length     |
+  |   No  -> try next word                 |
+  | Try word 2: does it match?             |
+  |   Yes -> jump ahead by word length     |
+  |   No  -> try next word                 |
+  | ...                                    |
+  | No word matches? -> DEAD END (False)   |
+  +----------------------------------------+
 
-"At each position, try ALL words. If one matches, jump ahead."
-"If I reach the end, the string is breakable!"
+"The choice is WHICH WORD to place at this position."
+"If it matches, I jump ahead and solve the rest."
+"Words are reusable (can use 'leet' twice in 'leetleetcode')."
 
-Base case: position == len(string): "Covered everything! True."
+SECTION 3, "STATE + BASE CASES" (amber header, about 25%):
+
+Variable checklist:
+  [checkmark] position: where am I in the string?
+  [X] index into dictionary: I try ALL words at each position
+
+BASE CASES:
+  GREEN: "position == len(s): Covered the whole string! True."
+  RED: "No word matches at this position: Dead end. False."
+
+"My function: can_break(s, words, position)"
+
+Kit: "Only ONE variable: my position in the string.
+At each spot, try every word. If any path reaches the end, True."
 
 
 ================================================================================
-PROMPT 7: Word Break - Code -> family2_child3_B.png
+PROMPT 6: Word Break - Code -> family2_child3_B.png
 ================================================================================
 
 ---BEGIN STYLE BIBLE---
@@ -459,59 +465,64 @@ SECTION 1, "THE CODE" (gray header, about 55%):
 
 Header: "FROM REASONING TO CODE"
 
-  def word_break(s, word_dict):
-      words = set(word_dict)
-      dp = [False] * (len(s) + 1)
-      dp[0] = True
+  def can_break(s, words, start):
 
-      for end in range(1, len(s) + 1):
-          for start in range(end):
-              if dp[start] and s[start:end] in words:
-                  dp[end] = True
-                  break
+      if start == len(s):                       <- "Reached the end!
+          return True                               Whole string covered."
 
-      return dp[len(s)]
+      for word in words:                        <- "Try EVERY word
+          end = start + len(word)                   at this position."
 
-Annotate:
-  dp[0] = True <- "Empty prefix is always valid."
-  for end <- "Check each position: can I reach here?"
-  for start <- "Try every possible last word ending at 'end'."
-  dp[start] <- "Was the prefix up to 'start' valid?"
-  s[start:end] in words <- "Is this chunk a real word?"
-  dp[end] = True <- "Yes! I can reach position 'end'."
-  break <- "One valid way is enough. Stop checking."
-  dp[len(s)] <- "Can I reach the very end?"
+          if end <= len(s) and                  <- "Does this word
+             s[start:end] == word:                  match starting here?"
 
-Show the dp array for "leetcode" with ["leet", "code"]:
-  Position: 0   1   2   3   4   5   6   7   8
-  dp:       T   F   F   F   T   F   F   F   T
-                              ^                ^
-                          "leet" ends       "code" ends
-                          here (valid!)     here (valid!)
+              if can_break(s, words, end):      <- "It matched!
+                  return True                       Jump ahead. Solve the rest.
+                                                    If the rest works, done!"
 
-  "dp[4] = True because dp[0] is True AND s[0:4] = 'leet' is a word."
-  "dp[8] = True because dp[4] is True AND s[4:8] = 'code' is a word."
+      return False                              <- "No word matched here.
+                                                    Dead end."
 
-SECTION 2, "HOW THIS CONNECTS TO UNBOUNDED KNAPSACK" (teal header, about 45%):
+Show the recursion for "leetcode", words = ["leet", "code", "lee", "t"]:
 
-Header: "THE ANALOGY"
+  can_break("leetcode", 0)
+    Try "leet" at 0: "leet" matches s[0:4]
+      can_break("leetcode", 4)
+        Try "leet" at 4: "code" != "leet". Skip.
+        Try "code" at 4: "code" matches s[4:8]
+          can_break("leetcode", 8)
+            8 == len("leetcode"). Return True!
+          True! Return True!
+        True! Return True!
 
-Show the connection:
-  UNBOUNDED KNAPSACK:              WORD BREAK:
-  Items (with weight)              Words (with length)
-  Bag capacity                     String length
-  "Does this item fit?"            "Does this word match here?"
-  Items are REUSABLE               Words are REUSABLE
-  Inner loop left to right         For each end, try each start
+  "Path: leet(0->4) + code(4->8) = done! True."
 
-  "Both allow reuse. Both build up from smaller valid states."
+SECTION 2, "PATTERN RECOGNITION" (gold header, about 45%):
 
-Kit: "Word Break doesn't LOOK like a knapsack problem.
-But the structure is the same: reusable items filling a capacity.
-The 'items' are words. The 'capacity' is the string length."
+Header: "WHEN YOU SEE THIS PATTERN"
 
-Gold box at bottom:
-  "THE UNBOUNDED FAMILY:
-   Same choice at the core: use this item again, or move on.
-   Coin Change: min coins. Coin Change 2: count ways. Word Break: can I tile?
-   All allow reuse. All loop left to right. One family."
+PATTERN CARD (teal border, prominent):
+  "CLUE: 'can this be segmented/split?', reusable pieces."
+  "STATE: just position (where am I?)."
+  "CHOICES: try each word/piece at current position."
+  "COMBINE: OR (any single path reaching the end is enough)."
+  "BASE: reached the end -> True, nothing matches -> False."
+
+THE UNBOUNDED FAMILY (summary, smaller):
+  Show all four problems:
+
+  UNBOUNDED KNAPSACK: max(use, move_on)
+    "maximize value, unlimited items"
+  COIN CHANGE: min(use, move_on)
+    "minimize count, unlimited coins"
+  COIN CHANGE 2: use + move_on
+    "count ways, unlimited coins"
+  WORD BREAK: or(try each word)
+    "can I cover everything, reusable words"
+
+  "All have unlimited/reusable items."
+  "All ask: use this item or try something else?"
+  "The combine step is what changes."
+
+Kit: "See 'unlimited' or 'reusable' + 'optimize'?
+Start with: what can I do with ONE item at this point?"

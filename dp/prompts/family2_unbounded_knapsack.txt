@@ -1,8 +1,15 @@
-UNBOUNDED KNAPSACK: FULL PIPELINE FROM SCRATCH
+UNBOUNDED KNAPSACK: INTUITIVE PIPELINE FROM SCRATCH
 ==============================================================
-4 images. Teach unbounded knapsack the same way as staircase/subset sum.
-Key difference from 0/1: you can REUSE items. The choice becomes
-"take AGAIN (stay)" vs "move on (next item)."
+4 images. Teach unbounded knapsack from zero. No references to 0/1 knapsack.
+Build intuition so the learner can DERIVE the solution independently.
+
+Pipeline:
+  1. Understand the problem + why brute force fails
+  2. Find the choices (THE most important, spend most time here)
+  3. Base cases + recursion tree
+  4. Code (derived from reasoning) + pattern recognition
+
+No tabulation. No memoization. Pure recursive thinking.
 
 ================================================================================
 STYLE BIBLE
@@ -33,7 +40,7 @@ CHARACTER (Kit, appears in EVERY image with this EXACT look):
 - Proportions: Pixar/Disney-style 3D render. Head slightly oversized
   (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
 
-NEW PROP for Unbounded Knapsack:
+PROP for Unbounded Knapsack:
 - A GLOWING BLUE CLONING MACHINE (small device on a table, sci-fi looking).
 - When an item goes through it, an IDENTICAL COPY appears.
 - Shows the key concept: items can be DUPLICATED and taken multiple times.
@@ -46,17 +53,17 @@ ART STYLE:
 COLOR PALETTE:
 - Background: dark navy/charcoal (#1a1a2e). Heist atmosphere.
 - Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
-- Headers: teal (#14b8a6) for unbounded knapsack (different from blue used for 0/1).
+- Headers: teal (#14b8a6).
 - Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
 - Gold accents: (#F59E0B) for callouts and highlights.
-- Green: (#22C55E) for TAKE AGAIN paths. Red: (#EF4444) for MOVE ON paths.
-- Teal accent lighting throughout (#14b8a6).
+- Green: (#22C55E) for USE/TAKE paths. Red: (#EF4444) for MOVE ON/SKIP paths.
+- Teal accent lighting throughout.
 
 ---END STYLE BIBLE---
 
 
 ================================================================================
-PROMPT 1: The Problem -> family2_A.png
+PROMPT 1: The Problem + Brute Force -> family2_A.png
 ================================================================================
 
 ---BEGIN STYLE BIBLE---
@@ -68,54 +75,58 @@ Create a tall portrait infographic (1024x1792). Three sections.
 SECTION 1, "THE PROBLEM" (teal header, about 40%):
 
 Big header: "UNBOUNDED KNAPSACK"
-Subtitle: "Same vault heist. But now you have a CLONING MACHINE."
+Subtitle: "Items with UNLIMITED supply. Maximize value."
 
-Show Kit standing next to a table with 3 treasures AND a CLONING MACHINE:
+Show Kit standing next to items on a table. A GLOWING BLUE CLONING MACHINE sits on the table.
+Three items with clear weight/value labels:
+
   Gold Bar:   weight 3kg, value $4
   Diamond:    weight 2kg, value $3
   Ruby:       weight 1kg, value $2
-  Bag capacity: 5kg
 
-Kit's speech bubble: "I can CLONE any treasure and take as many copies as I want.
-The bag is still 5kg. But now I'm not limited to one of each."
+Kit's bag is next to him with a label: "Capacity: 5kg"
 
-Show the cloning machine making copies of the Ruby:
-  [Ruby] -> [CLONE] -> [Ruby] [Ruby] [Ruby] [Ruby] [Ruby]
-  "5 Rubies = 5kg, $10!"
+The cloning machine has copies of Ruby coming out of it:
+  [Ruby] -> [CLONE] -> [Ruby] [Ruby] [Ruby]
 
-Show an alternative:
-  [Gold Bar] + [Diamond] = 5kg, $7
-  "Or one of each heavier item... but less money!"
+Kit's speech bubble: "I can clone any item. Take as many copies as I want.
+My bag holds 5kg. What's the MOST value I can fit?"
 
-SECTION 2, "0/1 vs UNBOUNDED" (gold header, about 30%):
+SECTION 2, "THE BRUTE FORCE PROBLEM" (gold header, about 30%):
 
-Header: "What changed from last time?"
+Header: "One approach: try EVERY combination"
 
-Two columns:
-  0/1 KNAPSACK:                    UNBOUNDED KNAPSACK:
-  Each item used AT MOST ONCE      Each item used UNLIMITED times
-  Take Gold? Can't take it again   Take Gold? Can take it AGAIN!
-  [Gold] [Diamond] [Ruby]          [Gold] [Gold] [Gold] [Gold]...
-  3 items to choose from           INFINITE supply of each
+Show several possible loadings:
+  5 x Ruby  (1kg each) = 5kg, $10
+  1 Gold + 1 Diamond   = 5kg, $7
+  1 Gold + 2 Ruby      = 5kg, $8
+  2 Diamond + 1 Ruby   = 5kg, $8
 
-Show: "Same bag. Same weight limit. But the SUPPLY is unlimited."
+"Which is best? $10? Maybe. But with unlimited copies..."
 
-SECTION 3, "THE QUESTION" (amber header, about 30%):
+Show a SCALING BOX (red warning):
+  3 items, bag=5:    dozens of combos
+  10 items, bag=100: MILLIONS of combos
+  "Explodes fast. Can't check them all."
 
-Header: "Same question, different constraint"
+SECTION 3, "THE KEY INSIGHT" (amber header, about 30%):
 
-"Given items with unlimited supply, what's the MAXIMUM value
-I can fit in my bag?"
+Kit thinking, with a thought bubble:
+"What if I don't think about ALL items at once?
+What if I look at just ONE item
+and make a decision about THAT one?"
 
-Kit looking at the cloning machine:
-"The hard part: should I keep cloning one item,
-or try different items? Let me find the CHOICES..."
+Show Kit focusing on ONLY the Gold Bar.
+Everything else is blurred/dimmed.
 
-Arrow: "NEXT: What choices do I have at each item?"
+"Right now, I only care about Gold.
+What can I do with it? That's the next question."
+
+Arrow pointing down: "NEXT: What choices do I have?"
 
 
 ================================================================================
-PROMPT 2: The Choices (THIS IS THE KEY DIFFERENCE) -> family2_B.png
+PROMPT 2: Finding the Choices (THE MOST IMPORTANT IMAGE) -> family2_B.png
 ================================================================================
 
 ---BEGIN STYLE BIBLE---
@@ -123,68 +134,86 @@ PROMPT 2: The Choices (THIS IS THE KEY DIFFERENCE) -> family2_B.png
 ---END STYLE BIBLE---
 
 Create a tall portrait infographic (1024x1792). Three sections.
-This is the MOST IMPORTANT image. The choice structure is different from 0/1.
+This is the CENTERPIECE of the entire lesson. Make it spacious and clear.
 
 SECTION 1, "THE CHOICES" (teal header, about 45%):
 
-Big header: "TAKE AGAIN or MOVE ON"
-Subtitle: "At each item: use it (and STAY to possibly use it again) or move on."
+Big header: "WHAT CAN I DO WITH THIS ONE ITEM?"
 
-Kit stands at a fork. The Gold Bar (3kg, $4) is in front of him.
+Kit stands at a FORK IN THE ROAD. The Gold Bar (3kg, $4) is in front of him.
+Bag capacity = 5kg. The cloning machine glows behind the Gold Bar.
 
-GREEN PATH: "TAKE AGAIN"
-  Kit grabs the Gold Bar. The cloning machine makes another copy.
-  "I took Gold ($4). Capacity: 5 -> 2. But Gold is STILL available!"
-  "I STAY at Gold. I might want another one."
-  Show: index STAYS the same. bag_limit shrinks.
+LEFT PATH (green, glowing):
+  Label: "USE IT"
+  Kit grabs the Gold Bar. The cloning machine produces another copy.
+  Three things shown clearly:
+    "Value: +$4"
+    "Bag: 5kg -> 2kg (shrinks by weight)"
+    "STAY at Gold (clone machine makes another copy, I might want more)"
 
-RED PATH: "MOVE ON"
-  Kit walks past the Gold Bar. It stays behind.
-  "Done with Gold forever. Moving to Diamond."
-  "I move to the next item. Can't come back."
-  Show: index advances to next item. bag_limit stays.
+RIGHT PATH (red):
+  Label: "MOVE ON"
+  Kit walks past Gold. It fades behind him.
+  Three things shown clearly:
+    "Value: no change"
+    "Bag: stays 5kg"
+    "Advance to Diamond (done with Gold FOREVER)"
 
-Big gold comparison box (THE KEY):
-  0/1 KNAPSACK:                     UNBOUNDED KNAPSACK:
-  TAKE: index + 1 (move on)         TAKE AGAIN: index (STAY!)
-  SKIP: index + 1 (move on)         MOVE ON: index + 1 (advance)
-  "Both choices advance"            "Only MOVE ON advances"
+BIG CHOICE DIAGRAM (centered, gold background card, the visual centerpiece):
 
-  "In 0/1, after taking, you're DONE with that item."
-  "In unbounded, after taking, the item is STILL THERE."
+  +---------------------------------------+
+  | At item[index], bag_limit remaining   |
+  | "What can I do with this ONE item?"   |
+  +------------------+--------------------+
+  | USE IT           | MOVE ON            |
+  | (stay)           | (advance)          |
+  |                  |                    |
+  | Add its value    | Skip this item     |
+  | Bag shrinks      | Bag stays same     |
+  | index STAYS      | index advances     |
+  | "might want more"| "done forever"     |
+  +------------------+--------------------+
 
-SECTION 2, "WHY THIS WORKS" (blue header, about 30%):
+Below the diagram, in amber:
+  "Why are these the ONLY choices?"
+  "I either want this item or I don't."
+  "Want more? USE and STAY. Done? MOVE ON."
 
-Header: "STAY means I can take it multiple times"
+SECTION 2, "HOW DOES THIS ACTUALLY SOLVE IT?" (blue header, about 30%):
 
-Show a chain of decisions for Gold Bar at capacity 5:
-  Step 1: At Gold (3kg, $4), cap=5. TAKE AGAIN. Cap: 5->2. Stay at Gold.
-  Step 2: At Gold (3kg, $4), cap=2. 3>2, can't take. Forced to MOVE ON.
-  "Took Gold once. Would've taken it again but it doesn't fit anymore."
+Header: "Watch the choices play out"
 
-Another example:
-  Ruby (1kg, $2), cap=5.
-  TAKE AGAIN. cap=4. Stay.
-  TAKE AGAIN. cap=3. Stay.
-  TAKE AGAIN. cap=2. Stay.
-  TAKE AGAIN. cap=1. Stay.
-  TAKE AGAIN. cap=0. Base case! 5 Rubies, $10.
+Show a chain of decisions (like a comic strip, 4 panels):
+
+Panel 1: "At Gold (3kg, $4), bag=5."
+  USE Gold. Value: +$4. Bag: 5->2. STAY at Gold.
+
+Panel 2: "At Gold (3kg, $4), bag=2."
+  3kg > 2kg. Doesn't fit! Forced to MOVE ON.
+
+Panel 3: "At Ruby (1kg, $2), bag=2."
+  USE Ruby. Value: +$2. Bag: 2->1. STAY at Ruby.
+
+Panel 4: "At Ruby (1kg, $2), bag=1."
+  USE Ruby. Value: +$2. Bag: 1->0. Done!
+  "Gold + Ruby + Ruby = $4+$2+$2 = $8"
 
 SECTION 3, "THE COMBINE STEP" (amber header, about 25%):
 
-  take_again = value + max_value(treasures, bag_limit - weight, index)
-  move_on = max_value(treasures, bag_limit, index + 1)
-  return max(take_again, move_on)
+"Both choices give me a VALUE.
+I pick whichever gives MORE."
 
-  "Same as 0/1: pick the better option. max(take_again, move_on)."
-  "The ONLY change is where 'index' goes after taking."
+Show the formula (BIG):
+  use_again = value + solve(remaining with SAME item)
+  move_on = solve(remaining with NEXT item)
+  answer = max(use_again, move_on)
 
-Kit: "One tiny change in the recursion: index stays instead of advancing.
-That one change turns 0/1 into unbounded."
+Kit: "At every item, I try both. Keep the better one.
+The recursion tries ALL paths and picks the best."
 
 
 ================================================================================
-PROMPT 3: The Recursion Tree -> family2_C.png
+PROMPT 3: Base Cases + Recursion Tree -> family2_C.png
 ================================================================================
 
 ---BEGIN STYLE BIBLE---
@@ -193,154 +222,136 @@ PROMPT 3: The Recursion Tree -> family2_C.png
 
 Create a tall portrait infographic (1024x1792). Two sections.
 
-SECTION 1, "THE TREE" (teal header, about 70%):
+SECTION 1, "WHEN DOES RECURSION STOP?" (amber header, about 30%):
 
-Header: "WATCH THE RECURSION"
+Big header: "BASE CASES"
+Subtitle: "The recursion needs to know when to stop."
+
+Two scenario cards:
+
+GREEN-OUTLINED CARD: "bag_limit == 0"
+  Kit's bag is bulging, completely full.
+  "Bag is full. Can't fit anything."
+  "Return 0 (no more value can be added)."
+
+RED-OUTLINED CARD: "index == len(treasures)"
+  Kit at an empty table. No items left.
+  "Looked at every item. Nothing left to consider."
+  "Return 0."
+
+YELLOW-OUTLINED CARD (smaller): "weight > bag_limit"
+  Kit trying to squeeze Gold (3kg) into bag with 1kg left.
+  "Doesn't fit. Forced to move on."
+  "Not a base case, just skip to the next item."
+
+SECTION 2, "THE RECURSION TREE" (teal header, about 70%):
+
+Header: "WATCH THE CHOICES PLAY OUT"
 Subtitle: "Items: Gold(3kg,$4), Ruby(1kg,$2). Bag: 4kg."
 
-Kit: "Only 2 items and 4kg. Watch how 'stay' creates more branches."
+Kit: "2 items, 4kg. Let me try every possible path."
 
-Draw the recursion tree. Use (item, remaining_capacity) at each node.
-Green = TAKE AGAIN, Red = MOVE ON.
+Draw a clean, well-spaced tree.
+Green branches = USE (labeled "USE, stay"). Red branches = MOVE ON (labeled "MOVE ON").
+Each node shows: (item, remaining bag).
 
-                        (Gold, cap=4)
-                       /              \
-               TAKE AGAIN            MOVE ON
-              (stay at Gold)        (go to Ruby)
-                  |                      |
-            (Gold, cap=1)          (Ruby, cap=4)
-            3>1, can't take       /              \
-            forced MOVE ON    TAKE AGAIN        MOVE ON
-                  |           (stay at Ruby)     (no items)
-            (Ruby, cap=1)         |              cap=4, $0
-              /        \    (Ruby, cap=3)
-        TAKE AGAIN  MOVE ON    /        \
-            |          |  TAKE AGAIN  MOVE ON
-       (Ruby, cap=0) (no items)  |      (no items)
-        $0+$2=$2     cap=1,$0  (Ruby, cap=2)  cap=3,$0
-                                /        \
-                          TAKE AGAIN  MOVE ON
-                              |          |
-                         (Ruby, cap=1) (no items)
-                           /      \     cap=2,$0
-                      TAKE AGAIN MOVE ON
-                          |        |
-                     (Ruby, cap=0)(no items)
-                       $0        cap=1,$0
+                     (Gold, bag=4)
+                    /               \
+             USE Gold            MOVE ON
+            bag 4->1           (go to Ruby)
+                |                    |
+          (Gold, bag=1)        (Ruby, bag=4)
+          3>1, won't fit       /            \
+          forced MOVE ON    USE Ruby      MOVE ON
+                |           bag 4->3      (no items)
+          (Ruby, bag=1)        |           bag=4, $0
+            /        \    (Ruby, bag=3)
+        USE Ruby  MOVE ON    /        \
+           |         |   USE Ruby   MOVE ON
+      (Ruby, bag=0) (no items)  |      (no items)
+       bag full!     $0    (Ruby, bag=2)
+       Return $0         ...continues...
 
-OK this is getting complex. Let me simplify.
+Best paths highlighted:
+  PATH A: USE Gold + USE Ruby = $4+$2 = $6
+  PATH B: MOVE ON from Gold, USE Ruby x4 = $2+$2+$2+$2 = $8
 
-Actually, show a CLEANER version. Just show the key paths:
+Big green highlight on PATH B:
+  "BEST: 4 Rubies = $8. Better than Gold+Ruby = $6!"
 
-PATH 1: Take Gold (cap 4->1), Move On, Take Ruby (cap 1->0).
-  Value: $4 + $2 = $6.
-
-PATH 2: Move On from Gold, Take Ruby x4 (cap 4->3->2->1->0).
-  Value: $2 + $2 + $2 + $2 = $8.
-
-PATH 3: Move On from Gold, Take Ruby x3 (cap 4->3->2->1), Move On.
-  Value: $2 + $2 + $2 = $6.
-
-Show the tree with the branching for the first 2-3 levels,
-then highlight the BEST path (Ruby x4 = $8).
-
-At the bottom, show:
-  "BEST: 4 Rubies = $8. Better than Gold + Ruby = $6!"
-  "The cloning machine made Ruby the winner."
-
-SECTION 2, "THE KEY OBSERVATION" (gold header, about 30%):
-
-Header: "STAY branches create REPEAT paths"
-
-Show that (Ruby, cap=2) appears in MULTIPLE branches of the tree.
-Circle two identical nodes: "Same item, same capacity. Same answer!"
-
-"Just like 0/1, subproblems OVERLAP.
-Memoize with (index, bag_limit) to avoid re-solving."
-
-Kit: "The tree is bigger (more branches from 'stay'),
-but the fix is the same: cache (index, capacity)."
+Circle two identical nodes (Ruby, bag=1) that appear in different branches:
+  "Same item, same bag. Same subproblem! Cache it."
 
 
 ================================================================================
-PROMPT 4: Base Cases + Code + 0/1 vs Unbounded -> family2_D.png
+PROMPT 4: Code (Derived from Reasoning) + Pattern Recognition -> family2_D.png
 ================================================================================
 
 ---BEGIN STYLE BIBLE---
 [Paste the full style bible from above here]
 ---END STYLE BIBLE---
 
-Create a tall portrait infographic (1024x1792). Three sections.
+Create a tall portrait infographic (1024x1792). Two sections.
 
-SECTION 1, "BASE CASES" (amber header, about 20%):
+SECTION 1, "FROM REASONING TO CODE" (gray header, about 60%):
 
-Two cards:
-  GREEN: "bag_limit == 0: return 0. Bag is full, can't take anything."
-  RED: "index == len(treasures): return 0. No items left to consider."
+Big header: "EVERY LINE COMES FROM A DECISION"
 
-Same as 0/1!
-
-SECTION 2, "THE CODE" (gray header, about 40%):
-
-Header: "ONE LINE DIFFERENT FROM 0/1"
-
-Show the code. HIGHLIGHT the ONE line that changed:
+Show the code with LARGE font. Next to EACH block, an annotation in a cream-colored
+rounded box connected by an arrow, explaining WHY that line exists:
 
   def max_value(treasures, bag_limit, index):
+
       if index == len(treasures) or bag_limit == 0:
           return 0
+  Arrow: "Base cases: no items left OR bag full. Can't add value."
 
       name, weight, value = treasures[index]
+  Arrow: "Look at the current item."
 
       if weight > bag_limit:
           return max_value(treasures, bag_limit, index + 1)
+  Arrow: "Doesn't fit? Forced to move on."
 
-      take_again = value + max_value(
+      use_again = value + max_value(
           treasures,
           bag_limit - weight,
-          index)                    # <-- THIS LINE! index, not index + 1
+          index)
+  Arrow: "USE IT. Add value. Bag shrinks. STAY (same index)."
 
       move_on = max_value(
           treasures,
           bag_limit,
           index + 1)
+  Arrow: "MOVE ON. No value. Bag same. Next item."
 
-      return max(take_again, move_on)
+      return max(use_again, move_on)
+  Arrow: "Which choice gave more value? Keep that one."
 
-Draw a BIG arrow pointing to "index" in the take_again call.
-Gold highlight box: "THIS is the ONLY difference from 0/1.
-'index' instead of 'index + 1'. Stay instead of advance."
+SECTION 2, "PATTERN RECOGNITION" (gold header, about 40%):
 
-SECTION 3, "0/1 vs UNBOUNDED: THE FULL COMPARISON" (teal header, about 40%):
+Header: "WHEN YOU SEE THIS PATTERN AGAIN"
 
-Header: "SIDE BY SIDE"
+A prominent PATTERN RECOGNITION CARD (teal border, gold background):
 
-Show the two codes next to each other, differences highlighted:
+  CLUE WORDS: "unlimited supply", "reusable items",
+              "as many times as you want"
 
-  0/1 KNAPSACK:                    UNBOUNDED KNAPSACK:
-  grab = value + max_value(        take_again = value + max_value(
-      treasures,                       treasures,
-      bag_limit - weight,              bag_limit - weight,
-      index + 1)   <-- ADVANCE        index)        <-- STAY
-  skip = max_value(                move_on = max_value(
-      ...)                             ...)
-  return max(grab, skip)           return max(take_again, move_on)
+  CHOICES: USE this item (STAY) or MOVE ON (advance).
 
-  TABULATION:                      TABULATION:
-  Inner loop RIGHT to LEFT         Inner loop LEFT to RIGHT
-  "Prevents reuse"                 "ALLOWS reuse"
+  STATE: (index, remaining_capacity)
 
-Show the loop direction visually:
-  0/1:        [0] [1] [2] [3] [4] [5]
-              <-------- RIGHT TO LEFT
-              "Each cell sees LAST row's values. Item used once."
+  COMBINE: depends on what you're asked:
+    "Maximize value?" -> max(use, move_on)
+    "Minimize count?" -> min(use, move_on)
+    "Count ways?"     -> use + move_on
 
-  Unbounded:  [0] [1] [2] [3] [4] [5]
-              LEFT TO RIGHT -------->
-              "Each cell sees THIS row's updates. Item reused!"
+  "The CHOICES never change. Only the COMBINE step changes."
 
-Kit: "One line in recursion. One loop direction in tabulation.
-That's the entire difference between the two families."
+Kit's speech bubble:
+  "See 'unlimited supply' + 'optimize something'?
+   Think: use again or move on. That's your starting point."
 
-Gold box: "NEXT: The children. Coin Change, Coin Change 2, Word Break.
-Same 'take again or move on' choice, different combine step."
+Gold box at bottom:
+  "NEXT: Coin Change, Coin Change 2, Word Break.
+   Same choices. Different combine."

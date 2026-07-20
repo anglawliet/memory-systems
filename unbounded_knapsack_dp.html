@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Unbounded Knapsack: Items Reusable</title>
+<title>Unbounded Knapsack: Deriving the Solution</title>
 <style>
 :root{--bg:#1a1916;--card:#252320;--card2:#2d2a26;--gold:#d4a843;--gold2:#fbbf24;--amber:#f59e0b;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;--red:#ef4444;--teal:#14b8a6;--text:#e8e2d6;--muted:#9b9484;--border:#3d3930;--sand:#c2956a}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -20,8 +20,56 @@ code{font-family:'Fira Code','Courier New',monospace}
 .hi{background:rgba(20,184,166,.08);border:1px solid rgba(20,184,166,.3);border-radius:6px;padding:12px 16px;margin:12px 0}
 .ws{background:var(--card);border-radius:12px;padding:20px;margin:20px 0;border-left:4px solid var(--teal)}
 .ws h3{color:var(--teal);margin-top:0}
-.sbox{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px;margin:10px 0}
-.sl{font-size:.72em;letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:6px}
+
+/* Choice diagram grid */
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.choice-use{background:rgba(34,197,94,.08);border:2px solid var(--green);border-radius:10px;padding:16px}
+.choice-use .choice-label{color:var(--green);font-weight:700;font-size:1.1em;margin-bottom:8px}
+.choice-skip{background:rgba(239,68,68,.08);border:2px solid var(--red);border-radius:10px;padding:16px}
+.choice-skip .choice-label{color:var(--red);font-weight:700;font-size:1.1em;margin-bottom:8px}
+.choice-detail{font-size:.88em;color:var(--text);line-height:1.6}
+.choice-detail strong{color:var(--gold2)}
+
+/* State checklist */
+.state-check{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;margin:12px 0}
+.state-check .item{display:flex;align-items:flex-start;gap:8px;margin:6px 0;font-size:.92em}
+.state-check .yes{color:var(--green);font-weight:700;min-width:20px}
+.state-check .no{color:var(--red);font-weight:700;min-width:20px}
+
+/* Base case cards */
+.base-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.base-card{border-radius:8px;padding:14px}
+.base-card.success{background:rgba(34,197,94,.08);border:1px solid var(--green)}
+.base-card.success .bc-label{color:var(--green);font-weight:700;font-size:.85em;margin-bottom:4px}
+.base-card.fail{background:rgba(239,68,68,.08);border:1px solid var(--red)}
+.base-card.fail .bc-label{color:var(--red);font-weight:700;font-size:.85em;margin-bottom:4px}
+.base-card.warn{background:rgba(245,158,11,.08);border:1px solid var(--amber)}
+.base-card.warn .bc-label{color:var(--amber);font-weight:700;font-size:.85em;margin-bottom:4px}
+
+/* Pattern recognition card */
+.pattern-card{background:linear-gradient(135deg,rgba(20,184,166,.06),rgba(251,191,36,.06));border:2px solid var(--gold2);border-radius:12px;padding:20px;margin:20px 0}
+.pattern-card h3{color:var(--gold2);margin:0 0 12px;font-size:1.1em}
+.pattern-card .row{display:flex;gap:8px;margin:4px 0;font-size:.9em}
+.pattern-card .label{color:var(--teal);font-weight:700;min-width:80px}
+
+/* Mistake box */
+.mistake-box{background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:14px 16px;margin:12px 0}
+.mistake-box h4{color:var(--red);font-size:.9em;margin-bottom:8px}
+.mistake-box li{font-size:.88em;margin:4px 0;color:var(--muted)}
+.mistake-box li strong{color:var(--text)}
+
+/* Annotation style for code */
+.code-annotated{display:grid;grid-template-columns:1fr;gap:0;margin:12px 0}
+.code-line{background:#0d0d0b;padding:4px 14px;font-family:'Fira Code','Courier New',monospace;font-size:.82em;line-height:1.5;border-left:1px solid var(--border);border-right:1px solid var(--border)}
+.code-line:first-child{border-top:1px solid var(--border);border-radius:8px 8px 0 0;padding-top:10px}
+.code-line:last-child{border-bottom:1px solid var(--border);border-radius:0 0 8px 8px;padding-bottom:10px}
+.code-note{background:var(--card);padding:6px 14px;font-size:.82em;color:var(--muted);border-left:3px solid var(--teal);margin:0 14px 8px}
+
+/* Why-only box */
+.why-box{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.3);border-radius:6px;padding:12px 16px;margin:12px 0;font-size:.92em}
+.why-box strong{color:var(--gold2)}
+
+/* Expandable children */
 .deriv{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:.2s}
 .deriv:hover{border-color:var(--teal)}
 .deriv-h{display:flex;align-items:center;justify-content:space-between;padding:14px 18px}
@@ -29,21 +77,23 @@ code{font-family:'Fira Code','Courier New',monospace}
 .deriv-n{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--teal);color:#000;font-size:.75em;font-weight:700;margin-right:8px}
 .deriv-a{color:var(--muted);font-size:.8em;transition:.3s}
 .deriv-b{max-height:0;overflow:hidden;transition:max-height .4s ease;padding:0 18px}
-.deriv.open .deriv-b{max-height:12000px;padding:0 18px 18px}
+.deriv.open .deriv-b{max-height:20000px;padding:0 18px 18px}
 .deriv.open .deriv-a{transform:rotate(90deg)}
+
 .nav-link{display:inline-block;background:var(--card);border:1px solid var(--border);padding:10px 20px;border-radius:8px;color:var(--teal);text-decoration:none;font-weight:700;margin:8px 4px;transition:.2s}
 .nav-link:hover{background:var(--teal);color:#000;border-color:var(--teal)}
-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
-th{background:var(--card2);color:var(--teal);text-align:center;padding:10px 12px;border:1px solid var(--border)}
-td{padding:10px 12px;border:1px solid var(--border);text-align:center}
+
+.sbox{background:var(--card);border-radius:8px;padding:14px;margin:10px 0;border:1px solid var(--border)}
+.sl{font-size:.72em;letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:6px}
+
 @media(max-width:600px){
   .wrap{padding:12px}
   .hdr h1{font-size:1.5em}
   h2{font-size:1.2em}
   pre{font-size:.75em;padding:10px;white-space:pre-wrap;word-break:break-word}
   code{word-break:break-word}
+  .choice-grid,.base-grid{grid-template-columns:1fr}
   .card,.ws,.hi{overflow-x:hidden}
-  table{font-size:.8em;display:block;overflow-x:auto}
 }
 </style>
 </head>
@@ -51,209 +101,589 @@ td{padding:10px 12px;border:1px solid var(--border);text-align:center}
 
 <div class="hdr">
 <h1>Unbounded Knapsack</h1>
-<p>Same choices as 0/1, but items are reusable. One line changes everything.</p>
+<p>Deriving the solution from scratch. No memorization.</p>
 </div>
 
 <div class="wrap">
 
 <div style="margin-bottom:24px">
 <a href="dp_workshop.html" class="nav-link">&larr; Back to DP Workshop</a>
-<a href="dp_workshop.html#sec-knapsack" class="nav-link">0/1 Knapsack &rarr;</a>
+<a href="staircase_dp.html" class="nav-link">Staircase &rarr;</a>
 </div>
 
-<!-- ==================== THE PARENT PROBLEM ==================== -->
+<!-- ==================== THE PROBLEM ==================== -->
 
 <h2>The Problem</h2>
 
-<img src="dp/images/family2_A.png" alt="Unbounded Knapsack: same vault, but a cloning machine lets you take unlimited copies" class="scene-img">
+<img src="dp/images/family2_A.png" alt="Unbounded Knapsack: items with unlimited supply, maximize value within a weight limit" class="scene-img">
 
 <div class="ws">
-<h3>Unbounded Knapsack</h3>
-<p>Same as 0/1 knapsack (maximize value within a weight limit), but each item can be used <strong>unlimited times</strong>. You have an infinite supply of every item.</p>
+<h3>What are we solving?</h3>
+<p>You have items. Each has a weight and a value. You have a bag with a weight limit. You can use each item <strong>as many times as you want</strong> (unlimited supply). What's the maximum value you can fit?</p>
+
+<div class="why-box">
+<strong>Why can't I just try every combination?</strong> With unlimited copies, the number of possible combinations explodes. 3 items with bag=5 is manageable. 10 items with bag=100 is millions. We need a smarter approach.
+</div>
+
+<p>The smarter approach: don't think about ALL items at once. Look at <strong>ONE item</strong> and decide what to do with it.</p>
+</div>
+
+<!-- ==================== FINDING THE CHOICES ==================== -->
+
+<h2>Finding the Choices</h2>
+
+<img src="dp/images/family2_B.png" alt="Choice diagram: at each item, USE IT (stay, might use again) or MOVE ON (advance to next item)" class="scene-img">
+
+<div class="ws">
+<h3>What can I do with this ONE item?</h3>
+<p>I'm looking at one item. I have exactly two options:</p>
+</div>
+
+<div class="choice-grid">
+<div class="choice-use">
+<div class="choice-label">USE IT (stay)</div>
+<div class="choice-detail">
+Add its value to my haul.<br>
+Bag capacity <strong>shrinks</strong> by the item's weight.<br>
+I <strong>stay at this item</strong> (it has unlimited copies, I might want another one).<br>
+</div>
+</div>
+<div class="choice-skip">
+<div class="choice-label">MOVE ON (advance)</div>
+<div class="choice-detail">
+Skip this item entirely.<br>
+Bag capacity <strong>stays the same</strong>.<br>
+I <strong>advance to the next item</strong>. Done with this one forever.<br>
+</div>
+</div>
+</div>
+
+<div class="why-box">
+<strong>Why are these the ONLY choices?</strong> At any item, I either want more copies of it or I don't. If I want more, I use it and stay (the cloning machine makes another copy). If I'm done, I move on and never come back. There is no third option. The item either goes in the bag or it doesn't.
+</div>
+
+<div class="ws">
+<h3>Watch the choices play out</h3>
+<p>Items: Gold(3kg, $4), Ruby(1kg, $2). Bag = 5kg.</p>
+
+<div class="sbox">
+<div class="sl" style="color:var(--green)">CHAIN OF DECISIONS</div>
+<strong>At Gold (3kg, $4), bag=5:</strong> USE Gold. Value +$4. Bag: 5 &rarr; 2. Stay at Gold.<br>
+<strong>At Gold (3kg, $4), bag=2:</strong> 3kg &gt; 2kg. Doesn't fit! Forced to move on.<br>
+<strong>At Ruby (1kg, $2), bag=2:</strong> USE Ruby. Value +$2. Bag: 2 &rarr; 1. Stay at Ruby.<br>
+<strong>At Ruby (1kg, $2), bag=1:</strong> USE Ruby. Value +$2. Bag: 1 &rarr; 0. Bag full!<br>
+<strong>Total:</strong> Gold + Ruby + Ruby = $4 + $2 + $2 = <strong>$8</strong>
+</div>
+
+<p>Both choices give a value. Pick whichever gives <strong>more</strong>:</p>
+<pre><code>use_again = value + solve(remaining with SAME item)
+move_on   = solve(remaining with NEXT item)
+answer    = max(use_again, move_on)</code></pre>
+</div>
+
+<!-- ==================== STATE DISCOVERY ==================== -->
+
+<h2>What Variables Do I Need?</h2>
+
+<div class="ws">
+<h3>What information must I know to solve the remaining subproblem?</h3>
+
+<p>After <strong>USE</strong>: bag_limit changed, index stayed the same.<br>
+After <strong>MOVE ON</strong>: index changed, bag_limit stayed the same.</p>
+
+<p>So two things are changing. Are both necessary?</p>
+</div>
+
+<div class="state-check">
+<div class="item"><span class="yes">&#10003;</span> <div><strong>index</strong> (which item am I looking at?)<br><span style="color:var(--muted)">Different items remain. If I'm at Gold vs Ruby, different choices are available. Remove this and I can't tell which items I've already considered.</span></div></div>
+<div class="item"><span class="yes">&#10003;</span> <div><strong>bag_limit</strong> (how much space is left?)<br><span style="color:var(--muted)">Remaining capacity determines what fits. A 5kg bag and a 2kg bag give different answers. Remove this and two completely different situations look identical.</span></div></div>
+<div class="item"><span class="no">&#10007;</span> <div><strong>value_so_far</strong> (how much value have I collected?)<br><span style="color:var(--muted)">Not needed. Value accumulates through the return values (<code>value + max_value(...)</code>). The function returns how much value can be added FROM HERE, not the total.</span></div></div>
+</div>
+
 <div class="hi">
-<strong>0/1:</strong> Take it (once) or skip it. Both advance to the next item.<br>
-<strong>Unbounded:</strong> Take it again (stay, might take more) or move on. Only "move on" advances.
+<strong>My function signature:</strong> <code>max_value(treasures, bag_limit, index)</code><br>
+<code>treasures</code> is the list of items (doesn't change). <code>bag_limit</code> and <code>index</code> are the state.
 </div>
-</div>
 
-<!-- ==================== THE CHOICES ==================== -->
+<!-- ==================== BASE CASES ==================== -->
 
-<h2>The Choices</h2>
-
-<img src="dp/images/family2_B.png" alt="Take again (stay at same item) or move on (advance to next). The key difference from 0/1." class="scene-img">
+<h2>When Does Recursion Stop?</h2>
 
 <div class="ws">
-<h3>Take Again or Move On</h3>
-<p>At each item, you have two options:</p>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0">
-<div style="background:rgba(34,197,94,.08);border:1px solid var(--green);border-radius:8px;padding:14px">
-<div style="color:var(--green);font-weight:700;margin-bottom:4px">TAKE AGAIN</div>
-<div style="font-size:.88em">Add the value, reduce capacity. <strong>Stay at the same item</strong> (might take it again).</div>
+<h3>What situations mean "I'm done"?</h3>
 </div>
-<div style="background:rgba(239,68,68,.08);border:1px solid var(--red);border-radius:8px;padding:14px">
-<div style="color:var(--red);font-weight:700;margin-bottom:4px">MOVE ON</div>
-<div style="font-size:.88em">Leave this item forever. <strong>Advance to the next item.</strong> Can't come back.</div>
+
+<div class="base-grid">
+<div class="base-card success">
+<div class="bc-label">bag_limit == 0</div>
+Bag is completely full. Can't fit anything else. No more value can be added.<br>
+<strong>Return 0.</strong>
+</div>
+<div class="base-card fail">
+<div class="bc-label">index == len(treasures)</div>
+I've looked at every item. Nothing left to consider.<br>
+<strong>Return 0.</strong>
 </div>
 </div>
 
-<table>
-<tr><th></th><th>0/1 Knapsack</th><th>Unbounded Knapsack</th></tr>
-<tr><td><strong>Take</strong></td><td>index + 1 (advance)</td><td style="color:var(--green);font-weight:700">index (STAY)</td></tr>
-<tr><td><strong>Skip/Move on</strong></td><td>index + 1 (advance)</td><td>index + 1 (advance)</td></tr>
-<tr><td><strong>Both advance?</strong></td><td>Yes</td><td style="color:var(--amber);font-weight:700">No, only move on</td></tr>
-</table>
+<div class="base-card warn" style="margin:12px 0">
+<div class="bc-label">weight &gt; bag_limit (not a base case)</div>
+This specific item doesn't fit. I'm <strong>forced to move on</strong> to the next item. Recursion continues.
 </div>
 
-<!-- ==================== THE TREE ==================== -->
+<!-- ==================== RECURSION TREE ==================== -->
 
 <h2>The Recursion Tree</h2>
 
-<img src="dp/images/family2_C.png" alt="Recursion tree showing stay branches creating repeated subproblems" class="scene-img">
-
-<div class="hi">
-<strong>The "stay" branch creates more branches</strong> than 0/1 (because you can keep taking the same item). But subproblems still overlap: the same (index, capacity) pair appears in multiple branches. Memoize with <code>(index, bag_limit)</code> to avoid re-solving.
-</div>
-
-<!-- ==================== CODE ==================== -->
-
-<h2>Base Cases + Code</h2>
-
-<img src="dp/images/family2_D.png" alt="The code with one line different from 0/1, and the loop direction comparison" class="scene-img">
+<img src="dp/images/family2_C.png" alt="Recursion tree showing USE (stay) and MOVE ON (advance) branches, overlapping subproblems" class="scene-img">
 
 <div class="ws">
-<h3>The Recursion</h3>
+<h3>Every path the recursion tries</h3>
+<p>Items: Gold(3kg, $4), Ruby(1kg, $2). Bag = 4kg.</p>
+
+<div class="sbox">
+<div class="sl" style="color:var(--green)">PATH A: USE Gold, then Rubies</div>
+USE Gold (bag 4 &rarr; 1). Gold doesn't fit again (3 &gt; 1). Move on.<br>
+USE Ruby (bag 1 &rarr; 0). Done.<br>
+Value: $4 + $2 = <strong>$6</strong>
+</div>
+
+<div class="sbox">
+<div class="sl" style="color:var(--teal)">PATH B: Skip Gold, all Rubies</div>
+MOVE ON from Gold. At Ruby, bag = 4.<br>
+USE Ruby (4 &rarr; 3). USE Ruby (3 &rarr; 2). USE Ruby (2 &rarr; 1). USE Ruby (1 &rarr; 0).<br>
+Value: $2 + $2 + $2 + $2 = <strong>$8</strong>
+</div>
+
+<p><strong>Best: 4 Rubies = $8.</strong> The recursion tries all paths and picks the maximum.</p>
+
+<div class="hi">
+<strong>Overlapping subproblems:</strong> The state (Ruby, bag=1) appears in both paths. Same item, same remaining capacity, same answer. If we cache (index, bag_limit) pairs, we avoid re-solving them.
+</div>
+</div>
+
+<!-- ==================== THE CODE ==================== -->
+
+<h2>The Code</h2>
+
+<img src="dp/images/family2_D.png" alt="Annotated code with every line derived from the reasoning" class="scene-img">
+
+<div class="ws">
+<h3>Every line comes from a decision</h3>
 <pre><code>def max_value(treasures, bag_limit, index):
+    # Base cases: nothing left to consider
     if index == len(treasures) or bag_limit == 0:
         return 0
 
     name, weight, value = treasures[index]
 
+    # This item doesn't fit? Forced to move on.
     if weight > bag_limit:
         return max_value(treasures, bag_limit, index + 1)
 
-    take_again = value + max_value(
+    # USE IT: add value, bag shrinks, STAY at same item
+    use_again = value + max_value(
         treasures,
         bag_limit - weight,
-        index)                    # STAY at same item
+        index)
 
+    # MOVE ON: skip item, bag stays, advance to next
     move_on = max_value(
         treasures,
         bag_limit,
         index + 1)
 
-    return max(take_again, move_on)</code></pre>
-
-<div class="hi">
-<strong>One line is different from 0/1:</strong> <code>index</code> instead of <code>index + 1</code> in the take branch. That single change turns "use once" into "use unlimited times."
+    # Which choice gave more value?
+    return max(use_again, move_on)</code></pre>
 </div>
 
-<h3>The Tabulation (1D)</h3>
-<pre><code>def max_value(treasures, bag_limit):
-    dp = [0] * (bag_limit + 1)
-
-    for name, weight, value in treasures:
-        for cap in range(weight, bag_limit + 1):
-            dp[cap] = max(dp[cap], dp[cap - weight] + value)
-
-    return dp[bag_limit]</code></pre>
-
-<div class="hi">
-<strong>Loop direction:</strong> inner loop goes <strong>LEFT to RIGHT</strong>. In 0/1, it goes right to left to prevent reuse. Here, left to right ALLOWS reuse: <code>dp[cap - weight]</code> might already include this item from an earlier iteration.
+<div class="why-box">
+<strong>Why does <code>index</code> stay the same in the USE branch?</strong> Because the item has unlimited copies. After using it, I might want another one. So I stay at the same item to decide again. If I'm done with it, the MOVE ON branch handles that.
 </div>
+
+<!-- ==================== PATTERN RECOGNITION ==================== -->
+
+<div class="pattern-card">
+<h3>Pattern Recognition Card</h3>
+<div class="row"><span class="label">CLUE:</span> "unlimited supply", "reusable items", "as many times as you want"</div>
+<div class="row"><span class="label">CHOICES:</span> USE this item (stay at same index) or MOVE ON (advance)</div>
+<div class="row"><span class="label">STATE:</span> (index, remaining_capacity)</div>
+<div class="row"><span class="label">COMBINE:</span> depends on what you're asked (see children below)</div>
+<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-size:.88em">
+<strong>If you see another problem where items are reusable and you're optimizing something, that's a clue for this pattern.</strong> Start by asking: "What can I do with ONE item?"
+</div>
+</div>
+
+<!-- ==================== COMMON MISTAKES ==================== -->
+
+<div class="mistake-box">
+<h4>Common Mistakes</h4>
+<ul>
+<li><strong>Advancing index in the USE branch:</strong> Writing <code>index + 1</code> instead of <code>index</code> makes it 0/1 knapsack (each item used once). For unlimited supply, you must STAY.</li>
+<li><strong>No guard for weight &gt; bag_limit:</strong> Without this, the recursion keeps trying to use an item that never fits, creating an infinite loop.</li>
+<li><strong>Missing bag_limit == 0:</strong> Without this, the recursion tries to add items to a full bag.</li>
+</ul>
 </div>
 
 <!-- ==================== CHILDREN ==================== -->
 
 <h2>The Unbounded Family</h2>
 
-<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin:16px 0">
-<strong style="color:var(--teal);font-size:1.1em">UNBOUNDED KNAPSACK (parent)</strong><br>
-<span style="font-size:.88em;color:var(--muted)">At each item: take again (stay) or move on. Maximize value. Items reusable.</span>
-</div>
+<p>Same choices (use again or move on). Different combine step. Each child below is derived from scratch.</p>
 
 <div style="display:grid;gap:10px">
 
+<!-- ========== COIN CHANGE ========== -->
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">1</span> Coin Change (Minimum Coins)</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
-<img src="dp/images/family2_child1_A.png" alt="Coin Change: fewest coins to make amount, use again or move on" class="scene-img">
-<img src="dp/images/family2_child1_B.png" alt="Recursion tree for coin change, code with min() and left-to-right loop" class="scene-img">
-<img src="dp/images/family2_child1_C.png" alt="Why greedy fails and when to use DP over greedy" class="scene-img">
-<div class="sbox"><div class="sl" style="color:var(--teal)">THE KEY IDEA</div>
-Same "use again or move on" choice. Combine with <code>min()</code> instead of <code>max()</code>. Each coin used adds 1 to the count. Base case: amount = 0 returns 0 coins, no coins left returns infinity.</div>
-<pre><code>def coin_change(coins, amount):
-    dp = [float('inf')] * (amount + 1)
-    dp[0] = 0
 
-    for coin in coins:
-        for a in range(coin, amount + 1):
-            dp[a] = min(dp[a], dp[a - coin] + 1)
+<img src="dp/images/family2_child1_A.png" alt="Coin Change: fewest coins to make amount, unlimited supply" class="scene-img">
 
-    if dp[amount] == float('inf'):
-        return -1
-    return dp[amount]</code></pre>
+<div class="ws">
+<h3>What are we solving?</h3>
+<p>You have coin types (unlimited supply of each). You need <strong>exactly</strong> this amount. What's the <strong>fewest coins</strong> to make it?</p>
+</div>
+
+<h3 style="color:var(--teal)">Finding the Choices</h3>
+<p>Look at ONE coin type. What can I do?</p>
+
+<div class="choice-grid">
+<div class="choice-use">
+<div class="choice-label">USE THIS COIN (stay)</div>
+<div class="choice-detail">
+Amount <strong>shrinks</strong> by coin value.<br>
+Coins used: <strong>+1</strong>.<br>
+<strong>Stay</strong> at this coin type (might use again).<br>
+</div>
+</div>
+<div class="choice-skip">
+<div class="choice-label">MOVE ON (advance)</div>
+<div class="choice-detail">
+Amount <strong>stays the same</strong>.<br>
+Coins used: <strong>+0</strong>.<br>
+<strong>Advance</strong> to next coin type. Done with this one.<br>
+</div>
+</div>
+</div>
+
+<div class="why-box">
+<strong>Why min() instead of max()?</strong> We want the <strong>fewest</strong> coins. Each use adds 1 to the count. We pick whichever choice used fewer coins.
+</div>
+
+<h3 style="color:var(--teal)">State + Base Cases</h3>
+
+<div class="state-check">
+<div class="item"><span class="yes">&#10003;</span> <div><strong>index</strong>: which coin type am I considering?</div></div>
+<div class="item"><span class="yes">&#10003;</span> <div><strong>amount</strong>: how much money do I still need?</div></div>
+<div class="item"><span class="no">&#10007;</span> <div><strong>coins_used</strong>: accumulates through <code>1 + min_coins(...)</code> returns</div></div>
+</div>
+
+<div class="base-grid">
+<div class="base-card success">
+<div class="bc-label">amount == 0</div>
+Exact change! 0 more coins needed.<br>
+<strong>Return 0.</strong>
+</div>
+<div class="base-card fail">
+<div class="bc-label">No coins left, amount &gt; 0</div>
+Can't make this amount. Impossible.<br>
+<strong>Return infinity.</strong>
+</div>
+</div>
+
+<img src="dp/images/family2_child1_B.png" alt="Coin Change recursion tree and annotated code" class="scene-img">
+
+<h3 style="color:var(--teal)">The Code</h3>
+<pre><code>def min_coins(coins, amount, index):
+    if amount == 0:
+        return 0
+    if index == len(coins):
+        return float('inf')
+
+    if coins[index] > amount:
+        return min_coins(coins, amount, index + 1)
+
+    use_again = 1 + min_coins(
+        coins,
+        amount - coins[index],
+        index)                    # STAY at same coin
+
+    move_on = min_coins(
+        coins,
+        amount,
+        index + 1)
+
+    return min(use_again, move_on)</code></pre>
+
+<div class="mistake-box">
+<h4>Common Mistake: Greedy</h4>
+<ul>
+<li><strong>Coins = [1, 5, 6], amount = 10.</strong> Greedy picks the biggest first: [6]+[1]+[1]+[1]+[1] = 5 coins. But [5]+[5] = 2 coins. Greedy doesn't always find the minimum. Use recursion.</li>
+</ul>
+</div>
+
+<div class="pattern-card" style="border-color:var(--teal)">
+<h3 style="color:var(--teal)">Pattern Card</h3>
+<div class="row"><span class="label">CLUE:</span> "fewest coins", "minimum number to make amount"</div>
+<div class="row"><span class="label">COMBINE:</span> min(use_again, move_on). Each use adds +1.</div>
+<div class="row"><span class="label">BASE:</span> amount=0 &rarr; 0, no coins &rarr; infinity</div>
+</div>
+
 </div></div>
 
+<!-- ========== COIN CHANGE 2 ========== -->
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">2</span> Coin Change 2 (Count Combinations)</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
-<img src="dp/images/family2_child2_A.png" alt="Coin Change 2: how many combinations make the amount, outer loop is coins" class="scene-img">
-<img src="dp/images/family2_child2_B.png" alt="Code and the full unbounded family tree" class="scene-img">
-<div class="sbox"><div class="sl" style="color:var(--teal)">THE KEY IDEA</div>
-Same choices. Combine with <code>+</code> (count ways). Outer loop = coins to count COMBINATIONS (not permutations). <code>{1,2}</code> and <code>{2,1}</code> are the same combination.</div>
-<pre><code>def count_ways(coins, amount):
-    dp = [0] * (amount + 1)
-    dp[0] = 1
 
-    for coin in coins:
-        for a in range(coin, amount + 1):
-            dp[a] += dp[a - coin]
+<img src="dp/images/family2_child2_A.png" alt="Coin Change 2: how many combinations make the amount" class="scene-img">
 
-    return dp[amount]</code></pre>
+<div class="ws">
+<h3>What are we solving?</h3>
+<p>Same coins, unlimited supply. But now: <strong>how many different ways</strong> can I make the amount?</p>
+<p>Coins = [1, 2, 5], amount = 5:</p>
+<div class="sbox">
+[5] = 5 &nbsp;&nbsp; [2]+[2]+[1] = 5 &nbsp;&nbsp; [2]+[1]+[1]+[1] = 5 &nbsp;&nbsp; [1]&times;5 = 5<br>
+<strong>Answer: 4 ways.</strong>
+</div>
+<p>Important: [2]+[1]+[1]+[1] and [1]+[2]+[1]+[1] are the <strong>same</strong> combination. Order doesn't matter.</p>
+</div>
+
+<h3 style="color:var(--teal)">Finding the Choices</h3>
+<p>Look at ONE coin type. What can I do?</p>
+
+<div class="choice-grid">
+<div class="choice-use">
+<div class="choice-label">USE THIS COIN (stay)</div>
+<div class="choice-detail">
+Amount <strong>shrinks</strong> by coin value.<br>
+<strong>Stay</strong> at this coin type (might use again).<br>
+Returns: number of ways from here.<br>
+</div>
+</div>
+<div class="choice-skip">
+<div class="choice-label">MOVE ON (advance)</div>
+<div class="choice-detail">
+Amount <strong>stays the same</strong>.<br>
+<strong>Advance</strong> to next coin type.<br>
+Returns: number of ways from here.<br>
+</div>
+</div>
+</div>
+
+<div class="why-box">
+<strong>Why + instead of min/max?</strong> I'm counting ALL the ways. Some ways go through "use this coin", others go through "move on". The total is the <strong>sum</strong> of ways from both choices.
+</div>
+
+<p>Compare the combine steps:</p>
+<div class="sbox">
+<div class="sl" style="color:var(--gold2)">SAME CHOICES, DIFFERENT COMBINE</div>
+Maximize value? &rarr; <code>max(use, move_on)</code><br>
+Minimize coins? &rarr; <code>min(use, move_on)</code><br>
+Count ways? &rarr; <code>use + move_on</code>
+</div>
+
+<h3 style="color:var(--teal)">State + Base Cases</h3>
+
+<div class="state-check">
+<div class="item"><span class="yes">&#10003;</span> <div><strong>index</strong>: which coin type am I considering?</div></div>
+<div class="item"><span class="yes">&#10003;</span> <div><strong>amount</strong>: how much left to make?</div></div>
+</div>
+
+<div class="base-grid">
+<div class="base-card success">
+<div class="bc-label">amount == 0</div>
+Made the exact amount! That counts as 1 valid way.<br>
+<strong>Return 1.</strong>
+</div>
+<div class="base-card fail">
+<div class="bc-label">No coins left, amount &gt; 0</div>
+Can't make this amount. Zero ways.<br>
+<strong>Return 0.</strong>
+</div>
+</div>
+
+<img src="dp/images/family2_child2_B.png" alt="Coin Change 2 code and combination insight" class="scene-img">
+
+<h3 style="color:var(--teal)">The Code</h3>
+<pre><code>def count_ways(coins, amount, index):
+    if amount == 0:
+        return 1
+    if index == len(coins):
+        return 0
+
+    if coins[index] > amount:
+        return count_ways(coins, amount, index + 1)
+
+    use_again = count_ways(
+        coins,
+        amount - coins[index],
+        index)                    # STAY at same coin
+
+    move_on = count_ways(
+        coins,
+        amount,
+        index + 1)
+
+    return use_again + move_on</code></pre>
+
+<div class="why-box">
+<strong>Why does this count combinations, not permutations?</strong> Because "move on" means "done with this coin type forever." I process coins in order: once I move past [1], I'll never use [1] again. So [1]+[2] can happen, but [2]+[1] can't (I already moved past [1]). Each combination is counted exactly once.
+</div>
+
+<div class="pattern-card" style="border-color:var(--teal)">
+<h3 style="color:var(--teal)">Pattern Card</h3>
+<div class="row"><span class="label">CLUE:</span> "how many ways", "count combinations", unlimited supply</div>
+<div class="row"><span class="label">COMBINE:</span> use + move_on (add all ways)</div>
+<div class="row"><span class="label">BASE:</span> amount=0 &rarr; 1, no coins &rarr; 0</div>
+<div class="row"><span class="label">KEY:</span> processing in order gives combinations, not permutations</div>
+</div>
+
 </div></div>
 
+<!-- ========== WORD BREAK ========== -->
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">3</span> Word Break</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
-<img src="dp/images/family2_child3_A.png" alt="Word Break: words are reusable coins, string length is capacity" class="scene-img">
-<img src="dp/images/family2_child3_B.png" alt="Code and how it connects to unbounded knapsack" class="scene-img">
-<div class="sbox"><div class="sl" style="color:var(--teal)">THE INSIGHT</div>
-Words are reusable items. String length is the capacity. At each position, try every word that starts there. If it matches and the prefix was valid, the new position is valid too.</div>
-<pre><code>def word_break(s, word_dict):
-    words = set(word_dict)
-    dp = [False] * (len(s) + 1)
-    dp[0] = True
 
-    for end in range(1, len(s) + 1):
-        for start in range(end):
-            if dp[start] and s[start:end] in words:
-                dp[end] = True
-                break
+<img src="dp/images/family2_child3_A.png" alt="Word Break: can I split this string into dictionary words?" class="scene-img">
 
-    return dp[len(s)]</code></pre>
+<div class="ws">
+<h3>What are we solving?</h3>
+<p>Given a string and a dictionary of words, can I split the string so every piece is a dictionary word?</p>
+
+<div class="sbox">
+<strong>s = "leetcode"</strong>, words = ["leet", "code", "lee", "t"]<br>
+"leet" + "code" = "leetcode". Every piece is a word. <strong>True.</strong>
+</div>
+
+<div class="sbox">
+<strong>s = "catsandog"</strong>, words = ["cats", "dog", "sand", "and", "cat"]<br>
+"cats" + "and" + "og"? "og" isn't a word. <strong>False.</strong>
+</div>
+</div>
+
+<h3 style="color:var(--teal)">Finding the Choices</h3>
+<p>This one is different. I'm not choosing "use or move on" for one item. I'm at a <strong>position</strong> in the string and asking: <strong>which word fits here?</strong></p>
+
+<div style="background:var(--card);border:2px solid var(--gold2);border-radius:10px;padding:16px;margin:12px 0">
+<div style="font-weight:700;color:var(--gold2);margin-bottom:8px">At position 0 of "leetcode"</div>
+<div style="font-family:monospace;letter-spacing:2px;margin:8px 0;font-size:1.1em">
+<span style="background:rgba(20,184,166,.2);padding:2px 4px;border-radius:3px">[l]</span>[e][e][t][c][o][d][e]
+</div>
+<div style="font-size:.88em">
+Try <strong>"leet"</strong>: s[0:4] = "leet". <span style="color:var(--green)">Match!</span> Jump to position 4.<br>
+Try <strong>"code"</strong>: s[0:4] = "leet" &ne; "code". <span style="color:var(--red)">No match.</span> Skip.<br>
+Try <strong>"lee"</strong>: s[0:3] = "lee". <span style="color:var(--green)">Match!</span> Jump to position 3.<br>
+Try <strong>"t"</strong>: s[0:1] = "l" &ne; "t". <span style="color:var(--red)">No match.</span> Skip.<br>
+</div>
+</div>
+
+<div class="why-box">
+<strong>The choice is: which word to place at this position.</strong> If a word matches, I jump ahead by that word's length and solve the rest. If no word matches at all, it's a dead end. Words are reusable ("leetleetcode" can use "leet" twice).
+</div>
+
+<h3 style="color:var(--teal)">State + Base Cases</h3>
+
+<div class="state-check">
+<div class="item"><span class="yes">&#10003;</span> <div><strong>position</strong>: where am I in the string? (just ONE variable!)</div></div>
+<div class="item"><span class="no">&#10007;</span> <div><strong>word index</strong>: not needed. I try ALL words at each position.</div></div>
+</div>
+
+<div class="base-grid">
+<div class="base-card success">
+<div class="bc-label">position == len(s)</div>
+Covered the entire string! Every piece was a valid word.<br>
+<strong>Return True.</strong>
+</div>
+<div class="base-card fail">
+<div class="bc-label">No word matches at this position</div>
+Dead end. Can't continue from here.<br>
+<strong>Return False.</strong>
+</div>
+</div>
+
+<img src="dp/images/family2_child3_B.png" alt="Word Break code and pattern recognition" class="scene-img">
+
+<h3 style="color:var(--teal)">The Code</h3>
+<pre><code>def can_break(s, words, start):
+    if start == len(s):
+        return True
+
+    for word in words:
+        end = start + len(word)
+        if end <= len(s) and s[start:end] == word:
+            if can_break(s, words, end):
+                return True
+
+    return False</code></pre>
+
+<div class="ws">
+<h3>Trace through "leetcode"</h3>
+<pre><code>can_break("leetcode", start=0)
+  "leet" matches s[0:4]
+    can_break("leetcode", start=4)
+      "code" matches s[4:8]
+        can_break("leetcode", start=8)
+          8 == len("leetcode") -> True!
+        True! Return True.
+      True! Return True.
+    True! Return True.</code></pre>
+<p>Path: "leet" (0 &rarr; 4) + "code" (4 &rarr; 8) = covered everything.</p>
+</div>
+
+<div class="why-box">
+<strong>How does this connect to unbounded knapsack?</strong> Words are reusable "items." The string length is the "capacity." At each position, I try to "fit" a word. If it matches, I jump ahead (like reducing capacity). Words can be reused (unlimited supply). The structure is the same: reusable items filling a capacity.
+</div>
+
+<div class="pattern-card" style="border-color:var(--teal)">
+<h3 style="color:var(--teal)">Pattern Card</h3>
+<div class="row"><span class="label">CLUE:</span> "can this be split/segmented?", reusable pieces</div>
+<div class="row"><span class="label">STATE:</span> just position (where am I in the string?)</div>
+<div class="row"><span class="label">CHOICES:</span> try each word at current position</div>
+<div class="row"><span class="label">COMBINE:</span> OR (any path reaching the end is enough)</div>
+<div class="row"><span class="label">BASE:</span> reached end &rarr; True, nothing matches &rarr; False</div>
+</div>
+
 </div></div>
 
 </div>
 
-<!-- ==================== SUMMARY ==================== -->
+<!-- ==================== FAMILY SUMMARY ==================== -->
 
-<h2>The Pattern</h2>
+<h2>The Family at a Glance</h2>
 
-<div class="ws" style="border-left-color:var(--gold2)">
-<h3 style="color:var(--gold2)">Two Knapsack Families, One Core Idea</h3>
+<div class="pattern-card" style="border-color:var(--teal)">
+<h3 style="color:var(--teal)">All Unbounded Problems, One Core Idea</h3>
+<p style="margin-bottom:12px">Every problem in this family has <strong>reusable items</strong>. The choices are always: use this item (stay) or move on. What changes is only the <strong>combine step</strong>.</p>
 
-<table>
-<tr><th></th><th>0/1 Knapsack</th><th>Unbounded Knapsack</th></tr>
-<tr><td><strong>Supply</strong></td><td>Each item once</td><td>Unlimited copies</td></tr>
-<tr><td><strong>Take branch</strong></td><td>index + 1</td><td style="color:var(--green)">index (stay)</td></tr>
-<tr><td><strong>1D loop</strong></td><td>Right to left</td><td style="color:var(--green)">Left to right</td></tr>
-<tr><td><strong>Children</strong></td><td>Subset Sum, Partition, Count, Min Diff, Target Sum, Given Diff</td><td>Coin Change, Coin Change 2, Word Break</td></tr>
-</table>
+<div class="sbox" style="background:var(--card2)">
+<div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:8px;font-size:.88em">
+<div style="font-weight:700;color:var(--teal)">Problem</div>
+<div style="font-weight:700;color:var(--teal)">Combine</div>
+<div style="font-weight:700;color:var(--teal)">Base Case</div>
 
-<div class="hi" style="border-color:var(--gold2);background:rgba(251,191,36,.06)">
-<strong>The choice at the core of BOTH families:</strong> at each item, do I use it or not?<br>
-The only question is: after using it, can I use it again?<br>
-0/1 says no (advance). Unbounded says yes (stay).
+<div>Unbounded Knapsack</div>
+<div><code>max(use, move_on)</code></div>
+<div>full/empty &rarr; 0</div>
+
+<div>Coin Change</div>
+<div><code>min(use, move_on)</code></div>
+<div>0 &rarr; 0, stuck &rarr; &infin;</div>
+
+<div>Coin Change 2</div>
+<div><code>use + move_on</code></div>
+<div>0 &rarr; 1, stuck &rarr; 0</div>
+
+<div>Word Break</div>
+<div><code>or(try each word)</code></div>
+<div>end &rarr; True, stuck &rarr; False</div>
+</div>
+</div>
+
+<div style="margin-top:12px;font-size:.92em">
+<strong>When you see "unlimited supply" + "optimize something," start here:</strong> look at ONE item, ask "use it or move on?", figure out the combine step from what the question asks (max, min, count, or any-path).
 </div>
 </div>
 

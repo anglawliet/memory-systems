@@ -229,37 +229,38 @@ Show the choice diagram on the left, the code on the right, with arrows connecti
 
 LARGE code block:
   treasures = [
-      ("Gold", 4, 10), ("Ruby", 3, 7), ("Diamond", 5, 12),
-      ("Emerald", 1, 3), ("Platinum", 2, 5)
+      ("Gold",     4, 10),
+      ("Ruby",     3,  7),
+      ("Diamond",  5, 12),
+      ("Emerald",  1,  3),
+      ("Platinum", 2,  5),
   ]
 
-  def max_value(treasures, bag_limit, count):
-      if count == 0 or bag_limit == 0:
+  def max_value(treasures, bag_limit, index):
+      if index == len(treasures) or bag_limit == 0:
           return 0
 
-      name, weight, value = treasures[count - 1]
+      name, weight, value = treasures[index]
 
-      if weight <= bag_limit:
-          grab = value + max_value(treasures, bag_limit - weight, count - 1)
-          skip = max_value(treasures, bag_limit, count - 1)
-          return max(grab, skip)
-      else:
-          return max_value(treasures, bag_limit, count - 1)
+      if weight > bag_limit:
+          return max_value(treasures, bag_limit, index + 1)
+
+      grab = value + max_value(treasures, bag_limit - weight, index + 1)
+      skip = max_value(treasures, bag_limit, index + 1)
+      return max(grab, skip)
+
+  max_value(treasures, 7, 0)
 
 Annotate each section with arrows from the choice diagram:
-  "if count == 0 or bag_limit == 0" <- "No items or no capacity = $0"
-  "if weight <= bag_limit" <- "Does it fit?"
+  "if index == len(treasures) or bag_limit == 0" <- "No items left or no capacity = $0"
+  "if weight > bag_limit" <- "Too heavy? Skip it."
   "grab = value + ..." <- GREEN path from choice diagram
   "skip = ..." <- RED path from choice diagram
   "return max(grab, skip)" <- "Take the better outcome"
-  "else: return skip" <- "Doesn't fit, forced to skip"
 
 Kit: "I didn't memorize this. I drew the choices, and the code followed."
 
-Highlighted callout (blue border): "WHY count - 1?
-count is how many items we're considering (1 to 5). But Python lists start at index 0. So treasures[count - 1] just says: the count-th item is at index count - 1. When count = 3, we want the 3rd item (Diamond), which is at index 2."
-
-Highlighted callout: "BASE CASE = smallest valid input. No items (count=0) or no capacity (bag_limit=0) -> value is $0."
+Highlighted callout: "BASE CASE = nothing left to consider. Walked past the last item (index == len), or bag is full (bag_limit == 0). Either way, value is $0."
 
 
 ================================================================================
@@ -271,11 +272,11 @@ PROMPT 2: Recursive Tree + Overlap + Memoization (Pages 4-5) -> family1_C_2.png
 
 IMPORTANT: Use 4 items (NOT 3!) to show a REAL overlapping subproblem.
 Items: Gold (4 kg/$10K), Ruby (3 kg/$7K), Emerald (1 kg/$3K), Platinum (2 kg/$5K)
-The recursion processes them in reverse: count=4 is Platinum, count=3 is Emerald, count=2 is Ruby, count=1 is Gold.
+The recursion starts at Gold (index=0) and walks forward.
 
-Two different paths both reach (count=1, cap=4), meaning "only Gold left, 4 kg capacity":
-  Path A: GRAB Plat (2 kg) + GRAB Emer (1 kg) + SKIP Ruby, used 3 kg, 4 kg left
-  Path B: SKIP Plat + SKIP Emer + GRAB Ruby (3 kg), used 3 kg, 4 kg left
+Two different paths both reach (index=3, cap=3), meaning "only Platinum left, 3 kg capacity":
+  Path A: GRAB Gold (4 kg), SKIP Ruby, SKIP Emerald. Used 4 kg, 3 kg left.
+  Path B: SKIP Gold, GRAB Ruby (3 kg), GRAB Emerald (1 kg). Used 4 kg, 3 kg left.
 
 Only 2 pages, give each LOTS of space.
 
@@ -292,34 +293,34 @@ Show the items being used:
   4. Platinum Watch 2 kg / $5K
   Bag limit: 7 kg
 
-Show a PARTIAL recursive tree starting at (count=4, cap=7).
+Show a PARTIAL recursive tree starting at (index=0, cap=7).
 
 DO NOT show the full tree (too complex). Show TWO highlighted paths that converge
 at the SAME subproblem. Show other branches as "..." or faded/dashed.
 
 PATH A (left side of tree, highlighted in BLUE):
-  (count=4, cap=7) -> GRAB Platinum (2 kg)
-    -> (count=3, cap=5) -> GRAB Emerald (1 kg)
-      -> (count=2, cap=4) -> SKIP Ruby
-        -> (count=1, cap=4) * "Only Gold left, 4 kg capacity"
+  (index=0, cap=7) -> GRAB Gold (4 kg)
+    -> (index=1, cap=3) -> SKIP Ruby
+      -> (index=2, cap=3) -> SKIP Emerald
+        -> (index=3, cap=3) * "Only Platinum left, 3 kg capacity"
 
-Explain path: "Used Platinum (2 kg) + Emerald (1 kg) = 3 kg. Ruby skipped. 4 kg left."
+Explain path: "Grabbed Gold (4 kg). Skipped Ruby and Emerald. 3 kg left."
 
 PATH B (right side of tree, highlighted in ORANGE):
-  (count=4, cap=7) -> SKIP Platinum
-    -> (count=3, cap=7) -> SKIP Emerald
-      -> (count=2, cap=7) -> GRAB Ruby (3 kg)
-        -> (count=1, cap=4) * "Only Gold left, 4 kg capacity"
+  (index=0, cap=7) -> SKIP Gold
+    -> (index=1, cap=7) -> GRAB Ruby (3 kg)
+      -> (index=2, cap=4) -> GRAB Emerald (1 kg)
+        -> (index=3, cap=3) * "Only Platinum left, 3 kg capacity"
 
-Explain path: "Skipped Platinum and Emerald. Used Ruby (3 kg). 4 kg left."
+Explain path: "Skipped Gold. Grabbed Ruby (3 kg) + Emerald (1 kg). 3 kg left."
 
-CRITICAL VISUAL: Both paths arrive at (count=1, cap=4), meaning "only Gold left, 4 kg
-capacity." Circle BOTH nodes with BRIGHT YELLOW GLOW. Draw a dashed line connecting them.
+CRITICAL VISUAL: Both paths arrive at (index=3, cap=3), meaning "only Platinum left,
+3 kg capacity." Circle BOTH nodes with BRIGHT YELLOW GLOW. Draw a dashed line connecting them.
 
-Label between them: "SAME SUBPROBLEM! Only Gold left, 4 kg capacity. Appears TWICE.
+Label between them: "SAME SUBPROBLEM! Only Platinum left, 3 kg capacity. Appears TWICE.
 Different items chosen, same question remaining!"
 
-Kit looking at the tree, surprised: "Wait... GRAB Plat+Emer or GRAB Ruby...
+Kit looking at the tree, surprised: "Wait... GRAB Gold or GRAB Ruby+Emerald...
 different choices, but the SAME question left over!"
 
 PAGE 5, "OVERLAPPING SUBPROBLEMS" (LARGE circled 5 top-right):
@@ -327,15 +328,15 @@ Header: "OVERLAPPING SUBPROBLEMS"
 Subtitle: "Same question, same answer. Don't solve it twice."
 
 Top section, zoom in on the overlapping subproblem:
-  Show (count=1, cap=4) expanded:
-    "Only Gold left (4 kg, $10K). Capacity = 4 kg."
-    GRAB Gold: 4 <= 4? YES! $10K + (no items left, 0 kg remaining) = $10K + $0 = $10K
-    SKIP Gold: (no items left, 4 kg remaining) = $0
-    Answer: max($10K, $0) = $10K
+  Show (index=3, cap=3) expanded:
+    "Only Platinum left (2 kg, $5K). Capacity = 3 kg."
+    GRAB Platinum: 2 <= 3? YES! $5K + (no items left, 1 kg remaining) = $5K + $0 = $5K
+    SKIP Platinum: (no items left, 3 kg remaining) = $0
+    Answer: max($5K, $0) = $5K
 
   Show both paths converging on this same answer:
-    "Path A arrived here. Answer = $10K."
-    "Path B arrived here. Answer = $10K."
+    "Path A arrived here. Answer = $5K."
+    "Path B arrived here. Answer = $5K."
     "Same question. Same answer. Solved TWICE without caching."
 
 Big highlighted callout (gold border):
@@ -345,21 +346,21 @@ Big highlighted callout (gold border):
     3. Each subproblem has the SAME answer every time"
 
 MEMOIZATION, show it's just 3 extra lines:
-  def max_value(treasures, bag_limit, count, memo):
-      if (count, bag_limit) in memo:        # ALREADY SOLVED? Return it!
-          return memo[(count, bag_limit)]
+  def max_value(treasures, bag_limit, index, memo):
+      if (index, bag_limit) in memo:
+          return memo[(index, bag_limit)]
       # ... same recursive code as before ...
-      memo[(count, bag_limit)] = result      # STORE the result
+      memo[(index, bag_limit)] = result
       return result
 
 Show Sack (duffel bag) with two panels:
-  WITHOUT CACHING: sweating, solving (1,4) TWICE. "Waste time!"
-  WITH CACHING: relaxed, cache shows (1,4) = $10K. "Solve ONCE. Look up the second time."
+  WITHOUT CACHING: sweating, solving (3,3) TWICE. "Waste time!"
+  WITH CACHING: relaxed, cache shows (3,3) = $5K. "Solve ONCE. Look up the second time."
 
 Kit: "Memoization = recursion + a dictionary. That's it. Same code, just cache the answers."
 
-Label: "Memoization turns exponential O(2^count) into polynomial O(count * bag_limit).
-Every unique (count, bag_limit) pair solved at most once."
+Label: "Memoization turns exponential O(2^n) into polynomial O(items * bag_limit).
+Every unique (index, bag_limit) pair solved at most once."
 
 
 ================================================================================
@@ -379,12 +380,12 @@ Header: "CHANGING VARIABLES -> TABLE DIMENSIONS"
 Subtitle: "The table isn't magic. It comes directly from the recursion."
 
 Show the recursive function signature:
-  max_value(treasures, bag_limit, count)
+  max_value(treasures, bag_limit, index)
 
 Circle the variables that CHANGE across recursive calls:
   treasures: SAME every call (constant), cross it out
   bag_limit: CHANGES! (decreases when you grab), circle it
-  count: CHANGES! (decreases as you move to next item), circle it
+  index: CHANGES! (increases as you move to next item), circle it
 
 Arrow pointing to: "2 changing variables -> 2D TABLE"
 
@@ -395,10 +396,10 @@ Show the empty table:
   "table[row][cap] = max value using the first 'row' treasures with 'cap' kg capacity"
   "This is EXACTLY what the recursion computes!"
 
-Kit: "The recursion has 2 changing variables: count and bag_limit. So the table is 2D: items x capacity. Not magic. Just math."
+Kit: "The recursion has 2 changing variables: index and bag_limit. So the table is 2D: items x capacity. Not magic. Just math."
 
 BASE CASES -> FIRST ROW AND COLUMN:
-Show the recursive base case: "if count == 0 or bag_limit == 0: return 0"
+Show the recursive base case: "if index == len(treasures) or bag_limit == 0: return 0"
 Arrow to: "First row (no items) = all zeros. First column (0 kg) = all zeros."
 Show the table with first row and first column filled with 0s.
 
@@ -412,10 +413,12 @@ Show the cell formula:
   name, weight, value = treasures[row - 1]
   without_this = table[row - 1]
 
-  if weight <= cap:
-      table[row][cap] = max(value + without_this[cap - weight], without_this[cap])
-  else:
+  if weight > cap:
       table[row][cap] = without_this[cap]
+  else:
+      grab = value + without_this[cap - weight]
+      skip = without_this[cap]
+      table[row][cap] = max(grab, skip)
 
 Map each part to the table visually:
   without_this[cap - weight] = "look UP and LEFT" (grabbed item, reduced capacity)
@@ -453,47 +456,59 @@ Subtitle: "Same logic, three forms."
 
 Show 3 code blocks side by side (or stacked), with DIFF HIGHLIGHTS showing what changes:
 
-VERSION 1, RECURSION (label: "correct but SLOW, O(2^count)"):
-  def max_value(treasures, bag_limit, count):
-      if count == 0 or bag_limit == 0:
+VERSION 1, RECURSION (label: "correct but SLOW, O(2^n)"):
+  def max_value(treasures, bag_limit, index):
+      if index == len(treasures) or bag_limit == 0:
           return 0
-      name, weight, value = treasures[count - 1]
-      if weight <= bag_limit:
-          grab = value + max_value(treasures, bag_limit - weight, count - 1)
-          skip = max_value(treasures, bag_limit, count - 1)
-          return max(grab, skip)
-      else:
-          return max_value(treasures, bag_limit, count - 1)
 
-VERSION 2, MEMOIZATION (label: "add 3 lines, O(count * bag_limit)"):
+      name, weight, value = treasures[index]
+
+      if weight > bag_limit:
+          return max_value(treasures, bag_limit, index + 1)
+
+      grab = value + max_value(treasures, bag_limit - weight, index + 1)
+      skip = max_value(treasures, bag_limit, index + 1)
+      return max(grab, skip)
+
+VERSION 2, MEMOIZATION (label: "add a cache, O(items * bag_limit)"):
   Highlight the 3 NEW lines in GREEN:
-  def max_value(treasures, bag_limit, count, memo={}):
-      if (count, bag_limit) in memo: return memo[(count, bag_limit)]   # CHECK
-      if count == 0 or bag_limit == 0:
+  def max_value(treasures, bag_limit, index, memo={}):
+      if (index, bag_limit) in memo:
+          return memo[(index, bag_limit)]
+
+      if index == len(treasures) or bag_limit == 0:
           return 0
-      name, weight, value = treasures[count - 1]
-      if weight <= bag_limit:
-          grab = value + max_value(treasures, bag_limit - weight, count - 1, memo)
-          skip = max_value(treasures, bag_limit, count - 1, memo)
-          result = max(grab, skip)
+
+      name, weight, value = treasures[index]
+
+      if weight > bag_limit:
+          result = max_value(treasures, bag_limit, index + 1, memo)
       else:
-          result = max_value(treasures, bag_limit, count - 1, memo)
-      memo[(count, bag_limit)] = result                                # STORE
+          grab = value + max_value(treasures, bag_limit - weight, index + 1, memo)
+          skip = max_value(treasures, bag_limit, index + 1, memo)
+          result = max(grab, skip)
+
+      memo[(index, bag_limit)] = result
       return result
 
-VERSION 3, TABULATION (label: "bottom-up, O(count * bag_limit), no recursion"):
+VERSION 3, TABULATION (label: "bottom-up, O(items * bag_limit), no recursion"):
   def max_value(treasures, bag_limit):
-      table = [[0] * (bag_limit + 1) for _ in range(len(treasures) + 1)]
-      for row in range(1, len(treasures) + 1):
+      count = len(treasures)
+      table = [[0] * (bag_limit + 1) for _ in range(count + 1)]
+
+      for row in range(1, count + 1):
           name, weight, value = treasures[row - 1]
           without_this = table[row - 1]
+
           for cap in range(1, bag_limit + 1):
-              if weight <= cap:
-                  table[row][cap] = max(value + without_this[cap - weight],
-                                        without_this[cap])
-              else:
+              if weight > cap:
                   table[row][cap] = without_this[cap]
-      return table[len(treasures)][bag_limit]
+              else:
+                  grab = value + without_this[cap - weight]
+                  skip = without_this[cap]
+                  table[row][cap] = max(grab, skip)
+
+      return table[count][bag_limit]
 
 Arrow from recursion -> memoization: "Add a cache. 3 lines."
 Arrow from memoization -> tabulation: "Replace recursion with loops. Same formula."
@@ -555,8 +570,8 @@ Three cards:
      (Kit icon holding up one finger vs open hand)
 
 TIME/SPACE COMPLEXITY:
-  Time: O(count * bag_limit), fill every cell once
-  Space: O(count * bag_limit) for 2D table, O(bag_limit) if optimized to 1D
+  Time: O(items * bag_limit), fill every cell once
+  Space: O(items * bag_limit) for 2D table, O(bag_limit) if optimized to 1D
 
 Kit with Sack (full, gauge at max) and Branch (projecting the family tree):
 "Choices first. Recursion follows. Table comes from the recursion. Learn the parent, solve the whole family."
@@ -578,12 +593,12 @@ Subtitle: "The table comes from the recursion. Nothing is invented."
 SECTION 1, CROSSING OUT CONSTANTS:
 Show the recursive function signature in HUGE text:
 
-  max_value( treasures, bag_limit, count )
+  max_value( treasures, bag_limit, index )
 
 Show each parameter with a visual verdict:
   treasures -> Same list every call -> RED X through it, faded out
   bag_limit -> Goes DOWN when you grab -> GREEN CHECK, highlighted, circled
-  count     -> Goes DOWN as you move to next item -> GREEN CHECK, highlighted, circled
+  index     -> Goes UP as you move to next item -> GREEN CHECK, highlighted, circled
 
 Kit crossing out treasures with a marker: "Constants don't need storage. Only track what CHANGES."
 
@@ -604,17 +619,17 @@ Show a clear, large, empty grid:
   Label: "table[row][cap] = best value using the first 'row' items with 'cap' kg capacity"
 
   Two annotation arrows:
-    Arrow along rows: "count goes 0 to 5, giving 6 rows (one per item plus the 'no items' row)"
+    Arrow along rows: "index goes 0 to 4, giving 6 rows (one per item plus the 'no items' row)"
     Arrow along columns: "bag_limit goes 0 to 7, giving 8 columns (each possible capacity)"
 
 SECTION 3, BASE CASES FILL THE EDGES:
 Show the SAME grid, now with the first row and first column filled with zeros.
 
   Show the recursive base case in a code box:
-    if count == 0 or bag_limit == 0: return 0
+    if index == len(treasures) or bag_limit == 0: return 0
 
   Two arrows connecting code to table:
-    "count == 0" -> arrow to first row -> "No items row: nothing available, $0 everywhere"
+    "index == len(treasures)" -> arrow to first row -> "No items row: nothing available, $0 everywhere"
     "bag_limit == 0" -> arrow to first column -> "0 kg column: bag holds nothing, $0 everywhere"
 
   First row highlighted in BLUE with all zeros.

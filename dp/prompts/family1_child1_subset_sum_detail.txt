@@ -1,0 +1,383 @@
+SUBSET SUM: FULL PIPELINE FROM SCRATCH
+==============================================================
+4 images. Teach Subset Sum the same way as the staircase problem.
+Do NOT reference the parent knapsack. Build the reasoning from zero.
+
+Pipeline:
+  1. Understand the problem (what are we even trying to do?)
+  2. Find the choices (the hard part: HOW do we come up with grab/skip?)
+  3. Choices become recursion + the full tree
+  4. Base cases + the code
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: dark navy/charcoal (#1a1a2e). Heist atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: bright blue (#3B82F6).
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for GRAB/TAKE paths. Red: (#EF4444) for SKIP/LEAVE paths.
+- Blue accent lighting throughout (neon heist feel).
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: The Problem + Why Recursion -> family1_child1_A.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections stacked vertically.
+Generous spacing. HUGE text. Not cramped.
+
+SECTION 1, "THE PROBLEM" (blue header, about 35%):
+
+Big header: "SUBSET SUM"
+Subtitle: "Given numbers, can I pick some that add up to EXACTLY the target?"
+
+Show Kit standing next to a row of numbered TOKENS (chunky 3D coins/chips)
+laid out on a table:
+
+  [3]  [2]  [7]  [1]      target = 6
+
+Kit's speech bubble: "I can pick some of these. Leave the rest.
+Do any combination add up to exactly 6?"
+
+Show two example picks below:
+  PICK {3, 2, 1}: 3 + 2 + 1 = 6. Green checkmark. "YES!"
+  PICK {7, 1}:    7 + 1 = 8. Red X. "Nope, too much."
+  PICK {3, 2}:    3 + 2 = 5. Red X. "Not enough."
+
+"Answer: TRUE. At least one combination works."
+
+SECTION 2, "THE BRUTE FORCE PROBLEM" (gold header, about 30%):
+
+Header: "One approach: try EVERY combination"
+
+Show a grid of ALL 16 subsets for 4 numbers (2^4 = 16):
+  {}         = 0
+  {3}        = 3
+  {2}        = 2
+  {7}        = 7
+  {1}        = 1
+  {3,2}      = 5
+  {3,7}      = 10
+  {3,1}      = 4
+  {2,7}      = 9
+  {2,1}      = 3
+  {7,1}      = 8
+  {3,2,7}    = 12
+  {3,2,1}    = 6  <-- GREEN HIGHLIGHT, this one!
+  {3,7,1}    = 11
+  {2,7,1}    = 10
+  {3,2,7,1}  = 13
+
+Kit looking exhausted: "16 subsets for 4 numbers. Not bad."
+
+But show a SCALING BOX:
+  4 numbers:  16 subsets
+  10 numbers: 1,024 subsets
+  20 numbers: 1,048,576 subsets
+  Red warning: "This EXPLODES. Can't check them all."
+
+SECTION 3, "THE KEY QUESTION" (amber header, about 35%):
+
+Header: "How can recursion help?"
+
+Kit thinking, with a thought bubble:
+"What if I don't think about ALL numbers at once?
+What if I look at ONE number at a time
+and make a decision about JUST that one?"
+
+Show Kit looking at ONLY the first token [3]:
+"Right now I only care about this one number: 3.
+What can I do with it?"
+
+Two arrows from the token [3]:
+  Green arrow: "TAKE it" (token glows green, pulled toward Kit)
+  Red arrow: "LEAVE it" (token stays on table, dimmed)
+
+"For ANY number, I only have TWO options: take it or leave it.
+Those are my CHOICES. Let me see what happens with each one..."
+
+Arrow pointing down: "NEXT IMAGE: What happens after I choose?"
+
+
+================================================================================
+PROMPT 2: Finding the Choices + How They Solve the Problem -> family1_child1_B.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections stacked vertically.
+This is the MOST IMPORTANT image. Give it breathing room.
+
+SECTION 1, "THE CHOICES" (gold header, about 40%):
+
+Big header: "WHAT HAPPENS WHEN I CHOOSE?"
+Subtitle: "Numbers = [3, 2, 7, 1], target = 6. Looking at the first number: 3."
+
+Kit stands at a FORK IN THE ROAD. Two paths diverge.
+The number [3] is in front of Kit, glowing.
+
+LEFT PATH (green, "TAKE 3"):
+  Kit grabs the token [3] and puts it in a pouch.
+  Speech bubble: "I took 3. Now I only need 6 - 3 = 3 more."
+  "Remaining numbers: [2, 7, 1]"
+  "NEW PROBLEM: can [2, 7, 1] make 3?"
+
+  Show clearly:   target: 6 -> 3    (shrinks by 3!)
+                   numbers left: [2, 7, 1]
+
+RIGHT PATH (red, "LEAVE 3"):
+  Kit walks past the token. It stays on the table.
+  Speech bubble: "I left 3. I still need all 6."
+  "Remaining numbers: [2, 7, 1]"
+  "NEW PROBLEM: can [2, 7, 1] make 6?"
+
+  Show clearly:   target: 6 -> 6    (stays the same!)
+                   numbers left: [2, 7, 1]
+
+Big gold box between the paths:
+"BOTH paths give me a SMALLER problem!
+Fewer numbers to decide about. THAT'S recursion."
+
+SECTION 2, "HOW DOES THIS SOLVE IT?" (blue header, about 30%):
+
+Header: "Keep choosing until you're done"
+
+Show a chain of decisions (like a comic strip, 3 panels):
+
+Panel 1: "At [3]: Take or Leave?"
+  Take 3. target: 6 -> 3. Left: [2, 7, 1]
+
+Panel 2: "At [2]: Take or Leave?"
+  Take 2. target: 3 -> 1. Left: [7, 1]
+
+Panel 3: "At [7]: Take or Leave?"
+  7 > 1. Can't take (would overshoot). Must Leave.
+  target stays 1. Left: [1]
+
+Panel 4: "At [1]: Take or Leave?"
+  Take 1. target: 1 -> 0.
+
+Final: "target = 0. I collected EXACTLY 6. Done! Return True."
+Show: 3 + 2 + 1 = 6. Green checkmark.
+
+SECTION 3, "THE COMBINE STEP" (amber header, about 30%):
+
+Header: "What if I chose differently?"
+
+"At each number, I tried TAKE. But what if LEAVE was the right choice?
+The recursion tries BOTH. If EITHER path reaches target = 0, the answer is True."
+
+Show the formula (BIG):
+  can_reach = take_path  OR  leave_path
+  "Did EITHER choice lead to success?"
+
+Kit: "I don't need BOTH paths to work. Just ONE path reaching zero is enough."
+
+Comparison to staircase (small box, not the focus):
+  "Staircase: ways = climb1 + climb2  (count ALL paths)
+   Subset Sum: result = take OR leave  (does ANY path work?)"
+
+
+================================================================================
+PROMPT 3: The Full Recursion Tree -> family1_child1_C.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE TREE" (blue header, about 75% of image):
+
+Big header: "EVERY PATH THE RECURSION TRIES"
+Subtitle: "Numbers = [3, 2, 1], target = 3"
+
+Kit at the top: "Let me try all combinations. Watch the target change at each step."
+
+Draw a clean, well-spaced BINARY TREE.
+Each node is a ROUNDED CARD showing:
+  - Which number I'm looking at
+  - Current target value (BIG, prominent)
+
+Green arrows = TAKE (labeled "TAKE"). Red arrows = LEAVE (labeled "LEAVE").
+
+THE TREE:
+
+                        [Looking at 3]
+                        target = 3
+                       /              \
+                  TAKE 3             LEAVE 3
+                (target shrinks)    (target stays)
+                    /                    \
+            [Looking at 2]          [Looking at 2]
+            target = 0              target = 3
+            "HIT ZERO!"               /        \
+            GREEN GLOW             TAKE 2     LEAVE 2
+            Return True               |           |
+               ✓                [Looking at 1]  [Looking at 1]
+                                target = 1      target = 3
+                                  /     \         /      \
+                             TAKE 1  LEAVE 1  TAKE 1  LEAVE 1
+                               |        |       |        |
+                            target=0  target=1  target=2  target=3
+                            "ZERO!"   no nums   no nums   no nums
+                            TRUE      FALSE     FALSE     FALSE
+                              ✓         ✗         ✗         ✗
+
+At each GREEN leaf (target=0): bright green card, checkmark.
+At each RED leaf (no numbers left, target>0): dim red card, X mark.
+
+Draw HIGHLIGHT PATHS showing the two successful routes:
+  Path 1 (thick green line): TAKE 3 -> target=0. "Subset: {3}"
+  Path 2 (thick green line): LEAVE 3 -> TAKE 2 -> TAKE 1 -> target=0. "Subset: {2, 1}"
+
+SECTION 2, "HOW 'OR' BUBBLES UP" (gold header, about 25%):
+
+Header: "Results flow back up the tree"
+
+Show the bubbling:
+  "LEAVE 3 -> TAKE 2 -> TAKE 1 -> True"
+  "True OR False = True. Bubbles up."
+  "LEAVE 3 -> True OR (True OR False) = True"
+  "Root: TAKE gives True, LEAVE gives True. True OR True = True."
+
+Kit: "Even if only ONE leaf had been True, the whole answer would be True.
+That's what 'or' does: any single success is enough."
+
+Gold summary box:
+  "3 choices led to 5 leaf nodes. 2 hit zero (True). 3 didn't (False).
+   At least one True exists, so the final answer is True.
+   The two valid subsets: {3} and {2, 1}."
+
+
+================================================================================
+PROMPT 4: Base Cases + The Code -> family1_child1_D.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+SECTION 1, "WHEN DO I STOP?" (amber header, about 30%):
+
+Big header: "BASE CASES"
+Subtitle: "The recursion needs to know when to stop."
+
+Two scenarios shown as big cards:
+
+GREEN CARD: "target == 0"
+  Kit celebrating, fist pump.
+  "I've collected EXACTLY the right amount! Nothing more to do."
+  "Return True"
+  Show: started needing 6, took 3, took 2, took 1. Now need 0. DONE!
+
+RED CARD: "No numbers left (index == len(nums)) and target > 0"
+  Kit with empty hands, looking at empty table.
+  "I still need more, but there's nothing left to pick from."
+  "Return False"
+  Show: started needing 6, took 3, skipped everything else. Still need 3. No items. FAIL.
+
+Small note: "What about target < 0? That can't happen if we check before taking.
+If the number is bigger than what I need, I just leave it."
+
+SECTION 2, "THE CODE" (gray/blue header, about 40%):
+
+Header: "FROM REASONING TO CODE"
+Subtitle: "Every line comes directly from our choices."
+
+Show the code with LARGE font. Next to each block, show which part of the
+reasoning it encodes:
+
+  def can_reach(nums, target, index):
+
+      if target == 0:              <- "Collected enough! Done. True."
+          return True
+
+      if index == len(nums):       <- "Nothing left to pick. Failed. False."
+          return False
+
+      if nums[index] > target:     <- "This number is too big.
+          return can_reach(            Would overshoot. Must leave it."
+              nums, target,
+              index + 1)
+
+      take = can_reach(            <- "TAKE this number.
+          nums,                        target SHRINKS by this amount.
+          target - nums[index],        Move to next number."
+          index + 1)
+
+      leave = can_reach(           <- "LEAVE this number.
+          nums,                        target STAYS the same.
+          target,                      Move to next number."
+          index + 1)
+
+      return take or leave         <- "Did EITHER choice work?"
+
+Use arrows connecting each annotation to the corresponding code lines.
+Annotations are in cream-colored rounded boxes.
+
+SECTION 3, "THE PATTERN" (gold header, about 30%):
+
+Header: "SEE THE STRUCTURE"
+
+Show the three key pieces side by side in a summary:
+
+  CHOICES:      take or leave (at each number)
+  SMALLER:      fewer numbers left to decide about
+  COMBINE:      take OR leave (either path working = True)
+  STOP:         target = 0 (success!) or no items (failure)
+
+Kit's final speech bubble:
+"Every recursion problem follows this pattern.
+Find the choices. Show they make the problem smaller.
+Pick how to combine. Define when to stop.
+The code writes itself."
+
+Gold box at very bottom:
+"NEXT: this same structure, with different COMBINE steps,
+gives you Count Subsets (+), Equal Partition, Target Sum, and more."

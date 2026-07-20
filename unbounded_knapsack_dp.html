@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unbounded Knapsack: Items Reusable</title>
+<style>
+:root{--bg:#1a1916;--card:#252320;--card2:#2d2a26;--gold:#d4a843;--gold2:#fbbf24;--amber:#f59e0b;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;--red:#ef4444;--teal:#14b8a6;--text:#e8e2d6;--muted:#9b9484;--border:#3d3930;--sand:#c2956a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;padding:0 0 80px;overflow-x:hidden}
+.hdr{background:linear-gradient(135deg,#0d1f1a,#1a1916);border-bottom:3px solid var(--teal);padding:40px 20px;text-align:center}
+.hdr h1{font-size:2em;color:var(--teal)}.hdr p{color:var(--muted)}
+.wrap{max-width:920px;margin:0 auto;padding:20px}
+h2{color:var(--teal);font-size:1.4em;margin:32px 0 12px;border-bottom:2px solid var(--border);padding-bottom:8px}
+h3{color:var(--teal);margin:20px 0 8px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin:16px 0}
+.scene-img{width:100%;border-radius:10px;margin:12px 0;border:1px solid var(--border)}
+pre{background:#0d0d0b;border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;font-size:.85em;line-height:1.6;margin:10px 0}
+code{font-family:'Fira Code','Courier New',monospace}
+.hi{background:rgba(20,184,166,.08);border:1px solid rgba(20,184,166,.3);border-radius:6px;padding:12px 16px;margin:12px 0}
+.ws{background:var(--card);border-radius:12px;padding:20px;margin:20px 0;border-left:4px solid var(--teal)}
+.ws h3{color:var(--teal);margin-top:0}
+.sbox{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px;margin:10px 0}
+.sl{font-size:.72em;letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:6px}
+.deriv{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:.2s}
+.deriv:hover{border-color:var(--teal)}
+.deriv-h{display:flex;align-items:center;justify-content:space-between;padding:14px 18px}
+.deriv-h h3{margin:0;font-size:1em}
+.deriv-n{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--teal);color:#000;font-size:.75em;font-weight:700;margin-right:8px}
+.deriv-a{color:var(--muted);font-size:.8em;transition:.3s}
+.deriv-b{max-height:0;overflow:hidden;transition:max-height .4s ease;padding:0 18px}
+.deriv.open .deriv-b{max-height:12000px;padding:0 18px 18px}
+.deriv.open .deriv-a{transform:rotate(90deg)}
+.nav-link{display:inline-block;background:var(--card);border:1px solid var(--border);padding:10px 20px;border-radius:8px;color:var(--teal);text-decoration:none;font-weight:700;margin:8px 4px;transition:.2s}
+.nav-link:hover{background:var(--teal);color:#000;border-color:var(--teal)}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+th{background:var(--card2);color:var(--teal);text-align:center;padding:10px 12px;border:1px solid var(--border)}
+td{padding:10px 12px;border:1px solid var(--border);text-align:center}
+@media(max-width:600px){
+  .wrap{padding:12px}
+  .hdr h1{font-size:1.5em}
+  h2{font-size:1.2em}
+  pre{font-size:.75em;padding:10px;white-space:pre-wrap;word-break:break-word}
+  code{word-break:break-word}
+  .card,.ws,.hi{overflow-x:hidden}
+  table{font-size:.8em;display:block;overflow-x:auto}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+<h1>Unbounded Knapsack</h1>
+<p>Same choices as 0/1, but items are reusable. One line changes everything.</p>
+</div>
+
+<div class="wrap">
+
+<div style="margin-bottom:24px">
+<a href="dp_workshop.html" class="nav-link">&larr; Back to DP Workshop</a>
+<a href="dp_workshop.html#sec-knapsack" class="nav-link">0/1 Knapsack &rarr;</a>
+</div>
+
+<!-- ==================== THE PARENT PROBLEM ==================== -->
+
+<h2>The Problem</h2>
+
+<img src="dp/images/family2_A.png" alt="Unbounded Knapsack: same vault, but a cloning machine lets you take unlimited copies" class="scene-img">
+
+<div class="ws">
+<h3>Unbounded Knapsack</h3>
+<p>Same as 0/1 knapsack (maximize value within a weight limit), but each item can be used <strong>unlimited times</strong>. You have an infinite supply of every item.</p>
+<div class="hi">
+<strong>0/1:</strong> Take it (once) or skip it. Both advance to the next item.<br>
+<strong>Unbounded:</strong> Take it again (stay, might take more) or move on. Only "move on" advances.
+</div>
+</div>
+
+<!-- ==================== THE CHOICES ==================== -->
+
+<h2>The Choices</h2>
+
+<img src="dp/images/family2_B.png" alt="Take again (stay at same item) or move on (advance to next). The key difference from 0/1." class="scene-img">
+
+<div class="ws">
+<h3>Take Again or Move On</h3>
+<p>At each item, you have two options:</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0">
+<div style="background:rgba(34,197,94,.08);border:1px solid var(--green);border-radius:8px;padding:14px">
+<div style="color:var(--green);font-weight:700;margin-bottom:4px">TAKE AGAIN</div>
+<div style="font-size:.88em">Add the value, reduce capacity. <strong>Stay at the same item</strong> (might take it again).</div>
+</div>
+<div style="background:rgba(239,68,68,.08);border:1px solid var(--red);border-radius:8px;padding:14px">
+<div style="color:var(--red);font-weight:700;margin-bottom:4px">MOVE ON</div>
+<div style="font-size:.88em">Leave this item forever. <strong>Advance to the next item.</strong> Can't come back.</div>
+</div>
+</div>
+
+<table>
+<tr><th></th><th>0/1 Knapsack</th><th>Unbounded Knapsack</th></tr>
+<tr><td><strong>Take</strong></td><td>index + 1 (advance)</td><td style="color:var(--green);font-weight:700">index (STAY)</td></tr>
+<tr><td><strong>Skip/Move on</strong></td><td>index + 1 (advance)</td><td>index + 1 (advance)</td></tr>
+<tr><td><strong>Both advance?</strong></td><td>Yes</td><td style="color:var(--amber);font-weight:700">No, only move on</td></tr>
+</table>
+</div>
+
+<!-- ==================== THE TREE ==================== -->
+
+<h2>The Recursion Tree</h2>
+
+<img src="dp/images/family2_C.png" alt="Recursion tree showing stay branches creating repeated subproblems" class="scene-img">
+
+<div class="hi">
+<strong>The "stay" branch creates more branches</strong> than 0/1 (because you can keep taking the same item). But subproblems still overlap: the same (index, capacity) pair appears in multiple branches. Memoize with <code>(index, bag_limit)</code> to avoid re-solving.
+</div>
+
+<!-- ==================== CODE ==================== -->
+
+<h2>Base Cases + Code</h2>
+
+<img src="dp/images/family2_D.png" alt="The code with one line different from 0/1, and the loop direction comparison" class="scene-img">
+
+<div class="ws">
+<h3>The Recursion</h3>
+<pre><code>def max_value(treasures, bag_limit, index):
+    if index == len(treasures) or bag_limit == 0:
+        return 0
+
+    name, weight, value = treasures[index]
+
+    if weight > bag_limit:
+        return max_value(treasures, bag_limit, index + 1)
+
+    take_again = value + max_value(
+        treasures,
+        bag_limit - weight,
+        index)                    # STAY at same item
+
+    move_on = max_value(
+        treasures,
+        bag_limit,
+        index + 1)
+
+    return max(take_again, move_on)</code></pre>
+
+<div class="hi">
+<strong>One line is different from 0/1:</strong> <code>index</code> instead of <code>index + 1</code> in the take branch. That single change turns "use once" into "use unlimited times."
+</div>
+
+<h3>The Tabulation (1D)</h3>
+<pre><code>def max_value(treasures, bag_limit):
+    dp = [0] * (bag_limit + 1)
+
+    for name, weight, value in treasures:
+        for cap in range(weight, bag_limit + 1):
+            dp[cap] = max(dp[cap], dp[cap - weight] + value)
+
+    return dp[bag_limit]</code></pre>
+
+<div class="hi">
+<strong>Loop direction:</strong> inner loop goes <strong>LEFT to RIGHT</strong>. In 0/1, it goes right to left to prevent reuse. Here, left to right ALLOWS reuse: <code>dp[cap - weight]</code> might already include this item from an earlier iteration.
+</div>
+</div>
+
+<!-- ==================== CHILDREN ==================== -->
+
+<h2>The Unbounded Family</h2>
+
+<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin:16px 0">
+<strong style="color:var(--teal);font-size:1.1em">UNBOUNDED KNAPSACK (parent)</strong><br>
+<span style="font-size:.88em;color:var(--muted)">At each item: take again (stay) or move on. Maximize value. Items reusable.</span>
+</div>
+
+<div style="display:grid;gap:10px">
+
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">1</span> Coin Change (Minimum Coins)</h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<img src="dp/images/family2_child1_A.png" alt="Coin Change: fewest coins to make amount, use again or move on" class="scene-img">
+<img src="dp/images/family2_child1_B.png" alt="Recursion tree for coin change, code with min() and left-to-right loop" class="scene-img">
+<img src="dp/images/family2_child1_C.png" alt="Why greedy fails and when to use DP over greedy" class="scene-img">
+<div class="sbox"><div class="sl" style="color:var(--teal)">THE KEY IDEA</div>
+Same "use again or move on" choice. Combine with <code>min()</code> instead of <code>max()</code>. Each coin used adds 1 to the count. Base case: amount = 0 returns 0 coins, no coins left returns infinity.</div>
+<pre><code>def coin_change(coins, amount):
+    dp = [float('inf')] * (amount + 1)
+    dp[0] = 0
+
+    for coin in coins:
+        for a in range(coin, amount + 1):
+            dp[a] = min(dp[a], dp[a - coin] + 1)
+
+    if dp[amount] == float('inf'):
+        return -1
+    return dp[amount]</code></pre>
+</div></div>
+
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">2</span> Coin Change 2 (Count Combinations)</h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<img src="dp/images/family2_child2_A.png" alt="Coin Change 2: how many combinations make the amount, outer loop is coins" class="scene-img">
+<img src="dp/images/family2_child2_B.png" alt="Code and the full unbounded family tree" class="scene-img">
+<div class="sbox"><div class="sl" style="color:var(--teal)">THE KEY IDEA</div>
+Same choices. Combine with <code>+</code> (count ways). Outer loop = coins to count COMBINATIONS (not permutations). <code>{1,2}</code> and <code>{2,1}</code> are the same combination.</div>
+<pre><code>def count_ways(coins, amount):
+    dp = [0] * (amount + 1)
+    dp[0] = 1
+
+    for coin in coins:
+        for a in range(coin, amount + 1):
+            dp[a] += dp[a - coin]
+
+    return dp[amount]</code></pre>
+</div></div>
+
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">3</span> Word Break</h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<img src="dp/images/family2_child3_A.png" alt="Word Break: words are reusable coins, string length is capacity" class="scene-img">
+<img src="dp/images/family2_child3_B.png" alt="Code and how it connects to unbounded knapsack" class="scene-img">
+<div class="sbox"><div class="sl" style="color:var(--teal)">THE INSIGHT</div>
+Words are reusable items. String length is the capacity. At each position, try every word that starts there. If it matches and the prefix was valid, the new position is valid too.</div>
+<pre><code>def word_break(s, word_dict):
+    words = set(word_dict)
+    dp = [False] * (len(s) + 1)
+    dp[0] = True
+
+    for end in range(1, len(s) + 1):
+        for start in range(end):
+            if dp[start] and s[start:end] in words:
+                dp[end] = True
+                break
+
+    return dp[len(s)]</code></pre>
+</div></div>
+
+</div>
+
+<!-- ==================== SUMMARY ==================== -->
+
+<h2>The Pattern</h2>
+
+<div class="ws" style="border-left-color:var(--gold2)">
+<h3 style="color:var(--gold2)">Two Knapsack Families, One Core Idea</h3>
+
+<table>
+<tr><th></th><th>0/1 Knapsack</th><th>Unbounded Knapsack</th></tr>
+<tr><td><strong>Supply</strong></td><td>Each item once</td><td>Unlimited copies</td></tr>
+<tr><td><strong>Take branch</strong></td><td>index + 1</td><td style="color:var(--green)">index (stay)</td></tr>
+<tr><td><strong>1D loop</strong></td><td>Right to left</td><td style="color:var(--green)">Left to right</td></tr>
+<tr><td><strong>Children</strong></td><td>Subset Sum, Partition, Count, Min Diff, Target Sum, Given Diff</td><td>Coin Change, Coin Change 2, Word Break</td></tr>
+</table>
+
+<div class="hi" style="border-color:var(--gold2);background:rgba(251,191,36,.06)">
+<strong>The choice at the core of BOTH families:</strong> at each item, do I use it or not?<br>
+The only question is: after using it, can I use it again?<br>
+0/1 says no (advance). Unbounded says yes (stay).
+</div>
+</div>
+
+<div style="text-align:center;margin-top:32px">
+<a href="dp_workshop.html" class="nav-link">&larr; Back to DP Workshop</a>
+<a href="staircase_dp.html" class="nav-link">Staircase (1D) &rarr;</a>
+</div>
+
+</div>
+
+</body>
+</html>

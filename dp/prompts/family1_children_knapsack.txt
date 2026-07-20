@@ -1,0 +1,560 @@
+FAMILY 1 CHILDREN: 0/1 KNAPSACK VARIATIONS (FULL PIPELINE)
+==============================================================
+6 prompts total: one image per child problem (1024x1792 each).
+Each child shows the FULL PIPELINE:
+  1. Understand the question (what's different from parent?)
+  2. Find the choices (same grab/skip, but combine differently!)
+  3. Choice diagram with the new combination
+  4. Recursion from the choices
+  5. Base cases
+  6. Code
+
+Key teaching point: THE CHOICES ARE THE SAME AS THE PARENT.
+At each item: grab or skip. What changes is HOW YOU COMBINE the results.
+  Parent:      max(grab, skip)    "pick the better value"
+  Subset Sum:  grab or skip       "can we reach it either way?"
+  Count:       grab + skip        "total ways = ways with + ways without"
+
+================================================================================
+STYLE BIBLE (copy into every prompt)
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+COMPANION 1 (Sack the Duffel Bag, appears in most images):
+- A sleek BLACK DUFFEL BAG (rectangular, gym-bag shaped, soft fabric).
+- GLOWING BLUE DIGITAL WEIGHT GAUGE on the side strap (bar from 0 to 7 kg).
+- Has a WORRIED FACE on the digital display (wide nervous eyes, small mouth).
+- COOL BLUE GLOW around him. Label nearby: "(knapsack)"
+
+COMPANION 2 (Branch the Holographic Projector, appears in most images):
+- A small CYLINDRICAL CHROME DEVICE (like a flashlight).
+- Projects HOLOGRAPHIC BRANCHING PATHS from the top.
+- LEFT beam: GREEN with a checkmark (GRAB/TAKE).
+- RIGHT beam: RED with an X (SKIP/LEAVE).
+- Has a MISCHIEVOUS FACE on the chrome body (bright eyes, cheeky grin).
+- WARM GREEN + RED GLOW from the projections. Label nearby: "(choices)"
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: dark navy/charcoal (#1a1a2e). Heist atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: bright blue (#3B82F6).
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for GRAB paths. Red: (#EF4444) for SKIP paths.
+- Blue accent lighting throughout (neon heist feel).
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: Subset Sum (Full Pipeline) -> family1_child_1.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Four sections stacked vertically.
+Give each section breathing room.
+
+SECTION 1, "THE QUESTION" (blue header):
+Header: "SUBSET SUM"
+Subtitle: "Can I pick items that add up to EXACTLY the target?"
+
+Show Kit with items that only have WEIGHT tags (no value tags, crossed out):
+  Items: [4, 3, 5, 1, 2], target = 7
+
+Kit's speech bubble: "I don't care about value. Just: can I hit exactly 7 kg?"
+
+Two examples side by side:
+  YES: {4, 3} = 7. Green checkmark.
+  YES: {4, 1, 2} = 7. Green checkmark.
+  "At least one way exists, answer is True."
+
+Small note: "Compare to parent: parent asks 'what's the MAX value?'
+This asks 'can I reach EXACTLY this number?'"
+
+SECTION 2, "THE CHOICES" (gold header, biggest section):
+Header: "SAME CHOICES AS PARENT!"
+Subtitle: "At each item: grab or skip. Only the COMBINE step changes."
+
+Show Branch projecting the SAME choice diagram as parent:
+  Kit at item "3":
+    GREEN arrow: GRAB 3. "Can I reach (7-3) = 4 with the rest?"
+    RED arrow: SKIP 3. "Can I reach 7 with the rest?"
+
+  At the BOTTOM, both arrows converge. But instead of max():
+    COMBINE: "grab OR skip"
+    "Did EITHER path reach the target? Yes? Then True."
+
+Big highlighted comparison box (two columns):
+  PARENT:                         SUBSET SUM:
+  max(grab, skip)                 grab or skip
+  "Pick the BETTER value"         "Did EITHER way work?"
+  Returns a number ($18K)         Returns True/False
+
+Kit: "The choices are identical. Grab or skip at each item.
+I just ask a different question about the result."
+
+SECTION 3, "BASE CASES" (amber header):
+Header: "WHEN DO I STOP?"
+
+Two base cases shown as cards:
+  GREEN card: "target == 0: return True"
+    "I need to reach exactly 0. That's already done! Pick nothing."
+    Sack with gauge at 0, happy face: "Zero means success!"
+
+  RED card: "no items left (index == len): return False"
+    "I still need to reach target > 0, but nothing is left to pick."
+    Sack with gauge showing remaining target, sad face: "Can't reach it."
+
+SECTION 4, "THE CODE" (gray code block):
+  def can_reach(nums, target, index):
+      if target == 0:
+          return True
+      if index == len(nums) or target < 0:
+          return False
+
+      grab = can_reach(nums, target - nums[index], index + 1)
+      skip = can_reach(nums, target, index + 1)
+      return grab or skip
+
+Annotate with arrows:
+  target == 0 <- "Hit the target! Done."
+  target - nums[index] <- "Grab: reduce target by this item"
+  target (unchanged) <- "Skip: target stays the same"
+  grab or skip <- "Did EITHER path work?"
+
+Gold box: "1D optimization: dp[j] = dp[j] or dp[j - num]. Right to left."
+
+
+================================================================================
+PROMPT 2: Equal Sum Partition (Full Pipeline) -> family1_child_2.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Four sections stacked vertically.
+
+SECTION 1, "THE QUESTION" (blue header):
+Header: "EQUAL SUM PARTITION"
+Subtitle: "Can I split ALL items into two groups with equal total?"
+
+Show Kit with TWO identical duffel bags. All items must go into one bag or the other.
+  Items: [1, 5, 11, 5], total = 22
+
+  Show two bags:
+    Bag A: {11} = 11
+    Bag B: {1, 5, 5} = 11
+    Balance scale: perfectly level! "Equal! Return True."
+
+Kit: "Every item goes somewhere. Can both bags have the same total?"
+
+SECTION 2, "THE INSIGHT" (gold header, biggest section):
+Header: "THIS IS JUST SUBSET SUM IN DISGUISE"
+
+Show the reduction in 3 steps:
+
+  STEP 1: "Sum all items."
+    [1, 5, 11, 5] -> total = 22
+
+  STEP 2: "Is total even?"
+    22 / 2 = 11. Yes, it's even. (If ODD -> immediately False. Can't split odd equally.)
+    Show: 23 / 2 = 11.5 -> RED X "Odd total = impossible"
+
+  STEP 3: "Can I pick items that sum to total/2?"
+    "If I can pick items summing to 11, the REST automatically sum to 11 too!"
+    "This is SUBSET SUM with target = 11!"
+
+Big arrow: "Equal Partition = Subset Sum(items, total / 2)"
+
+Kit: "Two questions become one. If I can fill half, the other half fills itself."
+
+SECTION 3, "CHOICES + BASE CASES":
+Header: "Same choices as Subset Sum"
+
+  At each item: grab (put in group A) or skip (put in group B).
+  grab or skip. target = total / 2.
+
+  Base cases:
+    target == 0: True (group A has exactly half!)
+    no items left: False (couldn't fill half)
+    total is odd: False (impossible before we even start)
+
+SECTION 4, "THE CODE":
+  def can_partition(nums):
+      total = sum(nums)
+
+      if total % 2 != 0:
+          return False
+
+      target = total // 2
+      return can_reach(nums, target, 0)
+
+Annotate:
+  total % 2 != 0 <- "Odd total? Impossible. Stop."
+  total // 2 <- "Half the sum is our target."
+  can_reach(nums, target, 0) <- "Just Subset Sum!"
+
+Gold box: "WHEN TO USE: 'split into two equal groups', 'partition equally'.
+Step 1: check if total is even. Step 2: run Subset Sum for half."
+
+
+================================================================================
+PROMPT 3: Count of Subsets with Sum (Full Pipeline) -> family1_child_3.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Four sections stacked vertically.
+
+SECTION 1, "THE QUESTION" (blue header):
+Header: "COUNT SUBSETS WITH SUM"
+Subtitle: "HOW MANY different subsets add up to the target?"
+
+Show Kit with a tally counter (click counter) in hand.
+  Items: [1, 2, 3, 4, 5], target = 5
+
+  Show ALL subsets that work:
+    {5} = 5         Way 1
+    {1, 4} = 5      Way 2
+    {2, 3} = 5      Way 3
+  Kit holding up 3 fingers: "THREE ways. Not just 'can I?', but 'how many?'"
+
+Branch projects MULTIPLE green paths (not just one).
+
+SECTION 2, "THE CHOICES" (gold header, biggest section):
+Header: "SAME CHOICES. DIFFERENT COMBINE."
+Subtitle: "Grab or skip. But now COUNT both paths instead of OR-ing them."
+
+Show the choice diagram:
+  Kit at item "3", target = 5:
+    GREEN arrow: GRAB 3. "How many ways to reach (5-3) = 2 with the rest?"
+    RED arrow: SKIP 3. "How many ways to reach 5 with the rest?"
+
+  COMBINE at the bottom:
+    "grab + skip"
+    "Total ways = ways WITH this item + ways WITHOUT this item"
+
+Big highlighted comparison box (THREE columns):
+  PARENT:           SUBSET SUM:       COUNT SUBSETS:
+  max(grab, skip)   grab or skip      grab + skip
+  "Best value"      "Either works?"   "Total ways"
+  Returns number    Returns T/F       Returns count
+
+Kit: "or counts 'at least one'. + counts 'all of them'."
+
+SECTION 3, "BASE CASES":
+Header: "WHEN DO I STOP?"
+
+  GREEN card: "target == 0: return 1"
+    "Reached the target! That's ONE valid way."
+    (Not True, but 1. We're counting now.)
+
+  RED card: "no items left, target > 0: return 0"
+    "Can't reach target. ZERO ways from here."
+
+  Note: "Compare: Subset Sum returns True/False. Count returns 1/0.
+  Same idea, different language."
+
+SECTION 4, "THE CODE":
+  def count_subsets(nums, target, index):
+      if target == 0:
+          return 1
+      if index == len(nums) or target < 0:
+          return 0
+
+      grab = count_subsets(nums, target - nums[index], index + 1)
+      skip = count_subsets(nums, target, index + 1)
+      return grab + skip
+
+Annotate:
+  return 1 <- "One way found! Count it."
+  return 0 <- "Dead end. Zero ways."
+  grab + skip <- "Add the ways. Not max, not or."
+
+Gold box: "1D optimization: dp[j] += dp[j - num]. Same loop, just += instead of or."
+
+
+================================================================================
+PROMPT 4: Minimum Subset Sum Difference (Full Pipeline) -> family1_child_4.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Four sections stacked vertically.
+
+SECTION 1, "THE QUESTION" (blue header):
+Header: "MINIMUM SUBSET SUM DIFFERENCE"
+Subtitle: "Split into two groups. Make the difference as small as possible."
+
+Show Kit with TWO bags on a balance scale. The scale is SLIGHTLY tilted (not equal).
+  Items: [1, 6, 11, 5], total = 23
+
+  Best split: {11, 1} = 12 vs {6, 5} = 11.
+  Difference = 12 - 11 = 1. (Can't do better; 23 is odd.)
+  Scale tilted just barely.
+
+Kit: "Can't make them equal (23 is odd). But I can get close."
+
+SECTION 2, "THE INSIGHT" (gold header, biggest section):
+Header: "CLOSER TO HALF = SMALLER DIFFERENCE"
+
+Show the math visually:
+  total = 23. Half = 11.5.
+  "If group A sums to S, group B = total - S."
+  "Difference = |total - 2S|"
+  "To minimize difference: get S as CLOSE to total/2 as possible."
+
+Arrow: "Which sums are achievable? Run Subset Sum for all targets 0 to total/2!"
+
+Show the dp array after running Subset Sum on [1, 6, 11, 5] up to half=11:
+  dp = [T, T, F, F, F, T, T, T, F, F, F, T]
+  index: 0  1  2  3  4  5  6  7  8  9 10 11
+
+  "Achievable sums: 0, 1, 5, 6, 7, 11"
+  "Closest to 11.5 is 11!"
+  "Difference = 23 - 2*11 = 1"
+
+Scan arrow from right to left: "Find the LARGEST True."
+
+SECTION 3, "THE CHOICES + BASE CASES":
+Header: "Same as Subset Sum, but we check ALL targets at once"
+
+  Choices: grab or skip (same as always).
+  The dp array tracks which sums from 0 to half are achievable.
+  After filling, scan from the right for the first achievable sum.
+
+  Base case: dp[0] = True (sum of 0 is always achievable).
+
+SECTION 4, "THE CODE":
+  def min_difference(nums):
+      total = sum(nums)
+      half = total // 2
+
+      dp = [False] * (half + 1)
+      dp[0] = True
+
+      for num in nums:
+          for j in range(half, num - 1, -1):
+              dp[j] = dp[j] or dp[j - num]
+
+      for j in range(half, -1, -1):
+          if dp[j]:
+              return total - 2 * j
+
+Annotate:
+  First loop: "Standard Subset Sum up to half"
+  Second loop: "Scan right to left for largest achievable sum"
+  total - 2 * j: "Difference formula"
+
+Gold box: "STRATEGY: Run Subset Sum. Find the achievable sum closest to half.
+The difference is total - 2 * that_sum."
+
+
+================================================================================
+PROMPT 5: Target Sum (Full Pipeline) -> family1_child_5.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Four sections stacked vertically.
+
+SECTION 1, "THE QUESTION" (blue header):
+Header: "TARGET SUM"
+Subtitle: "Assign + or - to each number. Can you reach the target?"
+
+Show Kit with items that have +/- TOGGLE SWITCHES (not grab/skip).
+EVERY item must be used. You just choose its SIGN.
+  Items: [1, 1, 1, 1, 1], target = 3
+
+  Show: +1 +1 +1 +1 -1 = 3. Works!
+  Show: +1 +1 +1 -1 +1 = 3. Works!
+  (5 total ways)
+
+Kit: "No skipping! Every item is used. I just pick: add or subtract."
+Branch projects GREEN (+) and RED (-) beams.
+
+SECTION 2, "THE MATH TRICK" (gold header, biggest section):
+Header: "REDUCE TO A PROBLEM WE ALREADY SOLVED"
+
+Show the algebra step by step (LARGE text):
+  Let P = sum of items marked +
+  Let N = sum of items marked -
+
+  P + N = total    (every item is used)
+  P - N = target   (the goal)
+
+  Add both equations:
+  2P = total + target
+  P = (total + target) / 2
+
+  "If (total + target) is odd, IMPOSSIBLE. Can't have half an item."
+  "Otherwise: COUNT subsets that sum to P. That's Child 3!"
+
+Big arrow showing the chain:
+  "Target Sum" -> "P = (total + target) / 2" -> "Count Subsets with Sum = P"
+
+Kit: "The hard part is seeing the math. Once you get P, it's just counting."
+
+SECTION 3, "THE CHOICES":
+Header: "Same choices as Count Subsets!"
+
+  At each item: put it in the + group (grab) or the - group (skip).
+  grab + skip. target = P = (total + target) / 2.
+
+  Base cases:
+    P == 0: return 1 (all items go to minus group)
+    no items left: return 0
+    (total + target) is odd: return 0 immediately
+
+SECTION 4, "THE CODE":
+  def find_target_sum_ways(nums, target):
+      total = sum(nums)
+
+      if (total + target) % 2 != 0:
+          return 0
+      if abs(target) > total:
+          return 0
+
+      goal = (total + target) // 2
+
+      dp = [0] * (goal + 1)
+      dp[0] = 1
+
+      for num in nums:
+          for j in range(goal, num - 1, -1):
+              dp[j] += dp[j - num]
+
+      return dp[goal]
+
+Annotate:
+  (total + target) % 2 != 0 <- "Odd? Impossible."
+  (total + target) // 2 <- "THE math reduction"
+  dp[j] += dp[j - num] <- "Same as Count Subsets!"
+
+Gold box: "KEY INSIGHT: +/- assignment reduces to counting subsets.
+P = (total + target) / 2. Then dp[j] += dp[j - num]."
+
+
+================================================================================
+PROMPT 6: Count Subsets with Given Difference (Full Pipeline) -> family1_child_6.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Four sections stacked vertically.
+
+SECTION 1, "THE QUESTION" (blue header):
+Header: "COUNT SUBSETS WITH GIVEN DIFFERENCE"
+Subtitle: "Split into two groups where group1 - group2 = diff. Count the ways."
+
+Show Kit with TWO bags that have a fixed GAP between them.
+  Items: [1, 1, 2, 3], diff = 1
+
+  Bag A must be exactly 1 more than Bag B.
+  Show: {3, 1} = 4 vs {2, 1} = 3. Gap = 1. Works!
+  Show: {2, 1, 1} = 4 vs {3} = 3. Gap = 1. Works!
+  "2 ways."
+
+Kit: "Split everything. Group A minus Group B equals exactly diff."
+
+SECTION 2, "THE MATH TRICK" (gold header, biggest section):
+Header: "SAME MATH AS TARGET SUM!"
+
+Show the algebra:
+  S1 - S2 = diff     (the goal)
+  S1 + S2 = total    (all items used)
+
+  Add both equations:
+  2 * S1 = total + diff
+  S1 = (total + diff) / 2
+
+  "IDENTICAL to Target Sum! Just 'diff' instead of 'target'."
+
+Show side by side:
+  TARGET SUM:              GIVEN DIFFERENCE:
+  P = (total + target)/2   S1 = (total + diff)/2
+  "SAME formula. SAME code. Different story."
+
+Kit: "If you solved Target Sum, you've already solved this.
+Same algebra, same reduction, same counting."
+
+SECTION 3, "THE CHOICES":
+Header: "Same choices as Count Subsets!"
+
+  At each item: put it in S1 (grab) or S2 (skip).
+  grab + skip. target = S1 = (total + diff) / 2.
+
+  Base cases: same as Target Sum.
+    S1 == 0: return 1
+    no items left: return 0
+    (total + diff) is odd: return 0
+
+SECTION 4, "THE CODE":
+  def count_with_diff(nums, diff):
+      total = sum(nums)
+
+      if (total + diff) % 2 != 0:
+          return 0
+      if abs(diff) > total:
+          return 0
+
+      target = (total + diff) // 2
+
+      dp = [0] * (target + 1)
+      dp[0] = 1
+
+      for num in nums:
+          for j in range(target, num - 1, -1):
+              dp[j] += dp[j - num]
+
+      return dp[target]
+
+Annotate:
+  "Literally Target Sum with 'target' renamed to 'diff'."
+  "Same checks. Same formula. Same loop."
+
+Gold box: "THE WHOLE FAMILY IN ONE LINE:
+  Parent: max(grab, skip). Child 1: grab or skip. Child 3: grab + skip.
+  Children 4-6: reduce to Child 1 or 3 with a math trick.
+  Same choices. Different combine. Different question. Same structure."

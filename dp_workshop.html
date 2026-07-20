@@ -87,6 +87,9 @@ td{padding:10px 12px;border:1px solid var(--border)}
    onmouseover="this.style.background='var(--amber)';this.style.color='#000';this.style.borderColor='var(--amber)'"
    onmouseout="this.style.background='var(--card)';this.style.color='var(--muted)';this.style.borderColor='var(--border)'">Staircase (1D)</a>
 <button onclick="go('knapsack')">0/1 Knapsack</button>
+<a href="unbounded_knapsack_dp.html" style="background:var(--card);color:var(--muted);border:1px solid var(--border);padding:8px 16px;border-radius:6px;font-size:.85em;text-decoration:none;transition:.2s;display:inline-block"
+   onmouseover="this.style.background='var(--amber)';this.style.color='#000';this.style.borderColor='var(--amber)'"
+   onmouseout="this.style.background='var(--card)';this.style.color='var(--muted)';this.style.borderColor='var(--border)'">Unbounded Knapsack</a>
 <button onclick="go('problems')">21 Problems</button>
 <button onclick="go('quiz')">Quiz</button>
 </div>
@@ -124,7 +127,7 @@ td{padding:10px 12px;border:1px solid var(--border)}
 <div class="pipe-step" style="border-color:var(--green)">
 <div style="font-size:.7em;color:var(--green);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">STEP 4</div>
 <strong style="color:var(--green);font-size:1.15em">Memoize (3 extra lines)</strong>
-<div style="font-size:.9em;color:var(--muted);margin-top:6px">Same recursive code. Just add a cache. Before computing: check the cache. After computing: store in the cache. Done. O(2<sup>n</sup>) &rarr; O(n&times;W).</div>
+<div style="font-size:.9em;color:var(--muted);margin-top:6px">Same recursive code. Just add a cache. Before computing: check the cache. After computing: store in the cache. Done. O(2<sup>n</sup>) &rarr; O(items &times; capacity).</div>
 </div>
 
 <div class="pipe-arrow">&darr;</div>
@@ -165,7 +168,7 @@ td{padding:10px 12px;border:1px solid var(--border)}
 <table>
 <tr><th>Family</th><th>Parent Problem</th><th>Key Choice</th><th># Variations</th><th>Status</th></tr>
 <tr><td><span class="ftag ftag-knap">0/1 Knapsack</span></td><td>Knapsack (take/skip, capacity limit)</td><td>GRAB it or SKIP it</td><td>6</td><td style="color:var(--green)">&#10003; Done</td></tr>
-<tr><td><span class="ftag ftag-uknap">Unbounded Knapsack</span></td><td>Coin Change (items reusable)</td><td>Use it AGAIN or move on</td><td>3</td><td style="color:var(--muted)">Coming</td></tr>
+<tr><td><span class="ftag ftag-uknap">Unbounded Knapsack</span></td><td>Coin Change (items reusable)</td><td>Use it AGAIN or move on</td><td>3</td><td><a href="unbounded_knapsack_dp.html" style="color:var(--teal)">View</a></td></tr>
 <tr><td><span class="ftag ftag-lcs">LCS</span></td><td>Longest Common Subsequence</td><td>Match, skip from A, skip from B</td><td>10</td><td style="color:var(--muted)">Coming</td></tr>
 <tr><td><span class="ftag ftag-lin">Linear/Fibonacci</span></td><td><a href="staircase_dp.html" style="color:var(--crimson)">Climbing Stairs</a></td><td>Step 1 or step 2</td><td>4</td><td style="color:var(--green)">&#10003; Done</td></tr>
 <tr><td><span class="ftag ftag-pal">Palindrome</span></td><td>Longest Palindromic Substring</td><td>Expand or stop</td><td>2</td><td style="color:var(--muted)">Coming</td></tr>
@@ -266,8 +269,8 @@ But what if Ruby doesn't fit? (<code>weight &gt; bag_limit</code>?) Then there's
 <div style="background:var(--card2);border-radius:8px;padding:14px">
 <div style="color:var(--green);font-weight:700;margin-bottom:6px">C. The formula writes itself</div>
 <div style="font-size:.93em;line-height:1.7">
-<code style="color:var(--green)">grab = value + max_value(count - 1, bag_limit - weight)</code><br>
-<code style="color:var(--red)">skip = max_value(count - 1, bag_limit)</code><br>
+<code style="color:var(--green)">grab = value + max_value(index + 1, bag_limit - weight)</code><br>
+<code style="color:var(--red)">skip = max_value(index + 1, bag_limit)</code><br>
 Pick the better one: <code>max(grab, skip)</code>
 </div>
 </div>
@@ -307,43 +310,44 @@ Pick the better one: <code>max(grab, skip)</code>
 <h3>Step 2: Choices &rarr; Recursion (the code writes itself)</h3>
 <p>The choice diagram IS the recursive function. Each branch = a recursive call.</p>
 
-<pre><code>treasures = [('Gold',4,10), ('Ruby',3,7), ('Diamond',5,12), ('Emerald',1,3), ('Platinum',2,5)]
+<pre><code>treasures = [
+    ("Gold",     4, 10),
+    ("Ruby",     3,  7),
+    ("Diamond",  5, 12),
+    ("Emerald",  1,  3),
+    ("Platinum", 2,  5),
+]
 
-def max_value(treasures, bag_limit, count):
-    if count == 0 or bag_limit == 0:
+def max_value(treasures, bag_limit, index):
+    if index == len(treasures) or bag_limit == 0:
         return 0
 
-    name, weight, value = treasures[count - 1]
+    name, weight, value = treasures[index]
 
-    if weight <= bag_limit:
-        grab = value + max_value(treasures, bag_limit - weight, count - 1)
-        skip = max_value(treasures, bag_limit, count - 1)
-        return max(grab, skip)
-    else:
-        return max_value(treasures, bag_limit, count - 1)</code></pre>
+    if weight > bag_limit:
+        return max_value(treasures, bag_limit, index + 1)
+
+    grab = value + max_value(treasures, bag_limit - weight, index + 1)
+    skip = max_value(treasures, bag_limit, index + 1)
+    return max(grab, skip)
+
+max_value(treasures, 7, 0)</code></pre>
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
 <div style="background:var(--card2);border-radius:6px;padding:10px;font-size:.88em">
 <div style="color:var(--blue);font-weight:700;margin-bottom:4px">Choice Diagram</div>
-<code>if weight &lt;= bag_limit</code> &rarr; "Does it fit?"<br>
+<code>if weight &gt; bag_limit</code> &rarr; "Too heavy? Skip."<br>
 <code style="color:var(--green)">grab = value + ...</code> &rarr; GREEN path<br>
 <code style="color:var(--red)">skip = ...</code> &rarr; RED path<br>
 <code>max(grab, skip)</code> &rarr; "Take the better one"
 </div>
 <div style="background:var(--card2);border-radius:6px;padding:10px;font-size:.88em">
 <div style="color:var(--blue);font-weight:700;margin-bottom:4px">Base Case</div>
-<code>count == 0</code> &rarr; No items left<br>
+<code>index == len(treasures)</code> &rarr; No items left<br>
 <code>bag_limit == 0</code> &rarr; No capacity left<br>
 Either way &rarr; value is $0<br>
 Base case = smallest valid input
 </div>
-</div>
-
-<div style="background:var(--card2);border-radius:6px;padding:10px;font-size:.88em;margin-top:8px">
-<div style="color:var(--amber);font-weight:700;margin-bottom:4px">Why <code>count - 1</code>?</div>
-<code>count</code> is how many items we're considering (1 to 5). But Python lists start at index 0.<br>
-So <code>treasures[count - 1]</code> just says: "the <code>count</code>-th item is at index <code>count - 1</code>."<br>
-When <code>count = 3</code>, we want the 3rd item (Diamond), which is at index 2.
 </div>
 </div>
 
@@ -353,7 +357,7 @@ When <code>count = 3</code>, we want the 3rd item (Diamond), which is at index 2
 <div class="walkthrough-section">
 <h3>Step 3: Draw the Tree, Spot the Overlap</h3>
 <p>Using 4 treasures: Gold (4kg), Ruby (3kg), Emerald (1kg), Platinum (2kg), bag_limit=7.</p>
-<p style="font-size:.9em;color:var(--muted)">The recursion processes items in reverse: Platinum (count=4), Emerald (count=3), Ruby (count=2), Gold (count=1).</p>
+<p style="font-size:.9em;color:var(--muted)">The recursion starts at Gold (index=0) and walks forward through items.</p>
 
 <p style="margin-top:12px"><strong>Two different paths through the tree arrive at the SAME subproblem:</strong></p>
 
@@ -361,35 +365,35 @@ When <code>count = 3</code>, we want the 3rd item (Diamond), which is at index 2
 <div style="background:rgba(59,130,246,.08);border:2px solid var(--blue);border-radius:10px;padding:14px">
 <div style="color:var(--blue);font-weight:700;font-size:1em;margin-bottom:8px">Path A</div>
 <div style="font-size:.9em;line-height:1.8">
-(count=4, cap=7) start<br>
-&rarr; <strong style="color:var(--green)">GRAB</strong> Platinum (2kg)<br>
-&rarr; (count=3, cap=5)<br>
-&rarr; <strong style="color:var(--green)">GRAB</strong> Emerald (1kg)<br>
-&rarr; (count=2, cap=4)<br>
+(index=0, cap=7) start<br>
+&rarr; <strong style="color:var(--green)">GRAB</strong> Gold (4kg)<br>
+&rarr; (index=1, cap=3)<br>
 &rarr; <strong style="color:var(--red)">SKIP</strong> Ruby<br>
-&rarr; <strong style="color:var(--gold2)">(count=1, cap=4)</strong>
+&rarr; (index=2, cap=3)<br>
+&rarr; <strong style="color:var(--red)">SKIP</strong> Emerald<br>
+&rarr; <strong style="color:var(--gold2)">(index=3, cap=3)</strong>
 </div>
-<div style="font-size:.85em;color:var(--muted);margin-top:6px">Used 2+1 = 3kg. Ruby skipped. 4kg left for Gold.</div>
+<div style="font-size:.85em;color:var(--muted);margin-top:6px">Grabbed Gold (4kg). Skipped Ruby and Emerald. 3kg left.</div>
 </div>
 <div style="background:rgba(245,158,11,.08);border:2px solid var(--amber);border-radius:10px;padding:14px">
 <div style="color:var(--amber);font-weight:700;font-size:1em;margin-bottom:8px">Path B</div>
 <div style="font-size:.9em;line-height:1.8">
-(count=4, cap=7) start<br>
-&rarr; <strong style="color:var(--red)">SKIP</strong> Platinum<br>
-&rarr; (count=3, cap=7)<br>
-&rarr; <strong style="color:var(--red)">SKIP</strong> Emerald<br>
-&rarr; (count=2, cap=7)<br>
+(index=0, cap=7) start<br>
+&rarr; <strong style="color:var(--red)">SKIP</strong> Gold<br>
+&rarr; (index=1, cap=7)<br>
 &rarr; <strong style="color:var(--green)">GRAB</strong> Ruby (3kg)<br>
-&rarr; <strong style="color:var(--gold2)">(count=1, cap=4)</strong>
+&rarr; (index=2, cap=4)<br>
+&rarr; <strong style="color:var(--green)">GRAB</strong> Emerald (1kg)<br>
+&rarr; <strong style="color:var(--gold2)">(index=3, cap=3)</strong>
 </div>
-<div style="font-size:.85em;color:var(--muted);margin-top:6px">Used 3kg (Ruby). Plat and Emer skipped. 4kg left for Gold.</div>
+<div style="font-size:.85em;color:var(--muted);margin-top:6px">Skipped Gold. Grabbed Ruby (3kg) + Emerald (1kg). 3kg left.</div>
 </div>
 </div>
 
 <div style="background:rgba(251,191,36,.12);border:2px solid var(--gold2);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
-<div style="font-size:1.2em;font-weight:800;color:var(--gold2);margin-bottom:8px">SAME SUBPROBLEM: (count=1, cap=4)</div>
-<div style="font-size:.95em;margin-bottom:8px">Both paths ask: <strong>"Only Gold left (4kg/$10K), bag has 4kg. What's the max?"</strong></div>
-<div style="font-size:.95em">Gold fits exactly. Answer = <strong>$10K</strong>. Both paths, same answer. <strong>Why solve it twice?</strong></div>
+<div style="font-size:1.2em;font-weight:800;color:var(--gold2);margin-bottom:8px">SAME SUBPROBLEM: (index=3, cap=3)</div>
+<div style="font-size:.95em;margin-bottom:8px">Both paths ask: <strong>"Only Platinum left (2kg/$5K), bag has 3kg. What's the max?"</strong></div>
+<div style="font-size:.95em">Platinum fits (2 &le; 3). Grab = $5K. Skip = $0. Answer = <strong>$5K</strong>. Both paths, same answer. <strong>Why solve it twice?</strong></div>
 </div>
 
 <div style="font-size:.95em;margin-bottom:12px">A problem is DP when:</div>
@@ -404,19 +408,23 @@ When <code>count = 3</code>, we want the 3rd item (Diamond), which is at index 2
 <h3>Step 4: Memoize (3 extra lines)</h3>
 <p>Same recursive code. Just add a cache. That's it.</p>
 
-<pre><code>def max_value(treasures, bag_limit, count, memo={}):
-    if (count, bag_limit) in memo:
-        return memo[(count, bag_limit)]          # ALREADY SOLVED? Return it!
-    if count == 0 or bag_limit == 0:
+<pre><code>def max_value(treasures, bag_limit, index, memo={}):
+    if (index, bag_limit) in memo:
+        return memo[(index, bag_limit)]
+
+    if index == len(treasures) or bag_limit == 0:
         return 0
-    name, weight, value = treasures[count - 1]
-    if weight <= bag_limit:
-        grab = value + max_value(treasures, bag_limit - weight, count - 1, memo)
-        skip = max_value(treasures, bag_limit, count - 1, memo)
-        result = max(grab, skip)
+
+    name, weight, value = treasures[index]
+
+    if weight > bag_limit:
+        result = max_value(treasures, bag_limit, index + 1, memo)
     else:
-        result = max_value(treasures, bag_limit, count - 1, memo)
-    memo[(count, bag_limit)] = result            # STORE result
+        grab = value + max_value(treasures, bag_limit - weight, index + 1, memo)
+        skip = max_value(treasures, bag_limit, index + 1, memo)
+        result = max(grab, skip)
+
+    memo[(index, bag_limit)] = result
     return result</code></pre>
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
@@ -425,8 +433,8 @@ When <code>count = 3</code>, we want the 3rd item (Diamond), which is at index 2
 Every branch explored, including duplicates.
 </div>
 <div style="background:rgba(34,197,94,.08);border-radius:6px;padding:10px;font-size:.88em">
-<div style="color:var(--green);font-weight:700;margin-bottom:4px">With cache: O(count &times; bag_limit)</div>
-Every unique (count, bag_limit) pair solved at most once.
+<div style="color:var(--green);font-weight:700;margin-bottom:4px">With cache: O(items &times; bag_limit)</div>
+Every unique (index, bag_limit) pair solved at most once.
 </div>
 </div>
 </div>
@@ -454,7 +462,7 @@ Every unique (count, bag_limit) pair solved at most once.
 <h3 style="color:var(--amber)">Q: Why a table? Why 2D?</h3>
 
 <p>Look at your recursive function signature:</p>
-<pre><code>def max_value(treasures, bag_limit, count):</code></pre>
+<pre><code>def max_value(treasures, bag_limit, index):</code></pre>
 
 <p>Cross out what stays the same across every recursive call:</p>
 <div style="display:grid;grid-template-columns:auto 1fr auto;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:12px 0">
@@ -464,8 +472,8 @@ Every unique (count, bag_limit) pair solved at most once.
 <div style="padding:10px 14px;background:var(--card2);font-weight:700"><code>bag_limit</code></div>
 <div style="padding:10px 14px">Goes down when you GRAB an item</div>
 <div style="padding:10px 14px;color:var(--green);font-weight:700">CHANGES &#x2713;</div>
-<div style="padding:10px 14px;background:var(--card2);font-weight:700"><code>count</code></div>
-<div style="padding:10px 14px">Goes down as you move to the next item</div>
+<div style="padding:10px 14px;background:var(--card2);font-weight:700"><code>index</code></div>
+<div style="padding:10px 14px">Goes up as you move to the next item</div>
 <div style="padding:10px 14px;color:var(--green);font-weight:700">CHANGES &#x2713;</div>
 </div>
 
@@ -477,7 +485,7 @@ Every unique (count, bag_limit) pair solved at most once.
 <div class="walkthrough-section" style="border-left-color:var(--amber)">
 <h3 style="color:var(--amber)">Q: What are the rows? What are the columns?</h3>
 
-<p>The two changing variables are <code>count</code> (items) and <code>bag_limit</code> (capacity). Each becomes one axis:</p>
+<p>The two changing variables are <code>index</code> (which item) and <code>bag_limit</code> (capacity). Each becomes one axis:</p>
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0">
 <div style="background:var(--card2);border-radius:8px;padding:14px">
@@ -499,10 +507,10 @@ Every unique (count, bag_limit) pair solved at most once.
 <h3 style="color:var(--amber)">Q: Why is the first row all zeros?</h3>
 
 <p>Look at your recursive base case:</p>
-<pre><code>if count == 0 or bag_limit == 0:
+<pre><code>if index == len(treasures) or bag_limit == 0:
     return 0</code></pre>
 
-<p><code>count == 0</code> means "no items to consider." Row 0 in the table is exactly that: zero items available.</p>
+<p><code>index == len(treasures)</code> means "we've walked past every item, nothing left." Row 0 in the table represents the same idea: zero items available.</p>
 <p>With zero items, no matter how much capacity you have (0 kg, 1 kg, ... 7 kg), the best value is always <strong>$0</strong>. You have nothing to grab.</p>
 
 <div style="overflow-x:auto;margin:12px 0">
@@ -516,7 +524,7 @@ Every unique (count, bag_limit) pair solved at most once.
 <tr><td style="color:var(--muted)">+ Platinum</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 </table>
 </div>
-<p style="font-size:.9em"><strong>Recursion says:</strong> <code>count == 0 &rarr; return 0</code>. <strong>Table says:</strong> row 0 = all zeros. Same thing.</p>
+<p style="font-size:.9em"><strong>Recursion says:</strong> <code>index == len(treasures) &rarr; return 0</code>. <strong>Table says:</strong> row 0 = all zeros. Same thing.</p>
 </div>
 
 <!-- Q4: Why is the first column all zeros? -->
@@ -552,8 +560,8 @@ Every unique (count, bag_limit) pair solved at most once.
 <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center">
 <div>
 <div style="font-size:.8em;color:var(--muted);margin-bottom:4px">RECURSION SAYS:</div>
-<pre style="margin:0;font-size:.85em"><code>return max_value(treasures, bag_limit, count - 1)</code></pre>
-<div style="font-size:.85em;margin-top:6px">"This item doesn't fit. Pretend it doesn't exist. Solve with one fewer item, same capacity."</div>
+<pre style="margin:0;font-size:.85em"><code>return max_value(treasures, bag_limit, index + 1)</code></pre>
+<div style="font-size:.85em;margin-top:6px">"This item doesn't fit. Move to the next one, same capacity."</div>
 </div>
 <div style="font-size:1.5em;color:var(--muted)">&rarr;</div>
 <div>
@@ -569,8 +577,8 @@ Every unique (count, bag_limit) pair solved at most once.
 <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center">
 <div>
 <div style="font-size:.8em;color:var(--muted);margin-bottom:4px">RECURSION SAYS:</div>
-<pre style="margin:0;font-size:.85em"><code>grab = value + max_value(bag_limit - weight, count - 1)
-skip = max_value(bag_limit, count - 1)
+<pre style="margin:0;font-size:.85em"><code>grab = value + max_value(bag_limit - weight, index + 1)
+skip = max_value(bag_limit, index + 1)
 return max(grab, skip)</code></pre>
 </div>
 <div style="font-size:1.5em;color:var(--muted)">&rarr;</div>
@@ -725,19 +733,22 @@ That's it. Every cell, same logic.
 <p>Every line maps to something we just derived:</p>
 
 <pre><code>def max_value(treasures, bag_limit):
-    table = [[0] * (bag_limit + 1)                  # first row + col = all zeros (base case)
-             for _ in range(len(treasures) + 1)]
-    for row in range(1, len(treasures) + 1):         # row by row (each item)
-        name, weight, value = treasures[row - 1]     # row 1 = Gold (index 0), row 2 = Ruby (index 1)...
-        without_this = table[row - 1]                 # the row above = world before this item existed
-        for cap in range(1, bag_limit + 1):           # column by column (each capacity)
-            if weight <= cap:                          # does this item fit?
-                grab = value + without_this[cap - weight]   # GRAB: value + row above, left by weight
-                skip = without_this[cap]                     # SKIP: row above, same column
-                table[row][cap] = max(grab, skip)            # pick the better one
+    count = len(treasures)
+    table = [[0] * (bag_limit + 1) for _ in range(count + 1)]
+
+    for row in range(1, count + 1):
+        name, weight, value = treasures[row - 1]
+        without_this = table[row - 1]
+
+        for cap in range(1, bag_limit + 1):
+            if weight > cap:
+                table[row][cap] = without_this[cap]
             else:
-                table[row][cap] = without_this[cap]  # NO: copy from above (can't use this item)
-    return table[len(treasures)][bag_limit]           # bottom-right = all items, full capacity</code></pre>
+                grab = value + without_this[cap - weight]
+                skip = without_this[cap]
+                table[row][cap] = max(grab, skip)
+
+    return table[count][bag_limit]</code></pre>
 </div>
 
 <!-- Pages 8-10: Family Tree -->
@@ -758,92 +769,121 @@ That's it. Every cell, same logic.
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">1</span> Subset Sum</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
-<div class="sbox"><div class="sl" style="color:var(--blue)">THE TWEAK</div>
-Values = weights. Answer is True/False, not max. "Can I pick items that sum to exactly S?"</div>
-<pre><code>def subsetSum(nums, target):
-    dp = [False] * (target + 1)
-    dp[0] = True
-    for num in nums:
-        for j in range(target, num - 1, -1):
-            dp[j] = dp[j] or dp[j - num]
-    return dp[target]</code></pre>
+<img src="dp/images/family1_child1_A.png" alt="Subset Sum: the problem, brute force explosion, and why we look at one number at a time" class="scene-img">
+<img src="dp/images/family1_child1_B.png" alt="Finding the choices: take or leave each number, how each choice creates a smaller problem" class="scene-img">
+<img src="dp/images/family1_child1_C.png" alt="Full recursion tree for [3,2,1] target 3, showing every take/leave branch" class="scene-img">
+<img src="dp/images/family1_child1_D.png" alt="Base cases and the code, every line derived from the choices" class="scene-img">
+<div class="sbox"><div class="sl" style="color:var(--blue)">THE KEY IDEA</div>
+<code>target</code> = "how much more do I need to collect." Grab a number: target shrinks. Skip: target stays. When target hits 0, the jar is full. Return True.</div>
+<pre><code>def can_reach(nums, target, index):
+    if target == 0:
+        return True
+    if index == len(nums) or target < 0:
+        return False
+
+    if nums[index] > target:
+        return can_reach(nums, target, index + 1)
+
+    grab = can_reach(nums, target - nums[index], index + 1)
+    skip = can_reach(nums, target, index + 1)
+    return grab or skip</code></pre>
 </div></div>
 
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">2</span> Equal Sum Partition</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
-<div class="sbox"><div class="sl" style="color:var(--blue)">THE TWEAK</div>
-Target = totalSum / 2, then run Subset Sum. "Can I split into two groups with equal sum?" If total is odd, immediately False.</div>
-<pre><code>def canPartition(nums):
+<img src="dp/images/family1_child2_A.png" alt="Equal Sum Partition: the problem, splitting into two equal groups" class="scene-img">
+<img src="dp/images/family1_child2_B.png" alt="Why finding half is enough, reduction to Subset Sum" class="scene-img">
+<div class="sbox"><div class="sl" style="color:var(--blue)">THE INSIGHT</div>
+If total is odd, immediately False. If even, can I pick items summing to total/2? That's Subset Sum. If Bag A holds exactly half, Bag B automatically holds the other half.</div>
+<pre><code>def can_partition(nums):
     total = sum(nums)
-    if total % 2: return False
-    return subsetSum(nums, total // 2)</code></pre>
+
+    if total % 2 != 0:
+        return False
+
+    target = total // 2
+    return can_reach(nums, target, 0)</code></pre>
 </div></div>
 
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">3</span> Count of Subsets with Sum</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
-<div class="sbox"><div class="sl" style="color:var(--blue)">THE TWEAK</div>
-Replace <code>max()</code> with <code>+=</code>. Count instead of optimize. "HOW MANY subsets sum to S?"</div>
-<pre><code>def countSubsets(nums, target):
-    dp = [0] * (target + 1)
-    dp[0] = 1
-    for num in nums:
-        for j in range(target, num - 1, -1):
-            dp[j] += dp[j - num]
-    return dp[target]</code></pre>
+<img src="dp/images/family1_child3_A.png" alt="Count Subsets: the problem, how many groups add up to the target" class="scene-img">
+<img src="dp/images/family1_child3_B.png" alt="The recursion tree showing counting, OR vs PLUS" class="scene-img">
+<img src="dp/images/family1_child3_C.png" alt="Base cases return 1/0 instead of True/False, code and family pattern" class="scene-img">
+<div class="sbox"><div class="sl" style="color:var(--blue)">THE KEY IDEA</div>
+Same choices: take or leave. But combine with <code>+</code> instead of <code>or</code>. Base case returns 1 (one valid way) or 0 (no ways), not True/False.</div>
+<pre><code>def count_subsets(nums, target, index):
+    if target == 0:
+        return 1
+    if index == len(nums) or target < 0:
+        return 0
+
+    grab = count_subsets(nums, target - nums[index], index + 1)
+    skip = count_subsets(nums, target, index + 1)
+    return grab + skip</code></pre>
 </div></div>
 
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">4</span> Minimum Subset Sum Difference</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
-<div class="sbox"><div class="sl" style="color:var(--blue)">THE TWEAK</div>
-Use Subset Sum table's last row to find which sums are achievable. Pick the achievable sum closest to totalSum/2. Difference = totalSum - 2 * closestSum.</div>
-<pre><code>def minimumDifference(nums):
+<img src="dp/images/family1_child4_A.png" alt="Min Subset Diff: the problem, closer to half means smaller gap" class="scene-img">
+<img src="dp/images/family1_child4_B.png" alt="The code: build Subset Sum table then scan for best achievable sum" class="scene-img">
+<div class="sbox"><div class="sl" style="color:var(--blue)">THE INSIGHT</div>
+The closer one group's sum is to total/2, the smaller the difference. Run Subset Sum for all targets up to half, then scan for the largest achievable sum. Difference = total - 2 * closest.</div>
+<pre><code>def min_difference(nums):
     total = sum(nums)
     half = total // 2
-    dp = [False] * (half + 1)
-    dp[0] = True
+
+    achievable = [False] * (half + 1)
+    achievable[0] = True
+
     for num in nums:
         for j in range(half, num - 1, -1):
-            dp[j] = dp[j] or dp[j - num]
-    for j in range(half, -1, -1):
-        if dp[j]:
-            return total - 2 * j</code></pre>
+            achievable[j] = achievable[j] or achievable[j - num]
+
+    for closest in range(half, -1, -1):
+        if achievable[closest]:
+            return total - 2 * closest</code></pre>
 </div></div>
 
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">5</span> Target Sum (LeetCode #494)</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
-<div class="sbox"><div class="sl" style="color:var(--blue)">THE TWEAK</div>
-Assign +/- to each number to reach target. Math reduction: P - (total - P) = target, so P = (total + target) / 2. Then Count of Subsets with Sum = P.</div>
-<pre><code>def findTargetSumWays(nums, target):
+<img src="dp/images/family1_child5_A.png" alt="Target Sum: the problem, it looks different but there's a math trick" class="scene-img">
+<img src="dp/images/family1_child5_B.png" alt="The algebra reduction: P = (total+target)/2, then Count Subsets" class="scene-img">
+<div class="sbox"><div class="sl" style="color:var(--blue)">THE MATH TRICK</div>
+Assign +/- to each number. Let P = sum of + numbers. Then P = (total + target) / 2. Count subsets summing to P. If (total + target) is odd, return 0.</div>
+<pre><code>def find_target_sum_ways(nums, target):
     total = sum(nums)
-    if (total + target) % 2 or abs(target) > total: return 0
+
+    if (total + target) % 2 != 0:
+        return 0
+    if abs(target) > total:
+        return 0
+
     goal = (total + target) // 2
-    dp = [0] * (goal + 1)
-    dp[0] = 1
-    for num in nums:
-        for a in range(goal, num - 1, -1):
-            dp[a] += dp[a - num]
-    return dp[goal]</code></pre>
+    return count_subsets(nums, goal, 0)</code></pre>
 </div></div>
 
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">6</span> Count Subsets with Given Difference</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
-<div class="sbox"><div class="sl" style="color:var(--blue)">THE TWEAK</div>
-S1 - S2 = diff. Same math as Target Sum: target = (total + diff) / 2, then Count of Subsets.</div>
-<pre><code>def countWithDiff(nums, diff):
+<img src="dp/images/family1_child6_A.png" alt="Given Difference: the problem, same algebra as Target Sum" class="scene-img">
+<img src="dp/images/family1_child6_B.png" alt="Complete knapsack family tree, all 6 children connected" class="scene-img">
+<div class="sbox"><div class="sl" style="color:var(--blue)">THE PATTERN</div>
+S1 - S2 = diff. Same algebra as Target Sum: S1 = (total + diff) / 2. Then Count Subsets. Identical formula, identical code.</div>
+<pre><code>def count_with_diff(nums, diff):
     total = sum(nums)
-    if (total + diff) % 2 or abs(diff) > total: return 0
+
+    if (total + diff) % 2 != 0:
+        return 0
+    if abs(diff) > total:
+        return 0
+
     target = (total + diff) // 2
-    dp = [0] * (target + 1)
-    dp[0] = 1
-    for num in nums:
-        for j in range(target, num - 1, -1):
-            dp[j] += dp[j - num]
-    return dp[target]</code></pre>
+    return count_subsets(nums, target, 0)</code></pre>
 </div></div>
 
 </div>
@@ -1017,16 +1057,16 @@ Same take-or-skip, but circular constraint. Can't rob both first and last. Run t
 <div class="sbox"><div class="sl" style="color:var(--blue)">THE CHOICES</div>
 At each number: assign + or assign -. This is 0/1 knapsack (each number used once). Math trick: P - (total - P) = target means P = (total + target) / 2. Reduces to Count of Subsets with Sum.</div>
 
-<pre><code>def findTargetSumWays(nums, target):
+<pre><code>def find_target_sum_ways(nums, target):
     total = sum(nums)
-    if (total + target) % 2 or abs(target) > total: return 0
+
+    if (total + target) % 2 != 0:
+        return 0
+    if abs(target) > total:
+        return 0
+
     goal = (total + target) // 2
-    dp = [0] * (goal + 1)
-    dp[0] = 1
-    for num in nums:
-        for a in range(goal, num - 1, -1):
-            dp[a] += dp[a - num]
-    return dp[goal]</code></pre>
+    return count_subsets(nums, goal, 0)</code></pre>
 </div></div>
 
 <!-- ============ UNBOUNDED KNAPSACK PROBLEMS ============ -->
@@ -1360,7 +1400,7 @@ Overlapping subintervals. dp[0][3] and dp[2][5] both need dp[2][3]. Same range, 
 
 <div class="quiz" onclick="this.classList.toggle('show')">
 <strong>4. How do you initialize the table?</strong>
-<div class="ans"><strong>From the recursive base case.</strong> Whatever the recursion returns at the base (<code>count==0</code> or <code>bag_limit==0</code>), fill that into the corresponding row/column of the table. Recursive base case = table initialization.</div>
+<div class="ans"><strong>From the recursive base case.</strong> Whatever the recursion returns at the base (<code>index == len(treasures)</code> or <code>bag_limit == 0</code>), fill that into the corresponding row/column of the table. Recursive base case = table initialization.</div>
 </div>
 
 <div class="quiz" onclick="this.classList.toggle('show')">

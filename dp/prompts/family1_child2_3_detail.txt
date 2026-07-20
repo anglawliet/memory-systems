@@ -1,0 +1,432 @@
+CHILD 2: EQUAL SUM PARTITION + CHILD 3: COUNT SUBSETS (FROM SCRATCH)
+==============================================================
+Child 2: 2 images. Child 3: 3 images. Total: 5 images.
+Build each from scratch. Show how to arrive at the choices.
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: dark navy/charcoal (#1a1a2e). Heist atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: bright blue (#3B82F6).
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for TAKE paths. Red: (#EF4444) for LEAVE paths.
+- Blue accent lighting throughout (neon heist feel).
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: Equal Sum Partition - The Problem + The Insight -> family1_child2_A.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections stacked vertically.
+
+SECTION 1, "THE PROBLEM" (blue header, about 35%):
+
+Big header: "EQUAL SUM PARTITION"
+Subtitle: "Can I split ALL numbers into two groups with equal total?"
+
+Show Kit with TWO bags (Bag A and Bag B) on a balance scale.
+EVERY number must go into one bag or the other. No leaving anything behind.
+
+Numbers: [1, 5, 11, 5]   total = 22
+
+Show a GOOD split:
+  Bag A: {11, 0} = 11  (wait, that uses 0... let me fix)
+  Bag A: {11} = 11
+  Bag B: {1, 5, 5} = 11
+  Scale: perfectly balanced! Green glow. "Equal! Answer: True"
+
+Show a BAD split:
+  Bag A: {11, 5} = 16
+  Bag B: {1, 5} = 6
+  Scale: tilted heavily. Red. "Not equal."
+
+Kit: "Every number goes somewhere. Can both bags weigh the same?"
+
+SECTION 2, "THE INSIGHT" (gold header, biggest section, about 40%):
+
+Header: "WHEN IS THIS POSSIBLE?"
+
+Step 1: "Add everything up."
+  [1, 5, 11, 5] = 22
+
+Step 2: "Is the total even?"
+  22 / 2 = 11. YES, it's even.
+  Show: if total was 23, then 23/2 = 11.5. RED X.
+  "Can't split an odd total equally. Immediately False."
+
+Step 3: "If even, can I pick numbers that sum to HALF?"
+  Half = 11. "Can I pick numbers from [1, 5, 11, 5] that add to 11?"
+  {11} = 11. YES!
+  "If Bag A holds exactly half, Bag B automatically holds the other half!"
+
+Big arrow with lightbulb:
+  "EQUAL PARTITION = SUBSET SUM with target = total / 2"
+  "We already know how to solve Subset Sum!"
+
+SECTION 3, "THE CODE" (gray header, about 25%):
+
+  def can_partition(nums):
+      total = sum(nums)
+
+      if total % 2 != 0:
+          return False
+
+      target = total // 2
+      return can_reach(nums, target, 0)
+
+Annotate:
+  total % 2 != 0 <- "Odd? Impossible. Stop immediately."
+  total // 2 <- "Half the total is our target."
+  can_reach(nums, target, 0) <- "Subset Sum! We solved this."
+
+Kit: "No new choices to learn. Just recognize: equal split = find half."
+
+
+================================================================================
+PROMPT 2: Equal Sum Partition - Why It Works Visually -> family1_child2_B.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "WHY FINDING HALF IS ENOUGH" (blue header, about 55%):
+
+Header: "If Bag A = half, Bag B fills itself"
+
+Show a visual proof with [1, 5, 11, 5], total = 22, half = 11:
+
+Draw ALL numbers as blocks in a horizontal bar (like a stacked bar chart):
+  [1][5][11][5] = 22 total (full bar)
+
+Now show picking {11} for Bag A:
+  BAG A: [11] = 11 (green, left half of bar)
+  BAG B: [1][5][5] = 11 (blue, right half of bar)
+  "The rest is AUTOMATICALLY the other half!"
+
+Show another valid pick {1, 5, 5} for Bag A:
+  BAG A: [1][5][5] = 11 (green)
+  BAG B: [11] = 11 (blue)
+  "Same thing! Either group summing to half works."
+
+Gold box: "I don't need to check BOTH bags.
+If one bag hits half, the other bag has no choice.
+total - half = half."
+
+SECTION 2, "THE PATTERN: REDUCING TO A SOLVED PROBLEM" (gold, about 45%):
+
+Header: "This is a REDUCTION"
+
+Show a flowchart:
+  "Can I split equally?"
+     |
+  "Is total even?" --- NO --> "Return False"
+     |
+    YES
+     |
+  "Can I find a subset summing to total/2?"
+     |
+  "That's SUBSET SUM! I already know how to solve this."
+     |
+  "Same choices: at each number, take or leave.
+   Same recursion. Same code. Different QUESTION."
+
+Show three problems stacked, showing the family:
+  SUBSET SUM:       "Can I pick items summing to target?"
+  EQUAL PARTITION:  "Can I pick items summing to total/2?"
+  (same thing, target just equals total/2!)
+
+Kit: "Half the DP problems aren't new problems.
+They're old problems wearing a costume.
+Strip the costume, find the problem you already solved."
+
+Gold box: "HOW TO SPOT IT: any time the question says 'split into two equal groups',
+'divide equally', or 'partition with same sum', it's Subset Sum with target = total/2."
+
+
+================================================================================
+PROMPT 3: Count of Subsets with Sum - The Problem -> family1_child3_A.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+SECTION 1, "THE PROBLEM" (blue header, about 40%):
+
+Big header: "COUNT SUBSETS WITH SUM"
+Subtitle: "HOW MANY different groups add up to the target?"
+
+Show Kit with a TALLY COUNTER (clicker) in hand.
+Numbers: [1, 2, 3, 4, 5], target = 5
+
+"Not just 'can I?' but 'how MANY ways can I?'"
+
+Show ALL valid subsets:
+  {5}       = 5   Way 1. Green checkmark.
+  {1, 4}    = 5   Way 2. Green checkmark.
+  {2, 3}    = 5   Way 3. Green checkmark.
+
+Kit holding up 3 fingers: "THREE ways to reach 5."
+
+Show some that don't work (dimmed, red X):
+  {1, 2}    = 3   Nope.
+  {3, 4}    = 7   Nope.
+  {1, 2, 3} = 6   Nope.
+
+SECTION 2, "HOW IS THIS DIFFERENT FROM SUBSET SUM?" (gold, about 30%):
+
+Header: "Subset Sum stops at 'yes'. This one COUNTS."
+
+Side by side comparison:
+  SUBSET SUM:              COUNT SUBSETS:
+  "Can I reach 5?"         "How MANY ways can I reach 5?"
+  Finds {5}. "Yes!"        Finds {5}, {1,4}, {2,3}. "3 ways!"
+  Answer: True/False       Answer: a NUMBER (3)
+
+  "Subset Sum asks: does a path exist?
+   Count Subsets asks: how many paths exist?"
+
+SECTION 3, "THE CHOICES" (amber header, about 30%):
+
+Header: "Same choices. Different combine."
+
+"At each number: TAKE or LEAVE. Same as Subset Sum."
+Show the fork at number [2], target = 5:
+  TAKE 2: "How many ways to reach 3 from the rest?"
+  LEAVE 2: "How many ways to reach 5 from the rest?"
+
+BUT the combine step:
+  "Subset Sum:   take OR leave     (did EITHER work?)"
+  "Count Subsets: take + leave     (add ALL the ways together)"
+
+Kit: "OR counts 'at least one'. PLUS counts 'all of them'."
+
+Arrow: "NEXT: See the tree and watch the counting happen."
+
+
+================================================================================
+PROMPT 4: Count Subsets - The Tree + How Counting Works -> family1_child3_B.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE TREE" (blue header, about 65%):
+
+Header: "WATCH THE COUNTING"
+Subtitle: "Numbers = [2, 3, 5], target = 5. How many subsets sum to 5?"
+
+Draw the recursion tree. Each node shows (number being decided, current target).
+Green = TAKE, Red = LEAVE.
+
+                    [Looking at 2]
+                     target = 5
+                    /            \
+              TAKE 2           LEAVE 2
+                 |                |
+           [Looking at 3]    [Looking at 3]
+            target = 3        target = 5
+            /        \        /        \
+       TAKE 3    LEAVE 3  TAKE 3   LEAVE 3
+          |          |       |         |
+      [Look at 5] [Look 5] [Look 5] [Look 5]
+      target=0   target=3  target=2  target=5
+        |          |         |          |
+     ZERO!     TAKE 5?    TAKE 5?    TAKE 5
+     1 WAY     3<5? no,   2<5? no,   target=0
+               but 5>3    but 5>2    ZERO!
+               must leave must leave 1 WAY
+               target=3   target=2
+               no nums    no nums
+               0 WAYS     0 WAYS
+
+Wait, let me recalculate. [2, 3, 5], target = 5:
+
+At [2], target=5:
+  TAKE 2: target=3, look at [3]
+    TAKE 3: target=0. HIT ZERO! 1 way. (subset {2,3})
+    LEAVE 3: target=3, look at [5]
+      TAKE 5: 5 > 3, can't take. Must leave.
+      LEAVE 5: target=3, no nums. 0 ways.
+      Result: 0 + 0 = 0
+    Result: 1 + 0 = 1
+  LEAVE 2: target=5, look at [3]
+    TAKE 3: target=2, look at [5]
+      TAKE 5: 5 > 2, can't take. Must leave.
+      LEAVE 5: target=2, no nums. 0 ways.
+      Result: 0 + 0 = 0
+    LEAVE 3: target=5, look at [5]
+      TAKE 5: target=0. HIT ZERO! 1 way. (subset {5})
+      LEAVE 5: target=5, no nums. 0 ways.
+      Result: 1 + 0 = 1
+    Result: 0 + 1 = 1
+  TOTAL: 1 + 1 = 2
+
+Show this tree clearly. At each leaf:
+  target = 0: green card, "1 WAY" (this combination works)
+  no nums left: red card, "0 WAYS" (this combination failed)
+
+At each internal node, show the ADDITION bubbling up:
+  "1 + 0 = 1 ways"
+  "0 + 1 = 1 ways"
+  "1 + 1 = 2 ways total"
+
+Label the two successful paths:
+  Path 1: TAKE 2, TAKE 3 -> {2, 3} = 5
+  Path 2: LEAVE 2, LEAVE 3, TAKE 5 -> {5} = 5
+
+SECTION 2, "OR vs PLUS" (gold header, about 35%):
+
+Header: "THE CRUCIAL DIFFERENCE"
+
+Show side by side:
+
+SUBSET SUM (or):                  COUNT SUBSETS (+):
+"Does ANY path hit zero?"         "How MANY paths hit zero?"
+True or False = True              1 + 0 = 1
+True or True = True               1 + 1 = 2
+False or False = False            0 + 0 = 0
+"One success is enough"           "Every success counts"
+
+Kit: "Same tree. Same choices. Just a different question at the bottom.
+Subset Sum asks 'any?' Count Subsets asks 'how many?'"
+
+Gold box:
+  "Subset Sum: base case returns True/False. Combine with OR.
+   Count Subsets: base case returns 1/0. Combine with +.
+   That's the ONLY difference."
+
+
+================================================================================
+PROMPT 5: Count Subsets - Base Cases + Code -> family1_child3_C.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+SECTION 1, "BASE CASES" (amber header, about 25%):
+
+Two cards:
+
+GREEN CARD: "target == 0: return 1"
+  "I've collected exactly the target! This combination works."
+  "That's ONE valid way. Count it."
+  Kit celebrating.
+
+RED CARD: "no numbers left, target > 0: return 0"
+  "I still need more but nothing's left."
+  "ZERO valid ways from here."
+  Kit with empty hands.
+
+Note: "Compare to Subset Sum: True becomes 1, False becomes 0.
+Same idea, but in counting language."
+
+SECTION 2, "THE CODE" (gray header, about 40%):
+
+Header: "FROM REASONING TO CODE"
+
+  def count_subsets(nums, target, index):
+
+      if target == 0:                <- "Found a valid group! Count: 1"
+          return 1
+
+      if index == len(nums):         <- "No items left. Count: 0"
+          return 0
+
+      if nums[index] > target:       <- "Too big. Must leave."
+          return count_subsets(
+              nums, target,
+              index + 1)
+
+      take = count_subsets(          <- "TAKE: target shrinks"
+          nums,
+          target - nums[index],
+          index + 1)
+
+      leave = count_subsets(         <- "LEAVE: target stays"
+          nums,
+          target,
+          index + 1)
+
+      return take + leave            <- "ADD the ways. Not OR."
+
+Annotate with arrows. Highlight "return take + leave" in gold.
+
+SECTION 3, "THE FAMILY SO FAR" (gold header, about 35%):
+
+Header: "SEE THE PATTERN GROWING"
+
+Show three columns:
+
+  SUBSET SUM:           COUNT SUBSETS:         (next children...)
+  "Can I reach it?"     "How many ways?"
+
+  Choices:              Choices:
+  take or leave         take or leave           SAME!
+
+  Combine:              Combine:
+  take OR leave         take + leave            DIFFERENT!
+
+  Base:                 Base:
+  True / False          1 / 0                   SAME idea!
+
+  Result:               Result:
+  True/False            a number                DIFFERENT!
+
+Kit: "The CHOICES never change. At each item: take or leave.
+What changes is the QUESTION you're asking about those choices.
+'Did it work?' vs 'How many times did it work?'"
+
+Gold box: "NEXT: Children 4, 5, 6 use MATH TRICKS to reduce
+to Subset Sum or Count Subsets. No new choices needed."

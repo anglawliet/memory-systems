@@ -1,0 +1,517 @@
+UNBOUNDED KNAPSACK CHILDREN: FULL PIPELINE FROM SCRATCH
+==============================================================
+Child 1: Coin Change min (3 images)
+Child 2: Coin Change 2 count (2 images)
+Child 3: Word Break (2 images)
+Total: 7 images.
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: dark navy/charcoal (#1a1a2e). Heist atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: teal (#14b8a6) for unbounded knapsack family.
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for USE AGAIN paths. Red: (#EF4444) for MOVE ON paths.
+- Teal accent lighting throughout.
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: Coin Change (minimum) - Problem + Choices -> family2_child1_A.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+SECTION 1, "THE PROBLEM" (teal header, about 35%):
+
+Big header: "COIN CHANGE"
+Subtitle: "What's the FEWEST coins I need to make this amount?"
+
+Show Kit at a vending machine. The machine shows: "INSERT $11"
+Kit has piles of coins (unlimited supply of each):
+  [1c] [1c] [1c]...   pile of 1-cent coins
+  [5c] [5c] [5c]...   pile of 5-cent coins
+  [6c] [6c] [6c]...   pile of 6-cent coins
+
+Show two attempts:
+  BAD: 11 x [1c] = 11 coins. Works but... 11 coins?!
+  GOOD: [5c] + [6c] = 2 coins! Much better.
+  BEST: [5c] + [6c] = 2 coins. That's the minimum.
+
+Kit: "I can use any coin as many times as I want.
+What's the FEWEST coins to reach exactly $11?"
+
+Warning box: "GREEDY DOESN'T WORK! Picking the biggest coin first:
+[6c] + [5c] = 11. Lucky! But for amount 10:
+Greedy: [6c] + [1c] + [1c] + [1c] + [1c] = 5 coins.
+Optimal: [5c] + [5c] = 2 coins. Greedy fails!"
+
+SECTION 2, "THE CHOICES" (gold header, about 35%):
+
+Header: "Same unbounded choice: USE AGAIN or MOVE ON"
+
+Kit at a fork with coin [5c], amount = 11:
+  GREEN: "USE [5c]. Amount: 11 -> 6. Stay at [5c]. Might use again."
+  RED: "MOVE ON. Done with [5c] forever. Try [6c] next."
+
+"If I USE a coin: amount shrinks by coin value. I STAY (can use it again)."
+"If I MOVE ON: amount stays. I advance to the next coin type."
+
+Show the chain:
+  At [5c], amount=11: USE. amount=6. Stay.
+  At [5c], amount=6: USE. amount=1. Stay.
+  At [5c], amount=1: 5>1, can't use. Forced to MOVE ON.
+  At [6c], amount=1: 6>1, can't use. MOVE ON.
+  At [1c], amount=1: USE. amount=0. DONE! 3 coins total (5+5+1).
+
+SECTION 3, "THE COMBINE STEP" (amber header, about 30%):
+
+Header: "min() instead of max()"
+
+  "Parent unbounded: max(take_again, move_on)  -> maximize VALUE"
+  "Coin Change:      min(use_again, move_on)   -> minimize COINS"
+
+  use_again = 1 + min_coins(coins, amount - coin, index)
+  move_on = min_coins(coins, amount, index + 1)
+  return min(use_again, move_on)
+
+  "The '1 +' counts each coin I use."
+  "min() picks the path with fewer coins."
+
+Base cases:
+  amount == 0: return 0. "No more money needed. Zero coins."
+  no coins left, amount > 0: return infinity. "Can't make it. Impossible."
+
+
+================================================================================
+PROMPT 2: Coin Change - The Tree -> family2_child1_B.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE TREE" (teal header, about 65%):
+
+Header: "WATCH THE MINIMUM COINS"
+Subtitle: "Coins = [5, 1], amount = 7"
+
+Draw the recursion tree. Show (coin being considered, remaining amount).
+Green = USE AGAIN, Red = MOVE ON.
+
+Start: (coin=5, amount=7)
+
+  USE 5: (coin=5, amount=2). 5>2, forced MOVE ON.
+    (coin=1, amount=2). USE 1: (coin=1, amount=1). USE 1: (coin=1, amount=0).
+    0! Return 0. Path: 5+1+1 = 3 coins.
+
+  MOVE ON: (coin=1, amount=7). USE 1 seven times.
+    1+1+1+1+1+1+1 = 7 coins.
+
+Show both paths:
+  Path 1: [5] + [1] + [1] = 3 coins. GREEN highlight.
+  Path 2: [1] x 7 = 7 coins. Dimmed.
+
+"min(3, 7) = 3. Answer: 3 coins."
+
+Show that (coin=1, amount=2) appears in BOTH branches:
+"Same subproblem! Memoize to avoid re-solving."
+
+SECTION 2, "THE CODE" (gray header, about 35%):
+
+Header: "THE OPTIMIZED 1D CODE"
+
+  def coin_change(coins, amount):
+      dp = [float('inf')] * (amount + 1)
+      dp[0] = 0
+
+      for coin in coins:
+          for a in range(coin, amount + 1):
+              dp[a] = min(dp[a], dp[a - coin] + 1)
+
+      if dp[amount] == float('inf'):
+          return -1
+      return dp[amount]
+
+Annotate:
+  dp[0] = 0 <- "0 coins to make amount 0"
+  float('inf') <- "Impossible until proven otherwise"
+  range(coin, amount + 1) <- "LEFT to RIGHT! Allows reuse."
+  dp[a - coin] + 1 <- "Use this coin (+1) on top of best for remainder"
+  min() <- "Keep the fewer coins"
+
+Gold box: "LEFT TO RIGHT loop = unbounded (reuse allowed).
+Compare to 0/1 Subset Sum which loops RIGHT TO LEFT (no reuse)."
+
+
+================================================================================
+PROMPT 3: Coin Change - Greedy vs DP -> family2_child1_C.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "WHY GREEDY FAILS" (red header, about 50%):
+
+Header: "THE GREEDY TRAP"
+Subtitle: "Coins = [1, 5, 6], amount = 10"
+
+Show GREEDY approach:
+  "Always pick the BIGGEST coin that fits."
+  Step 1: 6 fits in 10. Take [6]. Remaining: 4.
+  Step 2: 6 > 4. Skip. 5 > 4. Skip. Take [1]. Remaining: 3.
+  Step 3: Take [1]. Remaining: 2.
+  Step 4: Take [1]. Remaining: 1.
+  Step 5: Take [1]. Remaining: 0.
+  GREEDY: [6] + [1] + [1] + [1] + [1] = 5 coins. Red X.
+
+Show DP approach:
+  "Try ALL combinations. Find the minimum."
+  [5] + [5] = 2 coins. Green checkmark. OPTIMAL!
+
+Kit: "Greedy picks what LOOKS best right now.
+DP explores EVERY path and picks what IS best."
+
+Visual: Show a fork where greedy takes the wrong path.
+  At amount=10: Greedy goes to [6] (looks bigger = looks better).
+  But the path through [5]+[5] is shorter (2 coins vs 5).
+
+SECTION 2, "WHEN TO USE DP OVER GREEDY" (gold header, about 50%):
+
+Header: "GREEDY WORKS ONLY FOR SPECIAL COIN SETS"
+
+Show examples:
+  US coins [1, 5, 10, 25]: Greedy WORKS.
+  (Each larger coin is a multiple or near-multiple of smaller ones.)
+
+  Arbitrary coins [1, 5, 6]: Greedy FAILS.
+  (6 is NOT a multiple of 5. They interfere.)
+
+  "Unless the coins have a special mathematical property,
+  you NEED DP to guarantee the minimum."
+
+Kit: "When in doubt, use DP. Greedy is a gamble."
+
+Gold box: "INTERVIEW TIP: If the problem says 'minimum coins',
+think Unbounded Knapsack with min(). Not greedy."
+
+
+================================================================================
+PROMPT 4: Coin Change 2 (count) - Problem + Choices -> family2_child2_A.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+SECTION 1, "THE PROBLEM" (teal header, about 35%):
+
+Big header: "COIN CHANGE 2"
+Subtitle: "HOW MANY different combinations make the amount?"
+
+Coins = [1, 2, 5], amount = 5
+
+Show ALL valid combinations:
+  [5]             = 5   Way 1
+  [2] + [2] + [1] = 5   Way 2
+  [2] + [1] + [1] + [1] = 5   Way 3
+  [1] x 5         = 5   Way 4
+  "4 combinations."
+
+Kit: "Not the fewest coins. Not the most coins. HOW MANY WAYS."
+
+Note: "[2]+[1]+[1]+[1] and [1]+[2]+[1]+[1] are the SAME combination.
+Order doesn't matter. {2,1,1,1} counted once."
+
+SECTION 2, "SAME CHOICES, DIFFERENT COMBINE" (gold header, about 35%):
+
+Header: "USE AGAIN or MOVE ON. Combine with +"
+
+At coin [2], amount = 5:
+  USE [2]: "How many ways to make 3 with [2] and remaining coins?"
+  MOVE ON: "How many ways to make 5 with remaining coins only?"
+
+  ways = use_again + move_on
+  "Add ALL the ways. Same as Count Subsets, but with reuse."
+
+Compare three siblings:
+  PARENT:        max(take_again, move_on)  "Best value"
+  COIN CHANGE:   min(use_again, move_on)   "Fewest coins"
+  COIN CHANGE 2: use_again + move_on       "Total ways"
+
+  "SAME choice. DIFFERENT combine."
+
+SECTION 3, "WHY OUTER LOOP = COINS" (amber header, about 30%):
+
+Header: "Avoiding duplicate counting"
+
+"If we loop amount first, then coins, we'd count
+[1,2] and [2,1] as DIFFERENT. But they're the same combination!"
+
+Show:
+  WRONG (inner = coins): at amount 3, tries [1]+[2] AND [2]+[1]. Counts twice!
+  RIGHT (outer = coins): process [1] fully, then [2], then [5].
+    When processing [2], all [1]s are already counted. No going back.
+    [2]+[1] is counted but [1]+[2] can't happen (1 was processed earlier).
+
+  "Outer loop = coins means we process coins IN ORDER.
+  Once we move past a coin, we never go back to it.
+  This ensures each combination is counted exactly once."
+
+Gold box: "This is the COMBINATIONS vs PERMUTATIONS distinction.
+Outer=coins gives COMBINATIONS (order doesn't matter).
+Outer=amounts would give PERMUTATIONS (order matters)."
+
+
+================================================================================
+PROMPT 5: Coin Change 2 - Code + Comparison -> family2_child2_B.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE CODE" (gray header, about 50%):
+
+  def count_ways(coins, amount):
+      dp = [0] * (amount + 1)
+      dp[0] = 1
+
+      for coin in coins:
+          for a in range(coin, amount + 1):
+              dp[a] += dp[a - coin]
+
+      return dp[amount]
+
+Annotate:
+  dp[0] = 1 <- "One way to make 0: use no coins."
+  for coin in coins <- "OUTER loop = coins. Process each coin fully."
+  range(coin, amount + 1) <- "LEFT to RIGHT. Allows reuse."
+  dp[a] += dp[a - coin] <- "Add ways: using this coin + remaining."
+
+Show the dp array being filled for coins=[1,2], amount=4:
+
+  After processing coin=1:
+  dp = [1, 1, 1, 1, 1]
+  "Only one way with just 1s: [1,1,...,1]"
+
+  After processing coin=2:
+  dp = [1, 1, 2, 2, 3]
+  "Amount 4: {1,1,1,1}, {2,1,1}, {2,2}. Three ways."
+
+SECTION 2, "THE UNBOUNDED FAMILY TREE" (teal header, about 50%):
+
+Header: "ALL CHILDREN, ONE PATTERN"
+
+Tree diagram:
+  UNBOUNDED KNAPSACK (parent)
+  "Use again (STAY) or move on (ADVANCE)"
+    |
+    +-- COIN CHANGE (min coins)
+    |   combine: min(). base: 0 / infinity.
+    |   "Fewest coins to make amount"
+    |
+    +-- COIN CHANGE 2 (count ways)
+    |   combine: +. base: 1 / 0.
+    |   "How many combinations make amount"
+    |
+    +-- WORD BREAK
+        "Words are reusable items, positions are capacity"
+
+Show the pattern:
+  "The choice NEVER changes: use again or move on."
+  "What changes: max (value), min (coins), + (ways)"
+  "And the loop: always LEFT TO RIGHT (allows reuse)."
+
+Kit: "Same family structure as 0/1 knapsack.
+The core choice is the same. Only the combine step differs."
+
+
+================================================================================
+PROMPT 6: Word Break - Problem + Insight -> family2_child3_A.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+SECTION 1, "THE PROBLEM" (teal header, about 35%):
+
+Big header: "WORD BREAK"
+Subtitle: "Can I split this string into dictionary words?"
+
+Show Kit with a long string: "leetcode"
+And a dictionary (shown as a book or word cards):
+  ["leet", "code", "lee", "t"]
+
+Show: "leet" + "code" = "leetcode". Green check! "Can be segmented."
+
+Another example: "catsandog"
+Dictionary: ["cats", "dog", "sand", "and", "cat"]
+  "cats" + "and" + "og"? "og" not in dictionary. Red X.
+  "cat" + "sand" + "og"? Same problem. Red X.
+  "No valid segmentation. Return False."
+
+SECTION 2, "THE INSIGHT" (gold header, about 35%):
+
+Header: "WORDS ARE REUSABLE COINS"
+
+Show the analogy (big, clear):
+  COIN CHANGE:             WORD BREAK:
+  Coins: [1, 5, 6]        Words: ["leet", "code"]
+  Amount: 11               String length: 8
+  "Can I make 11?"         "Can I cover all 8 characters?"
+
+  Coins are REUSABLE       Words are REUSABLE
+  (use same coin again)    (use same word again)
+
+  "leetleetcode" with ["leet","code"]:
+  "leet" + "leet" + "code" = used "leet" TWICE!
+
+Kit: "The string is like a number line. Each word covers
+some positions. Can I tile the entire string with words?"
+
+Show the string as a ROW OF BOXES (like the dp array):
+  [l][e][e][t][c][o][d][e]
+   0  1  2  3  4  5  6  7
+
+  "leet" covers positions 0 to 3. Checkmark at position 4.
+  "code" covers positions 4 to 7. Checkmark at position 8.
+  "Both words tile the string perfectly!"
+
+SECTION 3, "THE CHOICES" (amber header, about 30%):
+
+Header: "At each position: which word fits here?"
+
+At position 0 of "leetcode":
+  Try "leet": matches s[0:4]! Jump to position 4.
+  Try "code": "code" != "leet". Doesn't match at position 0. Skip.
+  Try "lee":  matches s[0:3]! Jump to position 3.
+  Try "t":    "t" != "l". Doesn't match at position 0. Skip.
+
+"At each position, try ALL words. If one matches, jump ahead."
+"If I reach the end, the string is breakable!"
+
+Base case: position == len(string): "Covered everything! True."
+
+
+================================================================================
+PROMPT 7: Word Break - Code -> family2_child3_B.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE CODE" (gray header, about 55%):
+
+Header: "FROM REASONING TO CODE"
+
+  def word_break(s, word_dict):
+      words = set(word_dict)
+      dp = [False] * (len(s) + 1)
+      dp[0] = True
+
+      for end in range(1, len(s) + 1):
+          for start in range(end):
+              if dp[start] and s[start:end] in words:
+                  dp[end] = True
+                  break
+
+      return dp[len(s)]
+
+Annotate:
+  dp[0] = True <- "Empty prefix is always valid."
+  for end <- "Check each position: can I reach here?"
+  for start <- "Try every possible last word ending at 'end'."
+  dp[start] <- "Was the prefix up to 'start' valid?"
+  s[start:end] in words <- "Is this chunk a real word?"
+  dp[end] = True <- "Yes! I can reach position 'end'."
+  break <- "One valid way is enough. Stop checking."
+  dp[len(s)] <- "Can I reach the very end?"
+
+Show the dp array for "leetcode" with ["leet", "code"]:
+  Position: 0   1   2   3   4   5   6   7   8
+  dp:       T   F   F   F   T   F   F   F   T
+                              ^                ^
+                          "leet" ends       "code" ends
+                          here (valid!)     here (valid!)
+
+  "dp[4] = True because dp[0] is True AND s[0:4] = 'leet' is a word."
+  "dp[8] = True because dp[4] is True AND s[4:8] = 'code' is a word."
+
+SECTION 2, "HOW THIS CONNECTS TO UNBOUNDED KNAPSACK" (teal header, about 45%):
+
+Header: "THE ANALOGY"
+
+Show the connection:
+  UNBOUNDED KNAPSACK:              WORD BREAK:
+  Items (with weight)              Words (with length)
+  Bag capacity                     String length
+  "Does this item fit?"            "Does this word match here?"
+  Items are REUSABLE               Words are REUSABLE
+  Inner loop left to right         For each end, try each start
+
+  "Both allow reuse. Both build up from smaller valid states."
+
+Kit: "Word Break doesn't LOOK like a knapsack problem.
+But the structure is the same: reusable items filling a capacity.
+The 'items' are words. The 'capacity' is the string length."
+
+Gold box at bottom:
+  "THE UNBOUNDED FAMILY:
+   Same choice at the core: use this item again, or move on.
+   Coin Change: min coins. Coin Change 2: count ways. Word Break: can I tile?
+   All allow reuse. All loop left to right. One family."

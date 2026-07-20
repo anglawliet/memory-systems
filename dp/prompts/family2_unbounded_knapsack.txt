@@ -1,0 +1,346 @@
+UNBOUNDED KNAPSACK: FULL PIPELINE FROM SCRATCH
+==============================================================
+4 images. Teach unbounded knapsack the same way as staircase/subset sum.
+Key difference from 0/1: you can REUSE items. The choice becomes
+"take AGAIN (stay)" vs "move on (next item)."
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+NEW PROP for Unbounded Knapsack:
+- A GLOWING BLUE CLONING MACHINE (small device on a table, sci-fi looking).
+- When an item goes through it, an IDENTICAL COPY appears.
+- Shows the key concept: items can be DUPLICATED and taken multiple times.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: dark navy/charcoal (#1a1a2e). Heist atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: teal (#14b8a6) for unbounded knapsack (different from blue used for 0/1).
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for TAKE AGAIN paths. Red: (#EF4444) for MOVE ON paths.
+- Teal accent lighting throughout (#14b8a6).
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: The Problem -> family2_A.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+SECTION 1, "THE PROBLEM" (teal header, about 40%):
+
+Big header: "UNBOUNDED KNAPSACK"
+Subtitle: "Same vault heist. But now you have a CLONING MACHINE."
+
+Show Kit standing next to a table with 3 treasures AND a CLONING MACHINE:
+  Gold Bar:   weight 3kg, value $4
+  Diamond:    weight 2kg, value $3
+  Ruby:       weight 1kg, value $2
+  Bag capacity: 5kg
+
+Kit's speech bubble: "I can CLONE any treasure and take as many copies as I want.
+The bag is still 5kg. But now I'm not limited to one of each."
+
+Show the cloning machine making copies of the Ruby:
+  [Ruby] -> [CLONE] -> [Ruby] [Ruby] [Ruby] [Ruby] [Ruby]
+  "5 Rubies = 5kg, $10!"
+
+Show an alternative:
+  [Gold Bar] + [Diamond] = 5kg, $7
+  "Or one of each heavier item... but less money!"
+
+SECTION 2, "0/1 vs UNBOUNDED" (gold header, about 30%):
+
+Header: "What changed from last time?"
+
+Two columns:
+  0/1 KNAPSACK:                    UNBOUNDED KNAPSACK:
+  Each item used AT MOST ONCE      Each item used UNLIMITED times
+  Take Gold? Can't take it again   Take Gold? Can take it AGAIN!
+  [Gold] [Diamond] [Ruby]          [Gold] [Gold] [Gold] [Gold]...
+  3 items to choose from           INFINITE supply of each
+
+Show: "Same bag. Same weight limit. But the SUPPLY is unlimited."
+
+SECTION 3, "THE QUESTION" (amber header, about 30%):
+
+Header: "Same question, different constraint"
+
+"Given items with unlimited supply, what's the MAXIMUM value
+I can fit in my bag?"
+
+Kit looking at the cloning machine:
+"The hard part: should I keep cloning one item,
+or try different items? Let me find the CHOICES..."
+
+Arrow: "NEXT: What choices do I have at each item?"
+
+
+================================================================================
+PROMPT 2: The Choices (THIS IS THE KEY DIFFERENCE) -> family2_B.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+This is the MOST IMPORTANT image. The choice structure is different from 0/1.
+
+SECTION 1, "THE CHOICES" (teal header, about 45%):
+
+Big header: "TAKE AGAIN or MOVE ON"
+Subtitle: "At each item: use it (and STAY to possibly use it again) or move on."
+
+Kit stands at a fork. The Gold Bar (3kg, $4) is in front of him.
+
+GREEN PATH: "TAKE AGAIN"
+  Kit grabs the Gold Bar. The cloning machine makes another copy.
+  "I took Gold ($4). Capacity: 5 -> 2. But Gold is STILL available!"
+  "I STAY at Gold. I might want another one."
+  Show: index STAYS the same. bag_limit shrinks.
+
+RED PATH: "MOVE ON"
+  Kit walks past the Gold Bar. It stays behind.
+  "Done with Gold forever. Moving to Diamond."
+  "I move to the next item. Can't come back."
+  Show: index advances to next item. bag_limit stays.
+
+Big gold comparison box (THE KEY):
+  0/1 KNAPSACK:                     UNBOUNDED KNAPSACK:
+  TAKE: index + 1 (move on)         TAKE AGAIN: index (STAY!)
+  SKIP: index + 1 (move on)         MOVE ON: index + 1 (advance)
+  "Both choices advance"            "Only MOVE ON advances"
+
+  "In 0/1, after taking, you're DONE with that item."
+  "In unbounded, after taking, the item is STILL THERE."
+
+SECTION 2, "WHY THIS WORKS" (blue header, about 30%):
+
+Header: "STAY means I can take it multiple times"
+
+Show a chain of decisions for Gold Bar at capacity 5:
+  Step 1: At Gold (3kg, $4), cap=5. TAKE AGAIN. Cap: 5->2. Stay at Gold.
+  Step 2: At Gold (3kg, $4), cap=2. 3>2, can't take. Forced to MOVE ON.
+  "Took Gold once. Would've taken it again but it doesn't fit anymore."
+
+Another example:
+  Ruby (1kg, $2), cap=5.
+  TAKE AGAIN. cap=4. Stay.
+  TAKE AGAIN. cap=3. Stay.
+  TAKE AGAIN. cap=2. Stay.
+  TAKE AGAIN. cap=1. Stay.
+  TAKE AGAIN. cap=0. Base case! 5 Rubies, $10.
+
+SECTION 3, "THE COMBINE STEP" (amber header, about 25%):
+
+  take_again = value + max_value(treasures, bag_limit - weight, index)
+  move_on = max_value(treasures, bag_limit, index + 1)
+  return max(take_again, move_on)
+
+  "Same as 0/1: pick the better option. max(take_again, move_on)."
+  "The ONLY change is where 'index' goes after taking."
+
+Kit: "One tiny change in the recursion: index stays instead of advancing.
+That one change turns 0/1 into unbounded."
+
+
+================================================================================
+PROMPT 3: The Recursion Tree -> family2_C.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE TREE" (teal header, about 70%):
+
+Header: "WATCH THE RECURSION"
+Subtitle: "Items: Gold(3kg,$4), Ruby(1kg,$2). Bag: 4kg."
+
+Kit: "Only 2 items and 4kg. Watch how 'stay' creates more branches."
+
+Draw the recursion tree. Use (item, remaining_capacity) at each node.
+Green = TAKE AGAIN, Red = MOVE ON.
+
+                        (Gold, cap=4)
+                       /              \
+               TAKE AGAIN            MOVE ON
+              (stay at Gold)        (go to Ruby)
+                  |                      |
+            (Gold, cap=1)          (Ruby, cap=4)
+            3>1, can't take       /              \
+            forced MOVE ON    TAKE AGAIN        MOVE ON
+                  |           (stay at Ruby)     (no items)
+            (Ruby, cap=1)         |              cap=4, $0
+              /        \    (Ruby, cap=3)
+        TAKE AGAIN  MOVE ON    /        \
+            |          |  TAKE AGAIN  MOVE ON
+       (Ruby, cap=0) (no items)  |      (no items)
+        $0+$2=$2     cap=1,$0  (Ruby, cap=2)  cap=3,$0
+                                /        \
+                          TAKE AGAIN  MOVE ON
+                              |          |
+                         (Ruby, cap=1) (no items)
+                           /      \     cap=2,$0
+                      TAKE AGAIN MOVE ON
+                          |        |
+                     (Ruby, cap=0)(no items)
+                       $0        cap=1,$0
+
+OK this is getting complex. Let me simplify.
+
+Actually, show a CLEANER version. Just show the key paths:
+
+PATH 1: Take Gold (cap 4->1), Move On, Take Ruby (cap 1->0).
+  Value: $4 + $2 = $6.
+
+PATH 2: Move On from Gold, Take Ruby x4 (cap 4->3->2->1->0).
+  Value: $2 + $2 + $2 + $2 = $8.
+
+PATH 3: Move On from Gold, Take Ruby x3 (cap 4->3->2->1), Move On.
+  Value: $2 + $2 + $2 = $6.
+
+Show the tree with the branching for the first 2-3 levels,
+then highlight the BEST path (Ruby x4 = $8).
+
+At the bottom, show:
+  "BEST: 4 Rubies = $8. Better than Gold + Ruby = $6!"
+  "The cloning machine made Ruby the winner."
+
+SECTION 2, "THE KEY OBSERVATION" (gold header, about 30%):
+
+Header: "STAY branches create REPEAT paths"
+
+Show that (Ruby, cap=2) appears in MULTIPLE branches of the tree.
+Circle two identical nodes: "Same item, same capacity. Same answer!"
+
+"Just like 0/1, subproblems OVERLAP.
+Memoize with (index, bag_limit) to avoid re-solving."
+
+Kit: "The tree is bigger (more branches from 'stay'),
+but the fix is the same: cache (index, capacity)."
+
+
+================================================================================
+PROMPT 4: Base Cases + Code + 0/1 vs Unbounded -> family2_D.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+SECTION 1, "BASE CASES" (amber header, about 20%):
+
+Two cards:
+  GREEN: "bag_limit == 0: return 0. Bag is full, can't take anything."
+  RED: "index == len(treasures): return 0. No items left to consider."
+
+Same as 0/1!
+
+SECTION 2, "THE CODE" (gray header, about 40%):
+
+Header: "ONE LINE DIFFERENT FROM 0/1"
+
+Show the code. HIGHLIGHT the ONE line that changed:
+
+  def max_value(treasures, bag_limit, index):
+      if index == len(treasures) or bag_limit == 0:
+          return 0
+
+      name, weight, value = treasures[index]
+
+      if weight > bag_limit:
+          return max_value(treasures, bag_limit, index + 1)
+
+      take_again = value + max_value(
+          treasures,
+          bag_limit - weight,
+          index)                    # <-- THIS LINE! index, not index + 1
+
+      move_on = max_value(
+          treasures,
+          bag_limit,
+          index + 1)
+
+      return max(take_again, move_on)
+
+Draw a BIG arrow pointing to "index" in the take_again call.
+Gold highlight box: "THIS is the ONLY difference from 0/1.
+'index' instead of 'index + 1'. Stay instead of advance."
+
+SECTION 3, "0/1 vs UNBOUNDED: THE FULL COMPARISON" (teal header, about 40%):
+
+Header: "SIDE BY SIDE"
+
+Show the two codes next to each other, differences highlighted:
+
+  0/1 KNAPSACK:                    UNBOUNDED KNAPSACK:
+  grab = value + max_value(        take_again = value + max_value(
+      treasures,                       treasures,
+      bag_limit - weight,              bag_limit - weight,
+      index + 1)   <-- ADVANCE        index)        <-- STAY
+  skip = max_value(                move_on = max_value(
+      ...)                             ...)
+  return max(grab, skip)           return max(take_again, move_on)
+
+  TABULATION:                      TABULATION:
+  Inner loop RIGHT to LEFT         Inner loop LEFT to RIGHT
+  "Prevents reuse"                 "ALLOWS reuse"
+
+Show the loop direction visually:
+  0/1:        [0] [1] [2] [3] [4] [5]
+              <-------- RIGHT TO LEFT
+              "Each cell sees LAST row's values. Item used once."
+
+  Unbounded:  [0] [1] [2] [3] [4] [5]
+              LEFT TO RIGHT -------->
+              "Each cell sees THIS row's updates. Item reused!"
+
+Kit: "One line in recursion. One loop direction in tabulation.
+That's the entire difference between the two families."
+
+Gold box: "NEXT: The children. Coin Change, Coin Change 2, Word Break.
+Same 'take again or move on' choice, different combine step."

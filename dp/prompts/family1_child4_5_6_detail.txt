@@ -1,0 +1,479 @@
+CHILD 4: MIN SUBSET DIFF + CHILD 5: TARGET SUM + CHILD 6: GIVEN DIFF
+==============================================================
+Child 4: 2 images. Child 5: 2 images. Child 6: 2 images. Total: 6.
+These three all use MATH TRICKS to reduce to problems we already solved.
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: dark navy/charcoal (#1a1a2e). Heist atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: bright blue (#3B82F6).
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for TAKE paths. Red: (#EF4444) for LEAVE paths.
+- Blue accent lighting throughout (neon heist feel).
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: Min Subset Sum Difference - The Problem + Insight -> family1_child4_A.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+SECTION 1, "THE PROBLEM" (blue header, about 35%):
+
+Big header: "MINIMUM SUBSET SUM DIFFERENCE"
+Subtitle: "Split ALL numbers into two groups. Make the gap as small as possible."
+
+Show Kit with two bags on a BALANCE SCALE. The scale is SLIGHTLY tilted.
+Numbers: [1, 6, 11, 5], total = 23
+
+Show the best split:
+  Bag A: {11, 1} = 12
+  Bag B: {6, 5} = 11
+  Difference = 12 - 11 = 1
+  Scale barely tilted. "Gap of just 1! (23 is odd, can't do 0.)"
+
+Show a bad split:
+  Bag A: {11, 6} = 17
+  Bag B: {1, 5} = 6
+  Difference = 17 - 6 = 11
+  Scale heavily tilted. Red. "Gap of 11. Way too much."
+
+Kit: "I want the smallest possible gap between the two groups."
+
+SECTION 2, "THE KEY INSIGHT" (gold header, biggest, about 40%):
+
+Header: "CLOSER TO HALF = SMALLER GAP"
+
+Show the math visually with a NUMBER LINE from 0 to 23:
+
+  0 -------- 11.5 -------- 23
+              HALF
+
+  "If Bag A sums to S, then Bag B = total - S = 23 - S."
+  "Difference = |S - (23 - S)| = |2S - 23|"
+
+  Show three scenarios on the number line:
+    S = 6:  |2(6) - 23| = 11.  Far from half. Big gap.
+    S = 10: |2(10) - 23| = 3.  Getting closer. Smaller gap.
+    S = 11: |2(11) - 23| = 1.  Closest to half. Smallest gap!
+
+  Arrow pointing to half: "The closer S is to half, the smaller the difference."
+
+  "STRATEGY: Find the LARGEST achievable sum that doesn't exceed half."
+  "That's the best I can do."
+
+SECTION 3, "HOW TO FIND IT" (amber header, about 25%):
+
+Header: "Use Subset Sum to find all achievable sums"
+
+"Run Subset Sum for every target from 0 to half (11)."
+"Which sums can I make from [1, 6, 11, 5]?"
+
+Show a row of checkboxes 0 through 11:
+  0: YES (pick nothing)
+  1: YES ({1})
+  5: YES ({5})
+  6: YES ({6})
+  7: YES ({1, 6})
+  11: YES ({11} or {6, 5})
+  Others: NO
+
+"Largest achievable sum at or below half = 11."
+"Difference = 23 - 2(11) = 1."
+
+Kit: "No new choices! I just run Subset Sum, then scan for the best answer."
+
+
+================================================================================
+PROMPT 2: Min Subset Sum Difference - The Code -> family1_child4_B.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE CODE" (gray header, about 55%):
+
+Header: "TWO STEPS: BUILD THE TABLE, THEN SCAN"
+
+  def min_difference(nums):
+      total = sum(nums)
+      half = total // 2
+
+      # Step 1: Which sums are achievable?
+      achievable = [False] * (half + 1)
+      achievable[0] = True
+
+      for num in nums:
+          for j in range(half, num - 1, -1):
+              achievable[j] = achievable[j] or achievable[j - num]
+
+      # Step 2: Find largest achievable sum
+      for closest in range(half, -1, -1):
+          if achievable[closest]:
+              return total - 2 * closest
+
+Annotate Step 1:
+  "This is Subset Sum's optimized loop."
+  "After this, achievable[j] is True if I can pick numbers summing to j."
+
+Annotate Step 2:
+  "Scan from half downward. First True = closest to half = smallest gap."
+  "total - 2 * closest = the minimum difference."
+
+Show the achievable array for [1, 6, 11, 5]:
+  Index:       0  1  2  3  4  5  6  7  8  9  10  11
+  Achievable:  T  T  F  F  F  T  T  T  F  F   F   T
+  Scan from right: 11 is True. Answer = 23 - 2(11) = 1.
+
+SECTION 2, "THE REDUCTION CHAIN" (gold header, about 45%):
+
+Header: "WHERE THIS FITS IN THE FAMILY"
+
+Show a flowchart:
+  "Minimum Subset Sum Difference"
+     |
+  "Find largest achievable sum <= half"
+     |
+  "Which sums are achievable? -> SUBSET SUM"
+     |
+  "Same choices: take or leave each number"
+
+Kit: "Three problems deep, but it's still take-or-leave at the core."
+
+Show the family tree so far:
+  SUBSET SUM (take or leave, combine with OR)
+    |
+    +-- EQUAL PARTITION (target = total/2)
+    |
+    +-- COUNT SUBSETS (take or leave, combine with +)
+    |
+    +-- MIN DIFFERENCE (run Subset Sum, scan for best)
+
+Gold box: "PATTERN: When you see 'split into two groups' + 'minimize/maximize
+something about the split', think: what sums are achievable near half?"
+
+
+================================================================================
+PROMPT 3: Target Sum - The Problem + It Looks Different -> family1_child5_A.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+SECTION 1, "THE PROBLEM" (blue header, about 35%):
+
+Big header: "TARGET SUM"
+Subtitle: "Assign + or - to EVERY number. Can you reach the target?"
+
+Show Kit with numbers that have TOGGLE SWITCHES (+ / -) on each one.
+EVERY number must be used. You just choose its sign.
+
+Numbers: [1, 1, 1, 1, 1], target = 3
+
+Show two valid assignments:
+  +1 +1 +1 +1 -1 = 4 - 1 = 3. Green check. "Works!"
+  +1 +1 +1 -1 +1 = 4 - 1 = 3. Green check. "Works!"
+  +1 -1 +1 +1 +1 = 4 - 1 = 3. Green check. "Works!"
+  (5 total ways)
+
+Kit: "No skipping! I MUST use every number. I just pick: add or subtract."
+
+SECTION 2, "THIS LOOKS TOTALLY DIFFERENT..." (red/amber header, about 30%):
+
+Header: "Wait, this isn't take-or-leave!"
+
+Kit confused: "In Subset Sum, I could SKIP numbers.
+Here I MUST use every number. Just pick its SIGN.
+How is this related?"
+
+Show the apparent difference:
+  SUBSET SUM:     take or leave each number
+  TARGET SUM:     assign + or - to each number
+  "Seems like a completely different problem..."
+
+But then:
+  "Unless... there's a MATH TRICK hiding here."
+  Big gold lightbulb icon.
+
+SECTION 3, "THE MATH TRICK" (gold header, about 35%):
+
+Header: "Split into + group and - group"
+
+Show the algebra step by step (LARGE, clear):
+
+  "Every number goes into a + group or a - group."
+  Let P = sum of numbers marked +
+  Let N = sum of numbers marked -
+
+  Show: +1 +1 +1 +1 -1 = 3
+  P = 1+1+1+1 = 4 (the plus numbers)
+  N = 1 (the minus number)
+
+  Two facts:
+    P + N = total     "Every number is used"
+    P - N = target    "The goal"
+
+  Add both equations:
+    P + N + P - N = total + target
+    2P = total + target
+    P = (total + target) / 2
+
+  "P = (5 + 3) / 2 = 4"
+
+Kit's lightbulb moment: "I need to find numbers that sum to P = 4.
+That's COUNT SUBSETS WITH SUM! I already know how to do that!"
+
+Arrow: "NEXT: See the full reduction and the code."
+
+
+================================================================================
+PROMPT 4: Target Sum - The Reduction + Code -> family1_child5_B.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+SECTION 1, "THE FULL REDUCTION" (blue header, about 35%):
+
+Header: "TARGET SUM IS COUNT SUBSETS IN DISGUISE"
+
+Show a transformation chain (big arrows between each step):
+
+  "How many ways to assign +/- to reach target?"
+      |
+  "How many ways to pick a + group summing to P?"
+      |
+  P = (total + target) / 2
+      |
+  "COUNT SUBSETS with target = P"
+      |
+  "Same choices: take or leave. Combine with +."
+
+Show the edge cases (red warning boxes):
+  "If (total + target) is ODD: IMPOSSIBLE. Return 0."
+  Show: total=5, target=2. (5+2)/2 = 3.5. Can't pick 3.5 items. RED X.
+
+  "If |target| > total: IMPOSSIBLE. Return 0."
+  Show: total=5, target=8. Need sum > total. RED X.
+
+SECTION 2, "THE CODE" (gray header, about 35%):
+
+  def find_target_sum_ways(nums, target):
+      total = sum(nums)
+
+      if (total + target) % 2 != 0:
+          return 0
+      if abs(target) > total:
+          return 0
+
+      goal = (total + target) // 2
+      return count_subsets(nums, goal, 0)
+
+Annotate:
+  (total + target) % 2 != 0 <- "Odd? Can't split evenly. 0 ways."
+  abs(target) > total <- "Target bigger than everything? 0 ways."
+  (total + target) // 2 <- "THE math trick. This is our real target."
+  count_subsets(nums, goal, 0) <- "Count Subsets! Already solved."
+
+SECTION 3, "THE INSIGHT" (gold header, about 30%):
+
+Header: "THE HARD PART IS THE MATH, NOT THE CODE"
+
+Kit: "The code is tiny. The hard part is seeing that
+assigning +/- is the SAME as picking a subset.
+Once you do the algebra, it's Count Subsets."
+
+Show the pattern for recognizing Target Sum problems:
+  "CLUE WORDS: 'assign + or -', 'add or subtract each',
+   'ways to reach target using all numbers'"
+  "STEP 1: total + target. Is it even? If not, return 0."
+  "STEP 2: goal = (total + target) / 2."
+  "STEP 3: Count Subsets(nums, goal)."
+
+Gold box: "You've now solved 5 of 6 knapsack children.
+The 6th is the SAME math with a different name."
+
+
+================================================================================
+PROMPT 5: Count Subsets with Given Difference - Problem + It's Target Sum -> family1_child6_A.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+SECTION 1, "THE PROBLEM" (blue header, about 30%):
+
+Big header: "COUNT SUBSETS WITH GIVEN DIFFERENCE"
+Subtitle: "Split into two groups where Group1 - Group2 = diff. Count the ways."
+
+Numbers: [1, 1, 2, 3], diff = 1
+
+Show valid splits:
+  Group1 = {3, 1} = 4, Group2 = {2, 1} = 3. Difference = 1. Check!
+  Group1 = {2, 1, 1} = 4, Group2 = {3} = 3. Difference = 1. Check!
+  "2 ways."
+
+Kit: "Split everything. The bigger group minus the smaller equals exactly diff."
+
+SECTION 2, "THE ALGEBRA" (gold header, about 40%):
+
+Header: "SAME MATH AS TARGET SUM"
+
+Show the algebra:
+  S1 + S2 = total    (all numbers used)
+  S1 - S2 = diff     (the goal)
+
+  Add both:
+  2 * S1 = total + diff
+  S1 = (total + diff) / 2
+
+Show side by side (BIG):
+  TARGET SUM:              GIVEN DIFFERENCE:
+  P = (total + target)/2   S1 = (total + diff)/2
+
+  "IDENTICAL formula. Just 'target' became 'diff'."
+
+Kit: "If you solved Target Sum, you've already solved this.
+Same algebra, same code, different story."
+
+SECTION 3, "THE CODE" (gray header, about 30%):
+
+  def count_with_diff(nums, diff):
+      total = sum(nums)
+
+      if (total + diff) % 2 != 0:
+          return 0
+      if abs(diff) > total:
+          return 0
+
+      target = (total + diff) // 2
+      return count_subsets(nums, target, 0)
+
+Annotate: "Literally Target Sum with 'target' renamed to 'diff'."
+
+Gold box: "Same checks. Same formula. Same Count Subsets call."
+
+
+================================================================================
+PROMPT 6: The Complete Family Tree -> family1_child6_B.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE COMPLETE KNAPSACK FAMILY" (blue header, about 60%):
+
+Header: "ALL 6 CHILDREN, ONE FAMILY TREE"
+
+Draw a TREE DIAGRAM showing how all problems connect:
+
+At the TOP, two foundation blocks:
+  SUBSET SUM                    COUNT SUBSETS
+  "Can I reach target?"         "How many ways to reach target?"
+  take OR leave                 take + leave
+  Returns True/False            Returns a count
+
+Below SUBSET SUM, three children branch out:
+  |
+  +-- EQUAL PARTITION
+  |   "target = total / 2"
+  |   "Just Subset Sum with a specific target"
+  |
+  +-- MIN DIFFERENCE
+      "Run Subset Sum for all targets up to half"
+      "Pick the best achievable sum"
+
+Below COUNT SUBSETS, two children branch out:
+  |
+  +-- TARGET SUM
+  |   "goal = (total + target) / 2"
+  |   "Math trick: +/- becomes counting subsets"
+  |
+  +-- GIVEN DIFFERENCE
+      "target = (total + diff) / 2"
+      "Same math as Target Sum"
+
+Use color coding:
+  Blue for Subset Sum and its direct children
+  Green for Count Subsets and its direct children
+
+SECTION 2, "THE ONE THING THAT NEVER CHANGES" (gold header, about 40%):
+
+Header: "SAME CHOICES. ALWAYS."
+
+Big centered text:
+  "At each number: TAKE or LEAVE."
+  "That's the ONLY choice in the entire knapsack family."
+
+What changes:
+  "The COMBINE step:  OR (yes/no) or + (counting)"
+  "The TARGET:        given, or derived with math"
+  "The QUESTION:      can I? how many? what's the minimum?"
+
+Kit standing confidently:
+"Six problems. One choice. Take or leave.
+Learn that, and the whole family unlocks."
+
+Gold box at bottom:
+  "HOW TO SOLVE ANY KNAPSACK CHILD:
+   1. Read the problem. What's it REALLY asking?
+   2. Can I reduce it to Subset Sum or Count Subsets?
+   3. If yes, find the target (maybe with algebra).
+   4. Run the problem I already know.
+   5. Done."

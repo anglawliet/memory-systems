@@ -392,6 +392,41 @@ Can't make this amount. Impossible.<br>
 </div>
 </div>
 
+<div class="why-box">
+<strong>Why infinity? Why not zero?</strong><br>
+We combine with <code>min()</code>. The failure value must <strong>lose</strong> to any real answer.
+</div>
+
+<div class="choice-grid">
+<div class="choice-skip" style="border-color:var(--red)">
+<div class="choice-label" style="color:var(--red)">If failure returned 0</div>
+<div class="choice-detail">
+<code>min(3 coins, 0) = 0</code><br>
+Says I made $10 with <strong>zero coins</strong>. That's wrong!<br>
+Zero <strong>wins</strong> against real answers in min(). Bad.
+</div>
+</div>
+<div class="choice-use" style="border-color:var(--green)">
+<div class="choice-label" style="color:var(--green)">If failure returned infinity</div>
+<div class="choice-detail">
+<code>min(3 coins, &infin;) = 3</code><br>
+Real answer wins. Impossible path <strong>ignored</strong>.<br>
+Infinity <strong>always loses</strong> in min(). Correct.
+</div>
+</div>
+</div>
+
+<div class="sbox" style="border-left:3px solid var(--gold2)">
+<div class="sl" style="color:var(--gold2)">FAILURE VALUE DEPENDS ON COMBINE</div>
+<div style="display:grid;grid-template-columns:auto auto 1fr;gap:4px 12px;font-size:.9em;margin-top:6px">
+<code>max()</code> <span>&rarr; failure = <strong>0</strong></span> <span style="color:var(--muted)">max(real, 0) = real</span>
+<code>min()</code> <span>&rarr; failure = <strong>&infin;</strong></span> <span style="color:var(--muted)">min(real, &infin;) = real</span>
+<code>+</code> <span>&rarr; failure = <strong>0</strong></span> <span style="color:var(--muted)">real + 0 = real</span>
+<code>or</code> <span>&rarr; failure = <strong>False</strong></span> <span style="color:var(--muted)">real or False = real</span>
+</div>
+<p style="margin-top:8px;font-size:.88em"><strong>Pick the value your combine operation will ignore.</strong></p>
+</div>
+
 <img src="dp/images/family2_child1_B.png" alt="Coin Change recursion tree and annotated code" class="scene-img">
 
 <h3 style="color:var(--teal)">The Code</h3>
@@ -416,10 +451,45 @@ Can't make this amount. Impossible.<br>
 
     return min(use_again, move_on)</code></pre>
 
+<h3 style="color:var(--teal)">Tabulation</h3>
+
+<img src="dp/images/family2_child1_C.png" alt="Coin Change tabulation: building the dp table step by step" class="scene-img">
+
+<div class="ws">
+<h3>Building the table bottom-up</h3>
+<p>Same logic as recursion, different direction. Instead of breaking the problem down, build up from amount 0.</p>
+<pre><code>def coin_change(coins, amount):
+    dp = [float('inf')] * (amount + 1)
+    dp[0] = 0
+
+    for coin in coins:
+        for a in range(coin, amount + 1):
+            dp[a] = min(dp[a], dp[a - coin] + 1)
+
+    if dp[amount] == float('inf'):
+        return -1
+    return dp[amount]</code></pre>
+</div>
+
+<div class="sbox" style="border-left:3px solid var(--teal)">
+<div class="sl" style="color:var(--teal)">LINE BY LINE</div>
+<code>dp = [float('inf')] * (amount + 1)</code> &mdash; all impossible until proven.<br>
+<code>dp[0] = 0</code> &mdash; 0 coins to make amount 0.<br>
+<code>for coin in coins</code> &mdash; process one coin type at a time.<br>
+<code>range(coin, amount + 1)</code> &mdash; <strong>left to right</strong>. Allows reuse (unbounded).<br>
+<code>dp[a - coin] + 1</code> &mdash; best for the remainder + 1 more coin.<br>
+<code>min(dp[a], ...)</code> &mdash; keep whichever uses fewer coins.<br>
+<code>dp[amount] == float('inf')</code> &mdash; still impossible? No solution exists.
+</div>
+
+<div class="why-box">
+<strong>Why left to right?</strong> When filling <code>dp[a]</code>, <code>dp[a - coin]</code> might already include this same coin from an earlier cell. That's the "stay" behavior: unlimited reuse. Right to left would prevent reuse (that's 0/1 knapsack).
+</div>
+
 <div class="mistake-box">
 <h4>Common Mistake: Greedy</h4>
 <ul>
-<li><strong>Coins = [1, 5, 6], amount = 10.</strong> Greedy picks the biggest first: [6]+[1]+[1]+[1]+[1] = 5 coins. But [5]+[5] = 2 coins. Greedy doesn't always find the minimum. Use recursion.</li>
+<li><strong>Coins = [1, 5, 6], amount = 10.</strong> Greedy picks the biggest first: [6]+[1]+[1]+[1]+[1] = 5 coins. But [5]+[5] = 2 coins. Greedy doesn't always find the minimum. Use recursion or tabulation.</li>
 </ul>
 </div>
 
@@ -428,6 +498,7 @@ Can't make this amount. Impossible.<br>
 <div class="row"><span class="label">CLUE:</span> "fewest coins", "minimum number to make amount"</div>
 <div class="row"><span class="label">COMBINE:</span> min(use_again, move_on). Each use adds +1.</div>
 <div class="row"><span class="label">BASE:</span> amount=0 &rarr; 0, no coins &rarr; infinity</div>
+<div class="row"><span class="label">TABULATION:</span> left-to-right loop. <code>dp[a] = min(dp[a], dp[a-coin] + 1)</code></div>
 </div>
 
 </div></div>

@@ -1,0 +1,195 @@
+PALINDROME FAMILY: CHOICES + RECURSION TREE
+==============================================================
+2 images: choice diagram + recursive tree with overlap.
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: warm dark violet (#2D1B4E). Mirror/reflection atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: bright violet (#8B5CF6).
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for palindromes/match. Red: (#EF4444) for non-palindromes.
+- Violet accent lighting throughout.
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: Palindrome Choice Diagram -> palindrome_choices.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+SECTION 1, "THE CHOICES" (violet header, about 35%):
+
+Big header: "PALINDROME: FIND THE CHOICES"
+Subtitle: 'text = "abba". Is the substring [left, right] a palindrome?'
+
+Show the string "a b b a" with indices 0,1,2,3.
+Highlight left=0 ('a') and right=3 ('a') with arrows pointing inward.
+
+CHOICE DIAGRAM (centered, large, clear):
+
+  Current: is_palindrome(left, right)
+  "Do the outer characters match?"
+          |
+     _____|_____
+    |           |
+  YES          NO
+  text[left]   text[left]
+  == text[right]  != text[right]
+    |               |
+  "Check        "STOP.
+   inner"        Not a
+    |            palindrome."
+  is_palindrome     |
+  (left+1, right-1) return False
+    |
+  "Shrink inward"
+
+Use GREEN for the YES branch, RED for the NO branch.
+
+Kit pointing at the diagram: "Only TWO choices. Match or don't. The string tells you which."
+
+SECTION 2, "THE STATE" (violet header, about 30%):
+
+Header: "WHAT DO I NEED TO KNOW?"
+
+Show Kit asking: "What changes between recursive calls?"
+
+CHECKLIST (with checkmarks and X marks):
+  [CHECK] left index - which character am I checking on the left?
+  [CHECK] right index - which character am I checking on the right?
+  [X] the string itself - never changes
+  [X] any count - we just return True/False
+
+"State = (left, right). Two pointers closing inward."
+
+Gold box: "How to find the state: ask 'What information changes?'
+Here: left moves right, right moves left. That's your state."
+
+SECTION 3, "BASE CASES" (violet header, about 35%):
+
+Header: "WHEN DO I STOP?"
+
+Show two stopping conditions visually:
+
+  BASE CASE 1: left >= right
+  Show a string where left and right have CROSSED or MET.
+  "Zero or one character left. Always a palindrome."
+  return True (GREEN)
+
+  BASE CASE 2: text[left] != text[right]
+  Show "a" and "b" highlighted in RED on the string.
+  "Outer characters don't match. Can't be a palindrome."
+  return False (RED)
+
+Kit: "Two pointers walk inward. They either meet (palindrome!)
+or hit a mismatch (not palindrome!)."
+
+
+================================================================================
+PROMPT 2: Palindrome Recursion Tree -> palindrome_tree.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE RECURSION TREE" (violet header, about 55%):
+
+Big header: "PALINDROME: THE RECURSIVE TREE"
+Subtitle: 'Count palindromic substrings in "aaba".'
+
+Show the FULL recursion tree. The outer function calls is_palindrome
+for EVERY (left, right) pair where left <= right.
+
+Draw a tree showing all calls:
+  count_palindromes("aaba")
+    is_pal(0,0) -> True (single char)
+    is_pal(1,1) -> True (single char)
+    is_pal(2,2) -> True (single char)
+    is_pal(3,3) -> True (single char)
+    is_pal(0,1) -> text[0]='a'==text[1]='a'? YES -> is_pal(1,0) -> base: True!
+    is_pal(1,2) -> text[1]='a'==text[2]='b'? NO -> False
+    is_pal(2,3) -> text[2]='b'==text[3]='a'? NO -> False
+    is_pal(0,2) -> text[0]='a'==text[2]='b'? NO -> False
+    is_pal(1,3) -> text[1]='a'==text[3]='a'? YES -> is_pal(2,2) -> True!
+    is_pal(0,3) -> text[0]='a'==text[3]='a'? YES -> is_pal(1,2) -> False
+
+CIRCLE the overlapping subproblems with GOLD borders:
+  is_pal(2,2) called from is_pal(1,3) AND directly!
+  is_pal(1,2) called from is_pal(0,3) AND directly!
+
+"Same (left, right) pair from different starting points!"
+
+Kit looking at circled nodes: "Overlap! Same subproblem, different callers."
+
+SECTION 2, "WHY MEMOIZE" (gold header, about 45%):
+
+Header: "THE OVERLAP PROVES IT'S DP"
+
+Show a grid visualization: a 4x4 upper-triangle grid where each cell
+is (left, right). Color the cells:
+  GREEN = palindrome (True)
+  RED = not palindrome (False)
+  GOLD border = computed more than once (overlapping!)
+
+The grid for "aaba":
+         0    1    2    3
+    0   [T]  [T]  [F]  [F]
+    1        [T]  [F]  [T]
+    2             [T]  [F]
+    3                  [T]
+
+Mark cells (2,2) and (1,2) with gold borders: "These were checked multiple times!"
+
+"Without cache: some pairs checked more than once."
+"With cache: each (left, right) checked exactly once. O(n^2) pairs total."
+
+Kit: "n^2 possible (left, right) pairs. Cache them all.
+That IS the table you'll build in tabulation."
+
+Gold box: "The overlap is small here but grows fast.
+For a 10-character string: up to 55 unique pairs.
+Without caching, calls multiply at each level."

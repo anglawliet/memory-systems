@@ -1,0 +1,574 @@
+2D TABLE FAMILY: MEMOIZATION + TABULATION
+==============================================================
+10 images covering memo + tab for:
+  Parent (LCS #1143), Unique Paths (#62), Edit Distance (#72),
+  Interleaving String (#97), Distinct Subsequences (#115).
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: dark purple-blue (#1E1035). Grid/matrix atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: bright purple (#8B5CF6).
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for match/hit paths. Red: (#EF4444) for mismatch paths.
+- Purple accent lighting throughout.
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: LCS Memoization -> lcs_memo.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE OVERLAP" (purple header, about 45%):
+
+Big header: "LCS: MEMOIZE"
+Subtitle: 'text1 = "ace", text2 = "abcde". Find longest common subsequence.'
+
+Show a recursion tree for lcs_length(text1, text2, i, j).
+At each node: (i, j) indices.
+
+Show branching:
+  (0,0): 'a'=='a', match! -> (1,1) + 1
+  (1,1): 'c'!='b' -> skip_first(2,1) OR skip_second(1,2)
+  Show (1,2): 'c'=='c', match! -> (2,3) + 1
+  Show (2,1) branching further.
+
+Circle duplicate: same (i,j) pair reached from different skip paths.
+"Same position in both strings. Same answer!"
+
+Kit holding notebook: "Cache key: (i, j). Where I am in each string."
+
+SECTION 2, "THE CODE" (gray header, about 55%):
+
+Header: "ADD 3 LINES"
+
+  def lcs_length(text1, text2, i, j, cache):
+      if i == len(text1) or j == len(text2):
+          return 0
+      if (i, j) in cache:
+          return cache[(i, j)]
+      if text1[i] == text2[j]:
+          result = 1 + lcs_length(text1, text2, i + 1, j + 1, cache)
+      else:
+          skip_first = lcs_length(text1, text2, i + 1, j, cache)
+          skip_second = lcs_length(text1, text2, i, j + 1, cache)
+          result = max(skip_first, skip_second)
+      cache[(i, j)] = result
+      return result
+
+Highlight the 3 new things (gold boxes):
+  1. "cache parameter"
+  2. "Check cache first"
+  3. "Store result"
+
+Kit: "Match? Advance both. No match? Try skipping each.
+Two strings = two indices = 2D cache."
+
+Gold box: "Time: O(m * n) instead of O(2^(m+n)).
+One entry per unique (i, j) pair."
+
+
+================================================================================
+PROMPT 2: LCS Tabulation -> lcs_tab.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE TABLE" (purple header, about 50%):
+
+Big header: "LCS: TABLE"
+Subtitle: 'text1 = "ace", text2 = "abcde".'
+
+Show a (3+1) x (5+1) grid. Row headers: "", a, c, e. Col headers: "", a, b, c, d, e.
+First row and first column all zeros (base case).
+
+Fill the table row by row, left to right:
+  - When text1[i-1] == text2[j-1] (MATCH): diagonal + 1. GREEN cell.
+  - When they don't match: max(up, left). Regular cell.
+
+Show arrows for a MATCH cell: diagonal arrow from (i-1, j-1) with "+1".
+Show arrows for a NO-MATCH cell: one arrow from above, one from left, "max".
+
+Highlight the final cell (bottom-right) = 3. GOLD border.
+"LCS = 3. The subsequence 'ace'."
+
+Kit pointing at diagonal arrow: "Match = diagonal + 1. No match = max(up, left)."
+
+SECTION 2, "THE CODE" (gray header, about 50%):
+
+Header: "BUILD THE TABLE"
+
+  def lcs_length(text1, text2):
+      rows = len(text1)
+      cols = len(text2)
+      table = [[0] * (cols + 1) for _ in range(rows + 1)]
+      for i in range(1, rows + 1):
+          for j in range(1, cols + 1):
+              if text1[i - 1] == text2[j - 1]:
+                  table[i][j] = table[i - 1][j - 1] + 1
+              else:
+                  table[i][j] = max(table[i - 1][j], table[i][j - 1])
+      return table[rows][cols]
+
+Highlight key lines:
+  "Match: diagonal + 1"
+  "No match: max(up, left)"
+  "Extra row and column of zeros = base case"
+
+Kit: "Every 2D DP table follows this shape.
+Match rule changes, but it is always diagonal, up, or left."
+
+Gold box: "This is the PARENT pattern.
+All 4 children use the same table shape with different cell rules."
+
+
+================================================================================
+PROMPT 3: Unique Paths Memoization -> unique_paths_memo.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE OVERLAP" (purple header, about 45%):
+
+Big header: "UNIQUE PATHS: MEMOIZE"
+Subtitle: "3x3 grid. Start top-left, reach bottom-right. Only move down or right."
+
+Show a recursion tree for count_paths(r, c).
+At each node: (row, col).
+  (0,0) -> go_down(1,0) + go_right(0,1)
+  (1,0) -> (2,0) + (1,1)
+  (0,1) -> (1,1) + (0,2)
+
+Circle duplicate: (1,1) appears from BOTH (1,0) and (0,1).
+"Same cell, same remaining paths. Cache it!"
+
+Kit: "Cache key: (row, col). My position in the grid."
+
+SECTION 2, "THE CODE" (gray header, about 55%):
+
+  def count_paths(rows, cols, r, c, cache):
+      if r == rows - 1 and c == cols - 1:
+          return 1
+      if r >= rows or c >= cols:
+          return 0
+      if (r, c) in cache:
+          return cache[(r, c)]
+      go_down = count_paths(rows, cols, r + 1, c, cache)
+      go_right = count_paths(rows, cols, r, c + 1, cache)
+      cache[(r, c)] = go_down + go_right
+      return cache[(r, c)]
+
+Kit: "No match/no-match here. Always add down + right.
+Simplest 2D DP. Pure addition."
+
+
+================================================================================
+PROMPT 4: Unique Paths Tabulation -> unique_paths_tab.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE TABLE" (purple header, about 50%):
+
+Big header: "UNIQUE PATHS: TABLE"
+Subtitle: "3x3 grid."
+
+Show a 3x3 grid. First row all 1s, first column all 1s.
+Fill remaining cells: cell = up + left.
+
+  1  1  1
+  1  2  3
+  1  3  6
+
+Show arrows: each inner cell has one arrow from above + one from left.
+Highlight bottom-right = 6. GOLD border. "6 unique paths."
+
+Kit: "First row and first column are all 1. Only one way to stay on the edge."
+
+SECTION 2, "THE CODE" (gray header, about 50%):
+
+  def count_paths(rows, cols):
+      table = [[1] * cols for _ in range(rows)]
+      for r in range(1, rows):
+          for c in range(1, cols):
+              table[r][c] = table[r - 1][c] + table[r][c - 1]
+      return table[rows - 1][cols - 1]
+
+Kit: "Initialize edges to 1. Fill the rest with up + left.
+Same shape as LCS, but simpler formula."
+
+Gold box: "Vs LCS: No match/no-match decision.
+Every cell always = up + left. Pure addition."
+
+
+================================================================================
+PROMPT 5: Edit Distance Memoization -> edit_distance_memo.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE OVERLAP" (purple header, about 45%):
+
+Big header: "EDIT DISTANCE: MEMOIZE"
+Subtitle: 'word1 = "horse", word2 = "ros". Minimum edits to transform?'
+
+Show a recursion tree for min_edits(i, j).
+At each node: (i, j).
+  (0,0): 'h'!='r' -> 3 branches: replace(1,1), delete(1,0), insert(0,1)
+  Show each branch expanding further.
+
+Circle duplicate: same (i,j) reached from replace, delete, and insert paths.
+"3 operations = 3 branches. Lots of overlap!"
+
+Kit: "Three choices when letters differ. Each one creates a new subproblem."
+
+SECTION 2, "THE CODE" (gray header, about 55%):
+
+  def min_edits(word1, word2, i, j, cache):
+      if i == len(word1):
+          return len(word2) - j
+      if j == len(word2):
+          return len(word1) - i
+      if (i, j) in cache:
+          return cache[(i, j)]
+      if word1[i] == word2[j]:
+          result = min_edits(word1, word2, i + 1, j + 1, cache)
+      else:
+          replace = 1 + min_edits(word1, word2, i + 1, j + 1, cache)
+          delete = 1 + min_edits(word1, word2, i + 1, j, cache)
+          insert = 1 + min_edits(word1, word2, i, j + 1, cache)
+          result = min(replace, delete, insert)
+      cache[(i, j)] = result
+      return result
+
+Kit: "Match = free, advance both. No match = 1 + min(replace, delete, insert)."
+
+Gold box: "Base cases: ran out of word1? Insert remaining.
+Ran out of word2? Delete remaining."
+
+
+================================================================================
+PROMPT 6: Edit Distance Tabulation -> edit_distance_tab.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE TABLE" (purple header, about 50%):
+
+Big header: "EDIT DISTANCE: TABLE"
+Subtitle: 'word1 = "horse", word2 = "ros".'
+
+Show a (5+1) x (3+1) grid. Row headers: "", h, o, r, s, e. Col headers: "", r, o, s.
+First row: 0, 1, 2, 3. First column: 0, 1, 2, 3, 4, 5.
+"Edges = pure inserts or pure deletes."
+
+Fill the table:
+  - Match (e.g., 'o'=='o'): diagonal + 0 (FREE). GREEN cell.
+  - No match: 1 + min(diagonal, up, left). Regular cell.
+
+Show arrows for a MATCH cell: diagonal arrow, no cost.
+Show arrows for a NO-MATCH cell: THREE arrows (diagonal=replace, up=delete, left=insert).
+Label each arrow.
+
+Highlight bottom-right = 3. GOLD border.
+
+Kit: "Match = diagonal (free). No match = 1 + min of three neighbors."
+
+SECTION 2, "THE CODE" (gray header, about 50%):
+
+  def min_edits(word1, word2):
+      rows = len(word1)
+      cols = len(word2)
+      table = [[0] * (cols + 1) for _ in range(rows + 1)]
+      for i in range(rows + 1):
+          table[i][0] = i
+      for j in range(cols + 1):
+          table[0][j] = j
+      for i in range(1, rows + 1):
+          for j in range(1, cols + 1):
+              if word1[i - 1] == word2[j - 1]:
+                  table[i][j] = table[i - 1][j - 1]
+              else:
+                  table[i][j] = 1 + min(
+                      table[i - 1][j - 1],
+                      table[i - 1][j],
+                      table[i][j - 1]
+                  )
+      return table[rows][cols]
+
+Gold box: "Vs LCS: LCS uses max(up, left) on mismatch.
+Edit Distance uses 1 + min(diagonal, up, left). Three directions, not two."
+
+
+================================================================================
+PROMPT 7: Interleaving String Memoization -> interleaving_memo.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE OVERLAP" (purple header, about 45%):
+
+Big header: "INTERLEAVING: MEMOIZE"
+Subtitle: 's1 = "ab", s2 = "cd", s3 = "abcd". Can s3 be formed by interleaving s1 and s2?'
+
+Show a recursion tree for can_interleave(i, j).
+At each node: (i, j). The target character is s3[i+j].
+  (0,0): s3[0]='a'. s1[0]='a' matches! -> try (1,0)
+  (1,0): s3[1]='b'. s1[1]='b' matches! -> try (2,0). Also s2[0]='c' no match.
+  Eventually: (2,0): s3[2]='c'. s2[0]='c' matches! -> try (2,1)
+
+Circle duplicate (i,j) pairs reached from different interleaving orders.
+"Different weaving paths, same position in both strings!"
+
+Kit: "At each step: can the next s3 character come from s1 or s2?"
+
+SECTION 2, "THE CODE" (gray header, about 55%):
+
+  def can_interleave(s1, s2, s3, i, j, cache):
+      if i + j == len(s3):
+          return i == len(s1) and j == len(s2)
+      if (i, j) in cache:
+          return cache[(i, j)]
+      result = False
+      if i < len(s1) and s1[i] == s3[i + j]:
+          result = can_interleave(s1, s2, s3, i + 1, j, cache)
+      if not result and j < len(s2) and s2[j] == s3[i + j]:
+          result = can_interleave(s1, s2, s3, i, j + 1, cache)
+      cache[(i, j)] = result
+      return result
+
+Kit: "Boolean DP. True or False, not a number.
+Can we weave s1 and s2 into s3 without reordering?"
+
+Gold box: "The twist: target char = s3[i + j].
+i tracks s1, j tracks s2, but the target auto-advances."
+
+
+================================================================================
+PROMPT 8: Interleaving String Tabulation -> interleaving_tab.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE TABLE" (purple header, about 50%):
+
+Big header: "INTERLEAVING: TABLE"
+Subtitle: 's1 = "ab", s2 = "cd", s3 = "abcd".'
+
+Show a (2+1) x (2+1) grid. Row headers: "", a, b. Col headers: "", c, d.
+
+Fill order:
+  table[0][0] = True (GREEN). Empty s1 + empty s2 = empty s3.
+  First row: only using s2 characters. table[0][1]: s2[0]='c' vs s3[0]='a'? No. False (RED).
+  First col: only using s1 characters. table[1][0]: s1[0]='a' vs s3[0]='a'? Yes AND prev True. True (GREEN).
+  table[2][0]: s1[1]='b' vs s3[1]='b'? Yes AND prev True. True (GREEN).
+
+Inner cells:
+  table[i][j] = (from_s1: table[i-1][j] AND s1[i-1]==s3[i+j-1])
+             OR (from_s2: table[i][j-1] AND s2[j-1]==s3[i+j-1])
+
+Show arrows: one from above (using s1), one from left (using s2).
+Label each: "s1 match?" / "s2 match?"
+
+Highlight bottom-right = True. GOLD border.
+
+Kit: "Each cell: can I reach here by pulling from s1 (above) or s2 (left)?"
+
+SECTION 2, "THE CODE" (gray header, about 50%):
+
+  def can_interleave(s1, s2, s3):
+      if len(s1) + len(s2) != len(s3):
+          return False
+      rows = len(s1)
+      cols = len(s2)
+      table = [[False] * (cols + 1) for _ in range(rows + 1)]
+      table[0][0] = True
+      for j in range(1, cols + 1):
+          table[0][j] = table[0][j - 1] and s2[j - 1] == s3[j - 1]
+      for i in range(1, rows + 1):
+          table[i][0] = table[i - 1][0] and s1[i - 1] == s3[i - 1]
+      for i in range(1, rows + 1):
+          for j in range(1, cols + 1):
+              from_s1 = table[i - 1][j] and s1[i - 1] == s3[i + j - 1]
+              from_s2 = table[i][j - 1] and s2[j - 1] == s3[i + j - 1]
+              table[i][j] = from_s1 or from_s2
+      return table[rows][cols]
+
+Gold box: "Vs LCS: LCS looks for matches and counts.
+Interleaving checks if a specific target can be built. Boolean, not numeric."
+
+
+================================================================================
+PROMPT 9: Distinct Subsequences Memoization -> distinct_subs_memo.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE OVERLAP" (purple header, about 45%):
+
+Big header: "DISTINCT SUBS: MEMOIZE"
+Subtitle: 's = "rabbbit", t = "rabbit". How many ways can t appear as a subsequence of s?'
+
+Show a recursion tree for count_subsequences(i, j).
+At each node: (i, j).
+  (0,0): s[0]='r'==t[0]='r'. Match!
+    Use it: (1,1) + Skip it: (1,0)
+  (1,1): s[1]='a'==t[1]='a'. Match!
+    Use it: (2,2) + Skip it: (2,1)
+  Continue showing how the triple 'b' creates overlapping subproblems.
+
+Circle duplicates: same (i,j) from use_char and skip_char paths.
+"Match = USE it + SKIP it. Both paths lead to shared subproblems."
+
+Kit: "Match? Two choices: use this character or skip it. Add both counts."
+
+SECTION 2, "THE CODE" (gray header, about 55%):
+
+  def count_subsequences(s, t, i, j, cache):
+      if j == len(t):
+          return 1
+      if i == len(s):
+          return 0
+      if (i, j) in cache:
+          return cache[(i, j)]
+      skip_char = count_subsequences(s, t, i + 1, j, cache)
+      if s[i] == t[j]:
+          use_char = count_subsequences(s, t, i + 1, j + 1, cache)
+          result = use_char + skip_char
+      else:
+          result = skip_char
+      cache[(i, j)] = result
+      return result
+
+Kit: "Match = use + skip. No match = skip only.
+Like 0/1 knapsack, but for characters."
+
+Gold box: "Base cases:
+  j reaches end of t? Found a complete match! Return 1.
+  i reaches end of s? Ran out of characters. Return 0."
+
+
+================================================================================
+PROMPT 10: Distinct Subsequences Tabulation -> distinct_subs_tab.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE TABLE" (purple header, about 50%):
+
+Big header: "DISTINCT SUBS: TABLE"
+Subtitle: 's = "rabbbit", t = "rabbit".'
+
+Show a (7+1) x (6+1) grid. Row headers: "", r, a, b, b, b, i, t.
+Col headers: "", r, a, b, b, i, t.
+
+First column all 1s (empty t is always a subsequence). GREEN cells.
+First row (except [0][0]) all 0s (can't form non-empty t from empty s).
+
+Fill rule:
+  table[i][j] = table[i-1][j]                    (always: skip this char)
+              + table[i-1][j-1] if s[i-1]==t[j-1]  (match: use this char too)
+
+Show arrows for a MATCH cell: one from above (skip) + one from diagonal (use). Both arrows, sum them.
+Show arrows for NO-MATCH cell: only one from above (skip).
+
+Highlight bottom-right = 3. GOLD border.
+"3 ways to form 'rabbit' from 'rabbbit'."
+
+Kit: "Match = above + diagonal. No match = above only."
+
+SECTION 2, "THE CODE" (gray header, about 50%):
+
+  def count_subsequences(s, t):
+      rows = len(s)
+      cols = len(t)
+      table = [[0] * (cols + 1) for _ in range(rows + 1)]
+      for i in range(rows + 1):
+          table[i][0] = 1
+      for i in range(1, rows + 1):
+          for j in range(1, cols + 1):
+              table[i][j] = table[i - 1][j]
+              if s[i - 1] == t[j - 1]:
+                  table[i][j] += table[i - 1][j - 1]
+      return table[rows][cols]
+
+Gold box: "Vs LCS: LCS picks max(up, left) on mismatch.
+Distinct Subs always takes up, and ADDS diagonal on match.
+It is counting, not maximizing."

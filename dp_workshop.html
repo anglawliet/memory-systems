@@ -90,6 +90,15 @@ td{padding:10px 12px;border:1px solid var(--border)}
 <a href="unbounded_knapsack_dp.html" style="background:var(--card);color:var(--muted);border:1px solid var(--border);padding:8px 16px;border-radius:6px;font-size:.85em;text-decoration:none;transition:.2s;display:inline-block"
    onmouseover="this.style.background='var(--amber)';this.style.color='#000';this.style.borderColor='var(--amber)'"
    onmouseout="this.style.background='var(--card)';this.style.color='var(--muted)';this.style.borderColor='var(--border)'">Unbounded Knapsack</a>
+<a href="palindrome_dp.html" style="background:var(--card);color:var(--muted);border:1px solid var(--border);padding:8px 16px;border-radius:6px;font-size:.85em;text-decoration:none;transition:.2s;display:inline-block"
+   onmouseover="this.style.background='var(--amber)';this.style.color='#000';this.style.borderColor='var(--amber)'"
+   onmouseout="this.style.background='var(--card)';this.style.color='var(--muted)';this.style.borderColor='var(--border)'">Palindrome</a>
+<a href="table_2d_dp.html" style="background:var(--card);color:var(--muted);border:1px solid var(--border);padding:8px 16px;border-radius:6px;font-size:.85em;text-decoration:none;transition:.2s;display:inline-block"
+   onmouseover="this.style.background='var(--amber)';this.style.color='#000';this.style.borderColor='var(--amber)'"
+   onmouseout="this.style.background='var(--card)';this.style.color='var(--muted)';this.style.borderColor='var(--border)'">2D Table</a>
+<a href="state_machine_dp.html" style="background:var(--card);color:var(--muted);border:1px solid var(--border);padding:8px 16px;border-radius:6px;font-size:.85em;text-decoration:none;transition:.2s;display:inline-block"
+   onmouseover="this.style.background='var(--amber)';this.style.color='#000';this.style.borderColor='var(--amber)'"
+   onmouseout="this.style.background='var(--card)';this.style.color='var(--muted)';this.style.borderColor='var(--border)'">State Machine</a>
 <button onclick="go('problems')">21 Problems</button>
 <button onclick="go('quiz')">Quiz</button>
 </div>
@@ -169,12 +178,10 @@ td{padding:10px 12px;border:1px solid var(--border)}
 <tr><th>Family</th><th>Parent Problem</th><th>Key Choice</th><th># Variations</th><th>Status</th></tr>
 <tr><td><span class="ftag ftag-knap">0/1 Knapsack</span></td><td>Knapsack (take/skip, capacity limit)</td><td>GRAB it or SKIP it</td><td>6</td><td style="color:var(--green)">&#10003; Done</td></tr>
 <tr><td><span class="ftag ftag-uknap">Unbounded Knapsack</span></td><td>Coin Change (items reusable)</td><td>Use it AGAIN or move on</td><td>3</td><td><a href="unbounded_knapsack_dp.html" style="color:var(--teal)">View</a></td></tr>
-<tr><td><span class="ftag ftag-lcs">LCS</span></td><td>Longest Common Subsequence</td><td>Match, skip from A, skip from B</td><td>10</td><td style="color:var(--muted)">Coming</td></tr>
+<tr><td><span class="ftag ftag-lcs">LCS</span></td><td>Longest Common Subsequence</td><td>Match, skip from A, skip from B</td><td>5</td><td><a href="table_2d_dp.html" style="color:var(--violet)">View</a></td></tr>
 <tr><td><span class="ftag ftag-lin">Linear/Fibonacci</span></td><td><a href="staircase_dp.html" style="color:var(--crimson)">Climbing Stairs</a></td><td>Step 1 or step 2</td><td>4</td><td style="color:var(--green)">&#10003; Done</td></tr>
-<tr><td><span class="ftag ftag-pal">Palindrome</span></td><td>Longest Palindromic Substring</td><td>Expand or stop</td><td>2</td><td style="color:var(--muted)">Coming</td></tr>
-<tr><td><span class="ftag ftag-sm">State Machine</span></td><td>Buy & Sell Stock</td><td>Buy, sell, or rest</td><td>3</td><td style="color:var(--muted)">Coming</td></tr>
-<tr><td><span class="ftag ftag-int">Interval/MCM</span></td><td>Matrix Chain Multiplication</td><td>Where to split</td><td>5</td><td style="color:var(--muted)">Coming</td></tr>
-<tr><td><span class="ftag ftag-grid">Grid DP</span></td><td>Unique Paths</td><td>Go right or go down</td><td>3</td><td style="color:var(--muted)">Coming</td></tr>
+<tr><td><span class="ftag ftag-pal">Palindrome</span></td><td>Palindromic Substrings</td><td>Shrink from both ends</td><td>2</td><td><a href="palindrome_dp.html" style="color:var(--amber)">View</a></td></tr>
+<tr><td><span class="ftag ftag-sm">State Machine</span></td><td>Stock with Cooldown</td><td>Buy, sell, or rest</td><td>3</td><td><a href="state_machine_dp.html" style="color:var(--emerald)">View</a></td></tr>
 </table>
 
 <h2>How to Identify the Family</h2>

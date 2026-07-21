@@ -1,0 +1,389 @@
+STATE MACHINE FAMILY: MEMOIZATION + TABULATION
+==============================================================
+6 images covering memo + tab for:
+  Parent (Stock with Cooldown #309), LIS (#300), Burst Balloons (#312).
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: dark emerald (#0D2818). High-tech trading floor atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: bright emerald (#10B981).
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for profit/gain paths. Red: (#EF4444) for loss/cost paths.
+- Emerald accent lighting throughout.
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: Stock with Cooldown Memoization -> stock_cooldown_memo.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE STATES" (emerald header, about 45%):
+
+Big header: "STOCK COOLDOWN: MEMOIZE"
+Subtitle: "prices = [1, 2, 3, 0, 2]. Buy, sell, or rest. Cooldown after selling."
+
+Show a STATE MACHINE diagram with 3 nodes:
+  HOLD (red circle), SOLD (green circle), REST (blue circle).
+Draw 5 transition arrows:
+  HOLD -> HOLD (keep holding)
+  HOLD -> SOLD (sell: +price)
+  SOLD -> REST (mandatory cooldown)
+  REST -> HOLD (buy: -price)
+  REST -> REST (keep resting)
+
+Label each arrow with the action and cost/profit.
+
+Below the state machine: show a partial recursion tree.
+  max_profit(day=0, rest)
+    buy: max_profit(day=1, hold)
+    wait: max_profit(day=1, rest)
+  Circle where (day=3, rest) appears from multiple paths.
+
+Kit pointing at state machine: "The constraint tells you the states. Cooldown = 3 states."
+
+SECTION 2, "THE CODE" (gray header, about 55%):
+
+Header: "ONE FUNCTION, THREE BRANCHES"
+
+  def max_profit(prices, day, state, cache):
+      if day == len(prices):
+          return 0
+      if (day, state) in cache:
+          return cache[(day, state)]
+      if state == "rest":
+          buy = -prices[day] + max_profit(prices, day + 1, "hold", cache)
+          wait = max_profit(prices, day + 1, "rest", cache)
+          result = max(buy, wait)
+      elif state == "hold":
+          sell = prices[day] + max_profit(prices, day + 1, "sold", cache)
+          keep = max_profit(prices, day + 1, "hold", cache)
+          result = max(sell, keep)
+      else:
+          result = max_profit(prices, day + 1, "rest", cache)
+      cache[(day, state)] = result
+      return result
+
+Kit: "Cache key: (day, state). Two dimensions: WHEN and WHAT STATE."
+
+Gold box: "Each state has different choices.
+REST: buy or wait. HOLD: sell or keep. SOLD: must cooldown."
+
+
+================================================================================
+PROMPT 2: Stock with Cooldown Tabulation -> stock_cooldown_tab.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE TABLE" (emerald header, about 50%):
+
+Big header: "STOCK COOLDOWN: TABLE"
+Subtitle: "prices = [1, 2, 3, 0, 2]."
+
+Show a table with 5 rows (days 0-4) and 3 columns (HOLD, SOLD, REST).
+Use RED header for HOLD, GREEN for SOLD, BLUE for REST.
+
+Fill the table day by day:
+  Day 0: hold=-1, sold=0, rest=0
+  Day 1: hold=-1, sold=1, rest=0
+  Day 2: hold=-1, sold=2, rest=1
+  Day 3: hold=1,  sold=-1, rest=2
+  Day 4: hold=1,  sold=3,  rest=2
+
+Draw arrows showing transitions:
+  new_hold = max(prev_hold, prev_rest - price)
+  new_sold = prev_hold + price
+  new_rest = max(prev_rest, prev_sold)
+
+Highlight Day 4 SOLD = 3. GOLD border.
+"Answer: max(sold, rest) = max(3, 2) = 3."
+
+Kit: "Three variables, not an array. Each day only needs yesterday."
+
+SECTION 2, "THE CODE" (gray header, about 50%):
+
+Header: "THREE VARIABLES, NO ARRAY"
+
+  def max_profit(prices):
+      if not prices:
+          return 0
+      hold = -prices[0]
+      sold = 0
+      rest = 0
+      for day in range(1, len(prices)):
+          new_hold = max(hold, rest - prices[day])
+          new_sold = hold + prices[day]
+          new_rest = max(rest, sold)
+          hold, sold, rest = new_hold, new_sold, new_rest
+      return max(sold, rest)
+
+Highlight key transitions:
+  "new_hold: keep holding OR buy from rest"
+  "new_sold: sell what I am holding"
+  "new_rest: keep resting OR cooldown from sold"
+
+Kit: "Must use new_ variables! Can't update in place,
+all three depend on the PREVIOUS day."
+
+Gold box: "O(n) time, O(1) space. No array needed.
+The simplest state machine tabulation."
+
+
+================================================================================
+PROMPT 3: LIS Memoization -> lis_memo.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE OVERLAP" (emerald header, about 45%):
+
+Big header: "LIS: MEMOIZE"
+Subtitle: "nums = [10, 9, 2, 5, 3, 7, 101, 18]. Longest increasing subsequence?"
+
+Show the array with indices 0-7.
+For index 5 (value 7), draw arrows back to all valid predecessors:
+  index 2 (value 2): 2 < 7, lis[2] = 1, so 1+1 = 2
+  index 3 (value 5): 5 < 7, lis[3] = 2, so 2+1 = 3
+  index 4 (value 3): 3 < 7, lis[4] = 2, so 2+1 = 3
+
+"For each element, check ALL smaller elements before it."
+
+Circle overlapping: computing lis[5] and lis[6] both need lis[2], lis[3], lis[4].
+"Same subproblems reused. Cache lis[i] once."
+
+Kit: "lis_ending_at(i) = 1 + max of all lis_ending_at(j) where nums[j] < nums[i]."
+
+SECTION 2, "THE CODE" (gray header, about 55%):
+
+  def lis_ending_at(nums, index, cache):
+      if index in cache:
+          return cache[index]
+      best = 1
+      for prev in range(index):
+          if nums[prev] < nums[index]:
+              best = max(best, 1 + lis_ending_at(nums, prev, cache))
+      cache[index] = best
+      return best
+
+  def longest_increasing(nums):
+      cache = {}
+      return max(lis_ending_at(nums, i, cache) for i in range(len(nums)))
+
+Kit: "Cache key: just i. 1D cache. But for each i, scan ALL previous elements."
+
+Gold box: "Different from 2-string DP. Here we look BACKWARD,
+not at two pointers moving forward."
+
+
+================================================================================
+PROMPT 4: LIS Tabulation -> lis_tab.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE TABLE" (emerald header, about 50%):
+
+Big header: "LIS: TABLE"
+Subtitle: "nums = [10, 9, 2, 5, 3, 7, 101, 18]."
+
+Show a 1D array: lis = [1, 1, 1, 1, 1, 1, 1, 1] (all initialized to 1).
+
+Step-by-step fill (left to right):
+  i=0 (10): no prev. lis[0] = 1.
+  i=1 (9): 10 > 9, skip. lis[1] = 1.
+  i=2 (2): 10 > 2 skip, 9 > 2 skip. lis[2] = 1.
+  i=3 (5): 2 < 5! lis[3] = max(1, lis[2]+1) = 2. GREEN.
+  i=4 (3): 2 < 3! lis[4] = max(1, lis[2]+1) = 2. GREEN.
+  i=5 (7): 2,5,3 all < 7. lis[5] = max(1, 1+1, 2+1, 2+1) = 3. GREEN.
+  i=6 (101): everything < 101. lis[6] = 3+1 = 4. GOLD border!
+  i=7 (18): 2,5,3,7 < 18. lis[7] = 3+1 = 4. GREEN.
+
+Show the final array: [1, 1, 1, 2, 2, 3, 4, 4]
+Answer: max(lis) = 4. Subsequence: [2, 3, 7, 101] or [2, 5, 7, 101].
+
+Kit pointing at the scan: "For each element, scan everything before it. Keep the best."
+
+SECTION 2, "THE CODE" (gray header, about 50%):
+
+  def longest_increasing(nums):
+      n = len(nums)
+      lis = [1] * n
+      for i in range(1, n):
+          for prev in range(i):
+              if nums[prev] < nums[i]:
+                  lis[i] = max(lis[i], lis[prev] + 1)
+      return max(lis)
+
+Kit: "1D table. Each cell looks at ALL cells before it (not just neighbors).
+O(n^2) with DP."
+
+Gold box: "Vs Stock: Stock has fixed state transitions.
+LIS has variable lookback. But both track 'best value at this point'."
+
+
+================================================================================
+PROMPT 5: Burst Balloons Memoization -> burst_balloons_memo.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE KEY IDEA" (emerald header, about 45%):
+
+Big header: "BURST BALLOONS: MEMOIZE"
+Subtitle: "nums = [3, 1, 5, 8]. Burst balloons for max coins."
+
+THE REVERSAL:
+Show the insight visually: "Think LAST to burst, not FIRST."
+
+Draw 4 balloons in a row: [1] 3  1  5  8 [1] (with boundary 1s).
+"If balloon k is the LAST one in range [left, right]..."
+"Everything else is already gone. Neighbors are boundary values!"
+"coins = nums[left-1] * nums[k] * nums[right+1]"
+
+Show an example: if k=2 (value 5) is last in [1,3]:
+  Left subproblem: [1, 1] (indices 1 to 1)
+  Right subproblem: [3, 3] (index 3 to 3)
+  Coins from k: nums[0] * nums[2] * nums[4] = 1 * 5 * 1 = 5
+
+Kit: "Burst first? Neighbors change. Burst LAST? Neighbors are boundaries. Clean!"
+
+SECTION 2, "THE CODE" (gray header, about 55%):
+
+  def max_coins(nums, left, right, cache):
+      if left > right:
+          return 0
+      if (left, right) in cache:
+          return cache[(left, right)]
+      best = 0
+      for last in range(left, right + 1):
+          coins = nums[left - 1] * nums[last] * nums[right + 1]
+          coins += max_coins(nums, left, last - 1, cache)
+          coins += max_coins(nums, last + 1, right, cache)
+          best = max(best, coins)
+      cache[(left, right)] = best
+      return best
+
+  def burst_balloons(nums):
+      nums = [1] + nums + [1]
+      return max_coins(nums, 1, len(nums) - 2, {})
+
+Kit: "Cache key: (left, right). An interval.
+Try every balloon as the LAST to burst. Take the best."
+
+Gold box: "Interval DP: subproblems are ranges [left, right].
+Same shape as palindrome DP (also intervals)."
+
+
+================================================================================
+PROMPT 6: Burst Balloons Tabulation -> burst_balloons_tab.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE TABLE" (emerald header, about 50%):
+
+Big header: "BURST BALLOONS: TABLE"
+Subtitle: "nums = [1, 3, 1, 5, 8, 1] (with boundaries)."
+
+Show a 2D grid: table[left][right]. Only upper triangle (left <= right).
+
+Fill by interval LENGTH (like palindrome!):
+  Length 1: single balloons.
+    table[1][1] = nums[0]*nums[1]*nums[2] = 1*3*1 = 3
+    table[2][2] = nums[1]*nums[2]*nums[3] = 3*1*5 = 15
+    table[3][3] = nums[2]*nums[3]*nums[4] = 1*5*8 = 40
+    table[4][4] = nums[3]*nums[4]*nums[5] = 5*8*1 = 40
+
+  Length 2: try each as last.
+    table[1][2]: try last=1 or last=2, take max.
+
+  Continue until length 4:
+    table[1][4] = answer = 167. GOLD border.
+
+Show arrows: for each cell, sub-intervals combine.
+
+Kit: "Fill by length, small to large. Same fill order as palindrome."
+
+SECTION 2, "THE CODE" (gray header, about 50%):
+
+  def burst_balloons(nums):
+      nums = [1] + nums + [1]
+      n = len(nums)
+      table = [[0] * n for _ in range(n)]
+      for length in range(1, n - 1):
+          for left in range(1, n - length):
+              right = left + length - 1
+              for last in range(left, right + 1):
+                  coins = nums[left - 1] * nums[last] * nums[right + 1]
+                  coins += table[left][last - 1]
+                  coins += table[last + 1][right]
+                  table[left][right] = max(table[left][right], coins)
+      return table[1][n - 2]
+
+Kit: "Three nested loops: length, left, last.
+O(n^3), but the interval structure makes it manageable."
+
+Gold box: "Interval DP family: Palindrome and Burst Balloons both
+fill by interval length. The cell formula differs, but the shape is identical."

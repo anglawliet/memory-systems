@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>State Machine DP: States, Transitions, Decisions</title>
+<style>
+:root{--bg:#1a1916;--card:#252320;--card2:#2d2a26;--gold:#d4a843;--gold2:#fbbf24;--amber:#f59e0b;--green:#22c55e;--blue:#3b82f6;--red:#ef4444;--text:#e8e2d6;--muted:#9b9484;--border:#3d3930;--sand:#c2956a;--emerald:#10b981;--teal:#14b8a6}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;padding:0 0 80px;overflow-x:hidden}
+.hdr{background:linear-gradient(135deg,#1f1a0e,#1a1916);border-bottom:3px solid var(--emerald);padding:40px 20px;text-align:center}
+.hdr h1{font-size:2em;color:var(--emerald)}.hdr p{color:var(--muted)}
+.wrap{max-width:920px;margin:0 auto;padding:20px}
+h2{color:var(--emerald);font-size:1.4em;margin:32px 0 12px;border-bottom:2px solid var(--border);padding-bottom:8px}
+h3{color:var(--emerald);margin:20px 0 8px}
+.scene-img{width:100%;border-radius:10px;margin:12px 0;border:1px solid var(--border)}
+pre{background:#0d0d0b;border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;font-size:.85em;line-height:1.6;margin:10px 0}
+code{font-family:'Fira Code','Courier New',monospace}
+.hi{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:6px;padding:12px 16px;margin:12px 0}
+.ws{background:var(--card);border-radius:12px;padding:20px;margin:20px 0;border-left:4px solid var(--emerald)}
+.ws h3{color:var(--emerald);margin-top:0}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.code-ann{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:.9em}
+.nav-link{display:inline-block;background:var(--card);border:1px solid var(--border);padding:10px 20px;border-radius:8px;color:var(--emerald);text-decoration:none;font-weight:700;margin:8px 4px;transition:.2s}
+.nav-link:hover{background:var(--emerald);color:#000;border-color:var(--emerald)}
+.state-card{border-radius:8px;padding:14px;font-size:.92em}
+.state-hold{background:rgba(239,68,68,.06);border:2px solid var(--red)}
+.state-sold{background:rgba(34,197,94,.06);border:2px solid var(--green)}
+.state-rest{background:rgba(59,130,246,.06);border:2px solid var(--blue)}
+.grid-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+.grid-table th,.grid-table td{border:1px solid var(--border);padding:8px 12px;text-align:center}
+.grid-table th{background:var(--card2);color:var(--emerald)}
+.deriv{background:var(--card);border:1px solid var(--border);border-radius:10px;margin:16px 0;overflow:hidden}
+.deriv-h{padding:14px 20px;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+.deriv-h:hover{background:var(--card2)}
+.deriv-h h3{margin:0;display:flex;align-items:center;gap:10px;font-size:1em}
+.deriv-n{background:var(--emerald);color:#000;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8em;font-weight:800;flex-shrink:0}
+.deriv-a{color:var(--muted);transition:.3s}.deriv.open .deriv-a{transform:rotate(90deg)}
+.deriv-b{display:none;padding:0 20px 16px;border-top:1px solid var(--border)}.deriv.open .deriv-b{display:block}
+.sbox{background:var(--card2);border-radius:8px;padding:12px 16px;margin:10px 0}
+.sl{font-size:.7em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.cell-walk{border-radius:10px;padding:16px;margin:12px 0;font-size:.95em;line-height:1.8}
+.cell-fill{background:rgba(34,197,94,.06);border:1px solid var(--green)}
+@media(max-width:600px){
+  .wrap{padding:12px}
+  .hdr h1{font-size:1.5em}
+  h2{font-size:1.2em}
+  .two-col,.three-col{grid-template-columns:1fr}
+  .code-ann{grid-template-columns:1fr}
+  .code-ann code{display:block;margin-bottom:2px}
+  pre{font-size:.75em;padding:10px;white-space:pre-wrap;word-break:break-word}
+  code{word-break:break-word}
+  .grid-table{display:block;overflow-x:auto}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+<h1>State Machine DP</h1>
+<p>Multiple states, clear transitions. Track the best value in each state at every step.</p>
+</div>
+
+<div class="wrap">
+
+<div style="margin-bottom:24px">
+<a href="table_2d_dp.html" class="nav-link">&larr; 2D Table</a>
+<a href="palindrome_dp.html" class="nav-link">Palindrome</a>
+<a href="dp_workshop.html" class="nav-link">Knapsack</a>
+</div>
+
+<!-- ==================== THE PROBLEM ==================== -->
+<h2>The Problem</h2>
+
+<div class="ws">
+<h3 style="margin-bottom:12px">Best Time to Buy and Sell Stock with Cooldown (LeetCode #309)</h3>
+
+<p style="margin-bottom:12px">You have stock prices for each day. You can buy, sell, or rest. After selling, you must wait one day (cooldown) before buying again. Maximize profit.</p>
+
+<div style="text-align:center;margin:16px 0;font-size:1.1em">
+<code>prices = [1, 2, 3, 0, 2]</code>
+</div>
+
+<p style="margin-bottom:8px">Best strategy: buy day 0 ($1), sell day 2 ($3), cooldown day 3, buy day 3 ($0), sell day 4 ($2). Profit = (3-1) + (2-0) = <strong style="color:var(--gold2)">$3</strong>.</p>
+
+<div class="hi">
+<strong style="color:var(--emerald)">Why is this different?</strong> You can't just "grab or skip" like knapsack. Your available choices depend on <strong>what state you're in</strong>. Holding a stock? You can sell or keep holding. Just sold? You must rest. Resting? You can buy or keep resting.
+</div>
+</div>
+
+<!-- ==================== STEP 1: THE STATES ==================== -->
+<img src="dp/images/stock_cooldown_choices.png" alt="Stock Cooldown choice diagram: state machine with HOLD, SOLD, REST states and 5 transitions" class="scene-img">
+
+<h2>Step 1: What Are My States?</h2>
+
+<div class="ws">
+<h3>Three states, five transitions</h3>
+
+<div class="three-col" style="margin:16px 0">
+<div class="state-hold">
+<div style="color:var(--red);font-weight:700;margin-bottom:6px">HOLD</div>
+I own a stock. I can:<br>
+<strong>Keep holding</strong> (stay in HOLD)<br>
+<strong>Sell today</strong> (move to SOLD)
+</div>
+<div class="state-sold">
+<div style="color:var(--green);font-weight:700;margin-bottom:6px">SOLD</div>
+I just sold. I must:<br>
+<strong>Cool down</strong> (move to REST)<br>
+<span style="color:var(--muted);font-size:.85em">No choice, mandatory.</span>
+</div>
+<div class="state-rest">
+<div style="color:var(--blue);font-weight:700;margin-bottom:6px">REST</div>
+I'm free to act. I can:<br>
+<strong>Buy today</strong> (move to HOLD)<br>
+<strong>Keep resting</strong> (stay in REST)
+</div>
+</div>
+
+<pre style="font-size:.88em"><code>Transitions:
+  HOLD  ->  HOLD   (keep holding)
+  HOLD  ->  SOLD   (sell: + price)
+  SOLD  ->  REST   (mandatory cooldown)
+  REST  ->  HOLD   (buy: - price)
+  REST  ->  REST   (keep resting)</code></pre>
+
+<div class="hi">
+<strong style="color:var(--emerald)">The constraint creates the states.</strong> "Cooldown after selling" means selling and resting are different states. Without cooldown, you'd only need HOLD and REST.
+</div>
+</div>
+
+<!-- ==================== STEP 2: RECURSION ==================== -->
+<h2>Step 2: States &rarr; Recursion</h2>
+
+<div class="ws">
+<h3>Each state has its own choices</h3>
+
+<pre><code>def max_profit(prices, day, state, cache):
+    if day == len(prices):
+        return 0
+    if (day, state) in cache:
+        return cache[(day, state)]
+
+    if state == "rest":
+        buy = -prices[day] + max_profit(prices, day + 1, "hold", cache)
+        wait = max_profit(prices, day + 1, "rest", cache)
+        result = max(buy, wait)
+    elif state == "hold":
+        sell = prices[day] + max_profit(prices, day + 1, "sold", cache)
+        keep = max_profit(prices, day + 1, "hold", cache)
+        result = max(sell, keep)
+    else:
+        result = max_profit(prices, day + 1, "rest", cache)
+
+    cache[(day, state)] = result
+    return result
+
+max_profit(prices, 0, "rest", {})</code></pre>
+
+<div class="three-col" style="margin-top:12px">
+<div style="background:var(--card2);border-radius:6px;padding:10px;font-size:.85em">
+<div style="color:var(--blue);font-weight:700">REST</div>
+max(buy, wait). Buy costs money now but opens future sells.
+</div>
+<div style="background:var(--card2);border-radius:6px;padding:10px;font-size:.85em">
+<div style="color:var(--red);font-weight:700">HOLD</div>
+max(sell, keep). Sell for today's price or hold for a better one.
+</div>
+<div style="background:var(--card2);border-radius:6px;padding:10px;font-size:.85em">
+<div style="color:var(--green);font-weight:700">SOLD</div>
+No choice. Must cool down. Go to REST.
+</div>
+</div>
+</div>
+
+<!-- ==================== STEP 3: OVERLAP ==================== -->
+<img src="dp/images/stock_cooldown_tree.png" alt="Stock Cooldown recursion tree: same (day, state) reached from different trading paths" class="scene-img">
+
+<h2>Step 3: Spot the Overlap</h2>
+
+<div class="ws">
+<h3>Same (day, state) from different paths</h3>
+
+<pre style="font-size:.82em;line-height:1.8"><code>max_profit(day=0, rest)
+  buy: max_profit(day=1, hold)
+    sell: max_profit(day=2, sold)
+      cooldown: max_profit(day=3, rest)  ─ ─ ─ ┐
+    keep: max_profit(day=2, hold)               │
+      sell: max_profit(day=3, sold)             │ SAME!
+        cooldown: max_profit(day=4, rest)       │
+      keep: max_profit(day=3, hold)             │
+  wait: max_profit(day=1, rest)                 │
+    buy: max_profit(day=2, hold)                │
+      sell: max_profit(day=3, sold)             │
+        cooldown: max_profit(day=4, rest) ─ ─ ─ ┘</code></pre>
+
+<div style="background:rgba(251,191,36,.12);border:2px solid var(--gold2);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
+<div style="font-size:1.1em;font-weight:800;color:var(--gold2);margin-bottom:8px">(day=3, rest) appears from multiple paths</div>
+<div style="font-size:.95em">Cache key: <code>(day, state)</code>. At most 3n unique states.</div>
+</div>
+</div>
+
+<!-- ==================== STEP 4: MEMOIZE ==================== -->
+<img src="dp/images/stock_cooldown_memo.png" alt="Stock with Cooldown memoization: state machine with cache" class="scene-img">
+
+<h2>Step 4: Memoize</h2>
+
+<div class="ws">
+<h3>Already built into the recursion above</h3>
+
+<p>The recursion code above already includes the cache. The key insight:</p>
+
+<div class="code-ann" style="margin-top:14px">
+<code style="color:var(--gold2)">(day, state) in cache</code><div>Two state variables: which day, which state</div>
+<code style="color:var(--green)">3 states x n days</code><div>At most 3n entries in the cache</div>
+<code style="color:var(--emerald)">Start: day 0, state "rest"</code><div>Begin free to buy</div>
+</div>
+</div>
+
+<!-- ==================== STEP 5: TABULATION ==================== -->
+<img src="dp/images/stock_cooldown_tab.png" alt="Stock with Cooldown tabulation: three variables tracked day by day" class="scene-img">
+
+<h2 style="color:var(--amber);border-bottom-color:var(--amber)">Step 5: From Recursion to Table</h2>
+
+<div class="ws" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">Three variables, not an array</h3>
+
+<p style="margin-bottom:12px">Each day, compute three values: best profit if HOLD, SOLD, or REST.</p>
+
+<table class="grid-table">
+<tr><th>Day</th><th>Price</th><th style="color:var(--red)">HOLD</th><th style="color:var(--green)">SOLD</th><th style="color:var(--blue)">REST</th></tr>
+<tr><td>0</td><td>$1</td><td>-1</td><td>0</td><td>0</td></tr>
+<tr><td>1</td><td>$2</td><td>-1</td><td>1</td><td>0</td></tr>
+<tr><td>2</td><td>$3</td><td>-1</td><td>2</td><td>1</td></tr>
+<tr><td>3</td><td>$0</td><td style="color:var(--green);font-weight:700">1</td><td>-1</td><td style="color:var(--green);font-weight:700">2</td></tr>
+<tr><td>4</td><td>$2</td><td>1</td><td style="color:var(--gold2);font-weight:700">3</td><td>2</td></tr>
+</table>
+
+<p style="font-size:.9em;color:var(--muted);margin-top:8px">Answer: max(SOLD, REST) at last day = max(3, 2) = <strong style="color:var(--gold2)">3</strong>. (Can't end in HOLD, you'd be stuck with unsold stock.)</p>
+</div>
+
+<div class="ws" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">Day 3 walkthrough: the buy-the-dip moment</h3>
+
+<div class="cell-walk cell-fill">
+<div style="color:var(--green);font-weight:700;margin-bottom:8px">Price drops to $0. Time to buy!</div>
+
+<div class="three-col" style="margin:8px 0">
+<div class="state-hold">
+<div style="color:var(--red);font-weight:700;font-size:.85em">NEW HOLD</div>
+<code>max(prev_hold, prev_rest - price)</code><br>
+<code>max(-1, 1 - 0) = <strong>1</strong></code><br>
+<span style="font-size:.82em;color:var(--muted)">Buy at $0 with $1 rest profit!</span>
+</div>
+<div class="state-sold">
+<div style="color:var(--green);font-weight:700;font-size:.85em">NEW SOLD</div>
+<code>prev_hold + price</code><br>
+<code>-1 + 0 = <strong>-1</strong></code><br>
+<span style="font-size:.82em;color:var(--muted)">Selling at $0 loses money.</span>
+</div>
+<div class="state-rest">
+<div style="color:var(--blue);font-weight:700;font-size:.85em">NEW REST</div>
+<code>max(prev_rest, prev_sold)</code><br>
+<code>max(1, 2) = <strong>2</strong></code><br>
+<span style="font-size:.82em;color:var(--muted)">Yesterday's sold profit flows through.</span>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ==================== THE CODE ==================== -->
+<h2 style="color:var(--amber);border-bottom-color:var(--amber)">The Tabulation Code</h2>
+
+<div class="ws" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">Three variables, updated each day</h3>
+
+<pre><code>def max_profit(prices):
+    if not prices:
+        return 0
+
+    hold = -prices[0]
+    sold = 0
+    rest = 0
+
+    for day in range(1, len(prices)):
+        new_hold = max(hold, rest - prices[day])
+        new_sold = hold + prices[day]
+        new_rest = max(rest, sold)
+        hold, sold, rest = new_hold, new_sold, new_rest
+
+    return max(sold, rest)</code></pre>
+
+<div class="code-ann" style="margin-top:14px">
+<code style="color:var(--red)">hold = -prices[0]</code><div>Buy on day 0. Costs money, so negative.</div>
+<code style="color:var(--green)">sold = 0</code><div>Haven't sold anything yet.</div>
+<code style="color:var(--blue)">rest = 0</code><div>Haven't done anything yet.</div>
+<code style="color:var(--amber)">new_hold = max(hold, rest - prices[day])</code><div>Keep holding OR buy today from rest</div>
+<code style="color:var(--amber)">new_sold = hold + prices[day]</code><div>Sell today (must be holding)</div>
+<code style="color:var(--amber)">new_rest = max(rest, sold)</code><div>Keep resting OR cooldown from sold</div>
+<code style="color:var(--gold2)">return max(sold, rest)</code><div>Best ending: sold or resting. Not holding.</div>
+</div>
+
+<div class="hi" style="margin-top:16px">
+<strong style="color:var(--amber)">Why no array?</strong> Each day only depends on the previous day's values. Three variables are enough. No need to store the full history.
+</div>
+</div>
+
+<!-- ==================== CHILDREN ==================== -->
+<h2>The State Machine Family</h2>
+
+<div style="background:rgba(16,185,129,.15);border:2px solid var(--emerald);border-radius:8px;padding:14px;text-align:center;margin-bottom:16px">
+<strong style="color:var(--emerald);font-size:1.1em">STOCK WITH COOLDOWN (parent)</strong><br>
+<span style="font-size:.88em;color:var(--muted)">States + transitions. Each step, update every state from the previous step's states.</span>
+</div>
+
+<div style="display:grid;gap:10px">
+
+<!-- ==================== CHILD 1: LIS ==================== -->
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">1</span> Longest Increasing Subsequence</h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+
+<img src="dp/images/lis_choices.png" alt="LIS choice diagram: for each element, check ALL smaller previous elements. Variable lookback." class="scene-img">
+
+<div class="sbox"><div class="sl" style="color:var(--emerald)">LEETCODE #300</div>
+Given an array of integers, find the length of the longest strictly increasing subsequence. Example: <code>[10, 9, 2, 5, 3, 7, 101, 18]</code> &rarr; 4 (the subsequence <code>[2, 3, 7, 101]</code>).</div>
+
+<div class="sbox"><div class="sl" style="color:var(--emerald)">THE KEY IDEA</div>
+<code>lis[i]</code> = length of the longest increasing subsequence <strong>ending at index i</strong>. For each i, look at every j before it. If <code>nums[j] < nums[i]</code>, we can extend that subsequence. Take the longest one and add 1.</div>
+
+<h3 style="color:var(--emerald)">Recursion</h3>
+<pre><code>def lis_ending_at(nums, index, cache):
+    if index in cache:
+        return cache[index]
+
+    best = 1
+    for prev in range(index):
+        if nums[prev] < nums[index]:
+            best = max(best, 1 + lis_ending_at(nums, prev, cache))
+
+    cache[index] = best
+    return best
+
+def longest_increasing(nums):
+    cache = {}
+    return max(lis_ending_at(nums, i, cache) for i in range(len(nums)))</code></pre>
+
+<img src="dp/images/lis_memo.png" alt="LIS memoization: for each element, check all previous smaller elements" class="scene-img">
+
+<h3 style="color:var(--amber)">Tabulation</h3>
+<pre><code>def longest_increasing(nums):
+    n = len(nums)
+    lis = [1] * n
+
+    for i in range(1, n):
+        for prev in range(i):
+            if nums[prev] < nums[i]:
+                lis[i] = max(lis[i], lis[prev] + 1)
+
+    return max(lis)</code></pre>
+
+<img src="dp/images/lis_tab.png" alt="LIS tabulation: 1D array, each cell checks all previous cells with smaller values" class="scene-img">
+
+<div class="hi">
+<strong style="color:var(--amber)">Not a typical state machine,</strong> but each element's "state" is the length of the best subsequence ending there. The transition: can I extend any earlier subsequence? O(n&sup2;) with DP, O(n log n) with binary search (patience sorting).
+</div>
+</div>
+</div>
+
+<!-- ==================== CHILD 2: BURST BALLOONS ==================== -->
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">2</span> Burst Balloons</h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+
+<img src="dp/images/burst_balloons_choices.png" alt="Burst Balloons choice diagram: think LAST not FIRST, interval DP with boundary values" class="scene-img">
+
+<div class="sbox"><div class="sl" style="color:var(--emerald)">LEETCODE #312</div>
+Given n balloons with values, burst them one at a time. When you burst balloon i, you earn <code>nums[i-1] * nums[i] * nums[i+1]</code>. Maximize total coins. Boundaries are 1. Example: <code>[3, 1, 5, 8]</code> &rarr; 167.</div>
+
+<div class="sbox"><div class="sl" style="color:var(--emerald)">THE KEY IDEA</div>
+<strong>Think about which balloon to burst LAST</strong>, not first. If balloon k is the last to burst in range [left, right], the coins from k are <code>nums[left-1] * nums[k] * nums[right+1]</code> (the boundaries are still there because everything else in the range is already gone). This gives clean subproblems: [left, k-1] and [k+1, right].</div>
+
+<h3 style="color:var(--emerald)">Recursion</h3>
+<pre><code>def max_coins(nums, left, right, cache):
+    if left > right:
+        return 0
+    if (left, right) in cache:
+        return cache[(left, right)]
+
+    best = 0
+    for last in range(left, right + 1):
+        coins = nums[left - 1] * nums[last] * nums[right + 1]
+        coins += max_coins(nums, left, last - 1, cache)
+        coins += max_coins(nums, last + 1, right, cache)
+        best = max(best, coins)
+
+    cache[(left, right)] = best
+    return best
+
+def burst_balloons(nums):
+    nums = [1] + nums + [1]
+    return max_coins(nums, 1, len(nums) - 2, {})</code></pre>
+
+<img src="dp/images/burst_balloons_memo.png" alt="Burst Balloons memoization: interval DP, choose last balloon to burst" class="scene-img">
+
+<h3 style="color:var(--amber)">Tabulation</h3>
+<pre><code>def burst_balloons(nums):
+    nums = [1] + nums + [1]
+    n = len(nums)
+    table = [[0] * n for _ in range(n)]
+
+    for length in range(1, n - 1):
+        for left in range(1, n - length):
+            right = left + length - 1
+            for last in range(left, right + 1):
+                coins = nums[left - 1] * nums[last] * nums[right + 1]
+                coins += table[left][last - 1]
+                coins += table[last + 1][right]
+                table[left][right] = max(table[left][right], coins)
+
+    return table[1][n - 2]</code></pre>
+
+<img src="dp/images/burst_balloons_tab.png" alt="Burst Balloons tabulation: interval table filled by increasing range length" class="scene-img">
+
+<div class="hi">
+<strong style="color:var(--amber)">Interval DP:</strong> <code>table[left][right]</code> = max coins from bursting all balloons in [left, right]. Fill by increasing interval length (like palindrome DP). The twist: "burst last" reversal makes subproblems independent.
+</div>
+</div>
+</div>
+
+</div>
+
+<!-- ==================== COMPARISON ==================== -->
+<h2>The State Machine Pattern</h2>
+
+<div class="ws" style="border-left-color:var(--blue)">
+<h3 style="color:var(--blue)">Different shapes, same idea</h3>
+
+<table class="grid-table" style="font-size:.82em">
+<tr><th>Problem</th><th>States</th><th>Transitions</th><th>Table Shape</th></tr>
+<tr><td style="color:var(--emerald);font-weight:700">Stock + Cooldown</td><td>hold, sold, rest</td><td>5 arrows between states</td><td>3 variables per day</td></tr>
+<tr><td style="color:var(--emerald);font-weight:700">LIS</td><td>"best ending at i"</td><td>check all j &lt; i</td><td>1D array</td></tr>
+<tr><td style="color:var(--emerald);font-weight:700">Burst Balloons</td><td>"max coins in [l, r]"</td><td>choose last to burst</td><td>2D interval table</td></tr>
+</table>
+
+<div class="hi">
+<strong style="color:var(--emerald)">The common thread:</strong> in all three, the key insight is figuring out the RIGHT states. Stock: the constraint (cooldown) tells you the states. LIS: "ending at i" is the state. Burst Balloons: "last to burst" is the reversal that makes it work.
+</div>
+</div>
+
+<div style="text-align:center;margin-top:32px">
+<a href="table_2d_dp.html" class="nav-link">&larr; 2D Table</a>
+<a href="palindrome_dp.html" class="nav-link">Palindrome</a>
+<a href="dp_workshop.html" class="nav-link">Knapsack</a>
+</div>
+
+</div>
+
+</body>
+</html>

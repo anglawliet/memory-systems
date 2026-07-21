@@ -1,0 +1,111 @@
+STAIRCASE: MEMOIZATION
+==============================================================
+1 image. Tabulation already exists.
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: warm dark purple (#2D1B4E). Dungeon staircase atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: bright purple (#8B5CF6).
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for cached/hit paths. Red: (#EF4444) for computed paths.
+- Purple accent lighting throughout.
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: Staircase Memoization -> staircase_memo.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE OVERLAP" (purple header, about 45%):
+
+Big header: "STAIRCASE: MEMOIZE"
+Subtitle: "n = 5 steps. Take 1 or 2 steps at a time."
+
+Show a recursion tree for ways(5).
+  ways(5) -> ways(4), ways(3)
+  ways(4) -> ways(3), ways(2)
+  ways(3) -> ways(2), ways(1)
+  ways(3) -> ways(2), ways(1)     <-- DUPLICATE subtree!
+  ways(2) -> ways(1), ways(0)
+
+Circle the duplicate: ways(3) appears TWICE.
+And ways(2) appears THREE times.
+
+"ways(3) already computed. Just look it up!"
+"Without cache: 15 calls. With cache: 5 unique calls."
+
+Kit holding notebook: "I only compute each step count ONCE."
+
+SECTION 2, "THE CODE" (gray header, about 55%):
+
+Header: "ADD 3 LINES"
+
+  def ways(n, cache):
+      if n <= 1:
+          return 1
+
+      if n in cache:
+          return cache[n]
+
+      result = ways(n - 1, cache) + ways(n - 2, cache)
+
+      cache[n] = result
+      return result
+
+Highlight the 3 new things (gold boxes):
+  1. "cache parameter"
+  2. "Check before computing"
+  3. "Store after computing"
+
+"Cache key: just n. Only 1D!"
+"Time: O(n) instead of O(2^n). Huge improvement."
+
+Kit: "Staircase is the simplest DP to memoize.
+One variable, one cache key, done."
+
+Gold box: "Same pattern everywhere:
+  1. Check the cache.
+  2. Compute if needed.
+  3. Store the result."

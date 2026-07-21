@@ -1,0 +1,439 @@
+UNBOUNDED KNAPSACK FAMILY: MEMOIZATION + TABULATION
+==============================================================
+7 images covering memo + tab for:
+  Parent (Unbounded Knapsack), Coin Change (memo only, tab exists),
+  Coin Change 2, Word Break.
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: dark teal/charcoal (#0f2027 to #203a43). Vault atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: bright teal (#14B8A6).
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for cached/hit paths. Red: (#EF4444) for computed paths.
+- Teal accent lighting throughout.
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: Unbounded Knapsack Memoization -> family2_memo.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE OVERLAP" (teal header, about 40%):
+
+Big header: "WHY MEMOIZE?"
+Subtitle: "Treasures: Gem(2,$3), Crown(3,$4). Bag: 6."
+
+Show a recursion tree. Each node: (index, bag_limit).
+Green branches = USE AGAIN (stay), Red branches = MOVE ON (advance).
+
+Circle duplicate nodes that have the SAME (index, bag_limit):
+  e.g. (0, 4) appearing in two different branches.
+  "Same item, same capacity. SAME answer. Why compute twice?"
+
+Show savings: "With cache: skip all duplicates."
+
+SECTION 2, "THE CODE" (gray header, about 60%):
+
+Header: "ADD 3 LINES TO YOUR RECURSION"
+
+  def max_value(treasures, bag_limit, index, cache):
+      if index == len(treasures) or bag_limit == 0:
+          return 0
+
+      if (index, bag_limit) in cache:
+          return cache[(index, bag_limit)]
+
+      name, weight, value = treasures[index]
+      if weight > bag_limit:
+          result = max_value(treasures, bag_limit, index + 1, cache)
+      else:
+          use_again = value + max_value(treasures, bag_limit - weight, index, cache)
+          move_on = max_value(treasures, bag_limit, index + 1, cache)
+          result = max(use_again, move_on)
+
+      cache[(index, bag_limit)] = result
+      return result
+
+Highlight the 3 new things (gold boxes):
+  1. "cache parameter"
+  2. "Check before computing"
+  3. "Store after computing"
+
+Kit: "Same recursion. Just check the notebook first.
+Notice use_again stays at index (not index+1). That's unbounded."
+
+
+================================================================================
+PROMPT 2: Unbounded Knapsack Tabulation -> family2_tab.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE TABLE" (teal header, about 55%):
+
+Big header: "BUILD BOTTOM-UP"
+Subtitle: "Treasures: Gem(2,$3), Crown(3,$4). Bag: 7."
+
+Show a 1D array dp[0..7], all starting at 0.
+
+Process each item LEFT TO RIGHT:
+
+STEP 1: Process Gem (weight=2, value=$3).
+  Scan LEFT TO RIGHT: cap = 2, 3, 4, 5, 6, 7.
+  dp[2] = max(0, dp[0]+3) = 3
+  dp[3] = max(0, dp[1]+3) = 3
+  dp[4] = max(0, dp[2]+3) = max(0, 6) = 6
+  dp[5] = max(0, dp[3]+3) = max(0, 6) = 6
+  dp[6] = max(0, dp[4]+3) = max(0, 9) = 9
+  dp[7] = max(0, dp[5]+3) = max(0, 9) = 9
+  dp = [0, 0, 3, 3, 6, 6, 9, 9]
+
+STEP 2: Process Crown (weight=3, value=$4).
+  Scan LEFT TO RIGHT: cap = 3, 4, 5, 6, 7.
+  dp[3] = max(3, dp[0]+4) = max(3, 4) = 4
+  dp[4] = max(6, dp[1]+4) = max(6, 4) = 6
+  dp[5] = max(6, dp[2]+4) = max(6, 7) = 7
+  dp[6] = max(9, dp[3]+4) = max(9, 8) = 9
+  dp[7] = max(9, dp[4]+4) = max(9, 10) = 10
+  dp = [0, 0, 3, 4, 6, 7, 9, 10]
+
+Show: dp[7] = 10. That's Crown + Crown + Gem = $4+$4+$3 = ... wait.
+Actually: Crown(3) + Gem(2) + Gem(2) = 7, value = $4+$3+$3 = $10. Yes!
+
+Highlight: "LEFT TO RIGHT allows reuse."
+"dp[cap-weight] might ALREADY include this item. That's the point!"
+
+SECTION 2, "THE CODE" (gray header, about 45%):
+
+  def max_value(treasures, bag_limit):
+      dp = [0] * (bag_limit + 1)
+
+      for name, weight, value in treasures:
+          for cap in range(weight, bag_limit + 1):
+              dp[cap] = max(dp[cap], dp[cap - weight] + value)
+
+      return dp[bag_limit]
+
+Annotations:
+  dp = [0] * (bag_limit + 1)      <- "All zeros: no items yet."
+  for name, weight, value         <- "One item at a time."
+  range(weight, bag_limit + 1)    <- "LEFT TO RIGHT! Allows reuse."
+  dp[cap - weight] + value        <- "Use again: already includes this item."
+
+Gold comparison box:
+  "Unbounded: LEFT TO RIGHT  (allows reuse)"
+  "0/1:       RIGHT TO LEFT  (no reuse)"
+
+
+================================================================================
+PROMPT 3: Coin Change Memoization -> family2_child1_memo.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE OVERLAP" (teal header, about 40%):
+
+Big header: "COIN CHANGE: MEMOIZE"
+Subtitle: "coins = [1, 3, 4], amount = 6"
+
+Show partial recursion tree. Each node: (index, amount).
+Circle duplicate nodes, e.g. (1, 3) appearing twice.
+"Same coin position, same remaining amount. Same answer!"
+
+SECTION 2, "THE CODE" (gray header, about 60%):
+
+  def min_coins(coins, amount, index, cache):
+      if amount == 0:
+          return 0
+      if index == len(coins):
+          return float('inf')
+
+      if (index, amount) in cache:
+          return cache[(index, amount)]
+
+      if coins[index] > amount:
+          result = min_coins(coins, amount, index + 1, cache)
+      else:
+          use_again = 1 + min_coins(coins, amount - coins[index], index, cache)
+          move_on = min_coins(coins, amount, index + 1, cache)
+          result = min(use_again, move_on)
+
+      cache[(index, amount)] = result
+      return result
+
+Highlight the 3 new lines (gold).
+"Cache key: (index, amount). Cache value: min coins needed."
+
+Kit: "use_again stays at index (can reuse coin).
+move_on goes to index+1 (skip to next coin)."
+
+Note: "Tabulation image already exists (family2_child1_C.png)."
+
+
+================================================================================
+PROMPT 4: Coin Change 2 Memoization -> family2_child2_memo.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE OVERLAP" (teal header, about 40%):
+
+Big header: "COIN CHANGE 2: MEMOIZE"
+Subtitle: "coins = [1, 2, 5], amount = 5"
+
+Show partial recursion tree. Each node: (index, amount).
+Circle duplicate nodes. "Same position, same amount. Same count!"
+
+SECTION 2, "THE CODE" (gray header, about 60%):
+
+  def count_ways(coins, amount, index, cache):
+      if amount == 0:
+          return 1
+      if index == len(coins):
+          return 0
+
+      if (index, amount) in cache:
+          return cache[(index, amount)]
+
+      if coins[index] > amount:
+          result = count_ways(coins, amount, index + 1, cache)
+      else:
+          use_again = count_ways(coins, amount - coins[index], index, cache)
+          move_on = count_ways(coins, amount, index + 1, cache)
+          result = use_again + move_on
+
+      cache[(index, amount)] = result
+      return result
+
+Highlight the 3 new lines (gold).
+"combine = +. Success base = 1. Failure base = 0."
+
+
+================================================================================
+PROMPT 5: Coin Change 2 Tabulation -> family2_child2_tab.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE TABLE" (teal header, about 55%):
+
+Big header: "COIN CHANGE 2: COUNT WAYS"
+Subtitle: "coins = [1, 2, 5], amount = 5"
+
+1D array dp[0..5]. dp[0] = 1. Rest = 0.
+  dp = [1, 0, 0, 0, 0, 0]
+
+STEP 1: Process coin = 1. LEFT TO RIGHT.
+  dp[1] += dp[0] = 0+1 = 1
+  dp[2] += dp[1] = 0+1 = 1
+  dp[3] += dp[2] = 0+1 = 1
+  dp[4] += dp[3] = 0+1 = 1
+  dp[5] += dp[4] = 0+1 = 1
+  dp = [1, 1, 1, 1, 1, 1]
+
+STEP 2: Process coin = 2. LEFT TO RIGHT.
+  dp[2] += dp[0] = 1+1 = 2
+  dp[3] += dp[1] = 1+1 = 2
+  dp[4] += dp[2] = 1+2 = 3
+  dp[5] += dp[3] = 1+2 = 3
+  dp = [1, 1, 2, 2, 3, 3]
+
+STEP 3: Process coin = 5. LEFT TO RIGHT.
+  dp[5] += dp[0] = 3+1 = 4
+  dp = [1, 1, 2, 2, 3, 4]
+
+Show: dp[5] = 4. Four ways: {1,1,1,1,1}, {1,1,1,2}, {1,2,2}, {5}.
+
+"LEFT TO RIGHT: same coin can be used again."
+"This counts COMBINATIONS (not permutations) because we process one coin at a time."
+
+SECTION 2, "THE CODE" (gray header, about 45%):
+
+  def count_ways(coins, amount):
+      dp = [0] * (amount + 1)
+      dp[0] = 1
+
+      for coin in coins:
+          for a in range(coin, amount + 1):
+              dp[a] += dp[a - coin]
+
+      return dp[amount]
+
+Annotations:
+  dp[0] = 1               <- "One way to make 0: use no coins."
+  range(coin, amount + 1) <- "LEFT TO RIGHT. Allows reuse."
+  dp[a] += dp[a - coin]   <- "Add ways: use this coin one more time."
+
+
+================================================================================
+PROMPT 6: Word Break Memoization -> family2_child3_memo.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE OVERLAP" (teal header, about 40%):
+
+Big header: "WORD BREAK: MEMOIZE"
+Subtitle: 's = "leetcode", words = ["leet", "code", "lee", "tcode"]'
+
+Show partial recursion tree. Each node: start position.
+"start=4" appears from both "leet"(0..4) and "lee"(0..3)+"t" fails paths.
+"Same position in the string. Same answer!"
+
+"Word Break is 1D! Only one state variable: start position."
+"No index needed because we try ALL words at each position."
+
+SECTION 2, "THE CODE" (gray header, about 60%):
+
+  def can_break(s, words, start, cache):
+      if start == len(s):
+          return True
+
+      if start in cache:
+          return cache[start]
+
+      result = False
+      for word in words:
+          end = start + len(word)
+          if end <= len(s) and s[start:end] == word:
+              if can_break(s, words, end, cache):
+                  result = True
+                  break
+
+      cache[start] = result
+      return result
+
+Highlight the new lines (gold).
+"Cache key: just start. Only 1D!"
+"At most len(s) unique states."
+
+Kit: "No index because we try every word at each position.
+The only question: can I break from HERE to the end?"
+
+
+================================================================================
+PROMPT 7: Word Break Tabulation -> family2_child3_tab.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE TABLE" (teal header, about 55%):
+
+Big header: "WORD BREAK: BUILD THE TABLE"
+Subtitle: 's = "leetcode", words = ["leet", "code", "lee", "tcode"]'
+
+1D boolean array dp[0..8]. dp[0] = True. Rest = False.
+  dp = [T, F, F, F, F, F, F, F, F]
+  Index: 0  1  2  3  4  5  6  7  8
+
+"dp[i] = True means: s[0:i] can be broken into words."
+
+STEP 1: i=0 is True. Try all words starting at position 0:
+  "leet" matches s[0:4] -> dp[4] = True
+  "lee" matches s[0:3] -> dp[3] = True
+  dp = [T, F, F, T, T, F, F, F, F]
+
+STEP 2: i=1, dp[1]=False. Skip.
+  i=2, dp[2]=False. Skip.
+
+STEP 3: i=3 is True. Try words at position 3:
+  "tcode" matches s[3:8] -> dp[8] = True
+  dp = [T, F, F, T, T, F, F, F, T]
+
+STEP 4: i=4 is True. Try words at position 4:
+  "code" matches s[4:8] -> dp[8] = True (already True)
+  dp = [T, F, F, T, T, F, F, F, T]
+
+Show: dp[8] = True. "leetcode" can be broken!
+Two ways: "leet" + "code" or "lee" + "tcode".
+
+SECTION 2, "THE CODE" (gray header, about 45%):
+
+  def can_break(s, words):
+      dp = [False] * (len(s) + 1)
+      dp[0] = True
+
+      for i in range(len(s)):
+          if not dp[i]:
+              continue
+          for word in words:
+              end = i + len(word)
+              if end <= len(s) and s[i:end] == word:
+                  dp[end] = True
+
+      return dp[len(s)]
+
+Annotations:
+  dp[0] = True              <- "Empty string is always breakable."
+  if not dp[i]: continue    <- "Can't start from here. Skip."
+  s[i:end] == word          <- "Does this word match at position i?"
+  dp[end] = True            <- "Mark the end position as reachable."
+
+Kit: "No RIGHT or LEFT trick here. Word Break is 1D.
+Just check: if I can reach position i, which words extend from there?"

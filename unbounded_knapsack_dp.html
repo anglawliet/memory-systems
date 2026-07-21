@@ -325,6 +325,80 @@ Value: $2 + $2 + $2 + $2 = <strong>$8</strong>
 </ul>
 </div>
 
+<!-- ==================== MEMOIZATION ==================== -->
+
+<h2>Memoization</h2>
+
+<img src="dp/images/family2_memo.png" alt="Unbounded Knapsack memoization: overlapping subproblems circled, 3 new lines of cache code" class="scene-img">
+
+<div class="ws">
+<h3>Same recursion, just check the notebook first</h3>
+<pre><code>def max_value(treasures, bag_limit, index, cache):
+    if index == len(treasures) or bag_limit == 0:
+        return 0
+
+    if (index, bag_limit) in cache:
+        return cache[(index, bag_limit)]
+
+    name, weight, value = treasures[index]
+    if weight > bag_limit:
+        result = max_value(treasures, bag_limit, index + 1, cache)
+    else:
+        use_again = value + max_value(treasures, bag_limit - weight, index, cache)
+        move_on = max_value(treasures, bag_limit, index + 1, cache)
+        result = max(use_again, move_on)
+
+    cache[(index, bag_limit)] = result
+    return result</code></pre>
+</div>
+
+<div class="why-box">
+<strong>Cache key: (index, bag_limit).</strong> Same item at the same remaining capacity always gives the same answer. Notice <code>use_again</code> stays at <code>index</code> (not index+1). That's what makes it unbounded.
+</div>
+
+<!-- ==================== TABULATION ==================== -->
+
+<h2>Tabulation</h2>
+
+<img src="dp/images/family2_tab.png" alt="Unbounded Knapsack tabulation: 1D dp array, left-to-right processing allows reuse, step-by-step" class="scene-img">
+
+<div class="ws">
+<h3>Build bottom-up</h3>
+<pre><code>def max_value(treasures, bag_limit):
+    dp = [0] * (bag_limit + 1)
+
+    for name, weight, value in treasures:
+        for cap in range(weight, bag_limit + 1):
+            dp[cap] = max(dp[cap], dp[cap - weight] + value)
+
+    return dp[bag_limit]</code></pre>
+</div>
+
+<div class="sbox" style="border-left:3px solid var(--teal)">
+<div class="sl" style="color:var(--teal)">LINE BY LINE</div>
+<code>dp = [0] * (bag_limit + 1)</code> &ndash;all zeros: no items processed yet.<br>
+<code>for name, weight, value in treasures</code> &ndash;one item at a time.<br>
+<code>range(weight, bag_limit + 1)</code> &ndash;<strong>left to right</strong>. Allows reuse.<br>
+<code>dp[cap - weight] + value</code> &ndash;use this item: value + best for the remainder.<br>
+<code>max(dp[cap], ...)</code> &ndash;keep whichever is better (use or skip).
+</div>
+
+<div style="background:rgba(251,191,36,.1);border:2px solid var(--gold2);border-radius:10px;padding:16px;margin:16px 0">
+<div style="color:var(--gold2);font-weight:700;font-size:1.05em;margin-bottom:10px">The One Difference</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:.92em">
+<div style="background:var(--card);border-radius:8px;padding:12px">
+<div style="color:var(--teal);font-weight:700;margin-bottom:4px">Unbounded: LEFT TO RIGHT</div>
+<code>range(weight, bag_limit + 1)</code><br>
+<code>dp[cap - weight]</code> might already include this item. That's the "use again" behavior. Unlimited reuse.
+</div>
+<div style="background:var(--card);border-radius:8px;padding:12px">
+<div style="color:var(--blue);font-weight:700;margin-bottom:4px">0/1: RIGHT TO LEFT</div>
+<code>range(bag_limit, weight - 1, -1)</code><br>
+<code>dp[cap - weight]</code> still has last round's value. Each item used at most once.
+</div>
+</div>
+</div>
+
 <!-- ==================== CHILDREN ==================== -->
 
 <h2>The Unbounded Family</h2>
@@ -451,6 +525,27 @@ Infinity <strong>always loses</strong> in min(). Correct.
 
     return min(use_again, move_on)</code></pre>
 
+<h3 style="color:var(--teal)">Memoization</h3>
+<img src="dp/images/family2_child1_memo.png" alt="Coin Change memoization: cache key is (index, amount), cache value is min coins" class="scene-img">
+<pre><code>def min_coins(coins, amount, index, cache):
+    if amount == 0:
+        return 0
+    if index == len(coins):
+        return float('inf')
+
+    if (index, amount) in cache:
+        return cache[(index, amount)]
+
+    if coins[index] > amount:
+        result = min_coins(coins, amount, index + 1, cache)
+    else:
+        use_again = 1 + min_coins(coins, amount - coins[index], index, cache)
+        move_on = min_coins(coins, amount, index + 1, cache)
+        result = min(use_again, move_on)
+
+    cache[(index, amount)] = result
+    return result</code></pre>
+
 <h3 style="color:var(--teal)">Tabulation</h3>
 
 <img src="dp/images/family2_child1_C.png" alt="Coin Change tabulation: building the dp table step by step" class="scene-img">
@@ -473,13 +568,13 @@ Infinity <strong>always loses</strong> in min(). Correct.
 
 <div class="sbox" style="border-left:3px solid var(--teal)">
 <div class="sl" style="color:var(--teal)">LINE BY LINE</div>
-<code>dp = [float('inf')] * (amount + 1)</code> &mdash; all impossible until proven.<br>
-<code>dp[0] = 0</code> &mdash; 0 coins to make amount 0.<br>
-<code>for coin in coins</code> &mdash; process one coin type at a time.<br>
-<code>range(coin, amount + 1)</code> &mdash; <strong>left to right</strong>. Allows reuse (unbounded).<br>
-<code>dp[a - coin] + 1</code> &mdash; best for the remainder + 1 more coin.<br>
-<code>min(dp[a], ...)</code> &mdash; keep whichever uses fewer coins.<br>
-<code>dp[amount] == float('inf')</code> &mdash; still impossible? No solution exists.
+<code>dp = [float('inf')] * (amount + 1)</code> &ndash;all impossible until proven.<br>
+<code>dp[0] = 0</code> &ndash;0 coins to make amount 0.<br>
+<code>for coin in coins</code> &ndash;process one coin type at a time.<br>
+<code>range(coin, amount + 1)</code> &ndash;<strong>left to right</strong>. Allows reuse (unbounded).<br>
+<code>dp[a - coin] + 1</code> &ndash;best for the remainder + 1 more coin.<br>
+<code>min(dp[a], ...)</code> &ndash;keep whichever uses fewer coins.<br>
+<code>dp[amount] == float('inf')</code> &ndash;still impossible? No solution exists.
 </div>
 
 <div class="why-box">
@@ -603,6 +698,42 @@ Can't make this amount. Zero ways.<br>
 <strong>Why does this count combinations, not permutations?</strong> Because "move on" means "done with this coin type forever." I process coins in order: once I move past [1], I'll never use [1] again. So [1]+[2] can happen, but [2]+[1] can't (I already moved past [1]). Each combination is counted exactly once.
 </div>
 
+<h3 style="color:var(--teal)">Memoization</h3>
+<img src="dp/images/family2_child2_memo.png" alt="Coin Change 2 memoization: cache stores count of ways" class="scene-img">
+<pre><code>def count_ways(coins, amount, index, cache):
+    if amount == 0:
+        return 1
+    if index == len(coins):
+        return 0
+
+    if (index, amount) in cache:
+        return cache[(index, amount)]
+
+    if coins[index] > amount:
+        result = count_ways(coins, amount, index + 1, cache)
+    else:
+        use_again = count_ways(coins, amount - coins[index], index, cache)
+        move_on = count_ways(coins, amount, index + 1, cache)
+        result = use_again + move_on
+
+    cache[(index, amount)] = result
+    return result</code></pre>
+
+<h3 style="color:var(--teal)">Tabulation</h3>
+<img src="dp/images/family2_child2_tab.png" alt="Coin Change 2 tabulation: 1D array counting ways, left-to-right loop" class="scene-img">
+<pre><code>def count_ways(coins, amount):
+    dp = [0] * (amount + 1)
+    dp[0] = 1
+
+    for coin in coins:
+        for a in range(coin, amount + 1):
+            dp[a] += dp[a - coin]
+
+    return dp[amount]</code></pre>
+<div class="why-box">
+<strong>Left to right allows reuse.</strong> <code>dp[0] = 1</code> (one way to make 0: use no coins). Processing one coin type at a time gives <strong>combinations</strong>, not permutations.
+</div>
+
 <div class="pattern-card" style="border-color:var(--teal)">
 <h3 style="color:var(--teal)">Pattern Card</h3>
 <div class="row"><span class="label">CLUE:</span> "how many ways", "count combinations", unlimited supply</div>
@@ -706,6 +837,48 @@ Dead end. Can't continue from here.<br>
 
 <div class="why-box">
 <strong>How does this connect to unbounded knapsack?</strong> Words are reusable "items." The string length is the "capacity." At each position, I try to "fit" a word. If it matches, I jump ahead (like reducing capacity). Words can be reused (unlimited supply). The structure is the same: reusable items filling a capacity.
+</div>
+
+<h3 style="color:var(--teal)">Memoization</h3>
+<img src="dp/images/family2_child3_memo.png" alt="Word Break memoization: cache key is just start position, 1D" class="scene-img">
+<pre><code>def can_break(s, words, start, cache):
+    if start == len(s):
+        return True
+
+    if start in cache:
+        return cache[start]
+
+    result = False
+    for word in words:
+        end = start + len(word)
+        if end <= len(s) and s[start:end] == word:
+            if can_break(s, words, end, cache):
+                result = True
+                break
+
+    cache[start] = result
+    return result</code></pre>
+<div class="why-box">
+<strong>Cache key: just <code>start</code>.</strong> Word Break is 1D! No index needed because we try ALL words at each position. At most <code>len(s)</code> unique states.
+</div>
+
+<h3 style="color:var(--teal)">Tabulation</h3>
+<img src="dp/images/family2_child3_tab.png" alt="Word Break tabulation: 1D boolean dp array, mark reachable positions" class="scene-img">
+<pre><code>def can_break(s, words):
+    dp = [False] * (len(s) + 1)
+    dp[0] = True
+
+    for i in range(len(s)):
+        if not dp[i]:
+            continue
+        for word in words:
+            end = i + len(word)
+            if end <= len(s) and s[i:end] == word:
+                dp[end] = True
+
+    return dp[len(s)]</code></pre>
+<div class="why-box">
+<strong>No right-to-left trick here.</strong> <code>dp[i] = True</code> means "I can break <code>s[0:i]</code>." At each reachable position, try all words. If one matches, mark the end position as reachable. Answer is <code>dp[len(s)]</code>.
 </div>
 
 <div class="pattern-card" style="border-color:var(--teal)">

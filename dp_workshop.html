@@ -404,6 +404,8 @@ Base case = smallest valid input
 </div>
 </div>
 
+<img src="dp/images/family1_memo.png" alt="0/1 Knapsack memoization: overlapping subproblems circled in the tree, 3 new lines of code highlighted" class="scene-img">
+
 <div class="walkthrough-section">
 <h3>Step 4: Memoize (3 extra lines)</h3>
 <p>Same recursive code. Just add a cache. That's it.</p>
@@ -727,6 +729,8 @@ That's it. Every cell, same logic.
 <p style="font-size:.9em"><strong>Why bottom-right?</strong> Because that cell means "all 5 treasures available, full 7 kg capacity." That's the original question.</p>
 </div>
 
+<img src="dp/images/family1_tab.png" alt="0/1 Knapsack tabulation: 1D dp array, right-to-left processing, step-by-step table building, tabulation code" class="scene-img">
+
 <!-- Tabulation code -->
 <div class="walkthrough-section" style="border-left-color:var(--amber)">
 <h3 style="color:var(--amber)">The Tabulation Code</h3>
@@ -787,6 +791,42 @@ That's it. Every cell, same logic.
     grab = can_reach(nums, target - nums[index], index + 1)
     skip = can_reach(nums, target, index + 1)
     return grab or skip</code></pre>
+
+<h3 style="color:var(--blue)">Memoization</h3>
+<img src="dp/images/family1_child1_memo.png" alt="Subset Sum memoization: overlapping subproblems, cache key is (index, target)" class="scene-img">
+<pre><code>def can_reach(nums, target, index, cache):
+    if target == 0:
+        return True
+    if index == len(nums) or target < 0:
+        return False
+    if (index, target) in cache:
+        return cache[(index, target)]
+
+    if nums[index] > target:
+        result = can_reach(nums, target, index + 1, cache)
+    else:
+        take = can_reach(nums, target - nums[index], index + 1, cache)
+        leave = can_reach(nums, target, index + 1, cache)
+        result = take or leave
+
+    cache[(index, target)] = result
+    return result</code></pre>
+
+<h3 style="color:var(--blue)">Tabulation</h3>
+<img src="dp/images/family1_child1_tab.png" alt="Subset Sum tabulation: 1D boolean array, right-to-left loop, step-by-step walkthrough" class="scene-img">
+<pre><code>def can_reach(nums, target):
+    dp = [False] * (target + 1)
+    dp[0] = True
+
+    for num in nums:
+        for t in range(target, num - 1, -1):
+            if dp[t - num]:
+                dp[t] = True
+
+    return dp[target]</code></pre>
+<div class="why-box">
+<strong>Why right to left?</strong> Each number used at most once. Right-to-left ensures <code>dp[t - num]</code> still holds last round's value, not this round's. That's 0/1.
+</div>
 </div></div>
 
 <div class="deriv" onclick="this.classList.toggle('open')">
@@ -823,6 +863,38 @@ Same choices: take or leave. But combine with <code>+</code> instead of <code>or
     grab = count_subsets(nums, target - nums[index], index + 1)
     skip = count_subsets(nums, target, index + 1)
     return grab + skip</code></pre>
+
+<h3 style="color:var(--blue)">Memoization</h3>
+<img src="dp/images/family1_child3_memo.png" alt="Count Subsets memoization: cache stores count, not True/False" class="scene-img">
+<pre><code>def count_subsets(nums, target, index, cache):
+    if target == 0:
+        return 1
+    if index == len(nums) or target < 0:
+        return 0
+    if (index, target) in cache:
+        return cache[(index, target)]
+
+    grab = count_subsets(nums, target - nums[index], index + 1, cache)
+    skip = count_subsets(nums, target, index + 1, cache)
+    result = grab + skip
+
+    cache[(index, target)] = result
+    return result</code></pre>
+
+<h3 style="color:var(--blue)">Tabulation</h3>
+<img src="dp/images/family1_child3_tab.png" alt="Count Subsets tabulation: 1D array storing counts, right-to-left loop" class="scene-img">
+<pre><code>def count_subsets(nums, target):
+    dp = [0] * (target + 1)
+    dp[0] = 1
+
+    for num in nums:
+        for t in range(target, num - 1, -1):
+            dp[t] += dp[t - num]
+
+    return dp[target]</code></pre>
+<div class="why-box">
+<strong>Same as Subset Sum but stores counts.</strong> <code>dp[0] = 1</code> (one way to make 0: pick nothing). <code>dp[t] += dp[t - num]</code> adds ways that include this number. Right-to-left prevents reuse.
+</div>
 </div></div>
 
 <div class="deriv" onclick="this.classList.toggle('open')">
@@ -846,6 +918,35 @@ The closer one group's sum is to total/2, the smaller the difference. Run Subset
     for closest in range(half, -1, -1):
         if achievable[closest]:
             return total - 2 * closest</code></pre>
+
+<h3 style="color:var(--blue)">Memoization</h3>
+<img src="dp/images/family1_child4_memo.png" alt="Min Difference memoization: find S closest to half using subset sum with cache" class="scene-img">
+<pre><code>def min_difference(nums):
+    total = sum(nums)
+    half = total // 2
+    cache = {}
+
+    def can_reach(target, index):
+        if target == 0:
+            return True
+        if index == len(nums) or target < 0:
+            return False
+        if (index, target) in cache:
+            return cache[(index, target)]
+        result = (can_reach(target - nums[index], index + 1) or
+                  can_reach(target, index + 1))
+        cache[(index, target)] = result
+        return result
+
+    for s in range(half, -1, -1):
+        if can_reach(s, 0):
+            return total - 2 * s</code></pre>
+
+<h3 style="color:var(--blue)">Tabulation</h3>
+<img src="dp/images/family1_child4_tab.png" alt="Min Difference tabulation: boolean dp array, scan for closest True to half" class="scene-img">
+<div class="why-box">
+<strong>Same tabulation code as above.</strong> Build the <code>achievable</code> array (subset sum), then scan from <code>half</code> down to find the closest reachable sum. Difference = <code>total - 2 * closest</code>.
+</div>
 </div></div>
 
 <div class="deriv" onclick="this.classList.toggle('open')">

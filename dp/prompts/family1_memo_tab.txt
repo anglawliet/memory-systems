@@ -1,0 +1,491 @@
+0/1 KNAPSACK FAMILY: MEMOIZATION + TABULATION
+==============================================================
+8 images covering memo + tab for:
+  Parent (0/1 Knapsack), Subset Sum, Count Subsets, Min Difference.
+Equal Partition, Target Sum, Given Diff reduce to the above.
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: dark navy/charcoal (#1a1a2e). Heist atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: bright blue (#3B82F6).
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for cached/hit paths. Red: (#EF4444) for computed paths.
+- Blue accent lighting throughout.
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: 0/1 Knapsack Memoization -> family1_memo.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE OVERLAP" (blue header, about 40%):
+
+Big header: "WHY MEMOIZE?"
+Subtitle: "Items: Gold(3,$4), Diamond(2,$3), Ruby(1,$2). Bag: 4."
+
+Show a recursion tree for this problem. At each node: (index, bag_limit).
+GREEN branches = GRAB, RED branches = SKIP.
+
+Circle TWO nodes that have the SAME (index, bag_limit):
+  Both show (index=2, bag=1) appearing in different branches.
+  "Same item, same capacity. SAME answer. Why compute twice?"
+
+Kit holding a NOTEBOOK (the cache):
+"I write down every answer. Next time I see the same state, I just look it up."
+
+Show the savings:
+  "Without cache: visits 15 nodes."
+  "With cache: visits 8. Skips 7 duplicates."
+
+SECTION 2, "THE CODE" (gray header, about 60%):
+
+Header: "ADD 3 LINES TO YOUR RECURSION"
+
+Show the memoized code with highlights on the NEW lines:
+
+  def max_value(treasures, bag_limit, index, cache):
+      if index == len(treasures) or bag_limit == 0:
+          return 0
+
+      if (index, bag_limit) in cache:       # <-- NEW: check notebook
+          return cache[(index, bag_limit)]
+
+      name, weight, value = treasures[index]
+      if weight > bag_limit:
+          result = max_value(treasures, bag_limit, index + 1, cache)
+      else:
+          grab = value + max_value(treasures, bag_limit - weight, index + 1, cache)
+          skip = max_value(treasures, bag_limit, index + 1, cache)
+          result = max(grab, skip)
+
+      cache[(index, bag_limit)] = result     # <-- NEW: write in notebook
+      return result
+
+Highlight the 3 new things (gold boxes):
+  1. "cache parameter: pass the notebook around"
+  2. "Check before computing: already solved this?"
+  3. "Store after computing: write it down for later"
+
+Kit: "Same recursion. Same choices. Just check the notebook first.
+Cache key = your state: (index, bag_limit)."
+
+Gold box: "Time: O(n * capacity) instead of O(2^n). One entry per unique state."
+
+
+================================================================================
+PROMPT 2: 0/1 Knapsack Tabulation -> family1_tab.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE TABLE" (blue header, about 55%):
+
+Big header: "BUILD BOTTOM-UP"
+Subtitle: "Items: Gold(3,$4), Diamond(2,$3), Ruby(1,$2). Bag: 5."
+
+Show a 1D array dp[0..5], all starting at 0.
+
+Process each item RIGHT TO LEFT:
+
+STEP 1: Process Ruby (weight=1, value=$2).
+  Scan RIGHT TO LEFT: cap = 5, 4, 3, 2, 1.
+  dp[1] = max(0, dp[1-1]+2) = max(0, 0+2) = 2
+  dp[2] = max(0, dp[2-1]+2) = max(0, 2+2) = ... wait, right to left means
+  dp[cap] = max(dp[cap], dp[cap-weight] + value)
+  Show: dp = [0, 2, 2, 2, 2, 2]
+
+STEP 2: Process Diamond (weight=2, value=$3).
+  dp[2] = max(2, dp[0]+3) = max(2, 3) = 3
+  dp[3] = max(2, dp[1]+3) = max(2, 5) = 5
+  dp[5] = max(2, dp[3]+3) = max(2, 5+3) = ... show the improvements
+  dp = [0, 2, 3, 5, 5, 5]
+
+STEP 3: Process Gold (weight=3, value=$4).
+  dp[3] = max(5, dp[0]+4) = max(5, 4) = 5
+  dp[5] = max(5, dp[2]+4) = max(5, 3+4) = 7
+  dp = [0, 2, 3, 5, 5, 7]
+
+Show: dp[5] = 7. That's Diamond + Gold = $3+$4 = $7.
+
+Highlight: "RIGHT TO LEFT prevents reuse."
+"dp[cap-weight] still has LAST round's value, not this round's."
+"That's what makes it 0/1: each item used at most once."
+
+SECTION 2, "THE CODE" (gray header, about 45%):
+
+  def max_value(treasures, bag_limit):
+      dp = [0] * (bag_limit + 1)
+
+      for name, weight, value in treasures:
+          for cap in range(bag_limit, weight - 1, -1):
+              dp[cap] = max(dp[cap], dp[cap - weight] + value)
+
+      return dp[bag_limit]
+
+Annotations:
+  dp = [0] * (bag_limit + 1)                <- "All zeros: no items yet."
+  for name, weight, value in treasures       <- "One item at a time."
+  range(bag_limit, weight-1, -1)             <- "RIGHT TO LEFT! No reuse."
+  dp[cap - weight] + value                   <- "Grab: value + best for remainder."
+  max(dp[cap], ...)                          <- "Grab or skip, keep the better."
+
+Gold comparison box:
+  "0/1 Knapsack: RIGHT TO LEFT (no reuse)"
+  "Unbounded:    LEFT TO RIGHT (allows reuse)"
+  "One loop direction is the entire difference."
+
+
+================================================================================
+PROMPT 3: Subset Sum Memoization -> family1_child1_memo.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE OVERLAP" (blue header, about 40%):
+
+Big header: "SUBSET SUM: MEMOIZE"
+Subtitle: "nums = [3, 2, 7, 1], target = 6"
+
+Show a partial recursion tree. Each node: (index, target).
+Circle duplicate nodes, e.g. (index=2, target=3) appearing twice.
+"Same index, same remaining target. Same answer!"
+
+SECTION 2, "THE CODE" (gray header, about 60%):
+
+  def can_reach(nums, target, index, cache):
+      if target == 0:
+          return True
+      if index == len(nums) or target < 0:
+          return False
+      if (index, target) in cache:
+          return cache[(index, target)]
+
+      if nums[index] > target:
+          result = can_reach(nums, target, index + 1, cache)
+      else:
+          take = can_reach(nums, target - nums[index], index + 1, cache)
+          leave = can_reach(nums, target, index + 1, cache)
+          result = take or leave
+
+      cache[(index, target)] = result
+      return result
+
+Highlight the 3 new lines (gold).
+"Cache key: (index, target). Cache value: True or False."
+
+Kit: "Same recursion as before. Just remember what you've already tried."
+
+
+================================================================================
+PROMPT 4: Subset Sum Tabulation -> family1_child1_tab.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE TABLE" (blue header, about 55%):
+
+Big header: "SUBSET SUM: BUILD THE TABLE"
+Subtitle: "nums = [3, 2, 1], target = 5"
+
+Show 1D boolean array dp[0..5].
+dp[0] = True ("empty set sums to 0"). Rest = False.
+
+  dp = [T, F, F, F, F, F]
+
+STEP 1: Process num = 3. Scan RIGHT TO LEFT.
+  dp[3] = dp[3] or dp[3-3] = F or dp[0] = F or T = True
+  dp = [T, F, F, T, F, F]
+
+STEP 2: Process num = 2. Scan RIGHT TO LEFT.
+  dp[5] = dp[5] or dp[5-2] = F or dp[3] = F or T = True
+  dp[2] = dp[2] or dp[2-2] = F or dp[0] = F or T = True
+  dp = [T, F, T, T, F, T]
+
+STEP 3: Process num = 1. Scan RIGHT TO LEFT.
+  dp[4] = dp[4] or dp[4-1] = F or dp[3] = F or T = True
+  dp[3] = already True, stays True
+  dp[1] = dp[1] or dp[1-1] = F or dp[0] = F or T = True
+  dp = [T, T, T, T, T, T]
+
+Show: dp[5] = True. Can reach 5! (subset: {3, 2} or {3, 1, ...})
+
+"RIGHT TO LEFT: each number used AT MOST ONCE."
+
+SECTION 2, "THE CODE" (gray header, about 45%):
+
+  def can_reach(nums, target):
+      dp = [False] * (target + 1)
+      dp[0] = True
+
+      for num in nums:
+          for t in range(target, num - 1, -1):
+              if dp[t - num]:
+                  dp[t] = True
+
+      return dp[target]
+
+Annotations:
+  dp[0] = True             <- "Empty set sums to 0."
+  range(target, num-1, -1) <- "RIGHT TO LEFT. No reuse."
+  if dp[t - num]           <- "Can I reach t-num? Then I can reach t."
+  dp[t] = True             <- "Mark t as reachable."
+
+
+================================================================================
+PROMPT 5: Count Subsets Memoization -> family1_child3_memo.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE OVERLAP" (blue header, about 40%):
+
+Big header: "COUNT SUBSETS: MEMOIZE"
+Subtitle: "nums = [1, 2, 3], target = 3"
+
+Show partial tree. Each node: (index, remaining_target).
+Circle duplicates. "Same state, same count."
+
+SECTION 2, "THE CODE" (gray header, about 60%):
+
+  def count_subsets(nums, target, index, cache):
+      if target == 0:
+          return 1
+      if index == len(nums) or target < 0:
+          return 0
+      if (index, target) in cache:
+          return cache[(index, target)]
+
+      grab = count_subsets(nums, target - nums[index], index + 1, cache)
+      skip = count_subsets(nums, target, index + 1, cache)
+      result = grab + skip
+
+      cache[(index, target)] = result
+      return result
+
+"Cache key: (index, target). Cache value: number of subsets."
+"Same as subset sum but stores a COUNT, not True/False."
+
+
+================================================================================
+PROMPT 6: Count Subsets Tabulation -> family1_child3_tab.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE TABLE" (blue header, about 55%):
+
+Big header: "COUNT SUBSETS: BUILD THE TABLE"
+Subtitle: "nums = [1, 2, 3], target = 3"
+
+1D array dp[0..3]. dp[0] = 1. Rest = 0.
+  dp = [1, 0, 0, 0]
+
+STEP 1: Process num = 1. RIGHT TO LEFT.
+  dp[1] += dp[0] = 0 + 1 = 1
+  dp = [1, 1, 0, 0]
+
+STEP 2: Process num = 2. RIGHT TO LEFT.
+  dp[3] += dp[1] = 0 + 1 = 1
+  dp[2] += dp[0] = 0 + 1 = 1
+  dp = [1, 1, 1, 1]
+
+STEP 3: Process num = 3. RIGHT TO LEFT.
+  dp[3] += dp[0] = 1 + 1 = 2
+  dp = [1, 1, 1, 2]
+
+Show: dp[3] = 2. Two subsets: {1,2} and {3}.
+
+SECTION 2, "THE CODE" (gray header, about 45%):
+
+  def count_subsets(nums, target):
+      dp = [0] * (target + 1)
+      dp[0] = 1
+
+      for num in nums:
+          for t in range(target, num - 1, -1):
+              dp[t] += dp[t - num]
+
+      return dp[target]
+
+Annotations:
+  dp[0] = 1                <- "One way to make 0: pick nothing."
+  range(target, num-1, -1) <- "RIGHT TO LEFT. Each number once."
+  dp[t] += dp[t - num]     <- "Add ways: include this number."
+
+
+================================================================================
+PROMPT 7: Min Difference Memoization -> family1_child4_memo.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE INSIGHT" (blue header, about 45%):
+
+Big header: "MIN DIFFERENCE: THE TRICK"
+Subtitle: "nums = [1, 5, 6, 11], total = 23"
+
+"Split nums into two groups. Minimize |group1 - group2|."
+"If group1 sums to S, group2 sums to total - S."
+"Difference = |total - 2*S|."
+"To minimize: find S closest to total/2 = 11.5."
+
+"This is SUBSET SUM in disguise!"
+"Find all achievable sums up to total/2. Pick the closest."
+
+Show achievable sums:
+  S=0 (pick nothing), S=1, S=5, S=6, S=7, S=11, S=12
+  Closest to 11.5 = S=11.
+  Difference = |23 - 2*11| = 1.
+
+SECTION 2, "THE CODE" (gray header, about 55%):
+
+  def min_difference(nums):
+      total = sum(nums)
+      half = total // 2
+      cache = {}
+
+      def can_reach(target, index):
+          if target == 0:
+              return True
+          if index == len(nums) or target < 0:
+              return False
+          if (index, target) in cache:
+              return cache[(index, target)]
+          result = (can_reach(target - nums[index], index + 1) or
+                    can_reach(target, index + 1))
+          cache[(index, target)] = result
+          return result
+
+      for s in range(half, -1, -1):
+          if can_reach(s, 0):
+              return total - 2 * s
+
+Kit: "Find achievable sums using subset sum with memoization.
+Pick the one closest to half. That minimizes the difference."
+
+
+================================================================================
+PROMPT 8: Min Difference Tabulation -> family1_child4_tab.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE TABLE" (blue header, about 55%):
+
+Big header: "MIN DIFFERENCE: TABLE"
+Subtitle: "nums = [1, 5, 6, 11], total = 23, half = 11"
+
+1D boolean array dp[0..11]. dp[0] = True. Rest = False.
+
+STEP 1: Process 1. dp[1] = True.
+  dp = [T, T, F, F, F, F, F, F, F, F, F, F]
+
+STEP 2: Process 5. RIGHT TO LEFT.
+  dp[6] = True, dp[5] = True.
+  dp = [T, T, F, F, F, T, T, F, F, F, F, F]
+
+STEP 3: Process 6. RIGHT TO LEFT.
+  dp[7]=T, dp[11]=T, dp[6]=already T.
+  dp = [T, T, F, F, F, T, T, T, F, F, F, T]
+
+STEP 4: Process 11. RIGHT TO LEFT.
+  11 > most remaining caps. dp[11] already True.
+  dp = [T, T, F, F, F, T, T, T, F, F, F, T]
+
+Find closest True to half=11:
+  dp[11] = True. S = 11.
+  Difference = 23 - 2*11 = 1.
+
+SECTION 2, "THE CODE" (gray header, about 45%):
+
+  def min_difference(nums):
+      total = sum(nums)
+      half = total // 2
+      dp = [False] * (half + 1)
+      dp[0] = True
+
+      for num in nums:
+          for t in range(half, num - 1, -1):
+              if dp[t - num]:
+                  dp[t] = True
+
+      for s in range(half, -1, -1):
+          if dp[s]:
+              return total - 2 * s
+
+Annotations:
+  half = total // 2        <- "Only check up to half. Symmetry."
+  dp[0] = True             <- "Sum of 0 is always achievable."
+  RIGHT TO LEFT             <- "Each number used once."
+  range(half, -1, -1)      <- "Find closest True to half."
+  total - 2 * s            <- "The minimum difference."

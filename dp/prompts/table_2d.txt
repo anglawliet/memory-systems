@@ -1,3 +1,470 @@
+2D TABLE FAMILY: CHOICES + RECURSION TREES
+==============================================================
+6 images: choice diagrams + recursion trees for LCS (parent)
+and choice diagrams for 4 children.
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: dark purple-blue (#1E1035). Grid/matrix atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: bright purple (#8B5CF6).
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for match/hit paths. Red: (#EF4444) for mismatch paths.
+- Purple accent lighting throughout.
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: LCS Choice Diagram -> lcs_choices.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+SECTION 1, "THE CHOICES" (purple header, about 35%):
+
+Big header: "LCS: FIND THE CHOICES"
+Subtitle: 'text1 = "ace", text2 = "abcde". Longest common subsequence?'
+
+Show both strings with index pointers i and j:
+  text1:  a  c  e      (i points at current char)
+  text2:  a  b  c  d  e  (j points at current char)
+
+CHOICE DIAGRAM (centered, large, clear):
+
+  Current: lcs_length(i, j)
+  "Do the characters at i and j match?"
+          |
+     _____|_____
+    |           |
+  MATCH       NO MATCH
+  text1[i]    text1[i]
+  == text2[j] != text2[j]
+    |              |
+  "Take it!     "Try both
+  Advance        skips"
+   BOTH"           |
+    |          _____|_____
+  1 + lcs(   |           |
+  i+1, j+1)  skip i      skip j
+              lcs(i+1,j)  lcs(i,j+1)
+                  |
+              max(skip_i, skip_j)
+
+GREEN for MATCH branch, RED for NO MATCH branches.
+
+Kit: "Match? Advance both, count +1. No match? Try skipping each. Take the better skip."
+
+SECTION 2, "THE STATE" (purple header, about 30%):
+
+Header: "WHAT DO I NEED TO KNOW?"
+
+CHECKLIST:
+  [CHECK] i - position in text1
+  [CHECK] j - position in text2
+  [X] the strings themselves - never change
+  [X] what we've matched so far - the recursion carries this
+
+"State = (i, j). Where I am in EACH string."
+
+Gold box: "Two strings = two indices = 2D state.
+This is the PARENT pattern for the entire 2D table family."
+
+SECTION 3, "BASE CASES" (purple header, about 35%):
+
+Header: "WHEN DO I STOP?"
+
+  BASE CASE 1: i == len(text1)
+  "Ran out of text1. No more characters to match."
+  return 0 (GREEN)
+
+  BASE CASE 2: j == len(text2)
+  "Ran out of text2. No more characters to match."
+  return 0 (GREEN)
+
+Kit: "Either string runs out, game over. Return 0."
+
+Gold box: "Notice: two base cases because two changing variables.
+1 variable = 1 base case. 2 variables = 2 base cases."
+
+
+================================================================================
+PROMPT 2: LCS Recursion Tree -> lcs_tree.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE RECURSION TREE" (purple header, about 55%):
+
+Big header: "LCS: THE RECURSIVE TREE"
+Subtitle: 'text1 = "ace", text2 = "abcde"'
+
+Draw the recursion tree. Each node shows (i, j).
+GREEN edges = MATCH (advance both). RED edges = SKIP (try each).
+
+  (0,0) text1[0]='a' == text2[0]='a' MATCH!
+    |
+  (1,1) text1[1]='c' != text2[1]='b' NO MATCH
+    |                          |
+  skip_i: (2,1)           skip_j: (1,2)
+    |                          |
+  (2,1) 'e'!='b'          (1,2) 'c'=='c' MATCH!
+   |          |                |
+  (3,1)    (2,2)           (2,3) 'e'!='d'
+  BASE=0   'e'!='c'        |          |
+           |      |       (3,3)    (2,4)
+          (3,2)  (2,3)    BASE=0   'e'=='e' MATCH!
+          BASE=0  ...                 |
+                                   (3,5) BASE=0
+
+CIRCLE overlapping subproblems with GOLD borders:
+  (2,3) appears from BOTH the skip_i and skip_j branches!
+
+"Same (i,j) from different paths! Without cache, computed twice."
+
+Kit: "The NO MATCH branch splits into TWO paths.
+Each split can lead to the same (i,j). That's the overlap."
+
+SECTION 2, "THE EXPLOSION" (gold header, about 45%):
+
+Header: "WHY IT EXPLODES WITHOUT CACHE"
+
+Show the branching factor:
+  "MATCH: 1 branch (advance both). Good."
+  "NO MATCH: 2 branches (try each skip). Doubles!"
+  "Worst case: every character mismatches. 2^(m+n) calls!"
+  "With cache: at most m x n unique (i,j) pairs."
+
+Show a mini comparison:
+  text1 = "ace" (3 chars), text2 = "abcde" (5 chars)
+  Without cache: up to 2^8 = 256 calls
+  With cache: at most 3 x 5 = 15 unique states
+
+Kit: "The cache grid has m x n cells. That's your entire search space.
+Fill each cell once, and you're done."
+
+Gold box: "This is why ALL 2D table problems use the same grid shape.
+Two strings, two indices, m x n cells."
+
+
+================================================================================
+PROMPT 3: Unique Paths Choice Diagram -> unique_paths_choices.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+SECTION 1, "THE CHOICES" (purple header, about 35%):
+
+Big header: "UNIQUE PATHS: THE CHOICES"
+Subtitle: "3x3 grid. Start top-left, reach bottom-right."
+
+Show a 3x3 grid with Kit at (0,0) and a gold star at (2,2).
+
+CHOICE DIAGRAM:
+
+  Current: count_paths(row, col)
+  "Which way can I go?"
+          |
+     _____|_____
+    |           |
+  GO DOWN    GO RIGHT
+  (row+1, col) (row, col+1)
+    |           |
+  "Add the   "Add the
+   paths       paths
+   from        from
+   below"      the right"
+
+  result = go_down + go_right
+
+"No match/no-match here. Always TWO moves. Always ADD."
+Kit: "Simplest 2D problem. Every cell = sum of down + right."
+
+SECTION 2, "VS THE PARENT (LCS)" (purple header, about 30%):
+
+Show a COMPARISON:
+  LCS: "Match or no match? DIFFERENT formula per case."
+  Unique Paths: "Always the same formula. No conditions."
+
+  LCS cell = { diagonal+1 if match, max(up,left) if no match }
+  Unique Paths cell = up + left. Always.
+
+Kit: "LCS has a decision. Unique Paths has no decision.
+You always go down or right. Just count the ways."
+
+SECTION 3, "STATE + BASE CASES" (purple header, about 35%):
+
+State = (row, col). Your position in the grid.
+
+BASE CASES:
+  Reached (rows-1, cols-1)? TARGET! return 1.
+  row >= rows? Off the grid. return 0.
+  col >= cols? Off the grid. return 0.
+
+Kit: "First row and first column are all 1s.
+Only one way to reach any edge cell (go straight)."
+
+
+================================================================================
+PROMPT 4: Edit Distance Choice Diagram -> edit_distance_choices.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+SECTION 1, "THE CHOICES" (purple header, about 40%):
+
+Big header: "EDIT DISTANCE: THE CHOICES"
+Subtitle: 'word1 = "horse", word2 = "ros". Minimum edits?'
+
+Show both words with pointers i and j.
+
+CHOICE DIAGRAM:
+
+  Current: min_edits(i, j)
+  "Do the characters match?"
+          |
+     _____|_____
+    |           |
+  MATCH       NO MATCH
+    |              |
+  "FREE!       "3 operations
+  Advance       to try"
+   both"           |
+    |          ____|____
+  min_edits   |    |    |
+  (i+1,j+1)  R    D    I
+  cost: 0     |    |    |
+           REPLACE DELETE INSERT
+           1+f(i+1, 1+f(i+1, 1+f(i,
+              j+1)    j)      j+1)
+                  |
+              min(R, D, I)
+
+GREEN for MATCH (free). RED for each NO MATCH operation.
+
+Kit: "Match = free pass. No match = THREE choices, not two like LCS.
+Replace, delete, or insert. Take the cheapest."
+
+SECTION 2, "VS THE PARENT (LCS)" (purple header, about 30%):
+
+COMPARISON TABLE:
+  LCS: 2 skip choices on mismatch. max(skip_i, skip_j). MAXIMIZE.
+  Edit Distance: 3 operations on mismatch. min(replace, delete, insert). MINIMIZE.
+  LCS: match = diagonal + 1
+  Edit Distance: match = diagonal + 0 (free!)
+
+"Same grid shape, different cell formula."
+
+Kit: "LCS counts matches (maximizes). Edit Distance counts operations (minimizes).
+Same table, opposite goals."
+
+SECTION 3, "STATE + BASE CASES" (purple header, about 30%):
+
+State = (i, j). Position in each word.
+
+BASE CASES (different from LCS!):
+  i == len(word1)? Insert remaining word2 characters. return len(word2) - j.
+  j == len(word2)? Delete remaining word1 characters. return len(word1) - i.
+
+"Not just 0! Remaining characters still need work."
+
+Kit: "LCS base case: 0 (nothing left to match).
+Edit Distance base case: remaining length (still need operations)."
+
+
+================================================================================
+PROMPT 5: Interleaving String Choice Diagram -> interleaving_choices.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+SECTION 1, "THE CHOICES" (purple header, about 40%):
+
+Big header: "INTERLEAVING: THE CHOICES"
+Subtitle: 's1 = "ab", s2 = "cd", s3 = "acbd". Can s3 be woven from s1 and s2?'
+
+Show three strings:
+  s1: a b       (i tracks position)
+  s2: c d       (j tracks position)
+  s3: a c b d   (target, position = i+j)
+
+CHOICE DIAGRAM:
+
+  Current: can_interleave(i, j)
+  "Target character: s3[i+j]"
+  "Where can it come from?"
+          |
+     _____|_____
+    |           |
+  FROM s1     FROM s2
+  s1[i] ==    s2[j] ==
+  s3[i+j]?    s3[i+j]?
+    |              |
+  YES: try      YES: try
+  (i+1, j)      (i, j+1)
+    |              |
+  "Pull from   "Pull from
+   s1, advance   s2, advance
+   s1 pointer"   s2 pointer"
+
+  result = from_s1 OR from_s2 (boolean OR, not max!)
+
+Kit: "At each step, the TARGET character s3[i+j] tells you what to look for.
+Can s1 provide it? Can s2? Try both."
+
+SECTION 2, "VS THE PARENT (LCS)" (purple header, about 30%):
+
+COMPARISON:
+  LCS: "Do these two chars match each other?" Numeric (count matches).
+  Interleaving: "Can this char come from s1 or s2?" Boolean (True/False).
+  LCS: two strings compared to each other.
+  Interleaving: two strings combined into a THIRD target.
+
+"Same (i,j) state. Different question being asked."
+
+Kit: "LCS: compare two strings. Interleaving: weave two strings into a third.
+The third string (s3) is the constraint."
+
+SECTION 3, "STATE + BASE CASES" (purple header, about 30%):
+
+State = (i, j). Position in s1 and s2. Target position = i+j (automatic!).
+
+BASE CASE:
+  i + j == len(s3)? Reached the end!
+  But also check: i == len(s1) AND j == len(s2).
+  "Used up both source strings completely."
+
+Kit: "The trick: target position is i+j, not a separate variable.
+Two state variables track three strings!"
+
+
+================================================================================
+PROMPT 6: Distinct Subsequences Choice Diagram -> distinct_subs_choices.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+SECTION 1, "THE CHOICES" (purple header, about 40%):
+
+Big header: "DISTINCT SUBS: THE CHOICES"
+Subtitle: 's = "rabbbit", t = "rabbit". How many ways can t appear in s?'
+
+Show both strings with pointers:
+  s: r a b b b i t   (i tracks position, long string)
+  t: r a b b i t     (j tracks position, target)
+
+CHOICE DIAGRAM:
+
+  Current: count_subsequences(i, j)
+  "Does s[i] match t[j]?"
+          |
+     _____|_____
+    |           |
+  MATCH       NO MATCH
+  s[i]==t[j]  s[i]!=t[j]
+    |              |
+  TWO choices:   ONE choice:
+    |              |
+  USE it         SKIP s[i]
+  + SKIP it      (i+1, j)
+    |
+  __|__
+  |    |
+ USE  SKIP
+ (i+1, (i+1,
+  j+1)  j)
+    |
+  result = USE + SKIP
+
+For NO MATCH: result = SKIP only.
+
+Kit: "Match = USE + SKIP (add both counts!). No match = SKIP only.
+This is COUNTING, not maximizing."
+
+SECTION 2, "VS LCS AND KNAPSACK" (purple header, about 30%):
+
+COMPARISON:
+  LCS match: diagonal + 1. Take the match, advance both.
+  Distinct Subs match: diagonal + above. USE the match AND count without it.
+  0/1 Knapsack: grab + skip, take max.
+  Distinct Subs: use + skip, take SUM.
+
+"Same grab-or-skip structure as knapsack, but we ADD instead of MAX."
+
+Kit: "Knapsack: which is better, grab or skip? (max)
+Distinct Subs: how many ways total? (sum)"
+
+SECTION 3, "STATE + BASE CASES" (purple header, about 30%):
+
+State = (i, j). Position in s and t.
+
+BASE CASES:
+  j == len(t)? Found a complete match! return 1.
+  i == len(s)? Ran out of source characters. return 0.
+
+"Order matters! Check j first. If target is fully matched, it's a success
+even if source has characters left."
+
+Kit: "j hits the end = success (1). i hits the end = failure (0).
+Check j BEFORE i. Extra source chars are fine. Missing target chars are not."
 2D TABLE FAMILY: MEMOIZATION + TABULATION
 ==============================================================
 10 images covering memo + tab for:

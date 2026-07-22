@@ -117,9 +117,69 @@ Skip one or the other. Try both, keep the better result.<br><br>
 <div class="hi">
 <strong style="color:var(--purple)">Base case:</strong> either string runs out (<code>i == len(text1)</code> or <code>j == len(text2)</code>) &rarr; return 0. Nothing left to match.
 </div>
+
+<h3 style="color:var(--purple);margin-top:16px">Why each variable changes</h3>
+
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:10px">CASE: text1[i] == text2[j] (Match)</div>
+<div style="display:grid;gap:8px;font-size:.93em">
+<div><strong>Action:</strong> Characters match. This character is part of the LCS. Take it.</div>
+<div><strong>Immediate reward:</strong> <code>+1</code>. Found one common character, so LCS length grows by 1.</div>
+<div><strong>State changes:</strong></div>
+<div style="padding-left:20px">
+<code>i &rarr; i+1</code>: <code>text1[i]</code> consumed. It matched, so it's part of the LCS. Move past it.<br>
+<code>j &rarr; j+1</code>: <code>text2[j]</code> consumed. Same character, same match. Move past it.
+</div>
+<div><strong>Remaining subproblem:</strong> Find the LCS of <code>text1[i+1:]</code> and <code>text2[j+1:]</code>.</div>
+<div><strong>Call:</strong> <code>1 + lcs(i+1, j+1)</code></div>
+<div style="color:var(--muted)"><strong>Why both advance?</strong> A match consumes one character from each string. Using text1[i] without consuming text2[j] (or vice versa) would leave the matched character available for a double-count.</div>
+</div>
+</div>
+
+<div style="background:rgba(245,158,11,.04);border:2px solid var(--amber);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--amber);font-weight:800;font-size:1.05em;margin-bottom:10px">CASE: text1[i] != text2[j] (No Match)</div>
+
+<p style="margin-bottom:14px">Two options. Characters don't match, so skip one. Try both, keep the better result.</p>
+
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--amber)">
+<div style="color:var(--amber);font-weight:700;margin-bottom:8px">Option 1: Skip text1[i]</div>
+<div style="display:grid;gap:6px;font-size:.9em">
+<div><strong>Action:</strong> <code>text1[i]</code> doesn't match. Skip it. Maybe a later text1 character will match <code>text2[j]</code>.</div>
+<div><strong>Immediate reward:</strong> <code>+0</code>. Skipping contributes nothing to the LCS.</div>
+<div><strong>State changes:</strong></div>
+<div style="padding-left:20px">
+<code>i &rarr; i+1</code>: <code>text1[i]</code> skipped. Move past it.<br>
+<code>j</code> stays the same: <code>text2[j]</code> hasn't been matched yet. Still waiting.
+</div>
+<div><strong>Call:</strong> <code>lcs(i+1, j)</code></div>
+<div style="color:var(--muted)"><strong>Why doesn't j change?</strong> We only skipped a text1 character. text2[j] is still the next character we need to try matching.</div>
+</div>
+</div>
+
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--amber)">
+<div style="color:var(--amber);font-weight:700;margin-bottom:8px">Option 2: Skip text2[j]</div>
+<div style="display:grid;gap:6px;font-size:.9em">
+<div><strong>Action:</strong> Skip <code>text2[j]</code>. Maybe <code>text1[i]</code> will match a later text2 character.</div>
+<div><strong>Immediate reward:</strong> <code>+0</code>. Skipping contributes nothing.</div>
+<div><strong>State changes:</strong></div>
+<div style="padding-left:20px">
+<code>i</code> stays the same: <code>text1[i]</code> hasn't been matched yet. Still waiting.<br>
+<code>j &rarr; j+1</code>: <code>text2[j]</code> skipped. Move past it.
+</div>
+<div><strong>Call:</strong> <code>lcs(i, j+1)</code></div>
+<div style="color:var(--muted)"><strong>Why doesn't i change?</strong> We only skipped a text2 character. text1[i] is still available for matching.</div>
+</div>
+</div>
+
+<div style="font-size:.93em;margin-top:8px">
+<strong>Final decision:</strong> <code>result = max(skip_first, skip_second)</code>. We want the <strong>longest</strong> common subsequence, so take the better of the two skip options.
+</div>
+</div>
 </div>
 
 <img src="dp/images/lcs_choices.png" alt="LCS choice diagram: match advances both, no match tries skipping each. State = (i, j)" class="scene-img">
+
+<img src="dp/images/lcs_transitions.png" alt="LCS transition justification: match advances both, skip text1 moves only i, skip text2 moves only j" class="scene-img">
 
 <!-- ==================== STEP 2: RECURSION ==================== -->
 <h2>Step 2: Choices &rarr; Recursion</h2>
@@ -298,6 +358,44 @@ A robot starts at the top-left of an <code>m x n</code> grid. It can only move <
 <span style="color:var(--green)">No match/no-match here.</span> Every cell gets its value from exactly two neighbors: the cell above and the cell to the left. <code>table[r][c] = table[r-1][c] + table[r][c-1]</code>. First row and first column are all 1's (only one way to get there).</div>
 
 <img src="dp/images/unique_paths_choices.png" alt="Unique Paths choice diagram: always go down + go right, no match/no-match" class="scene-img">
+
+<h3 style="color:var(--purple)">Why each variable changes</h3>
+
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--green)">
+<div style="color:var(--green);font-weight:700;margin-bottom:8px">Move DOWN</div>
+<div style="display:grid;gap:6px;font-size:.9em">
+<div><strong>Action:</strong> Robot moves one cell down.</div>
+<div><strong>Immediate reward:</strong> <code>+0</code>. Moving doesn't add paths, it's one step toward the destination.</div>
+<div><strong>State changes:</strong></div>
+<div style="padding-left:20px">
+<code>r &rarr; r+1</code>: Moved down one row.<br>
+<code>c</code> stays the same: Didn't move horizontally.
+</div>
+<div><strong>Call:</strong> <code>count_paths(r+1, c)</code></div>
+<div style="color:var(--muted)"><strong>Why doesn't c change?</strong> Moving down is purely vertical. The column position is unchanged.</div>
+</div>
+</div>
+
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--blue)">
+<div style="color:var(--blue);font-weight:700;margin-bottom:8px">Move RIGHT</div>
+<div style="display:grid;gap:6px;font-size:.9em">
+<div><strong>Action:</strong> Robot moves one cell right.</div>
+<div><strong>Immediate reward:</strong> <code>+0</code>. Just another step toward the destination.</div>
+<div><strong>State changes:</strong></div>
+<div style="padding-left:20px">
+<code>r</code> stays the same: Didn't move vertically.<br>
+<code>c &rarr; c+1</code>: Moved right one column.
+</div>
+<div><strong>Call:</strong> <code>count_paths(r, c+1)</code></div>
+<div style="color:var(--muted)"><strong>Why doesn't r change?</strong> Moving right is purely horizontal. The row position is unchanged.</div>
+</div>
+</div>
+
+<div style="font-size:.93em;margin-top:8px">
+<strong>Final decision:</strong> <code>result = down + right</code>. We <strong>count</strong> all paths, so we <strong>add</strong> the counts from both directions.
+</div>
+
+<img src="dp/images/unique_paths_transitions.png" alt="Unique Paths transition justification: down moves only r, right moves only c" class="scene-img">
 
 <h3 style="color:var(--purple)">Recursion</h3>
 <pre><code>def count_paths(rows, cols, r, c, cache):
@@ -572,6 +670,44 @@ Given strings <code>s1</code>, <code>s2</code>, and <code>s3</code>, check if <c
 
 <img src="dp/images/interleaving_choices.png" alt="Interleaving String choice diagram: can target char come from s1 or s2?" class="scene-img">
 
+<h3 style="color:var(--purple)">Why each variable changes</h3>
+
+<p style="margin-bottom:10px;font-size:.93em">State: <code>can_interleave(i, j)</code>. We need to produce <code>s3[i+j]</code> next. It must come from either <code>s1[i]</code> or <code>s2[j]</code>.</p>
+
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--green)">
+<div style="color:var(--green);font-weight:700;margin-bottom:8px">Take from s1 (when s1[i] == s3[i+j])</div>
+<div style="display:grid;gap:6px;font-size:.9em">
+<div><strong>Action:</strong> Use <code>s1[i]</code> to produce <code>s3[i+j]</code>.</div>
+<div><strong>State changes:</strong></div>
+<div style="padding-left:20px">
+<code>i &rarr; i+1</code>: <code>s1[i]</code> consumed. It produced the next character of s3.<br>
+<code>j</code> stays the same: <code>s2[j]</code> not used. Still available.
+</div>
+<div><strong>Call:</strong> <code>can_interleave(i+1, j)</code></div>
+<div style="color:var(--muted)"><strong>Why doesn't j change?</strong> We took from s1, not s2. s2[j] is still the next available character from s2.</div>
+</div>
+</div>
+
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--blue)">
+<div style="color:var(--blue);font-weight:700;margin-bottom:8px">Take from s2 (when s2[j] == s3[i+j])</div>
+<div style="display:grid;gap:6px;font-size:.9em">
+<div><strong>Action:</strong> Use <code>s2[j]</code> to produce <code>s3[i+j]</code>.</div>
+<div><strong>State changes:</strong></div>
+<div style="padding-left:20px">
+<code>i</code> stays the same: <code>s1[i]</code> not used. Still available.<br>
+<code>j &rarr; j+1</code>: <code>s2[j]</code> consumed. It produced the next character of s3.
+</div>
+<div><strong>Call:</strong> <code>can_interleave(i, j+1)</code></div>
+<div style="color:var(--muted)"><strong>Why doesn't i change?</strong> We took from s2, not s1. s1[i] is still available.</div>
+</div>
+</div>
+
+<div style="font-size:.93em;margin-top:8px">
+<strong>Decision:</strong> If either path returns True, the interleaving works. <code>OR</code> logic, not max/min.
+</div>
+
+<img src="dp/images/interleaving_transitions.png" alt="Interleaving String transition justification: take from s1 moves only i, take from s2 moves only j" class="scene-img">
+
 <h3 style="color:var(--purple)">Recursion</h3>
 <pre><code>def can_interleave(s1, s2, s3, i, j, cache):
     if i + j == len(s3):
@@ -634,6 +770,61 @@ Given strings <code>s</code> and <code>t</code>, count how many distinct subsequ
 At each position, if <code>s[i] == t[j]</code>: you can use this character (diagonal) OR skip it (up). <span style="color:var(--green)">Add both options.</span> If no match: skip (up only). This is Count Subsets logic applied to strings.</div>
 
 <img src="dp/images/distinct_subs_choices.png" alt="Distinct Subsequences choice diagram: match = use + skip (count both), no match = skip only" class="scene-img">
+
+<h3 style="color:var(--purple)">Why each variable changes</h3>
+
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:10px">CASE: s[i] == t[j] (Match)</div>
+
+<p style="margin-bottom:14px;font-size:.93em">Two options. Characters match, but we can USE this match or SKIP it. Count <strong>both</strong> paths (add them).</p>
+
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--green)">
+<div style="color:var(--green);font-weight:700;margin-bottom:8px">Option 1: USE s[i] to match t[j]</div>
+<div style="display:grid;gap:6px;font-size:.9em">
+<div><strong>Action:</strong> Use <code>s[i]</code> to match <code>t[j]</code>. Both are consumed.</div>
+<div><strong>State changes:</strong></div>
+<div style="padding-left:20px">
+<code>i &rarr; i+1</code>: <code>s[i]</code> consumed (used for the match). Move past it.<br>
+<code>j &rarr; j+1</code>: <code>t[j]</code> matched (covered by <code>s[i]</code>). Move past it.
+</div>
+<div><strong>Call:</strong> <code>count_subsequences(i+1, j+1)</code></div>
+<div style="color:var(--muted)"><strong>Why both advance?</strong> Using s[i] to match t[j] consumes one character from each string.</div>
+</div>
+</div>
+
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--amber)">
+<div style="color:var(--amber);font-weight:700;margin-bottom:8px">Option 2: SKIP s[i] (even though it matches)</div>
+<div style="display:grid;gap:6px;font-size:.9em">
+<div><strong>Action:</strong> Skip <code>s[i]</code>. Maybe a later copy of this character gives more subsequences.</div>
+<div><strong>State changes:</strong></div>
+<div style="padding-left:20px">
+<code>i &rarr; i+1</code>: <code>s[i]</code> skipped. Move past it.<br>
+<code>j</code> stays the same: <code>t[j]</code> not matched yet. Still waiting.
+</div>
+<div><strong>Call:</strong> <code>count_subsequences(i+1, j)</code></div>
+<div style="color:var(--muted)"><strong>Why doesn't j change?</strong> We chose not to use this match. t[j] still needs to be matched by a later s character.</div>
+</div>
+</div>
+
+<div style="font-size:.93em;margin-top:8px">
+<strong>Decision:</strong> <code>result = use + skip</code>. We <strong>count</strong> all distinct subsequences, so we <strong>add</strong> both paths.
+</div>
+</div>
+
+<div style="background:rgba(239,68,68,.04);border:2px solid var(--red);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--red);font-weight:800;font-size:1.05em;margin-bottom:10px">CASE: s[i] != t[j] (No Match)</div>
+<div style="display:grid;gap:8px;font-size:.93em">
+<div><strong>Action:</strong> <code>s[i]</code> can't match <code>t[j]</code>. Only option: skip it.</div>
+<div><strong>State changes:</strong></div>
+<div style="padding-left:20px">
+<code>i &rarr; i+1</code>: <code>s[i]</code> skipped (useless for current target).<br>
+<code>j</code> stays the same: <code>t[j]</code> still waiting to be matched.
+</div>
+<div><strong>Call:</strong> <code>count_subsequences(i+1, j)</code></div>
+</div>
+</div>
+
+<img src="dp/images/distinct_subs_transitions.png" alt="Distinct Subsequences transition justification: use advances both, skip advances only i" class="scene-img">
 
 <h3 style="color:var(--purple)">Recursion</h3>
 <pre><code>def count_subsequences(s, t, i, j, cache):

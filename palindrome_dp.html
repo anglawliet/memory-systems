@@ -137,9 +137,39 @@ code{font-family:'Fira Code','Courier New',monospace}
 <code>left >= right</code> (single char or empty) &rarr; always a palindrome. Return True.<br>
 <code>text[left] != text[right]</code> &rarr; not a palindrome. Return False.
 </div>
+
+<h3 style="color:var(--violet);margin-top:16px">Why each variable changes</h3>
+
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:10px">CASE: text[left] == text[right] (Ends Match)</div>
+<div style="display:grid;gap:8px;font-size:.93em">
+<div><strong>Action:</strong> Outer characters match. Peel them off and check the inner substring.</div>
+<div><strong>Immediate cost:</strong> None. A matching pair just means this layer is valid. The whole answer depends on what's inside.</div>
+<div><strong>State changes:</strong></div>
+<div style="padding-left:20px">
+<code>left &rarr; left+1</code>: Confirmed <code>text[left]</code> matches the other end. Move inward from the left.<br>
+<code>right &rarr; right-1</code>: Confirmed <code>text[right]</code> matches the other end. Move inward from the right.
+</div>
+<div><strong>Remaining subproblem:</strong> Is <code>text[left+1..right-1]</code> a palindrome?</div>
+<div><strong>Call:</strong> <code>is_palindrome(left+1, right-1)</code></div>
+<div style="color:var(--muted)"><strong>Why both change?</strong> A palindrome is symmetric. We check both ends at the same time. Each confirmed match peels one character from each side. Advancing only one pointer would leave a confirmed character in the range, which is redundant.</div>
+</div>
+</div>
+
+<div style="background:rgba(239,68,68,.04);border:2px solid var(--red);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--red);font-weight:800;font-size:1.05em;margin-bottom:10px">CASE: text[left] != text[right] (Ends Don't Match)</div>
+<div style="display:grid;gap:8px;font-size:.93em">
+<div><strong>Action:</strong> Outer characters differ. This substring is not a palindrome.</div>
+<div><strong>Result:</strong> Return <code>False</code> immediately. No recursion needed.</div>
+<div><strong>No state changes:</strong> We stop here. No deeper check required.</div>
+<div style="color:var(--muted)"><strong>Why stop immediately?</strong> A palindrome must read the same forwards and backwards. If the outermost characters differ, no inner arrangement can fix that.</div>
+</div>
+</div>
 </div>
 
 <img src="dp/images/palindrome_choices.png" alt="Palindrome choice diagram: outer letters match? Check inner. State = (left, right)" class="scene-img">
+
+<img src="dp/images/palindrome_transitions.png" alt="Palindrome transition justification: left moves right, right moves left, both shrink inward on match" class="scene-img">
 
 <!-- ==================== STEP 2: RECURSION ==================== -->
 <h2>Step 2: Choices &rarr; Recursion</h2>

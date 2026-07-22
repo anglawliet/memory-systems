@@ -126,9 +126,103 @@ I'm free to act. I can:<br>
 <div class="hi">
 <strong style="color:var(--emerald)">The constraint creates the states.</strong> "Cooldown after selling" means selling and resting are different states. Without cooldown, you'd only need HOLD and REST.
 </div>
+
+<h3 style="color:var(--emerald);margin-top:16px">Why each variable changes</h3>
+
+<p style="margin-bottom:10px;font-size:.93em">State: <code>max_profit(day, state)</code>. Two state variables: which day, and which state we're in (rest, hold, or sold).</p>
+
+<!-- FROM REST -->
+<div style="background:rgba(59,130,246,.06);border:2px solid var(--blue);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--blue);font-weight:800;font-size:1.05em;margin-bottom:10px">FROM REST: Two choices</div>
+
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--red)">
+<div style="color:var(--red);font-weight:700;margin-bottom:8px">BUY (rest &rarr; hold)</div>
+<div style="display:grid;gap:6px;font-size:.9em">
+<div><strong>Action:</strong> Buy stock at today's price.</div>
+<div><strong>Immediate cost:</strong> <code>-prices[day]</code>. Money spent to buy the stock.</div>
+<div><strong>State changes:</strong></div>
+<div style="padding-left:20px">
+<code>day &rarr; day+1</code>: This day is done. Move to next day.<br>
+<code>state: rest &rarr; hold</code>: We now own a stock.
+</div>
+<div><strong>Call:</strong> <code>-prices[day] + max_profit(day+1, "hold")</code></div>
+<div style="color:var(--muted)"><strong>Why does state change?</strong> Buying means we now hold a stock. Our future choices are different (sell or keep).</div>
+</div>
+</div>
+
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--blue)">
+<div style="color:var(--blue);font-weight:700;margin-bottom:8px">WAIT (rest &rarr; rest)</div>
+<div style="display:grid;gap:6px;font-size:.9em">
+<div><strong>Action:</strong> Do nothing. Stay resting.</div>
+<div><strong>Immediate cost:</strong> <code>+0</code>. No transaction.</div>
+<div><strong>State changes:</strong></div>
+<div style="padding-left:20px">
+<code>day &rarr; day+1</code>: This day is done. Move to next day.<br>
+<code>state</code> stays rest: We didn't act. Still free to buy or wait tomorrow.
+</div>
+<div><strong>Call:</strong> <code>max_profit(day+1, "rest")</code></div>
+</div>
+</div>
+
+<div style="font-size:.93em"><strong>Decision:</strong> <code>max(buy, wait)</code>.</div>
+</div>
+
+<!-- FROM HOLD -->
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--red);font-weight:800;font-size:1.05em;margin-bottom:10px">FROM HOLD: Two choices</div>
+
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--green)">
+<div style="color:var(--green);font-weight:700;margin-bottom:8px">SELL (hold &rarr; sold)</div>
+<div style="display:grid;gap:6px;font-size:.9em">
+<div><strong>Action:</strong> Sell the stock at today's price.</div>
+<div><strong>Immediate reward:</strong> <code>+prices[day]</code>. Money received from selling.</div>
+<div><strong>State changes:</strong></div>
+<div style="padding-left:20px">
+<code>day &rarr; day+1</code>: This day is done.<br>
+<code>state: hold &rarr; sold</code>: We just sold. Must cooldown next.
+</div>
+<div><strong>Call:</strong> <code>prices[day] + max_profit(day+1, "sold")</code></div>
+<div style="color:var(--muted)"><strong>Why sold, not rest?</strong> The cooldown rule: after selling, you must wait one day. The "sold" state enforces that constraint.</div>
+</div>
+</div>
+
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--red)">
+<div style="color:var(--red);font-weight:700;margin-bottom:8px">KEEP HOLDING (hold &rarr; hold)</div>
+<div style="display:grid;gap:6px;font-size:.9em">
+<div><strong>Action:</strong> Don't sell. Keep the stock for a better price later.</div>
+<div><strong>Immediate cost:</strong> <code>+0</code>. No transaction.</div>
+<div><strong>State changes:</strong></div>
+<div style="padding-left:20px">
+<code>day &rarr; day+1</code>: This day is done.<br>
+<code>state</code> stays hold: Still own the stock.
+</div>
+<div><strong>Call:</strong> <code>max_profit(day+1, "hold")</code></div>
+</div>
+</div>
+
+<div style="font-size:.93em"><strong>Decision:</strong> <code>max(sell, keep)</code>.</div>
+</div>
+
+<!-- FROM SOLD -->
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:10px">FROM SOLD: No choice (mandatory cooldown)</div>
+<div style="display:grid;gap:8px;font-size:.93em">
+<div><strong>Action:</strong> Mandatory rest day after selling. No trading allowed.</div>
+<div><strong>Immediate cost:</strong> <code>+0</code>. Just waiting.</div>
+<div><strong>State changes:</strong></div>
+<div style="padding-left:20px">
+<code>day &rarr; day+1</code>: This day is done.<br>
+<code>state: sold &rarr; rest</code>: Cooldown complete. Free to act tomorrow.
+</div>
+<div><strong>Call:</strong> <code>max_profit(day+1, "rest")</code></div>
+<div style="color:var(--muted)"><strong>Why is this mandatory?</strong> The problem requires waiting one day after selling before buying again. The "sold" state exists solely to enforce this one-day gap.</div>
+</div>
+</div>
 </div>
 
 <img src="dp/images/stock_cooldown_choices.png" alt="Stock Cooldown choice diagram: state machine with HOLD, SOLD, REST states and 5 transitions" class="scene-img">
+
+<img src="dp/images/stock_cooldown_transitions.png" alt="Stock Cooldown transition justification: 5 transitions between 3 states with cost/reward for each" class="scene-img">
 
 <!-- ==================== STEP 2: RECURSION ==================== -->
 <h2>Step 2: States &rarr; Recursion</h2>
@@ -329,6 +423,39 @@ Given an array of integers, find the length of the longest strictly increasing s
 
 <img src="dp/images/lis_choices.png" alt="LIS choice diagram: for each element, check ALL smaller previous elements. Variable lookback." class="scene-img">
 
+<h3 style="color:var(--emerald)">Why each variable changes</h3>
+
+<p style="margin-bottom:10px;font-size:.93em">State: <code>lis_ending_at(index)</code> = length of longest increasing subsequence <strong>ending at</strong> <code>nums[index]</code>.</p>
+
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:10px">For each prev where nums[prev] &lt; nums[index]: EXTEND</div>
+<div style="display:grid;gap:8px;font-size:.93em">
+<div><strong>Action:</strong> Extend the subsequence ending at <code>prev</code> by appending <code>nums[index]</code>.</div>
+<div><strong>Immediate reward:</strong> <code>+1</code>. Adding one more element to the subsequence.</div>
+<div><strong>Why can we extend?</strong> <code>nums[prev] &lt; nums[index]</code>, so the sequence stays strictly increasing.</div>
+<div><strong>State change:</strong></div>
+<div style="padding-left:20px">
+<code>index &rarr; prev</code>: We ask "what's the best subsequence ending at prev?" to know how long the chain is before us.
+</div>
+<div><strong>Call:</strong> <code>1 + lis_ending_at(prev)</code></div>
+<div style="color:var(--muted)"><strong>Why check ALL prev, not just one?</strong> Any earlier element with a smaller value could be the end of the longest chain. We don't know which prev gives the longest result until we try them all.</div>
+</div>
+</div>
+
+<div style="background:rgba(245,158,11,.06);border:2px solid var(--amber);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--amber);font-weight:800;font-size:1.05em;margin-bottom:10px">No valid prev exists (or standalone is best)</div>
+<div style="display:grid;gap:8px;font-size:.93em">
+<div><strong>Action:</strong> <code>nums[index]</code> starts a new subsequence by itself.</div>
+<div><strong>Result:</strong> <code>lis_ending_at(index) = 1</code>. A single element is always an increasing subsequence of length 1.</div>
+</div>
+</div>
+
+<div style="font-size:.93em;margin-top:8px">
+<strong>Decision:</strong> <code>best = max(1, max(1 + lis_ending_at(prev) for valid prev))</code>. Take the longest chain we can extend, or start fresh.
+</div>
+
+<img src="dp/images/lis_transitions.png" alt="LIS transition justification: extend any previous smaller element's chain by 1, or start fresh at 1" class="scene-img">
+
 <h3 style="color:var(--emerald)">Recursion</h3>
 <pre><code>def lis_ending_at(nums, index, cache):
     if index in cache:
@@ -380,6 +507,40 @@ Given n balloons with values, burst them one at a time. When you burst balloon i
 <strong>Think about which balloon to burst LAST</strong>, not first. If balloon k is the last to burst in range [left, right], the coins from k are <code>nums[left-1] * nums[k] * nums[right+1]</code> (the boundaries are still there because everything else in the range is already gone). This gives clean subproblems: [left, k-1] and [k+1, right].</div>
 
 <img src="dp/images/burst_balloons_choices.png" alt="Burst Balloons choice diagram: think LAST not FIRST, interval DP with boundary values" class="scene-img">
+
+<h3 style="color:var(--emerald)">Why each variable changes</h3>
+
+<p style="margin-bottom:10px;font-size:.93em">State: <code>max_coins(left, right)</code> = max coins from bursting all balloons in <code>[left, right]</code>.</p>
+
+<div style="background:rgba(16,185,129,.06);border:2px solid var(--emerald);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--emerald);font-weight:800;font-size:1.05em;margin-bottom:10px">For each k in [left, right]: Burst k LAST</div>
+<div style="display:grid;gap:8px;font-size:.93em">
+<div><strong>Action:</strong> Choose balloon <code>k</code> to be the <strong>last</strong> one burst in the range <code>[left, right]</code>.</div>
+<div><strong>Immediate reward:</strong> <code>nums[left-1] * nums[k] * nums[right+1]</code>. When k is the last balloon, its neighbors are the range boundaries (everything else inside is already gone).</div>
+<div><strong>Why LAST, not first?</strong> If we burst k first, the remaining balloons shift neighbors, making subproblems depend on each other. Bursting k last means everything else is already gone, so left-1 and right+1 are the true boundaries.</div>
+<div><strong>State changes:</strong></div>
+<div style="padding-left:20px">
+Left subproblem: <code>[left, k-1]</code>. All balloons to the left of k. They are burst before k.<br>
+Right subproblem: <code>[k+1, right]</code>. All balloons to the right of k. Also burst before k.
+</div>
+<div><strong>Call:</strong> <code>nums[left-1] * nums[k] * nums[right+1] + max_coins(left, k-1) + max_coins(k+1, right)</code></div>
+<div style="color:var(--muted)"><strong>Why are subproblems independent?</strong> Since k is burst last, when we solve [left, k-1], balloon k is still there as its right boundary. When we solve [k+1, right], balloon k is still there as its left boundary. Neither subproblem affects the other's boundaries.</div>
+</div>
+</div>
+
+<div style="background:rgba(245,158,11,.06);border:2px solid var(--amber);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--amber);font-weight:800;font-size:1.05em;margin-bottom:10px">Base case: left &gt; right</div>
+<div style="display:grid;gap:8px;font-size:.93em">
+<div><strong>Action:</strong> No balloons in this range. Nothing to burst.</div>
+<div><strong>Result:</strong> Return <code>0</code>.</div>
+</div>
+</div>
+
+<div style="font-size:.93em;margin-top:8px">
+<strong>Decision:</strong> <code>best = max over all k</code>. Try every balloon as the last one burst, keep the most profitable choice.
+</div>
+
+<img src="dp/images/burst_balloons_transitions.png" alt="Burst Balloons transition justification: burst k last, boundaries are left-1 and right+1, independent subproblems" class="scene-img">
 
 <h3 style="color:var(--emerald)">Recursion</h3>
 <pre><code>def max_coins(nums, left, right, cache):

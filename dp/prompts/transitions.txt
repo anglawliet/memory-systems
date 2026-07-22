@@ -483,3 +483,57 @@ Choose k=3 (value 5) as LAST to burst.
 
 Kit at bottom (about 20%): "Try every k as last. Take the max.
 The 'burst last' reversal is what makes the subproblems clean."
+
+
+================================================================================
+PROMPT 9: Why Greedy Fails for Interleaving -> interleaving_why_dp.png
+================================================================================
+
+[Paste the full style bible from above here]
+
+TITLE (giant, top): "WHY CAN'T WE JUST GO GREEDY?"
+
+Layout: Two side-by-side paths showing the SAME starting point but different outcomes.
+
+Setup (top, ~15% of image):
+  Three strings in colored boxes, each character in its own cell:
+  s1: | a | a |        (green boxes)
+  s2: | a | b |        (blue boxes)
+  s3: | a | a | b | a | (gold/target boxes, labeled "target")
+
+  Label: "s3[0] = 'a'. Both s1[0] AND s2[0] are 'a'. Which do we pick?"
+  Big bold text: "TIE! Both match."
+
+Section 1 (~40%): TWO COLUMNS side by side.
+
+LEFT COLUMN: red border, header "PICK s1[0]" with X icon.
+  Step-by-step trace, each step a row:
+    Step 1: need 'a' for s3[0]. Pick s1[0]='a'. Check mark.
+      Show: s1 pointer at index 1, s2 pointer at index 0.
+    Step 2: need 'a' for s3[1]. s1[1]='a' matches. Pick it.
+      Show: s1 pointer at index 2 (done), s2 pointer at index 0.
+    Step 3: need 'b' for s3[2]. s1 used up. s2[0]='a'. NO MATCH.
+      Big red X. "STUCK. s2[0]='a' but need 'b'."
+  Bottom: big red "FAIL" label.
+
+RIGHT COLUMN: green border, header "PICK s2[0]" with check icon.
+  Step-by-step trace:
+    Step 1: need 'a' for s3[0]. Pick s2[0]='a'. Check mark.
+      Show: s1 pointer at index 0, s2 pointer at index 1.
+    Step 2: need 'a' for s3[1]. s1[0]='a' matches. Pick it.
+      Show: s1 pointer at index 1, s2 pointer at index 1.
+    Step 3: need 'b' for s3[2]. s2[1]='b' matches. Pick it.
+      Show: s1 pointer at index 1, s2 pointer at index 2 (done).
+    Step 4: need 'a' for s3[3]. s1[1]='a' matches. Pick it.
+      Show: both done.
+  Bottom: big green "SUCCESS" label. Result: a(s2) a(s1) b(s2) a(s1).
+
+Section 2 (~20%): Gold callout box.
+  Header: "THE PROBLEM"
+  "When BOTH strings can supply the next character, picking the wrong one leads to a dead end."
+  "You can't know which is right without trying both."
+  Arrow pointing to: "Trying both = RECURSION"
+  Arrow pointing to: "Same (i,j) from different paths = MEMOIZATION"
+
+Kit at bottom (~20%): pointing up at the two columns.
+  Speech bubble: "Greedy picks one path. DP tries all paths and remembers."

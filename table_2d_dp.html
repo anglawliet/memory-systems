@@ -665,6 +665,11 @@ Base case: remaining length<br>
 <div class="sbox"><div class="sl" style="color:var(--purple)">LEETCODE #97</div>
 Given strings <code>s1</code>, <code>s2</code>, and <code>s3</code>, check if <code>s3</code> can be formed by interleaving <code>s1</code> and <code>s2</code> while keeping their character order.</div>
 
+<h3 style="color:var(--purple)">Why not just greedy?</h3>
+<p style="font-size:.93em">If only one string matches the next character in s3, you pick it. But when <strong>both</strong> s1[i] and s2[j] match, picking the wrong one leads to a dead end. You need to try both paths.</p>
+
+<img src="dp/images/interleaving_why_dp.png" alt="Why greedy fails for interleaving: when both strings match, picking wrong leads to dead end" class="scene-img">
+
 <div class="sbox"><div class="sl" style="color:var(--purple)">THE KEY IDEA</div>
 <code>table[i][j]</code> = True if <code>s3[:i+j]</code> can be formed from <code>s1[:i]</code> and <code>s2[:j]</code>. At each cell, the next character in s3 is <code>s3[i+j-1]</code>. It came from either s1 (above) or s2 (left).</div>
 

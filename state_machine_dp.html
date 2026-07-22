@@ -416,7 +416,21 @@ No choice. Must cool down. Go to REST.
 <div class="deriv-b">
 
 <div class="sbox"><div class="sl" style="color:var(--emerald)">LEETCODE #300</div>
-Given an array of integers, find the length of the longest strictly increasing subsequence. Example: <code>[10, 9, 2, 5, 3, 7, 101, 18]</code> &rarr; 4 (the subsequence <code>[2, 3, 7, 101]</code>).</div>
+Given an array of integers, find the length of the longest strictly increasing subsequence.</div>
+
+<div style="background:var(--card2);border-radius:10px;padding:16px;margin:12px 0;font-size:.93em">
+<div style="font-weight:700;margin-bottom:8px">Example:</div>
+<code>[10, 9, 2, 5, 3, 7, 101, 18]</code><br><br>
+Some increasing subsequences:
+<div style="display:grid;gap:4px;font-size:.9em;padding:8px 0 0 8px">
+<div>[<strong style="color:var(--green)">2, 5, 7, 101</strong>] → length 4</div>
+<div>[<strong style="color:var(--green)">2, 5, 7, 18</strong>] → length 4</div>
+<div>[<strong style="color:var(--green)">2, 3, 7, 101</strong>] → length 4</div>
+<div>[2, 5] → length 2 (valid, but not longest)</div>
+</div>
+<br>Answer: <strong style="color:var(--gold2)">4</strong>. No increasing subsequence of length 5 exists.
+<div style="margin-top:8px;color:var(--muted);font-size:.9em">A subsequence keeps the original order but can skip elements. It doesn't have to be contiguous.</div>
+</div>
 
 <div class="sbox"><div class="sl" style="color:var(--emerald)">THE KEY IDEA</div>
 <code>lis[i]</code> = length of the longest increasing subsequence <strong>ending at index i</strong>. For each i, look at every j before it. If <code>nums[j] < nums[i]</code>, we can extend that subsequence. Take the longest one and add 1.</div>
@@ -501,7 +515,21 @@ def longest_increasing(nums):
 <div class="deriv-b">
 
 <div class="sbox"><div class="sl" style="color:var(--emerald)">LEETCODE #312</div>
-Given n balloons with values, burst them one at a time. When you burst balloon i, you earn <code>nums[i-1] * nums[i] * nums[i+1]</code>. Maximize total coins. Boundaries are 1. Example: <code>[3, 1, 5, 8]</code> &rarr; 167.</div>
+Given n balloons with values, burst them one at a time. When you burst balloon i, you earn <code>nums[i-1] * nums[i] * nums[i+1]</code> (product of it and its current neighbors). Maximize total coins. Boundaries are 1.</div>
+
+<div style="background:var(--card2);border-radius:10px;padding:16px;margin:12px 0;font-size:.93em">
+<div style="font-weight:700;margin-bottom:8px">Example:</div>
+<code>nums = [3, 1, 5, 8]</code> → with boundaries: <code>[1, 3, 1, 5, 8, 1]</code><br><br>
+One possible order:
+<div style="display:grid;gap:4px;font-size:.9em;padding:8px 0 0 8px">
+<div>Burst <strong>1</strong> (neighbors 3, 5): 3&times;1&times;5 = <strong>15</strong>. Remaining: [3, 5, 8]</div>
+<div>Burst <strong>5</strong> (neighbors 3, 8): 3&times;5&times;8 = <strong>120</strong>. Remaining: [3, 8]</div>
+<div>Burst <strong>3</strong> (neighbors 1, 8): 1&times;3&times;8 = <strong>24</strong>. Remaining: [8]</div>
+<div>Burst <strong>8</strong> (neighbors 1, 1): 1&times;8&times;1 = <strong>8</strong>. Remaining: []</div>
+</div>
+<br>Total: 15 + 120 + 24 + 8 = <strong style="color:var(--gold2)">167</strong> (this happens to be optimal).
+<div style="margin-top:8px;color:var(--muted);font-size:.9em">The tricky part: when you burst a balloon, its neighbors change. Bursting [1] makes [3] and [5] become neighbors.</div>
+</div>
 
 <div class="sbox"><div class="sl" style="color:var(--emerald)">THE KEY IDEA</div>
 <strong>Think about which balloon to burst LAST</strong>, not first. If balloon k is the last to burst in range [left, right], the coins from k are <code>nums[left-1] * nums[k] * nums[right+1]</code> (the boundaries are still there because everything else in the range is already gone). This gives clean subproblems: [left, k-1] and [k+1, right].</div>

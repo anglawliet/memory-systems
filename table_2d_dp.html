@@ -354,6 +354,18 @@ No match. Skip from text1 or text2, keep the better.
 <div class="sbox"><div class="sl" style="color:var(--purple)">LEETCODE #62</div>
 A robot starts at the top-left of an <code>m x n</code> grid. It can only move <strong>down</strong> or <strong>right</strong>. Count the number of unique paths to the bottom-right corner.</div>
 
+<div style="background:var(--card2);border-radius:10px;padding:16px;margin:12px 0;font-size:.93em">
+<div style="font-weight:700;margin-bottom:8px">Example:</div>
+<code>m = 3, n = 3</code> (a 3x3 grid)<br><br>
+<div style="display:inline-grid;grid-template-columns:repeat(3,40px);gap:2px;font-size:.85em;text-align:center">
+<span style="background:var(--green);color:#fff;border-radius:4px;padding:6px">start</span><span style="background:var(--card);border-radius:4px;padding:6px">&rarr;</span><span style="background:var(--card);border-radius:4px;padding:6px">&rarr;</span>
+<span style="background:var(--card);border-radius:4px;padding:6px">&darr;</span><span style="background:var(--card);border-radius:4px;padding:6px"></span><span style="background:var(--card);border-radius:4px;padding:6px">&darr;</span>
+<span style="background:var(--card);border-radius:4px;padding:6px">&rarr;</span><span style="background:var(--card);border-radius:4px;padding:6px">&rarr;</span><span style="background:var(--gold2);color:#fff;border-radius:4px;padding:6px">end</span>
+</div><br><br>
+One path: right, right, down, down. Another: down, right, down, right.<br>
+Answer: <strong style="color:var(--gold2)">6</strong> unique paths total.
+</div>
+
 <div class="sbox"><div class="sl" style="color:var(--purple)">THE KEY IDEA</div>
 <span style="color:var(--green)">No match/no-match here.</span> Every cell gets its value from exactly two neighbors: the cell above and the cell to the left. <code>table[r][c] = table[r-1][c] + table[r][c-1]</code>. First row and first column are all 1's (only one way to get there).</div>
 
@@ -437,7 +449,18 @@ A robot starts at the top-left of an <code>m x n</code> grid. It can only move <
 <div class="deriv-b">
 
 <div class="sbox"><div class="sl" style="color:var(--purple)">LEETCODE #72</div>
-Given two words, find the minimum number of operations (insert, delete, replace) to transform <code>word1</code> into <code>word2</code>. Example: <code>word1 = "horse"</code>, <code>word2 = "ros"</code> &rarr; 3 edits.</div>
+Given two words, find the minimum number of operations (insert, delete, replace) to transform <code>word1</code> into <code>word2</code>.</div>
+
+<div style="background:var(--card2);border-radius:10px;padding:16px;margin:12px 0;font-size:.93em">
+<div style="font-weight:700;margin-bottom:8px">Example:</div>
+<code>word1 = "horse"</code>, <code>word2 = "ros"</code><br><br>
+<div style="display:grid;gap:4px;font-size:.9em;padding-left:8px">
+<div><span style="color:var(--amber)">replace</span> <code>h</code> with <code>r</code> → <code>"<strong>r</strong>orse"</code></div>
+<div><span style="color:var(--red)">delete</span> <code>r</code> → <code>"<strong>r</strong>o<s>r</s>se"</code> → <code>"rose"</code></div>
+<div><span style="color:var(--red)">delete</span> <code>e</code> → <code>"ros<s>e</s>"</code> → <code>"ros"</code></div>
+</div>
+<br>Answer: <strong style="color:var(--gold2)">3</strong> operations (one replace, two deletes).
+</div>
 
 <!-- ===== STEP 1: THE STATE ===== -->
 
@@ -665,6 +688,17 @@ Base case: remaining length<br>
 <div class="sbox"><div class="sl" style="color:var(--purple)">LEETCODE #97</div>
 Given strings <code>s1</code>, <code>s2</code>, and <code>s3</code>, check if <code>s3</code> can be formed by interleaving <code>s1</code> and <code>s2</code> while keeping their character order.</div>
 
+<div style="background:var(--card2);border-radius:10px;padding:16px;margin:12px 0;font-size:.93em">
+<div style="font-weight:700;margin-bottom:8px">Example:</div>
+<code>s1 = "aab"</code>, <code>s2 = "axy"</code>, <code>s3 = "aaxaby"</code><br><br>
+Interleave: <span style="color:var(--green)"><strong>a</strong></span><span style="color:var(--blue)"><strong>a</strong></span><span style="color:var(--blue)"><strong>x</strong></span><span style="color:var(--green)"><strong>a</strong></span><span style="color:var(--green)"><strong>b</strong></span><span style="color:var(--blue)"><strong>y</strong></span>
+(<span style="color:var(--green)">s1 chars</span>, <span style="color:var(--blue)">s2 chars</span>)<br>
+Both strings keep their original order. Answer: <strong style="color:var(--gold2)">True</strong>.<br><br>
+<code>s1 = "ab"</code>, <code>s2 = "cd"</code>, <code>s3 = "acdb"</code> → <strong style="color:var(--gold2)">True</strong> (<span style="color:var(--green)">a</span><span style="color:var(--blue)">c</span><span style="color:var(--blue)">d</span><span style="color:var(--green)">b</span>)<br>
+<code>s1 = "ab"</code>, <code>s2 = "cd"</code>, <code>s3 = "abdc"</code> → <strong style="color:var(--gold2)">True</strong> (<span style="color:var(--green)">a</span><span style="color:var(--green)">b</span><span style="color:var(--blue)">d</span><span style="color:var(--blue)">c</span>)
+<div style="margin-top:8px;color:var(--muted);font-size:.9em">Not allowed: rearranging characters within s1 or s2. Only the interleaving order changes.</div>
+</div>
+
 <h3 style="color:var(--purple)">Why not just greedy?</h3>
 <p style="font-size:.93em">If only one string matches the next character in s3, you pick it. But when <strong>both</strong> s1[i] and s2[j] match, picking the wrong one leads to a dead end. You need to try both paths.</p>
 
@@ -769,7 +803,20 @@ Given strings <code>s1</code>, <code>s2</code>, and <code>s3</code>, check if <c
 <div class="deriv-b">
 
 <div class="sbox"><div class="sl" style="color:var(--purple)">LEETCODE #115</div>
-Given strings <code>s</code> and <code>t</code>, count how many distinct subsequences of <code>s</code> equal <code>t</code>. Example: s = "rabbbit", t = "rabbit" &rarr; 3 (three ways to pick the b's).</div>
+Given strings <code>s</code> and <code>t</code>, count how many distinct subsequences of <code>s</code> equal <code>t</code>.</div>
+
+<div style="background:var(--card2);border-radius:10px;padding:16px;margin:12px 0;font-size:.93em">
+<div style="font-weight:700;margin-bottom:8px">Example:</div>
+<code>s = "rab<strong>b</strong>b<strong>i</strong>t"</code>, <code>t = "rabbit"</code><br><br>
+s has three b's. To spell "rabbit" you need two b's. Which two do you pick?
+<div style="display:grid;gap:4px;font-size:.9em;padding:8px 0 0 8px">
+<div>Way 1: ra<strong style="color:var(--green)">b<sub>1</sub>b<sub>2</sub></strong>it</div>
+<div>Way 2: ra<strong style="color:var(--green)">b<sub>1</sub></strong>_<strong style="color:var(--green)">b<sub>3</sub></strong>it</div>
+<div>Way 3: ra_<strong style="color:var(--green)">b<sub>2</sub>b<sub>3</sub></strong>it</div>
+</div>
+<br>Answer: <strong style="color:var(--gold2)">3</strong> distinct subsequences.
+<div style="margin-top:8px;color:var(--muted);font-size:.9em">You're not rearranging anything. You're choosing which characters in s to "use" to form t, keeping the order.</div>
+</div>
 
 <div class="sbox"><div class="sl" style="color:var(--purple)">THE KEY IDEA</div>
 At each position, if <code>s[i] == t[j]</code>: you can use this character (diagonal) OR skip it (up). <span style="color:var(--green)">Add both options.</span> If no match: skip (up only). This is Count Subsets logic applied to strings.</div>

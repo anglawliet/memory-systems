@@ -780,6 +780,11 @@ That's it. Every cell, same logic.
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">1</span> Subset Sum</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:0 0 12px;font-size:.9em">
+<strong>Question:</strong> Can you pick some numbers from the array that add up exactly to the target?<br>
+<strong>Example:</strong> <code>nums = [3, 2, 7, 1]</code>, <code>target = 6</code> → Yes: pick 3+2+1=6. Answer: <strong>True</strong>.<br>
+<code>nums = [3, 2, 7, 1]</code>, <code>target = 10</code> → No combination sums to 10. Answer: <strong>False</strong>.
+</div>
 <img src="dp/images/family1_child1_A.png" alt="Subset Sum: the problem, brute force explosion, and why we look at one number at a time" class="scene-img">
 <img src="dp/images/family1_child1_B.png" alt="Finding the choices: take or leave each number, how each choice creates a smaller problem" class="scene-img">
 <img src="dp/images/family1_child1_C.png" alt="Full recursion tree for [3,2,1] target 3, showing every take/leave branch" class="scene-img">
@@ -839,6 +844,11 @@ That's it. Every cell, same logic.
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">2</span> Equal Sum Partition</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:0 0 12px;font-size:.9em">
+<strong>Question:</strong> Can you split the array into two groups with equal sums?<br>
+<strong>Example:</strong> <code>[1, 5, 11, 5]</code> → {1,5,5} and {11}. Both sum to 11. Answer: <strong>True</strong>.<br>
+<code>[1, 2, 3, 5]</code> → Total=11 (odd), can't split evenly. Answer: <strong>False</strong>.
+</div>
 <img src="dp/images/family1_child2_A.png" alt="Equal Sum Partition: the problem, splitting into two equal groups" class="scene-img">
 <img src="dp/images/family1_child2_B.png" alt="Why finding half is enough, reduction to Subset Sum" class="scene-img">
 <div class="sbox"><div class="sl" style="color:var(--blue)">THE INSIGHT</div>
@@ -856,6 +866,11 @@ If total is odd, immediately False. If even, can I pick items summing to total/2
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">3</span> Count of Subsets with Sum</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:0 0 12px;font-size:.9em">
+<strong>Question:</strong> How many subsets of the array add up to exactly the target?<br>
+<strong>Example:</strong> <code>nums = [1, 2, 3, 3]</code>, <code>target = 6</code><br>
+{3,3}, {1,2,3<sub>a</sub>}, {1,2,3<sub>b</sub>} → Answer: <strong>3</strong> subsets.
+</div>
 <img src="dp/images/family1_child3_A.png" alt="Count Subsets: the problem, how many groups add up to the target" class="scene-img">
 <img src="dp/images/family1_child3_B.png" alt="The recursion tree showing counting, OR vs PLUS" class="scene-img">
 <img src="dp/images/family1_child3_C.png" alt="Base cases return 1/0 instead of True/False, code and family pattern" class="scene-img">
@@ -907,6 +922,11 @@ Same choices: take or leave. But combine with <code>+</code> instead of <code>or
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">4</span> Minimum Subset Sum Difference</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:0 0 12px;font-size:.9em">
+<strong>Question:</strong> Split the array into two groups. Minimize the difference between their sums.<br>
+<strong>Example:</strong> <code>[1, 6, 11, 5]</code> → {1,6,5}=12 and {11}=11. Difference = <strong>1</strong>.<br>
+<span style="color:var(--muted)">Other splits like {1,5}=6 vs {6,11}=17 give difference 11. Closer to half = smaller gap.</span>
+</div>
 <img src="dp/images/family1_child4_A.png" alt="Min Subset Diff: the problem, closer to half means smaller gap" class="scene-img">
 <img src="dp/images/family1_child4_B.png" alt="The code: build Subset Sum table then scan for best achievable sum" class="scene-img">
 <div class="sbox"><div class="sl" style="color:var(--blue)">THE INSIGHT</div>
@@ -959,6 +979,11 @@ The closer one group's sum is to total/2, the smaller the difference. Run Subset
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">5</span> Target Sum (LeetCode #494)</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:0 0 12px;font-size:.9em">
+<strong>Question:</strong> Put + or - in front of each number. How many ways to reach the target sum?<br>
+<strong>Example:</strong> <code>nums = [1, 1, 1]</code>, <code>target = 1</code><br>
++1+1-1=1, +1-1+1=1, -1+1+1=1 → Answer: <strong>3</strong> ways.
+</div>
 <img src="dp/images/family1_child5_A.png" alt="Target Sum: the problem, it looks different but there's a math trick" class="scene-img">
 <img src="dp/images/family1_child5_B.png" alt="The algebra reduction: P = (total+target)/2, then Count Subsets" class="scene-img">
 <div class="sbox"><div class="sl" style="color:var(--blue)">THE MATH TRICK</div>
@@ -978,6 +1003,11 @@ Assign +/- to each number. Let P = sum of + numbers. Then P = (total + target) /
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">6</span> Count Subsets with Given Difference</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:0 0 12px;font-size:.9em">
+<strong>Question:</strong> Split into two groups where group1 - group2 = diff. How many ways?<br>
+<strong>Example:</strong> <code>nums = [1, 1, 2, 3]</code>, <code>diff = 1</code><br>
+{3,1<sub>a</sub>}=4 vs {2,1<sub>b</sub>}=3. And {3,1<sub>b</sub>}=4 vs {2,1<sub>a</sub>}=3 → Answer: <strong>2</strong> ways (each gives 4-3=1).
+</div>
 <img src="dp/images/family1_child6_A.png" alt="Given Difference: the problem, same algebra as Target Sum" class="scene-img">
 <img src="dp/images/family1_child6_B.png" alt="Complete knapsack family tree, all 6 children connected" class="scene-img">
 <div class="sbox"><div class="sl" style="color:var(--blue)">THE PATTERN</div>
@@ -1051,6 +1081,10 @@ goal = (total + target) // 2</code></pre>
 <div class="deriv-h"><h3><span class="deriv-n">1</span> Climbing Stairs (#70) <span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>You are climbing a staircase. It takes <code>n</code> steps to reach the top. Each time you can climb 1 or 2 steps. In how many distinct ways can you climb to the top?</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em">
+<strong>Example:</strong> <code>n = 4</code><br>
+Ways: [1,1,1,1], [1,1,2], [1,2,1], [2,1,1], [2,2] → Answer: <strong>5</strong>
+</div>
 
 <div class="sbox"><div class="sl" style="color:var(--crimson)">THE CHOICES</div>
 At each step: climb 1 or climb 2. Two choices, each leads to a smaller subproblem. Ways to reach step i = ways from (i-1) + ways from (i-2). Pure Fibonacci.</div>
@@ -1070,6 +1104,11 @@ At each step: climb 1 or climb 2. Two choices, each leads to a smaller subproble
 <div class="deriv-h"><h3><span class="deriv-n">2</span> Min Cost Climbing Stairs (#746) <span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given an array <code>cost</code> where <code>cost[i]</code> is the cost of step i, find the minimum cost to reach the top. You can start from step 0 or step 1, and climb 1 or 2 steps at a time.</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em">
+<strong>Example:</strong> <code>cost = [10, 15, 20]</code><br>
+Start at step 1 (cost 15), climb 2 → top. Total: <strong>15</strong>.<br>
+Starting at step 0 costs 10+20=30, which is worse.
+</div>
 
 <div class="sbox"><div class="sl" style="color:var(--crimson)">THE CHOICES</div>
 At each step: arrive from (i-1) paying cost[i-1], or from (i-2) paying cost[i-2]. Pick the cheaper path.</div>
@@ -1085,6 +1124,10 @@ At each step: arrive from (i-1) paying cost[i-1], or from (i-2) paying cost[i-2]
 <div class="deriv-h"><h3><span class="deriv-n">3</span> Decode Ways (#91) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a string of digits, determine the total number of ways to decode it. 'A'=1, 'B'=2, ..., 'Z'=26.</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em">
+<strong>Example:</strong> <code>"226"</code><br>
+"2|2|6" → BBF, "22|6" → VF, "2|26" → BZ → Answer: <strong>3</strong> ways.
+</div>
 
 <div class="sbox"><div class="sl" style="color:var(--crimson)">THE CHOICES</div>
 At position i: decode 1 digit (if valid, i.e. not '0') or decode 2 digits (if the pair is 10-26). Conditional Fibonacci: not always looking back 2.</div>
@@ -1106,6 +1149,11 @@ At position i: decode 1 digit (if valid, i.e. not '0') or decode 2 digits (if th
 <div class="deriv-h"><h3><span class="deriv-n">4</span> Maximum Product Subarray (#152) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given an integer array, find a contiguous subarray that has the largest product, and return its product.</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em">
+<strong>Example:</strong> <code>[2, 3, -2, 4]</code><br>
+[2, 3] has product 6. Including -2 makes it -12. Answer: <strong>6</strong>.<br>
+<span style="color:var(--muted)">Tricky: <code>[-2, 3, -4]</code> → entire array = 24 (negative × negative = positive).</span>
+</div>
 
 <div class="sbox"><div class="sl" style="color:var(--crimson)">THE CHOICES</div>
 At each element: extend the current subarray or start fresh. Track BOTH max and min at each step because a negative times a negative becomes positive.</div>
@@ -1127,6 +1175,11 @@ At each element: extend the current subarray or start fresh. Track BOTH max and 
 <div class="deriv-h"><h3><span class="deriv-n">5</span> House Robber (#198) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given an array of non-negative integers representing money in each house, determine the maximum amount you can rob without robbing two adjacent houses.</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em">
+<strong>Example:</strong> <code>[2, 7, 9, 3, 1]</code><br>
+Rob houses 0, 2, 4 (values 2+9+1=12) or houses 1, 3 (7+3=10). Answer: <strong>12</strong>.<br>
+<span style="color:var(--muted)">Can't rob house 1 and 2 together because they're adjacent.</span>
+</div>
 
 <div class="sbox"><div class="sl" style="color:var(--blue)">THE CHOICES</div>
 At each house: ROB it (skip previous, take this one's money + best from 2 houses back) or SKIP it (keep the best from previous). Same take-or-skip pattern as knapsack, but the constraint is adjacency instead of capacity.</div>
@@ -1143,6 +1196,10 @@ At each house: ROB it (skip previous, take this one's money + best from 2 houses
 <div class="deriv-h"><h3><span class="deriv-n">6</span> House Robber II (#213) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Same as House Robber, but houses are arranged in a circle. First and last houses are adjacent.</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em">
+<strong>Example:</strong> <code>[2, 3, 2]</code><br>
+Can't rob house 0 and house 2 (they're neighbors in the circle). Best: rob house 1. Answer: <strong>3</strong>.
+</div>
 
 <div class="sbox"><div class="sl" style="color:var(--blue)">THE CHOICES</div>
 Same take-or-skip, but circular constraint. Can't rob both first and last. Run the linear version twice: once skipping first house, once skipping last. Answer = max of both.</div>
@@ -1161,6 +1218,11 @@ Same take-or-skip, but circular constraint. Can't rob both first and last. Run t
 <div class="deriv-h"><h3><span class="deriv-n">7</span> Target Sum (#494) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given an array of integers and a target, assign + or - to each integer to make the sum equal target. Return the number of ways.</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em">
+<strong>Example:</strong> <code>nums = [1, 1, 1, 1, 1]</code>, <code>target = 3</code><br>
++1+1+1+1-1=3, +1+1+1-1+1=3, +1+1-1+1+1=3, +1-1+1+1+1=3, -1+1+1+1+1=3<br>
+Answer: <strong>5</strong> ways.
+</div>
 
 <div class="sbox"><div class="sl" style="color:var(--blue)">THE CHOICES</div>
 At each number: assign + or assign -. This is 0/1 knapsack (each number used once). Math trick: P - (total - P) = target means P = (total + target) / 2. Reduces to Count of Subsets with Sum.</div>
@@ -1184,6 +1246,10 @@ At each number: assign + or assign -. This is 0/1 knapsack (each number used onc
 <div class="deriv-h"><h3><span class="deriv-n">8</span> Coin Change (#322) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given coins of different denominations and a total amount, return the fewest number of coins needed. Return -1 if impossible.</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em">
+<strong>Example:</strong> <code>coins = [1, 5, 11]</code>, <code>amount = 15</code><br>
+Greedy picks 11+1+1+1+1=5 coins. Optimal: 5+5+5=<strong>3</strong> coins.
+</div>
 
 <div class="sbox"><div class="sl" style="color:var(--teal)">THE CHOICES</div>
 At each amount: try using each coin denomination. If coin fits, use it and solve for (amount - coin). Can reuse the same coin, so inner loop goes LEFT to RIGHT.</div>
@@ -1204,6 +1270,11 @@ At each amount: try using each coin denomination. If coin fits, use it and solve
 <div class="deriv-h"><h3><span class="deriv-n">9</span> Coin Change II (#518) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given coins and an amount, return the number of combinations that make up that amount.</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em">
+<strong>Example:</strong> <code>coins = [1, 2, 5]</code>, <code>amount = 5</code><br>
+5, 2+2+1, 2+1+1+1, 1+1+1+1+1 → Answer: <strong>4</strong> combinations.<br>
+<span style="color:var(--muted)">[2,1,2] and [1,2,2] are the same combination, not counted twice.</span>
+</div>
 
 <div class="sbox"><div class="sl" style="color:var(--teal)">THE CHOICES</div>
 Same as Coin Change, but COUNT combinations instead of minimizing. <code>+=</code> instead of <code>min</code>. Base case dp[0] = 1 (one way to make 0). Outer loop = coins ensures unique combos (avoids counting [1,2] and [2,1] separately).</div>
@@ -1221,6 +1292,11 @@ Same as Coin Change, but COUNT combinations instead of minimizing. <code>+=</cod
 <div class="deriv-h"><h3><span class="deriv-n">10</span> Word Break (#139) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a string <code>s</code> and a dictionary of words, determine if <code>s</code> can be segmented into a space-separated sequence of dictionary words.</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em">
+<strong>Example:</strong> <code>s = "leetcode"</code>, <code>dict = ["leet", "code"]</code><br>
+"leet" + "code" → Answer: <strong>True</strong>.<br>
+<code>s = "catsandog"</code>, <code>dict = ["cats", "and", "dog", "sand"]</code> → <strong>False</strong> (no valid split covers the whole string).
+</div>
 
 <div class="sbox"><div class="sl" style="color:var(--teal)">THE CHOICES</div>
 At position i: try every split point j. If s[j:i] is a dictionary word AND dp[j] is True (prefix is valid), then dp[i] = True. Words are like coins (reusable), string length is the amount.</div>
@@ -1244,6 +1320,9 @@ At position i: try every split point j. If s[j:i] is a dictionary word AND dp[j]
 <div class="deriv-h"><h3><span class="deriv-n">11</span> Longest Palindromic Substring (#5) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a string <code>s</code>, return the longest palindromic substring in <code>s</code>.</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em">
+<strong>Example:</strong> <code>"babad"</code> → <strong>"bab"</strong> (or "aba"). <code>"cbbd"</code> → <strong>"bb"</strong>.
+</div>
 
 <div class="sbox"><div class="sl" style="color:var(--amber)">THE CHOICES</div>
 At each center: expand outward. If s[l] == s[r], it's still a palindrome, keep expanding. If mismatch, stop. Try both odd-length (center on one char) and even-length (center between two chars).</div>
@@ -1263,6 +1342,9 @@ At each center: expand outward. If s[l] == s[r], it's still a palindrome, keep e
 <div class="deriv-h"><h3><span class="deriv-n">12</span> Palindromic Substrings (#647) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a string <code>s</code>, return the number of palindromic substrings in it.</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em">
+<strong>Example:</strong> <code>"aaa"</code> → "a","a","a","aa","aa","aaa" → Answer: <strong>6</strong>.
+</div>
 
 <div class="sbox"><div class="sl" style="color:var(--amber)">THE CHOICES</div>
 Same expand-from-center approach. Instead of tracking the longest, just count every successful expansion as one more palindromic substring.</div>
@@ -1284,6 +1366,10 @@ Same expand-from-center approach. Instead of tracking the longest, just count ev
 <div class="deriv-h"><h3><span class="deriv-n">13</span> Longest Common Subsequence (#1143) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given two strings <code>text1</code> and <code>text2</code>, return the length of their longest common subsequence.</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em">
+<strong>Example:</strong> <code>text1 = "abcde"</code>, <code>text2 = "ace"</code><br>
+Common subsequence "ace" (a..c..e from text1) → Answer: <strong>3</strong>.
+</div>
 
 <div class="sbox"><div class="sl" style="color:var(--violet)">THE CHOICES</div>
 At position (i, j): do the characters match? If YES: both advance, count it (diagonal + 1). If NO: skip one character from either string, take the better result (max of up, left).</div>
@@ -1307,6 +1393,10 @@ At position (i, j): do the characters match? If YES: both advance, count it (dia
 <div class="deriv-h"><h3><span class="deriv-n">14</span> Edit Distance (#72) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given two strings <code>word1</code> and <code>word2</code>, return the minimum number of operations (insert, delete, replace) to convert word1 to word2.</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em">
+<strong>Example:</strong> <code>"horse"</code> → <code>"ros"</code><br>
+replace h→r, delete r, delete e → Answer: <strong>3</strong> operations.
+</div>
 
 <div class="sbox"><div class="sl" style="color:var(--violet)">THE CHOICES</div>
 At (i, j): characters match? Free, take diagonal. Don't match? Three choices: replace (diagonal + 1), delete from word1 (up + 1), insert into word1 (left + 1). Take the minimum.</div>
@@ -1329,6 +1419,10 @@ At (i, j): characters match? Free, take diagonal. Don't match? Three choices: re
 <div class="deriv-h"><h3><span class="deriv-n">15</span> Interleaving String (#97) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given strings <code>s1</code>, <code>s2</code>, and <code>s3</code>, determine if <code>s3</code> is formed by interleaving <code>s1</code> and <code>s2</code>.</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em">
+<strong>Example:</strong> <code>s1 = "aab"</code>, <code>s2 = "axy"</code>, <code>s3 = "aaxaby"</code><br>
+Pick: <span style="color:var(--green)">a</span><span style="color:var(--blue)">a</span><span style="color:var(--blue)">x</span><span style="color:var(--green)">a</span><span style="color:var(--green)">b</span><span style="color:var(--blue)">y</span> (<span style="color:var(--green)">s1</span>, <span style="color:var(--blue)">s2</span>) → Answer: <strong>True</strong>.
+</div>
 
 <div class="sbox"><div class="sl" style="color:var(--violet)">THE CHOICES</div>
 At (i, j): does the next character in s3 come from s1 or s2? Check s3[i+j-1] against s1[i-1] (from above) or s2[j-1] (from left). Boolean 2D table.</div>
@@ -1353,6 +1447,10 @@ At (i, j): does the next character in s3 come from s1 or s2? Check s3[i+j-1] aga
 <div class="deriv-h"><h3><span class="deriv-n">16</span> Distinct Subsequences (#115) <span class="tag-h">Hard</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given strings <code>s</code> and <code>t</code>, return the number of distinct subsequences of <code>s</code> which equals <code>t</code>.</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em">
+<strong>Example:</strong> <code>s = "rabbbit"</code>, <code>t = "rabbit"</code><br>
+Three b's, need two: pick b<sub>1</sub>b<sub>2</sub>, or b<sub>1</sub>b<sub>3</sub>, or b<sub>2</sub>b<sub>3</sub> → Answer: <strong>3</strong>.
+</div>
 
 <div class="sbox"><div class="sl" style="color:var(--violet)">THE CHOICES</div>
 At (i, j): always inherit from above (skip this char in s). If characters match, ALSO add the diagonal value (use this char). Count, not max.</div>
@@ -1373,6 +1471,11 @@ At (i, j): always inherit from above (skip this char in s). If characters match,
 <div class="deriv-h"><h3><span class="deriv-n">17</span> Regular Expression Matching (#10) <span class="tag-h">Hard</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a string <code>s</code> and a pattern <code>p</code> with <code>'.'</code> (any char) and <code>'*'</code> (zero or more of preceding), determine if the pattern matches the entire string.</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em">
+<strong>Example:</strong> <code>s = "aab"</code>, <code>p = "c*a*b"</code><br>
+c* = zero c's, a* = two a's, b = b → matches "aab". Answer: <strong>True</strong>.<br>
+<code>s = "ab"</code>, <code>p = ".*"</code> → .* matches any sequence → <strong>True</strong>.
+</div>
 
 <div class="sbox"><div class="sl" style="color:var(--violet)">THE CHOICES</div>
 At (i, j): if pattern char is '*', two choices: use zero of preceding (look 2 cols back) or use one more (look up, if char matches). If '.' or exact match, diagonal. Boolean 2D grid.</div>
@@ -1402,6 +1505,10 @@ At (i, j): if pattern char is '*', two choices: use zero of preceding (look 2 co
 <div class="deriv-h"><h3><span class="deriv-n">18</span> Unique Paths (#62) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>A robot is on an m x n grid. It can only move right or down. How many unique paths exist from top-left to bottom-right?</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em">
+<strong>Example:</strong> <code>m = 3, n = 2</code> (3 rows, 2 cols)<br>
+Paths: RDD, DRD, DDR → Answer: <strong>3</strong>.
+</div>
 
 <div class="sbox"><div class="sl" style="color:#818cf8">THE CHOICES</div>
 At each cell: come from above or come from the left. dp[i][j] = dp[i-1][j] + dp[i][j-1]. Base: first row and first column all 1s (only one way to reach any edge cell).</div>
@@ -1421,6 +1528,10 @@ At each cell: come from above or come from the left. dp[i][j] = dp[i-1][j] + dp[
 <div class="deriv-h"><h3><span class="deriv-n">19</span> Best Time to Buy &amp; Sell Stock with Cooldown (#309) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given an array of stock prices, find the maximum profit. After selling, you must wait one day before buying again (cooldown).</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em">
+<strong>Example:</strong> <code>prices = [1, 2, 3, 0, 2]</code><br>
+Buy day 0 ($1), sell day 2 ($3), cooldown day 3, buy day 3 ($0), sell day 4 ($2). Profit: (3-1)+(2-0) = <strong>3</strong>.
+</div>
 
 <div class="sbox"><div class="sl" style="color:var(--emerald)">THE CHOICES</div>
 At each day, you're in one of three states: HOLD (bought, waiting), SOLD (just sold today), REST (cooling down or idle). Each state transitions based on the choice: hold = max(keep holding, buy from rest). sold = hold + price. rest = max(keep resting, cooldown from sold). Compute ALL new values simultaneously, then swap.</div>
@@ -1443,6 +1554,10 @@ At each day, you're in one of three states: HOLD (bought, waiting), SOLD (just s
 <div class="deriv-h"><h3><span class="deriv-n">20</span> Longest Increasing Subsequence (#300) <span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given an integer array <code>nums</code>, return the length of the longest strictly increasing subsequence.</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em">
+<strong>Example:</strong> <code>[10, 9, 2, 5, 3, 7, 101, 18]</code><br>
+One LIS: [2, 3, 7, 101]. Another: [2, 5, 7, 18]. Both length 4 → Answer: <strong>4</strong>.
+</div>
 
 <div class="sbox"><div class="sl" style="color:var(--emerald)">THE CHOICES</div>
 At position i: for each previous position j where nums[j] &lt; nums[i], you can extend that subsequence by 1. dp[i] = max(dp[j] + 1) for all valid j. Answer = max of entire dp array (the LIS can end anywhere).</div>
@@ -1463,6 +1578,10 @@ At position i: for each previous position j where nums[j] &lt; nums[i], you can 
 <div class="deriv-h"><h3><span class="deriv-n">21</span> Burst Balloons (#312) <span class="tag-h">Hard</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given <code>n</code> balloons with values, burst them to maximize coins. Bursting balloon i gives <code>nums[left] * nums[i] * nums[right]</code>. Return maximum coins.</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em">
+<strong>Example:</strong> <code>[3, 1, 5, 8]</code><br>
+Burst 1 (3×1×5=15), burst 5 (3×5×8=120), burst 3 (1×3×8=24), burst 8 (1×8×1=8) → Total: <strong>167</strong>.
+</div>
 
 <div class="sbox"><div class="sl" style="color:#84cc16">THE CHOICES</div>
 Within interval [l, r]: which balloon pops LAST? Think backwards. The last balloon to pop in this range sees boundaries l and r as its neighbors. Try each k in [l+1, r-1] as the last pop. dp[l][r] = max over all k of (dp[l][k] + dp[k][r] + nums[l]*nums[k]*nums[r]).</div>

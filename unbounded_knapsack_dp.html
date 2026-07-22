@@ -417,6 +417,10 @@ Value: $2 + $2 + $2 + $2 = <strong>$8</strong>
 <div class="ws">
 <h3>What are we solving?</h3>
 <p>You have coin types (unlimited supply of each). You need <strong>exactly</strong> this amount. What's the <strong>fewest coins</strong> to make it?</p>
+<div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em">
+<strong>Example:</strong> <code>coins = [1, 5, 11]</code>, <code>amount = 15</code><br>
+Greedy picks biggest first: 11+1+1+1+1 = 5 coins. But 5+5+5 = <strong>3</strong> coins. Greedy fails here.
+</div>
 </div>
 
 <h3 style="color:var(--teal)">Finding the Choices</h3>

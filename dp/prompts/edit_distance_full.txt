@@ -126,45 +126,57 @@ Create a tall portrait infographic (1024x1792). Four sections, one per transitio
 
 Big header at top: "WHY DOES EACH VARIABLE CHANGE?"
 
-Show word1 = "horse" and word2 = "ros".
-Current state: i=0, j=0. Looking at word1[0]='h' and word2[0]='r'. They DON'T match.
+CRITICAL LAYOUT: In EVERY section, show TWO SEPARATE ROWS of letter boxes:
+  TOP ROW labeled "word1:" showing letters h  o  r  s  e  (5 boxes).
+  BOTTOM ROW labeled "word2:" showing letters r  o  s  (3 boxes).
+  Pointer "i" is an ARROW pointing DOWN at a letter in the TOP ROW (word1).
+  Pointer "j" is an ARROW pointing DOWN at a letter in the BOTTOM ROW (word2).
+  "i" NEVER appears on the bottom row. "j" NEVER appears on the top row.
+  The two rows must be visually separated with clear "word1:" and "word2:" labels.
 
 SECTION 1: "MATCH (when chars are equal)" (GREEN card, about 20%):
 
-Show a case where word1[i] == word2[j] (e.g., 'o' == 'o'):
+Show word1 with i pointing at 'o' (index 1) on the TOP ROW.
+Show word2 with j pointing at 'o' (index 1) on the BOTTOM ROW.
+'o' == 'o', they match!
   Action: "Characters match. No operation needed."
   Cost: +0
-  i changes: i -> i+1 "word1[i] consumed (it matched)"
-  j changes: j -> j+1 "word2[j] produced (the match covers it)"
+  i on word1: i -> i+1 "word1[i] consumed (it matched)"
+  j on word2: j -> j+1 "word2[j] produced (the match covers it)"
   Call: min_edits(i+1, j+1)
 
 SECTION 2: "REPLACE" (AMBER card, about 25%):
 
-Show word1[0]='h', word2[0]='r'. Overwrite 'h' with 'r'.
+Show word1 with i pointing at 'h' (index 0) on the TOP ROW.
+Show word2 with j pointing at 'r' (index 0) on the BOTTOM ROW.
+'h' != 'r'. Overwrite 'h' with 'r'.
   Action: "Overwrite word1[i] to become word2[j]"
   Cost: +1 (one replace operation)
-  i changes: i -> i+1 "word1[i] consumed (we replaced it, it's now correct)"
-  j changes: j -> j+1 "word2[j] produced (the replacement covers it)"
+  i on word1: i -> i+1 "word1[i] consumed (we replaced it)"
+  j on word2: j -> j+1 "word2[j] produced (the replacement covers it)"
   Call: 1 + min_edits(i+1, j+1)
   "Both advance: replace handles BOTH positions at once."
 
 SECTION 3: "DELETE" (RED card, about 25%):
 
-Show word1[0]='h'. Remove it entirely.
+Show word1 with i pointing at 'h' (index 0) on the TOP ROW. Cross out the 'h'.
+Show word2 with j pointing at 'r' (index 0) on the BOTTOM ROW. j does NOT move.
   Action: "Remove word1[i] from word1"
   Cost: +1 (one delete operation)
-  i changes: i -> i+1 "word1[i] consumed (we deleted it)"
-  j STAYS: j unchanged "Nothing was produced for word2. word2[j] still waiting."
+  i on word1: i -> i+1 "word1[i] consumed (we deleted it)"
+  j on word2: j STAYS "Nothing produced for word2. word2[j] still waiting."
   Call: 1 + min_edits(i+1, j)
   "Only i moves. Deleting doesn't help word2."
 
 SECTION 4: "INSERT" (BLUE card, about 25%):
 
-Show: insert 'r' (= word2[0]) before word1[0].
+Show word1 with i pointing at 'h' (index 0) on the TOP ROW. i does NOT move.
+Show word2 with j pointing at 'r' (index 0) on the BOTTOM ROW.
+Insert 'r' (= word2[j]) before word1[i].
   Action: "Insert word2[j] into word1 at position i"
   Cost: +1 (one insert operation)
-  i STAYS: i unchanged "word1[i] NOT consumed. Still there, still needs handling."
-  j changes: j -> j+1 "word2[j] produced (we inserted it)"
+  i on word1: i STAYS "word1[i] NOT consumed. Still there."
+  j on word2: j -> j+1 "word2[j] produced (we inserted it)"
   Call: 1 + min_edits(i, j+1)
   "Only j moves. Inserting doesn't consume word1."
 

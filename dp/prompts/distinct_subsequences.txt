@@ -1,0 +1,210 @@
+DISTINCT SUBSEQUENCES DP IMAGES (14-step framework)
+==============================================================
+New images for the rewritten Distinct Subsequences child section.
+==============================================================
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: dark purple-blue (#1E1035). Grid/matrix atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: bright purple (#8B5CF6).
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for match/free paths. Red: (#EF4444) for mismatch/cost.
+- Amber: (#F59E0B) for replace. Blue: (#3B82F6) for insert.
+- Purple accent lighting throughout.
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: Distinct Subsequences Base Cases -> distinct_subs_base_cases.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+Big header at top: "WHEN MUST I STOP?"
+
+Kit stands to the left, hand raised, pointing at the two scenarios on the right.
+
+SECTION 1: "ALL OF t MATCHED" (GREEN card, about 45%):
+
+Show two rows of letter boxes:
+Row 1 (labeled "s"): r a b b b i t (7 boxes)
+Row 2 (labeled "t"): r a b b i t (6 boxes)
+
+An arrow labeled "j" points PAST the last box of t, off the edge.
+Text: "j == len(t)"
+
+Below: Big green checkmark.
+Text: "Return 1"
+Explanation: "Target fully spelled. This IS one valid way."
+
+Highlight text in gold: "NOT 0. Success = count it."
+
+SECTION 2: "RAN OUT OF s" (RED card, about 40%):
+
+Show two rows of letter boxes:
+Row 1 (labeled "s"): r a b (3 boxes, shorter than t)
+Row 2 (labeled "t"): r a b b i t (6 boxes)
+
+An arrow labeled "i" points PAST the last box of s.
+An arrow labeled "j" points at "b" in t (position 3). Characters b, i, t in t are still unmatched.
+
+Below: Big red X mark.
+Text: "Return 0"
+Explanation: "s exhausted. Can't finish spelling t."
+
+At the bottom, a GOLD accent box:
+"Check j first! If both exhausted, answer is 1 (success), not 0."
+
+
+================================================================================
+PROMPT 2: Distinct Subsequences Choices -> distinct_subs_choices.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+Big header at top: "USE IT OR SKIP IT?"
+
+SECTION 1: "THE QUESTION" (GOLD card, about 20%):
+
+Kit thinking, with thought bubble: "Does s[i] match t[j]?"
+
+Show two letter boxes side by side:
+s[i] box and t[j] box with a question mark between them.
+
+Text: "The same first question as LCS. But what I DO with a match is different."
+
+SECTION 2: "MATCH: TWO OPTIONS" (GREEN card, about 40%):
+
+Show s = "rabbbit" with i pointing at the first 'b' (index 2).
+Show t = "rabbit" with j pointing at the first 'b' (index 2).
+s[2]='b' == t[2]='b'. Green highlight on both.
+
+Two branching arrows from this state:
+
+LEFT BRANCH (green border):
+Label: "USE it"
+"s[i] matches t[j]. Consume both."
+"i+1, j+1"
+Arrow shows both pointers advancing.
+
+RIGHT BRANCH (amber border):
+Label: "SKIP it"
+"Maybe a later 'b' in s gives more paths."
+"i+1, j stays"
+Arrow shows only i advancing, j stays put.
+
+Below both: "result = use + skip"
+"COUNTING all ways, so ADD both paths."
+
+SECTION 3: "NO MATCH: SKIP ONLY" (RED card, about 25%):
+
+Show s[i]='b' and t[j]='i'. Red highlight. They don't match.
+
+One arrow: "SKIP s[i]"
+"i+1, j stays"
+
+Text: "Can't use it. Can't skip t[j] either."
+Smaller text in gold: "Why no skip t[j]? t is the target. Every character of t MUST be matched. One-sided skipping."
+
+
+================================================================================
+PROMPT 3: Distinct Subsequences Transitions -> distinct_subs_transitions.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+Big header at top: "WHY DOES EACH VARIABLE CHANGE?"
+
+Show two rows of letter boxes at the top:
+Row 1 (labeled "s"): r a b b b i t
+Row 2 (labeled "t"): r a b b i t
+Pointer "i" on s, pointer "j" on t.
+
+SECTION 1: "USE: s[i] matches t[j], consume both" (GREEN card, about 30%):
+
+  Action: "Use s[i] to match t[j]."
+
+  Show i pointer moving right by 1: "i -> i+1"
+  Text: "s[i] consumed. Used for the match."
+
+  Show j pointer moving right by 1: "j -> j+1"
+  Text: "t[j] matched. Move to next target."
+
+  Call: "count_subsequences(i+1, j+1)"
+
+  Why both? "Match consumes one from each string."
+
+SECTION 2: "SKIP: s[i] matches but I choose not to use it" (AMBER card, about 30%):
+
+  Action: "Skip s[i]. Maybe a later duplicate gives more ways."
+
+  Show i pointer moving right by 1: "i -> i+1"
+  Text: "s[i] skipped. Move past it."
+
+  Show j pointer staying in place: "j stays"
+  Text: "t[j] NOT matched yet. Still needs a match."
+
+  Call: "count_subsequences(i+1, j)"
+
+  Why j stays? "Didn't use this match. t[j] still waiting."
+
+SECTION 3: "NO MATCH: s[i] != t[j]" (RED card, about 25%):
+
+  Action: "s[i] can't match t[j]. Only option: skip."
+
+  Show i pointer moving: "i -> i+1"
+  Show j pointer staying: "j stays"
+
+  Call: "count_subsequences(i+1, j)"
+
+  Text: "Same as skip. j NEVER moves without a used match."
+
+Kit at the bottom with text: "j only advances when I USE a match. Skipping always moves only i."

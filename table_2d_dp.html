@@ -914,7 +914,7 @@ Given strings <code>s</code> and <code>t</code>, count how many distinct subsequ
 
 <div style="background:var(--card2);border-radius:10px;padding:16px;margin:12px 0;font-size:.93em">
 <div style="font-weight:700;margin-bottom:8px">Example:</div>
-<code>s = "rab<strong>b</strong>b<strong>i</strong>t"</code>, <code>t = "rabbit"</code><br><br>
+<code>s = "rabbbit"</code>, <code>t = "rabbit"</code><br><br>
 s has three b's. To spell "rabbit" you need two b's. Which two do you pick?
 <div style="display:grid;gap:4px;font-size:.9em;padding:8px 0 0 8px">
 <div>Way 1: ra<strong style="color:var(--green)">b<sub>1</sub>b<sub>2</sub></strong>it</div>
@@ -925,48 +925,96 @@ s has three b's. To spell "rabbit" you need two b's. Which two do you pick?
 <div style="margin-top:8px;color:var(--muted);font-size:.9em">You're not rearranging anything. You're choosing which characters in s to "use" to form t, keeping the order.</div>
 </div>
 
-<div class="sbox"><div class="sl" style="color:var(--purple)">THE KEY IDEA</div>
-At each position, if <code>s[i] == t[j]</code>: you can use this character (diagonal) OR skip it (up). <span style="color:var(--green)">Add both options.</span> If no match: skip (up only). This is Count Subsets logic applied to strings.</div>
+<!-- CLASSIFICATION -->
+<div class="sbox"><div class="sl" style="color:var(--purple)">CLASSIFICATION</div>
+<div style="font-size:.95em">
+<strong>What does it compute?</strong> Count the number of ways to form one string from another by choosing characters.<br>
+<strong>Why not greedy?</strong> Greedy picks the first matching character. But we need ALL ways, not just one. Skipping a match now might lead to more total subsequences through later duplicates.<br>
+<strong>Which family?</strong> 2D table (two strings, one grid). Same grid as LCS, but counting paths instead of maximizing length.
+</div></div>
 
-<img src="dp/images/distinct_subs_choices.png" alt="Distinct Subsequences choice diagram: match = use + skip (count both), no match = skip only" class="scene-img">
+<!-- RECURSIVE QUESTION -->
+<div class="sbox"><div class="sl" style="color:var(--purple)">RECURSIVE QUESTION</div>
+<div style="font-size:.95em">
+<strong>"In how many ways can I form t[j:] using characters from s[i:]?"</strong><br><br>
+Plain English first: I'm looking at position i in s and position j in t. How many different ways can I pick characters from s (starting at i) that spell out the rest of t (starting at j)?
+</div></div>
 
+<!-- BASE CASES: WHEN MUST I STOP? -->
+<h3 style="color:var(--purple)">When must I stop?</h3>
+
+<p style="font-size:.93em;margin-bottom:10px">Before thinking about choices, ask: <strong>"When is the answer obvious without any recursion?"</strong></p>
+
+<div class="two-col" style="margin:12px 0">
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
+<div style="color:var(--green);font-weight:700;margin-bottom:6px">j == len(t): all of t is matched</div>
+<strong>Situation:</strong> I've matched every character of t. Nothing left to spell.<br>
+<strong>Why stop?</strong> The target string is fully formed. No more work to do.<br>
+<strong>Return:</strong> <code>1</code>. This IS one valid subsequence. I found a complete way.<br>
+<span style="font-size:.85em;color:var(--muted)">NOT 0. Reaching the end means success, so count it as one way.</span>
+</div>
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="color:var(--red);font-weight:700;margin-bottom:6px">i == len(s): ran out of s characters</div>
+<strong>Situation:</strong> I've exhausted s, but t[j:] still has unmatched characters.<br>
+<strong>Why stop?</strong> No more characters in s to pick from. Can't finish spelling t.<br>
+<strong>Return:</strong> <code>0</code>. No way to complete the match.<br>
+<span style="font-size:.85em;color:var(--muted)">Order matters: check j == len(t) FIRST. If both exhausted, the answer is 1 (success), not 0.</span>
+</div>
+</div>
+
+<img src="dp/images/distinct_subs_base_cases.png" alt="Distinct Subsequences base cases: j reaches end of t = 1 (success), i reaches end of s with remaining t = 0 (failure)" class="scene-img">
+
+<!-- CHOICES: DISCOVERED, NOT LISTED -->
+<div class="sbox"><div class="sl" style="color:var(--purple)">CHOICES (DISCOVERED, NOT LISTED)</div>
+<div style="font-size:.95em">
+<strong>Situation:</strong> I'm at <code>s[i]</code> and I need to match <code>t[j]</code> next.<br>
+<strong>The natural first question:</strong> Does <code>s[i]</code> match <code>t[j]</code>?<br><br>
+<strong>If they match:</strong> I have a real choice. I can USE <code>s[i]</code> to cover <code>t[j]</code>, or I can SKIP it (maybe a later copy of this character leads to more subsequences). Both are valid, so I count both and add.<br>
+<strong>If they don't match:</strong> <code>s[i]</code> can't help with <code>t[j]</code>. Only option is to skip it.<br><br>
+<strong>Why is "use + skip" the key insight?</strong> In LCS, a match is always taken (no reason to skip a free match when maximizing). Here I'm COUNTING all ways. Even when characters match, skipping can lead to different valid subsequences through later duplicates. Both paths contribute to the total count.<br><br>
+<strong>Why can't I skip t[j]?</strong> t is the target. Every character of t must be matched. Skipping a character of t would change what I'm trying to spell. I can only skip characters of s (choosing which copies to use).
+</div></div>
+
+<img src="dp/images/distinct_subs_choices.png" alt="Distinct Subsequences choice discovery: match = use + skip (count both), no match = skip only. One-sided skipping." class="scene-img">
+
+<!-- TRANSITION JUSTIFICATION -->
 <h3 style="color:var(--purple)">Why each variable changes</h3>
 
 <div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:10px">CASE: s[i] == t[j] (Match)</div>
 
-<p style="margin-bottom:14px;font-size:.93em">Two options. Characters match, but we can USE this match or SKIP it. Count <strong>both</strong> paths (add them).</p>
+<p style="margin-bottom:14px;font-size:.93em">Two options. Characters match, but I can USE this match or SKIP it. Count <strong>both</strong> paths (add them).</p>
 
 <div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--green)">
 <div style="color:var(--green);font-weight:700;margin-bottom:8px">Option 1: USE s[i] to match t[j]</div>
 <div style="display:grid;gap:6px;font-size:.9em">
-<div><strong>Action:</strong> Use <code>s[i]</code> to match <code>t[j]</code>. Both are consumed.</div>
+<div><strong>Action:</strong> Use <code>s[i]</code> to match <code>t[j]</code>. Both characters consumed.</div>
 <div><strong>State changes:</strong></div>
 <div style="padding-left:20px">
 <code>i &rarr; i+1</code>: <code>s[i]</code> consumed (used for the match). Move past it.<br>
-<code>j &rarr; j+1</code>: <code>t[j]</code> matched (covered by <code>s[i]</code>). Move past it.
+<code>j &rarr; j+1</code>: <code>t[j]</code> matched. Move to the next target character.
 </div>
 <div><strong>Call:</strong> <code>count_subsequences(i+1, j+1)</code></div>
-<div style="color:var(--muted)"><strong>Why both advance?</strong> Using s[i] to match t[j] consumes one character from each string.</div>
+<div style="color:var(--muted)"><strong>Why both advance?</strong> Using s[i] to match t[j] consumes one character from each string. Both positions are handled.</div>
 </div>
 </div>
 
 <div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--amber)">
 <div style="color:var(--amber);font-weight:700;margin-bottom:8px">Option 2: SKIP s[i] (even though it matches)</div>
 <div style="display:grid;gap:6px;font-size:.9em">
-<div><strong>Action:</strong> Skip <code>s[i]</code>. Maybe a later copy of this character gives more subsequences.</div>
+<div><strong>Action:</strong> Skip <code>s[i]</code>. Maybe a later copy of this character leads to more subsequences.</div>
 <div><strong>State changes:</strong></div>
 <div style="padding-left:20px">
 <code>i &rarr; i+1</code>: <code>s[i]</code> skipped. Move past it.<br>
-<code>j</code> stays the same: <code>t[j]</code> not matched yet. Still waiting.
+<code>j</code> stays the same: <code>t[j]</code> not matched yet. Still needs to be covered by a later character.
 </div>
 <div><strong>Call:</strong> <code>count_subsequences(i+1, j)</code></div>
-<div style="color:var(--muted)"><strong>Why doesn't j change?</strong> We chose not to use this match. t[j] still needs to be matched by a later s character.</div>
+<div style="color:var(--muted)"><strong>Why doesn't j change?</strong> I chose not to use this match. t[j] still needs to be matched by a later s character.</div>
 </div>
 </div>
 
 <div style="font-size:.93em;margin-top:8px">
-<strong>Decision:</strong> <code>result = use + skip</code>. We <strong>count</strong> all distinct subsequences, so we <strong>add</strong> both paths.
+<strong>Decision:</strong> <code>result = use + skip</code>. Counting all distinct subsequences, so ADD both paths.
 </div>
 </div>
 
@@ -983,8 +1031,35 @@ At each position, if <code>s[i] == t[j]</code>: you can use this character (diag
 </div>
 </div>
 
-<img src="dp/images/distinct_subs_transitions.png" alt="Distinct Subsequences transition justification: use advances both, skip advances only i" class="scene-img">
+<img src="dp/images/distinct_subs_transitions.png" alt="Distinct Subsequences transition justification: use advances both, skip advances only i, one-sided skipping" class="scene-img">
 
+<!-- WATCH IT PLAY OUT -->
+<h3 style="color:var(--purple)">Watch it play out</h3>
+
+<p style="margin-bottom:8px">Trace s="rabbbit", t="rabbit", starting at i=0, j=0:</p>
+
+<div style="background:var(--card2);border-radius:10px;padding:16px;margin:12px 0">
+<div style="display:grid;gap:10px;font-size:.9em">
+<div>
+<strong style="color:var(--green)">i=0, j=0:</strong> s[0]='r' == t[0]='r'. <strong>Match!</strong> Use it (i=1, j=1) + skip it (i=1, j=0). Follow the "use" path:
+</div>
+<div>
+<strong style="color:var(--green)">i=1, j=1:</strong> s[1]='a' == t[1]='a'. <strong>Match!</strong> Use it. Now i=2, j=2.
+</div>
+<div>
+<strong style="color:var(--green)">i=2, j=2:</strong> s[2]='b' == t[2]='b'. <strong>Match!</strong> Here's where it branches:
+<div style="padding-left:20px">
+USE b<sub>1</sub>: count_subsequences(3, 3) (used first b)<br>
+SKIP b<sub>1</sub>: count_subsequences(3, 2) (save for later b's)
+</div>
+</div>
+<div>
+<strong style="color:var(--amber)">The branching at b's</strong> is exactly why there are 3 ways. Three b's, need two, and <span style="color:var(--gold2)">C(3,2) = 3</span>.
+</div>
+</div>
+</div>
+
+<!-- RECURSION -->
 <h3 style="color:var(--purple)">Recursion</h3>
 <pre><code>def count_subsequences(s, t, i, j, cache):
     if j == len(t):
@@ -1004,9 +1079,20 @@ At each position, if <code>s[i] == t[j]</code>: you can use this character (diag
     cache[(i, j)] = result
     return result</code></pre>
 
-<img src="dp/images/distinct_subs_memo.png" alt="Distinct Subsequences memoization: use or skip each character of s" class="scene-img">
+<img src="dp/images/distinct_subs_memo.png" alt="Distinct Subsequences memoization: use or skip each character of s, overlapping subproblems" class="scene-img">
 
+<!-- TABULATION -->
 <h3 style="color:var(--amber)">Tabulation</h3>
+
+<div class="sbox"><div class="sl" style="color:var(--amber)">TABLE MAPPING</div>
+<strong>Row i</strong> = how much of s we've considered (0 to len(s)).<br>
+<strong>Col j</strong> = how much of t we need to match (0 to len(t)).<br>
+<strong>table[i][j]</strong> = number of ways to form t[:j] from s[:i].<br><br>
+<strong>Base cases in the table:</strong><br>
+<code>table[i][0] = 1</code> for all i: empty t can always be formed (one way: pick nothing).<br>
+<code>table[0][j] = 0</code> for j > 0: empty s can't form any non-empty t.
+</div>
+
 <pre><code>def count_subsequences(s, t):
     rows = len(s)
     cols = len(t)
@@ -1025,8 +1111,36 @@ At each position, if <code>s[i] == t[j]</code>: you can use this character (diag
 
 <img src="dp/images/distinct_subs_tab.png" alt="Distinct Subsequences tabulation: grid counting ways, match adds diagonal to skip" class="scene-img">
 
+<!-- LCS COMPARISON -->
+<h3 style="color:var(--purple)">LCS vs Distinct Subsequences: same grid, different operation</h3>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0">
+<div style="background:var(--card2);border-radius:8px;padding:14px;border-top:3px solid var(--purple)">
+<div style="color:var(--purple);font-weight:700;margin-bottom:8px">LCS (parent)</div>
+<div style="font-size:.88em;line-height:1.8">
+Match: <strong>take it</strong> (diagonal + 1)<br>
+No match: max(skip from s, skip from t)<br>
+Goal: <strong>maximize</strong> match length<br>
+Two-sided skipping
+</div>
+</div>
+<div style="background:var(--card2);border-radius:8px;padding:14px;border-top:3px solid var(--amber)">
+<div style="color:var(--amber);font-weight:700;margin-bottom:8px">Distinct Subsequences</div>
+<div style="font-size:.88em;line-height:1.8">
+Match: <strong>use + skip</strong> (diagonal + up)<br>
+No match: skip only (up)<br>
+Goal: <strong>count</strong> all paths<br>
+One-sided skipping (only from s)
+</div>
+</div>
+</div>
+
 <div class="hi">
-<strong style="color:var(--amber)">Familiar pattern:</strong> this is knapsack's "grab + skip" but on strings. Match = use_char (diagonal) + skip_char (up). No match = skip_char (up only). Count, not max.
+<strong style="color:var(--purple)">Why one-sided skipping?</strong> In LCS, both strings are equal partners, so you can skip from either. In Distinct Subsequences, t is the target. You never skip characters of t (that would change what you're trying to spell). You only skip characters of s (choosing which copies to use).
+</div>
+
+<div class="hi">
+<strong style="color:var(--amber)">Familiar pattern:</strong> this is knapsack's "grab + skip" on strings. Match = use (diagonal) + skip (up). No match = skip (up only). Count, not max. The difference from LCS: match uses ADD (count both paths), not "take the match and move on."
 </div>
 </div>
 </div>

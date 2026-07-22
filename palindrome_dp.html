@@ -101,7 +101,6 @@ code{font-family:'Fira Code','Courier New',monospace}
 </div>
 
 <!-- ==================== STEP 1: CHOICES ==================== -->
-<img src="dp/images/palindrome_choices.png" alt="Palindrome choice diagram: outer letters match? Check inner. State = (left, right)" class="scene-img">
 
 <h2>Step 1: What Are My Choices?</h2>
 
@@ -140,6 +139,8 @@ code{font-family:'Fira Code','Courier New',monospace}
 </div>
 </div>
 
+<img src="dp/images/palindrome_choices.png" alt="Palindrome choice diagram: outer letters match? Check inner. State = (left, right)" class="scene-img">
+
 <!-- ==================== STEP 2: RECURSION ==================== -->
 <h2>Step 2: Choices &rarr; Recursion</h2>
 
@@ -174,7 +175,6 @@ Ends don't match. Not a palindrome.
 </div>
 
 <!-- ==================== STEP 3: TREE + OVERLAP ==================== -->
-<img src="dp/images/palindrome_tree.png" alt="Palindrome recursion tree: overlapping (left,right) pairs from different callers" class="scene-img">
 
 <h2>Step 3: Spot the Overlap</h2>
 
@@ -199,8 +199,9 @@ is_palindrome(1,3) "aba"  ─ ─ ─ ─ ─ ─ ─ ┘
 <p style="color:var(--muted);font-size:.9em">Cache key: <code>(left, right)</code>. At most n&sup2; unique pairs.</p>
 </div>
 
+<img src="dp/images/palindrome_tree.png" alt="Palindrome recursion tree: overlapping (left,right) pairs from different callers" class="scene-img">
+
 <!-- ==================== STEP 4: MEMOIZE ==================== -->
-<img src="dp/images/palindrome_memo.png" alt="Palindrome memoization: overlapping subproblems in recursion tree, cache key is (left, right)" class="scene-img">
 
 <h2>Step 4: Memoize</h2>
 
@@ -237,8 +238,9 @@ def count_palindromes(text):
 </div>
 </div>
 
+<img src="dp/images/palindrome_memo.png" alt="Palindrome memoization: overlapping subproblems in recursion tree, cache key is (left, right)" class="scene-img">
+
 <!-- ==================== STEP 5: TABULATION ==================== -->
-<img src="dp/images/palindrome_tab.png" alt="Palindrome tabulation: 2D table filled by substring length, step-by-step walkthrough" class="scene-img">
 
 <h2 style="color:var(--amber);border-bottom-color:var(--amber)">Step 5: From Recursion to Table</h2>
 
@@ -258,6 +260,8 @@ def count_palindromes(text):
 
 <p style="font-size:.9em;color:var(--muted)">Only the upper triangle matters (left &lt;= right). Count the T's: 4 palindromic substrings.</p>
 </div>
+
+<img src="dp/images/palindrome_tab.png" alt="Palindrome tabulation: 2D table filled by substring length, step-by-step walkthrough" class="scene-img">
 
 <div class="ws" style="border-left-color:var(--amber)">
 <h3 style="color:var(--amber)">Fill by substring length</h3>

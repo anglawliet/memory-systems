@@ -90,8 +90,6 @@ code{font-family:'Fira Code','Courier New',monospace}
 </div>
 
 <!-- ==================== STEP 1: THE STATES ==================== -->
-<img src="dp/images/stock_cooldown_choices.png" alt="Stock Cooldown choice diagram: state machine with HOLD, SOLD, REST states and 5 transitions" class="scene-img">
-
 <h2>Step 1: What Are My States?</h2>
 
 <div class="ws">
@@ -129,6 +127,8 @@ I'm free to act. I can:<br>
 <strong style="color:var(--emerald)">The constraint creates the states.</strong> "Cooldown after selling" means selling and resting are different states. Without cooldown, you'd only need HOLD and REST.
 </div>
 </div>
+
+<img src="dp/images/stock_cooldown_choices.png" alt="Stock Cooldown choice diagram: state machine with HOLD, SOLD, REST states and 5 transitions" class="scene-img">
 
 <!-- ==================== STEP 2: RECURSION ==================== -->
 <h2>Step 2: States &rarr; Recursion</h2>
@@ -175,8 +175,6 @@ No choice. Must cool down. Go to REST.
 </div>
 
 <!-- ==================== STEP 3: OVERLAP ==================== -->
-<img src="dp/images/stock_cooldown_tree.png" alt="Stock Cooldown recursion tree: same (day, state) reached from different trading paths" class="scene-img">
-
 <h2>Step 3: Spot the Overlap</h2>
 
 <div class="ws">
@@ -201,9 +199,9 @@ No choice. Must cool down. Go to REST.
 </div>
 </div>
 
-<!-- ==================== STEP 4: MEMOIZE ==================== -->
-<img src="dp/images/stock_cooldown_memo.png" alt="Stock with Cooldown memoization: state machine with cache" class="scene-img">
+<img src="dp/images/stock_cooldown_tree.png" alt="Stock Cooldown recursion tree: same (day, state) reached from different trading paths" class="scene-img">
 
+<!-- ==================== STEP 4: MEMOIZE ==================== -->
 <h2>Step 4: Memoize</h2>
 
 <div class="ws">
@@ -218,9 +216,9 @@ No choice. Must cool down. Go to REST.
 </div>
 </div>
 
-<!-- ==================== STEP 5: TABULATION ==================== -->
-<img src="dp/images/stock_cooldown_tab.png" alt="Stock with Cooldown tabulation: three variables tracked day by day" class="scene-img">
+<img src="dp/images/stock_cooldown_memo.png" alt="Stock with Cooldown memoization: state machine with cache" class="scene-img">
 
+<!-- ==================== STEP 5: TABULATION ==================== -->
 <h2 style="color:var(--amber);border-bottom-color:var(--amber)">Step 5: From Recursion to Table</h2>
 
 <div class="ws" style="border-left-color:var(--amber)">
@@ -239,6 +237,8 @@ No choice. Must cool down. Go to REST.
 
 <p style="font-size:.9em;color:var(--muted);margin-top:8px">Answer: max(SOLD, REST) at last day = max(3, 2) = <strong style="color:var(--gold2)">3</strong>. (Can't end in HOLD, you'd be stuck with unsold stock.)</p>
 </div>
+
+<img src="dp/images/stock_cooldown_tab.png" alt="Stock with Cooldown tabulation: three variables tracked day by day" class="scene-img">
 
 <div class="ws" style="border-left-color:var(--amber)">
 <h3 style="color:var(--amber)">Day 3 walkthrough: the buy-the-dip moment</h3>
@@ -321,13 +321,13 @@ No choice. Must cool down. Go to REST.
 <div class="deriv-h"><h3><span class="deriv-n">1</span> Longest Increasing Subsequence</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 
-<img src="dp/images/lis_choices.png" alt="LIS choice diagram: for each element, check ALL smaller previous elements. Variable lookback." class="scene-img">
-
 <div class="sbox"><div class="sl" style="color:var(--emerald)">LEETCODE #300</div>
 Given an array of integers, find the length of the longest strictly increasing subsequence. Example: <code>[10, 9, 2, 5, 3, 7, 101, 18]</code> &rarr; 4 (the subsequence <code>[2, 3, 7, 101]</code>).</div>
 
 <div class="sbox"><div class="sl" style="color:var(--emerald)">THE KEY IDEA</div>
 <code>lis[i]</code> = length of the longest increasing subsequence <strong>ending at index i</strong>. For each i, look at every j before it. If <code>nums[j] < nums[i]</code>, we can extend that subsequence. Take the longest one and add 1.</div>
+
+<img src="dp/images/lis_choices.png" alt="LIS choice diagram: for each element, check ALL smaller previous elements. Variable lookback." class="scene-img">
 
 <h3 style="color:var(--emerald)">Recursion</h3>
 <pre><code>def lis_ending_at(nums, index, cache):
@@ -373,13 +373,13 @@ def longest_increasing(nums):
 <div class="deriv-h"><h3><span class="deriv-n">2</span> Burst Balloons</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 
-<img src="dp/images/burst_balloons_choices.png" alt="Burst Balloons choice diagram: think LAST not FIRST, interval DP with boundary values" class="scene-img">
-
 <div class="sbox"><div class="sl" style="color:var(--emerald)">LEETCODE #312</div>
 Given n balloons with values, burst them one at a time. When you burst balloon i, you earn <code>nums[i-1] * nums[i] * nums[i+1]</code>. Maximize total coins. Boundaries are 1. Example: <code>[3, 1, 5, 8]</code> &rarr; 167.</div>
 
 <div class="sbox"><div class="sl" style="color:var(--emerald)">THE KEY IDEA</div>
 <strong>Think about which balloon to burst LAST</strong>, not first. If balloon k is the last to burst in range [left, right], the coins from k are <code>nums[left-1] * nums[k] * nums[right+1]</code> (the boundaries are still there because everything else in the range is already gone). This gives clean subproblems: [left, k-1] and [k+1, right].</div>
+
+<img src="dp/images/burst_balloons_choices.png" alt="Burst Balloons choice diagram: think LAST not FIRST, interval DP with boundary values" class="scene-img">
 
 <h3 style="color:var(--emerald)">Recursion</h3>
 <pre><code>def max_coins(nums, left, right, cache):

@@ -1,0 +1,331 @@
+EDIT DISTANCE: FULL TEACHING IMAGES
+==============================================================
+4 images: choices, transitions, memoization, tabulation.
+Transition justification style: explain WHY each state variable changes.
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: dark purple-blue (#1E1035). Grid/matrix atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: bright purple (#8B5CF6).
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for match/free paths. Red: (#EF4444) for mismatch/cost.
+- Amber: (#F59E0B) for replace. Blue: (#3B82F6) for insert.
+- Purple accent lighting throughout.
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: Edit Distance Choices + State -> edit_distance_choices.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+SECTION 1, "THE PROBLEM + STATE" (purple header, about 30%):
+
+Big header: "EDIT DISTANCE: CHOICES"
+Subtitle: 'word1 = "horse", word2 = "ros". Minimum edits?'
+
+Show both words with index pointers:
+  word1: h  o  r  s  e    (i points at current)
+  word2: r  o  s          (j points at current)
+
+STATE BOX (gold border):
+  "min_edits(i, j) = minimum operations to transform word1[i:] into word2[j:]"
+  "i = how far we've processed word1"
+  "j = how far we've produced word2"
+
+SECTION 2, "THE CHOICE DIAGRAM" (purple header, about 45%):
+
+Large, centered choice diagram:
+
+  State: min_edits(i, j)
+  "word1[i] vs word2[j]?"
+          |
+     _____|_____
+    |           |
+  MATCH       NO MATCH
+  "FREE!"     "3 operations"
+    |              |
+  cost: 0     ____|____
+  (i+1,j+1)  |    |    |
+              |    |    |
+           REPLACE DELETE INSERT
+           cost:1  cost:1 cost:1
+           (i+1,   (i+1,  (i,
+            j+1)    j)     j+1)
+                  |
+              min of all 3
+
+Color code: GREEN for match. AMBER for replace. RED for delete. BLUE for insert.
+
+For each operation, show a SHORT annotation:
+  Replace: "both advance (handled both positions)"
+  Delete: "only i advances (removed from word1, word2 waiting)"
+  Insert: "only j advances (produced for word2, word1 waiting)"
+
+SECTION 3, "BASE CASES" (purple header, about 25%):
+
+  i == len(word1): "word1 exhausted. Insert remaining word2." Cost: len(word2) - j
+  j == len(word2): "word2 complete. Delete remaining word1." Cost: len(word1) - i
+
+Kit: "NOT zero like LCS! Remaining characters still need work."
+
+Gold box: "3 operations, 3 directions in the table:
+Replace = diagonal. Delete = up. Insert = left."
+
+
+================================================================================
+PROMPT 2: Edit Distance Transition Justification -> edit_distance_transitions.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Four sections, one per transition.
+
+Big header at top: "WHY DOES EACH VARIABLE CHANGE?"
+
+Show word1 = "horse" and word2 = "ros".
+Current state: i=0, j=0. Looking at word1[0]='h' and word2[0]='r'. They DON'T match.
+
+SECTION 1: "MATCH (when chars are equal)" (GREEN card, about 20%):
+
+Show a case where word1[i] == word2[j] (e.g., 'o' == 'o'):
+  Action: "Characters match. No operation needed."
+  Cost: +0
+  i changes: i -> i+1 "word1[i] consumed (it matched)"
+  j changes: j -> j+1 "word2[j] produced (the match covers it)"
+  Call: min_edits(i+1, j+1)
+
+SECTION 2: "REPLACE" (AMBER card, about 25%):
+
+Show word1[0]='h', word2[0]='r'. Overwrite 'h' with 'r'.
+  Action: "Overwrite word1[i] to become word2[j]"
+  Cost: +1 (one replace operation)
+  i changes: i -> i+1 "word1[i] consumed (we replaced it, it's now correct)"
+  j changes: j -> j+1 "word2[j] produced (the replacement covers it)"
+  Call: 1 + min_edits(i+1, j+1)
+  "Both advance: replace handles BOTH positions at once."
+
+SECTION 3: "DELETE" (RED card, about 25%):
+
+Show word1[0]='h'. Remove it entirely.
+  Action: "Remove word1[i] from word1"
+  Cost: +1 (one delete operation)
+  i changes: i -> i+1 "word1[i] consumed (we deleted it)"
+  j STAYS: j unchanged "Nothing was produced for word2. word2[j] still waiting."
+  Call: 1 + min_edits(i+1, j)
+  "Only i moves. Deleting doesn't help word2."
+
+SECTION 4: "INSERT" (BLUE card, about 25%):
+
+Show: insert 'r' (= word2[0]) before word1[0].
+  Action: "Insert word2[j] into word1 at position i"
+  Cost: +1 (one insert operation)
+  i STAYS: i unchanged "word1[i] NOT consumed. Still there, still needs handling."
+  j changes: j -> j+1 "word2[j] produced (we inserted it)"
+  Call: 1 + min_edits(i, j+1)
+  "Only j moves. Inserting doesn't consume word1."
+
+Kit at bottom: "Every state change = something consumed or produced.
+If nothing was consumed, that pointer doesn't move."
+
+
+================================================================================
+PROMPT 3: Edit Distance Memoization -> edit_distance_memo.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE OVERLAP" (purple header, about 50%):
+
+Big header: "EDIT DISTANCE: MEMOIZE"
+Subtitle: 'word1 = "horse", word2 = "ros"'
+
+Show a recursion tree for min_edits(i, j).
+At each node: (i, j). Start at (0,0).
+
+(0,0): 'h' != 'r'. THREE branches:
+  Replace: (1,1) [amber arrow]
+  Delete:  (1,0) [red arrow]
+  Insert:  (0,1) [blue arrow]
+
+Expand (1,1): 'o' == 'o'. Match! One branch:
+  (2,2) [green arrow]
+
+Expand (1,0): 'o' != 'r'. Three branches:
+  Replace: (2,1)
+  Delete:  (2,0)
+  Insert:  (1,1)  <-- OVERLAP! Already seen!
+
+Expand (0,1): 'h' != 'o'. Three branches:
+  Replace: (1,2)
+  Delete:  (1,1)  <-- OVERLAP! Already seen!
+  Insert:  (0,2)
+
+CIRCLE (1,1) with GOLD border: "Same state from 3 different paths!"
+"Replace reaches (1,1). Delete reaches (1,1). Insert reaches (1,1).
+Different operations, same remaining subproblem."
+
+"3 branches per mismatch. Overlap grows FAST."
+"Without cache: O(3^(m+n)). With cache: O(m * n)."
+
+Kit: "Every mismatch creates 3 branches. Overlaps pile up quickly.
+Cache key: (i, j). At most 5 x 3 = 15 unique states."
+
+SECTION 2, "THE CODE" (gray header, about 50%):
+
+Show the memoized code:
+
+  def min_edits(word1, word2, i, j, cache):
+      if i == len(word1):
+          return len(word2) - j
+      if j == len(word2):
+          return len(word1) - i
+      if (i, j) in cache:
+          return cache[(i, j)]
+      if word1[i] == word2[j]:
+          result = min_edits(word1, word2, i + 1, j + 1, cache)
+      else:
+          replace = 1 + min_edits(word1, word2, i + 1, j + 1, cache)
+          delete = 1 + min_edits(word1, word2, i + 1, j, cache)
+          insert = 1 + min_edits(word1, word2, i, j + 1, cache)
+          result = min(replace, delete, insert)
+      cache[(i, j)] = result
+      return result
+
+Highlight each operation with its color:
+  GREEN: match line
+  AMBER: replace line
+  RED: delete line
+  BLUE: insert line
+
+Kit: "Same 3 lines as always: check cache, compute, store.
+The operations are different, the memoization pattern is identical."
+
+
+================================================================================
+PROMPT 4: Edit Distance Tabulation -> edit_distance_tab.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+SECTION 1, "THE TABLE" (purple header, about 55%):
+
+Big header: "EDIT DISTANCE: TABLE"
+Subtitle: 'word1 = "horse", word2 = "ros"'
+
+Show a (5+1) x (3+1) grid.
+Row headers (word1): "", h, o, r, s, e.
+Col headers (word2): "", r, o, s.
+
+First column (delete all): 0, 1, 2, 3, 4, 5. Label: "delete remaining word1"
+First row (insert all): 0, 1, 2, 3. Label: "insert remaining word2"
+
+Fill the table with the correct values:
+      ""  r  o  s
+  ""   0  1  2  3
+  h    1  1  2  3
+  o    2  2  1  2
+  r    3  2  2  2
+  s    4  3  3  2
+  e    5  4  4  3
+
+For MATCH cells (like 'o'=='o' at position [2][2]):
+  GREEN cell. Show diagonal arrow with label "match (free)".
+
+For NO-MATCH cells (like 'h' vs 'r' at position [1][1]):
+  Show THREE arrows:
+    Diagonal arrow (AMBER): "replace" = table[0][0] + 1 = 1
+    Up arrow (RED): "delete" = table[0][1] + 1 = 2
+    Left arrow (BLUE): "insert" = table[1][0] + 1 = 2
+  Cell value = min(1, 2, 2) = 1.
+
+Highlight bottom-right = 3. GOLD border. "3 edits needed."
+
+Kit: "Match = diagonal (free). No match = 1 + min(diagonal, up, left).
+Diagonal = replace. Up = delete. Left = insert."
+
+SECTION 2, "THE CODE" (gray header, about 45%):
+
+  def min_edits(word1, word2):
+      rows = len(word1)
+      cols = len(word2)
+      table = [[0] * (cols + 1) for _ in range(rows + 1)]
+      for i in range(rows + 1):
+          table[i][0] = i
+      for j in range(cols + 1):
+          table[0][j] = j
+      for i in range(1, rows + 1):
+          for j in range(1, cols + 1):
+              if word1[i - 1] == word2[j - 1]:
+                  table[i][j] = table[i - 1][j - 1]
+              else:
+                  table[i][j] = 1 + min(
+                      table[i - 1][j - 1],
+                      table[i - 1][j],
+                      table[i][j - 1]
+                  )
+      return table[rows][cols]
+
+Color-code the three directions in the else block:
+  AMBER: table[i-1][j-1] = replace (diagonal)
+  RED: table[i-1][j] = delete (up)
+  BLUE: table[i][j-1] = insert (left)
+
+Kit: "Edge base cases: first column = cost of deleting all word1 chars.
+First row = cost of inserting all word2 chars."
+
+Gold box: "Why directions map to operations:
+Diagonal (i-1,j-1): replace consumes word1[i] AND produces word2[j].
+Up (i-1,j): delete consumes word1[i], word2[j] still waiting.
+Left (i,j-1): insert produces word2[j], word1[i] still waiting."

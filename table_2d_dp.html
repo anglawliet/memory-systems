@@ -93,8 +93,6 @@ code{font-family:'Fira Code','Courier New',monospace}
 </div>
 
 <!-- ==================== STEP 1: CHOICES ==================== -->
-<img src="dp/images/lcs_choices.png" alt="LCS choice diagram: match advances both, no match tries skipping each. State = (i, j)" class="scene-img">
-
 <h2>Step 1: What Are My Choices?</h2>
 
 <div class="ws">
@@ -120,6 +118,8 @@ Skip one or the other. Try both, keep the better result.<br><br>
 <strong style="color:var(--purple)">Base case:</strong> either string runs out (<code>i == len(text1)</code> or <code>j == len(text2)</code>) &rarr; return 0. Nothing left to match.
 </div>
 </div>
+
+<img src="dp/images/lcs_choices.png" alt="LCS choice diagram: match advances both, no match tries skipping each. State = (i, j)" class="scene-img">
 
 <!-- ==================== STEP 2: RECURSION ==================== -->
 <h2>Step 2: Choices &rarr; Recursion</h2>
@@ -151,8 +151,6 @@ No match. Skip from text1 or text2, keep the better.
 </div>
 
 <!-- ==================== STEP 3: OVERLAP ==================== -->
-<img src="dp/images/lcs_tree.png" alt="LCS recursion tree: same (i,j) reached from different skip paths" class="scene-img">
-
 <h2>Step 3: Spot the Overlap</h2>
 
 <div class="ws">
@@ -177,9 +175,9 @@ No match. Skip from text1 or text2, keep the better.
 </div>
 </div>
 
-<!-- ==================== STEP 4: MEMOIZE ==================== -->
-<img src="dp/images/lcs_memo.png" alt="LCS memoization: overlapping subproblems, cache key is (i, j)" class="scene-img">
+<img src="dp/images/lcs_tree.png" alt="LCS recursion tree: same (i,j) reached from different skip paths" class="scene-img">
 
+<!-- ==================== STEP 4: MEMOIZE ==================== -->
 <h2>Step 4: Memoize</h2>
 
 <div class="ws">
@@ -208,9 +206,9 @@ No match. Skip from text1 or text2, keep the better.
 </div>
 </div>
 
-<!-- ==================== STEP 5: TABULATION ==================== -->
-<img src="dp/images/lcs_tab.png" alt="LCS tabulation: 2D grid walkthrough, match on diagonal, else max of up and left" class="scene-img">
+<img src="dp/images/lcs_memo.png" alt="LCS memoization: overlapping subproblems, cache key is (i, j)" class="scene-img">
 
+<!-- ==================== STEP 5: TABULATION ==================== -->
 <h2 style="color:var(--amber);border-bottom-color:var(--amber)">Step 5: From Recursion to Table</h2>
 
 <div class="ws" style="border-left-color:var(--amber)">
@@ -276,6 +274,8 @@ No match. Skip from text1 or text2, keep the better.
 </div>
 </div>
 
+<img src="dp/images/lcs_tab.png" alt="LCS tabulation: grid filled row by row, match = diagonal + 1, else max(up, left)" class="scene-img">
+
 <!-- ==================== CHILDREN ==================== -->
 <h2>The 2D Table Family</h2>
 
@@ -291,13 +291,13 @@ No match. Skip from text1 or text2, keep the better.
 <div class="deriv-h"><h3><span class="deriv-n">1</span> Unique Paths</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 
-<img src="dp/images/unique_paths_choices.png" alt="Unique Paths choice diagram: always go down + go right, no match/no-match" class="scene-img">
-
 <div class="sbox"><div class="sl" style="color:var(--purple)">LEETCODE #62</div>
 A robot starts at the top-left of an <code>m x n</code> grid. It can only move <strong>down</strong> or <strong>right</strong>. Count the number of unique paths to the bottom-right corner.</div>
 
 <div class="sbox"><div class="sl" style="color:var(--purple)">THE KEY IDEA</div>
 <span style="color:var(--green)">No match/no-match here.</span> Every cell gets its value from exactly two neighbors: the cell above and the cell to the left. <code>table[r][c] = table[r-1][c] + table[r][c-1]</code>. First row and first column are all 1's (only one way to get there).</div>
+
+<img src="dp/images/unique_paths_choices.png" alt="Unique Paths choice diagram: always go down + go right, no match/no-match" class="scene-img">
 
 <h3 style="color:var(--purple)">Recursion</h3>
 <pre><code>def count_paths(rows, cols, r, c, cache):
@@ -338,15 +338,133 @@ A robot starts at the top-left of an <code>m x n</code> grid. It can only move <
 <div class="deriv-h"><h3><span class="deriv-n">2</span> Edit Distance</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 
-<img src="dp/images/edit_distance_choices.png" alt="Edit Distance choice diagram: match is free, no match has 3 operations (replace, delete, insert)" class="scene-img">
-
 <div class="sbox"><div class="sl" style="color:var(--purple)">LEETCODE #72</div>
-Given two words, find the minimum number of operations (insert, delete, replace) to transform <code>word1</code> into <code>word2</code>.</div>
+Given two words, find the minimum number of operations (insert, delete, replace) to transform <code>word1</code> into <code>word2</code>. Example: <code>word1 = "horse"</code>, <code>word2 = "ros"</code> &rarr; 3 edits.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--purple)">THE KEY IDEA</div>
-Same grid as LCS. <span style="color:var(--green)">Match: diagonal (no edit needed).</span> <span style="color:var(--amber)">No match: 1 + min(diagonal, up, left).</span> Three operations: replace (diagonal), delete (up), insert (left). Pick the cheapest.</div>
+<!-- ===== STEP 1: THE STATE ===== -->
 
-<h3 style="color:var(--purple)">Recursion</h3>
+<h3 style="color:var(--purple)">What do I need to know?</h3>
+
+<div class="sbox"><div class="sl" style="color:var(--purple)">THE STATE</div>
+<code>min_edits(i, j)</code> = minimum operations to transform <code>word1[i:]</code> into <code>word2[j:]</code>.<br><br>
+<strong>i</strong> = how far we've processed in word1. Characters <code>word1[0..i-1]</code> are already handled.<br>
+<strong>j</strong> = how far we've processed in word2. Characters <code>word2[0..j-1]</code> are already produced.
+</div>
+
+<!-- ===== STEP 2: CHOICES + TRANSITIONS ===== -->
+
+<h3 style="color:var(--purple)">The choices at state (i, j)</h3>
+
+<p>We're looking at <code>word1[i]</code> and <code>word2[j]</code>. Either they match or they don't.</p>
+
+<!-- MATCH -->
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:10px">CASE: word1[i] == word2[j] (Match)</div>
+
+<div style="display:grid;gap:8px;font-size:.93em">
+<div><strong>Action:</strong> Characters already match. No operation needed. Move past both.</div>
+<div><strong>Immediate cost:</strong> <code>+0</code>. A match is free because the character is already correct.</div>
+<div><strong>State changes:</strong></div>
+<div style="padding-left:20px">
+<code>i &rarr; i+1</code>: We consumed <code>word1[i]</code>. It matched, so it's handled.<br>
+<code>j &rarr; j+1</code>: We produced <code>word2[j]</code>. The match covers it.
+</div>
+<div><strong>Remaining subproblem:</strong> Transform <code>word1[i+1:]</code> into <code>word2[j+1:]</code>.</div>
+<div><strong>Call:</strong> <code>min_edits(i+1, j+1)</code></div>
+<div style="color:var(--muted)"><strong>Why not (i+1, j) or (i, j+1)?</strong> Both characters are dealt with. Advancing only one would leave a character unmatched that we already know matches.</div>
+</div>
+</div>
+
+<!-- NO MATCH -->
+<div style="background:rgba(239,68,68,.04);border:2px solid var(--red);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--red);font-weight:800;font-size:1.05em;margin-bottom:10px">CASE: word1[i] != word2[j] (No Match)</div>
+
+<p style="margin-bottom:14px">Three operations. Each has cost <code>1</code>. Each changes the state differently.</p>
+
+<!-- REPLACE -->
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--amber)">
+<div style="color:var(--amber);font-weight:700;margin-bottom:8px">Operation 1: REPLACE word1[i] with word2[j]</div>
+<div style="display:grid;gap:6px;font-size:.9em">
+<div><strong>Action:</strong> Overwrite <code>word1[i]</code> so it becomes <code>word2[j]</code>.</div>
+<div><strong>Immediate cost:</strong> <code>+1</code>. One replace operation used.</div>
+<div><strong>State changes:</strong></div>
+<div style="padding-left:20px">
+<code>i &rarr; i+1</code>: <code>word1[i]</code> is now correct (we replaced it). Move past it.<br>
+<code>j &rarr; j+1</code>: <code>word2[j]</code> is now produced (by the replacement). Move past it.
+</div>
+<div><strong>Remaining subproblem:</strong> Transform <code>word1[i+1:]</code> into <code>word2[j+1:]</code>.</div>
+<div><strong>Call:</strong> <code>1 + min_edits(i+1, j+1)</code></div>
+<div style="color:var(--muted)"><strong>Why both advance?</strong> Replace handles both positions at once: it consumes word1[i] and produces word2[j] in a single operation.</div>
+</div>
+</div>
+
+<!-- DELETE -->
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--red)">
+<div style="color:var(--red);font-weight:700;margin-bottom:8px">Operation 2: DELETE word1[i]</div>
+<div style="display:grid;gap:6px;font-size:.9em">
+<div><strong>Action:</strong> Remove <code>word1[i]</code> from word1. It doesn't correspond to anything in word2.</div>
+<div><strong>Immediate cost:</strong> <code>+1</code>. One delete operation used.</div>
+<div><strong>State changes:</strong></div>
+<div style="padding-left:20px">
+<code>i &rarr; i+1</code>: <code>word1[i]</code> is deleted, so we move past it.<br>
+<code>j</code> stays the same: We haven't produced any character of word2 yet. <code>word2[j]</code> still needs to be handled.
+</div>
+<div><strong>Remaining subproblem:</strong> Transform <code>word1[i+1:]</code> into <code>word2[j:]</code>. (Same j, word2 hasn't progressed.)</div>
+<div><strong>Call:</strong> <code>1 + min_edits(i+1, j)</code></div>
+<div style="color:var(--muted)"><strong>Why doesn't j change?</strong> Deleting from word1 doesn't produce anything in word2. The target character word2[j] is still waiting.</div>
+</div>
+</div>
+
+<!-- INSERT -->
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--blue)">
+<div style="color:var(--blue);font-weight:700;margin-bottom:8px">Operation 3: INSERT word2[j] before word1[i]</div>
+<div style="display:grid;gap:6px;font-size:.9em">
+<div><strong>Action:</strong> Insert the character <code>word2[j]</code> into word1 at position i. This produces the needed character.</div>
+<div><strong>Immediate cost:</strong> <code>+1</code>. One insert operation used.</div>
+<div><strong>State changes:</strong></div>
+<div style="padding-left:20px">
+<code>i</code> stays the same: We didn't consume any character from word1. <code>word1[i]</code> is still there, waiting to be dealt with.<br>
+<code>j &rarr; j+1</code>: We produced <code>word2[j]</code> (by inserting it). Move past it.
+</div>
+<div><strong>Remaining subproblem:</strong> Transform <code>word1[i:]</code> into <code>word2[j+1:]</code>. (Same i, word1 hasn't progressed.)</div>
+<div><strong>Call:</strong> <code>1 + min_edits(i, j+1)</code></div>
+<div style="color:var(--muted)"><strong>Why doesn't i change?</strong> Inserting adds a new character. It doesn't consume word1[i]. That character still needs to be matched, replaced, or deleted later.</div>
+</div>
+</div>
+
+<div style="font-size:.93em;margin-top:8px">
+<strong>Final decision:</strong> <code>result = min(replace, delete, insert)</code>. We want the cheapest path.
+</div>
+</div>
+
+<img src="dp/images/edit_distance_choices.png" alt="Edit Distance choice diagram: match is free, no match has 3 operations with full transition justification" class="scene-img">
+
+<img src="dp/images/edit_distance_transitions.png" alt="Edit Distance transition justification: why each operation changes i, j, or both" class="scene-img">
+
+<!-- ===== STEP 3: BASE CASES ===== -->
+
+<h3 style="color:var(--purple)">Base cases (derived from the state)</h3>
+
+<div class="two-col" style="margin:12px 0">
+<div style="background:var(--card2);border-radius:8px;padding:14px">
+<div style="color:var(--red);font-weight:700;margin-bottom:6px">i == len(word1)</div>
+<strong>Situation:</strong> We've consumed all of word1, but word2[j:] still has characters left.<br>
+<strong>Only option:</strong> Insert every remaining character of word2.<br>
+<strong>Cost:</strong> <code>len(word2) - j</code> (one insert per remaining character).<br>
+<span style="font-size:.85em;color:var(--muted)">This is NOT 0 like LCS. There's still work to do.</span>
+</div>
+<div style="background:var(--card2);border-radius:8px;padding:14px">
+<div style="color:var(--blue);font-weight:700;margin-bottom:6px">j == len(word2)</div>
+<strong>Situation:</strong> We've produced all of word2, but word1[i:] still has characters left.<br>
+<strong>Only option:</strong> Delete every remaining character of word1.<br>
+<strong>Cost:</strong> <code>len(word1) - i</code> (one delete per remaining character).<br>
+<span style="font-size:.85em;color:var(--muted)">Extra word1 characters are baggage. They must go.</span>
+</div>
+</div>
+
+<!-- ===== STEP 4: RECURSION CODE ===== -->
+
+<h3 style="color:var(--purple)">Recursion (with memoization)</h3>
 <pre><code>def min_edits(word1, word2, i, j, cache):
     if i == len(word1):
         return len(word2) - j
@@ -366,9 +484,20 @@ Same grid as LCS. <span style="color:var(--green)">Match: diagonal (no edit need
     cache[(i, j)] = result
     return result</code></pre>
 
-<img src="dp/images/edit_distance_memo.png" alt="Edit Distance memoization: three operations at each mismatch" class="scene-img">
+<img src="dp/images/edit_distance_memo.png" alt="Edit Distance memoization: three operations at each mismatch, overlapping subproblems" class="scene-img">
+
+<!-- ===== STEP 5: TABULATION ===== -->
 
 <h3 style="color:var(--amber)">Tabulation</h3>
+
+<div class="sbox"><div class="sl" style="color:var(--amber)">TABLE MAPPING</div>
+<strong>Row i</strong> = how much of word1 we've processed (0 to len(word1)).<br>
+<strong>Col j</strong> = how much of word2 we've produced (0 to len(word2)).<br>
+<strong>table[i][j]</strong> = min operations to transform word1[i:] into word2[j:].<br><br>
+<strong>Edges:</strong> <code>table[i][0] = i</code> (delete all remaining word1). <code>table[0][j] = j</code> (insert all remaining word2).<br>
+These are the base cases, written directly into the first row and column.
+</div>
+
 <pre><code>def min_edits(word1, word2):
     rows = len(word1)
     cols = len(word2)
@@ -392,13 +521,40 @@ Same grid as LCS. <span style="color:var(--green)">Match: diagonal (no edit need
 
     return table[rows][cols]</code></pre>
 
-<img src="dp/images/edit_distance_tab.png" alt="Edit Distance tabulation: grid with base cases on edges, 3-way min at each cell" class="scene-img">
+<img src="dp/images/edit_distance_tab.png" alt="Edit Distance tabulation: grid with base cases on edges, arrows showing replace/delete/insert" class="scene-img">
+
+<!-- ===== LCS COMPARISON ===== -->
+
+<h3 style="color:var(--purple)">LCS vs Edit Distance: same grid, different goal</h3>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0">
+<div style="background:var(--card2);border-radius:8px;padding:14px;border-top:3px solid var(--purple)">
+<div style="color:var(--purple);font-weight:700;margin-bottom:8px">LCS (parent)</div>
+<div style="font-size:.88em;line-height:1.8">
+Match: diagonal <strong>+ 1</strong> (count it!)<br>
+No match: <strong>max</strong>(up, left)<br>
+Goal: <strong>maximize</strong> matches<br>
+Base case: 0 (nothing to match)<br>
+2 choices on mismatch
+</div>
+</div>
+<div style="background:var(--card2);border-radius:8px;padding:14px;border-top:3px solid var(--amber)">
+<div style="color:var(--amber);font-weight:700;margin-bottom:8px">Edit Distance</div>
+<div style="font-size:.88em;line-height:1.8">
+Match: diagonal <strong>+ 0</strong> (free!)<br>
+No match: 1 + <strong>min</strong>(diag, up, left)<br>
+Goal: <strong>minimize</strong> operations<br>
+Base case: remaining length<br>
+3 choices on mismatch
+</div>
+</div>
+</div>
 
 <div class="hi">
-<strong style="color:var(--amber)">LCS vs Edit Distance:</strong><br>
-LCS: match = diagonal + 1, no match = max(up, left)<br>
-Edit: match = diagonal + 0, no match = 1 + min(diagonal, up, left)<br>
-Same grid structure, different cell formula.
+<strong style="color:var(--purple)">Why the directions map to operations:</strong><br>
+<strong>Diagonal</strong> (i+1, j+1) = replace. Both pointers advance because replace handles both positions.<br>
+<strong>Up</strong> (i+1, j) = delete. Only i advances because we removed from word1, word2 hasn't progressed.<br>
+<strong>Left</strong> (i, j+1) = insert. Only j advances because we added to word2's production, word1 hasn't been consumed.
 </div>
 </div>
 </div>
@@ -408,13 +564,13 @@ Same grid structure, different cell formula.
 <div class="deriv-h"><h3><span class="deriv-n">3</span> Interleaving String</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 
-<img src="dp/images/interleaving_choices.png" alt="Interleaving String choice diagram: can target char come from s1 or s2?" class="scene-img">
-
 <div class="sbox"><div class="sl" style="color:var(--purple)">LEETCODE #97</div>
 Given strings <code>s1</code>, <code>s2</code>, and <code>s3</code>, check if <code>s3</code> can be formed by interleaving <code>s1</code> and <code>s2</code> while keeping their character order.</div>
 
 <div class="sbox"><div class="sl" style="color:var(--purple)">THE KEY IDEA</div>
 <code>table[i][j]</code> = True if <code>s3[:i+j]</code> can be formed from <code>s1[:i]</code> and <code>s2[:j]</code>. At each cell, the next character in s3 is <code>s3[i+j-1]</code>. It came from either s1 (above) or s2 (left).</div>
+
+<img src="dp/images/interleaving_choices.png" alt="Interleaving String choice diagram: can target char come from s1 or s2?" class="scene-img">
 
 <h3 style="color:var(--purple)">Recursion</h3>
 <pre><code>def can_interleave(s1, s2, s3, i, j, cache):
@@ -471,13 +627,13 @@ Given strings <code>s1</code>, <code>s2</code>, and <code>s3</code>, check if <c
 <div class="deriv-h"><h3><span class="deriv-n">4</span> Distinct Subsequences</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
 
-<img src="dp/images/distinct_subs_choices.png" alt="Distinct Subsequences choice diagram: match = use + skip (count both), no match = skip only" class="scene-img">
-
 <div class="sbox"><div class="sl" style="color:var(--purple)">LEETCODE #115</div>
 Given strings <code>s</code> and <code>t</code>, count how many distinct subsequences of <code>s</code> equal <code>t</code>. Example: s = "rabbbit", t = "rabbit" &rarr; 3 (three ways to pick the b's).</div>
 
 <div class="sbox"><div class="sl" style="color:var(--purple)">THE KEY IDEA</div>
 At each position, if <code>s[i] == t[j]</code>: you can use this character (diagonal) OR skip it (up). <span style="color:var(--green)">Add both options.</span> If no match: skip (up only). This is Count Subsets logic applied to strings.</div>
+
+<img src="dp/images/distinct_subs_choices.png" alt="Distinct Subsequences choice diagram: match = use + skip (count both), no match = skip only" class="scene-img">
 
 <h3 style="color:var(--purple)">Recursion</h3>
 <pre><code>def count_subsequences(s, t, i, j, cache):

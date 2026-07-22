@@ -89,44 +89,229 @@ code{font-family:'Fira Code','Courier New',monospace}
 </div>
 </div>
 
-<!-- ==================== STEP 1: THE STATES ==================== -->
-<h2>Step 1: What Are My States?</h2>
+<!-- ==================== STEP 1: DISCOVERING THE CHOICES ==================== -->
+<h2>Step 1: Discovering the Choices</h2>
 
 <div class="ws">
-<h3>Three states, five transitions</h3>
+
+<!-- STEP 1: DEFINE MY CURRENT SITUATION -->
+<h3 style="color:var(--emerald)">What's my situation?</h3>
+
+<p>It's a particular day. I see today's stock price. I want to maximize my total profit by the end. I need to decide: <strong>what do I do today?</strong></p>
+
+<div style="text-align:center;margin:16px 0;font-size:1.1em">
+<code>prices = [1, 2, 3, 0, 2]</code>
+<div style="font-size:.82em;color:var(--muted);margin-top:6px">I'm standing on some day, looking at today's price.</div>
+</div>
+
+<!-- STEP 2: WHAT CAN I DO RIGHT NOW? -->
+<h3 style="color:var(--emerald);margin-top:20px">What can I do right now?</h3>
+
+<p style="margin-bottom:12px">Think about it in plain English. The problem says I can <strong>buy</strong>, <strong>sell</strong>, or <strong>do nothing</strong>. Three possible actions. But can I always do all three?</p>
+
+<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:12px 0">
+<div style="color:var(--gold2);font-weight:700;font-size:1.05em;margin-bottom:12px">THE KEY QUESTION: "Can I always do all three?"</div>
+<div style="font-size:.95em;display:grid;gap:10px">
+<div><strong>Can I buy?</strong> Only if I don't already own a stock. I can't buy a second one while holding the first.</div>
+<div><strong>Can I sell?</strong> Only if I currently own a stock. I can't sell something I don't have.</div>
+<div><strong>Can I do nothing?</strong> Always. Waiting is always legal.</div>
+<div><strong>Is there a constraint?</strong> Yes: <em>after selling, I must wait one day before buying again</em>. So even if I don't own a stock, I might not be allowed to buy yet.</div>
+</div>
+</div>
+
+<p style="margin-top:12px">So my available actions <strong>depend on my current situation</strong>. That's different from knapsack where "grab or skip" is always available. Here, I need to know <strong>what situation I'm in</strong> before I can figure out my choices.</p>
+
+<!-- DISCOVERING THE STATES -->
+<h3 style="color:var(--emerald);margin-top:20px">What situations can I be in?</h3>
+
+<p style="margin-bottom:12px">Let me list every possible situation and ask: <strong>what's different about what I'm allowed to do?</strong></p>
+
+<div style="background:var(--card2);border-radius:10px;padding:16px;margin:12px 0">
+<div style="display:grid;gap:14px;font-size:.93em">
+
+<div>
+<strong>Situation A:</strong> I don't own a stock, and I didn't sell yesterday.<br>
+<span style="padding-left:20px">→ I'm <strong>free</strong>. I can buy or wait.</span>
+</div>
+
+<div>
+<strong>Situation B:</strong> I own a stock.<br>
+<span style="padding-left:20px">→ I'm <strong>holding</strong>. I can sell or keep holding.</span>
+</div>
+
+<div>
+<strong>Situation C:</strong> I don't own a stock, but I sold yesterday.<br>
+<span style="padding-left:20px">→ I'm in <strong>cooldown</strong>. The rule says I must wait. I can't buy, can't sell. I can only wait.</span>
+</div>
+
+</div>
+</div>
+
+<div style="background:rgba(16,185,129,.08);border:2px solid var(--emerald);border-radius:10px;padding:16px;margin:12px 0">
+<div style="font-size:.95em">
+<strong>How do I know these are the only three?</strong> Because the only constraint is "wait one day after selling." That creates exactly one special situation (just sold, must wait). Everything else is either "I'm holding a stock" or "I'm free to act." Three situations, three states.
+</div>
+</div>
+
+<p>These three situations are the <strong>states</strong>:</p>
 
 <div class="three-col" style="margin:16px 0">
+<div class="state-rest">
+<div style="color:var(--blue);font-weight:700;margin-bottom:6px">REST</div>
+I don't own anything. I'm free to act.
+</div>
 <div class="state-hold">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">HOLD</div>
-I own a stock. I can:<br>
-<strong>Keep holding</strong> (stay in HOLD)<br>
-<strong>Sell today</strong> (move to SOLD)
+I own a stock. Waiting for the right time to sell.
 </div>
 <div class="state-sold">
 <div style="color:var(--green);font-weight:700;margin-bottom:6px">SOLD</div>
-I just sold. I must:<br>
-<strong>Cool down</strong> (move to REST)<br>
-<span style="color:var(--muted);font-size:.85em">No choice, mandatory.</span>
-</div>
-<div class="state-rest">
-<div style="color:var(--blue);font-weight:700;margin-bottom:6px">REST</div>
-I'm free to act. I can:<br>
-<strong>Buy today</strong> (move to HOLD)<br>
-<strong>Keep resting</strong> (stay in REST)
+I just sold. Mandatory cooldown. Can't do anything today.
 </div>
 </div>
 
-<pre style="font-size:.88em"><code>Transitions:
-  HOLD  ->  HOLD   (keep holding)
-  HOLD  ->  SOLD   (sell: + price)
-  SOLD  ->  REST   (mandatory cooldown)
-  REST  ->  HOLD   (buy: - price)
-  REST  ->  REST   (keep resting)</code></pre>
+<!-- STEP 3: EACH STATE'S CHOICES AS A STORY -->
+<h3 style="color:var(--emerald);margin-top:20px">What happens in each state?</h3>
 
-<div class="hi">
-<strong style="color:var(--emerald)">The constraint creates the states.</strong> "Cooldown after selling" means selling and resting are different states. Without cooldown, you'd only need HOLD and REST.
+<p style="margin-bottom:12px">Now I can derive the choices for each situation. In each state, I ask: "what actions are legal <strong>right now</strong>?"</p>
+
+<!-- FROM REST -->
+<div style="background:rgba(59,130,246,.06);border:2px solid var(--blue);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--blue);font-weight:800;font-size:1.05em;margin-bottom:12px">FROM REST: "I'm free. What can I do?"</div>
+
+<div style="display:grid;gap:14px;font-size:.93em">
+<div style="background:var(--card2);border-radius:8px;padding:14px;border-left:3px solid var(--red)">
+<div style="color:var(--red);font-weight:700;margin-bottom:6px">BUY</div>
+<strong>What am I choosing?</strong> Spend money to buy a stock at today's price.<br>
+<strong>What changes immediately?</strong> I lose <code>prices[day]</code> in cash. I now own a stock.<br>
+<strong>What new situation does this create?</strong> Tomorrow I'll be in HOLD (I own something).<br>
+<strong>What work remains?</strong> From tomorrow onward, maximize profit while holding. <code>-prices[day] + max_profit(day+1, "hold")</code>
 </div>
 
+<div style="background:var(--card2);border-radius:8px;padding:14px;border-left:3px solid var(--blue)">
+<div style="color:var(--blue);font-weight:700;margin-bottom:6px">WAIT</div>
+<strong>What am I choosing?</strong> Do nothing. Skip this day.<br>
+<strong>What changes immediately?</strong> Nothing. No money spent, no stock acquired.<br>
+<strong>What new situation does this create?</strong> Tomorrow I'll still be in REST (still free).<br>
+<strong>What work remains?</strong> Same problem starting tomorrow. <code>max_profit(day+1, "rest")</code>
+</div>
+</div>
+
+<div style="font-size:.93em;margin-top:10px"><strong>Are there other options?</strong> Can I sell? No, I don't own anything. Buy or wait are the only legal actions. <strong>Decision:</strong> <code>max(buy, wait)</code>.</div>
+</div>
+
+<!-- FROM HOLD -->
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--red);font-weight:800;font-size:1.05em;margin-bottom:12px">FROM HOLD: "I own a stock. What can I do?"</div>
+
+<div style="display:grid;gap:14px;font-size:.93em">
+<div style="background:var(--card2);border-radius:8px;padding:14px;border-left:3px solid var(--green)">
+<div style="color:var(--green);font-weight:700;margin-bottom:6px">SELL</div>
+<strong>What am I choosing?</strong> Sell my stock at today's price.<br>
+<strong>What changes immediately?</strong> I gain <code>prices[day]</code> in cash. I no longer own a stock.<br>
+<strong>What new situation does this create?</strong> Tomorrow I'll be in SOLD (not REST!). The cooldown rule forces me to wait one day before I can buy again.<br>
+<strong>What work remains?</strong> <code>prices[day] + max_profit(day+1, "sold")</code>
+</div>
+
+<div style="background:var(--card2);border-radius:8px;padding:14px;border-left:3px solid var(--red)">
+<div style="color:var(--red);font-weight:700;margin-bottom:6px">KEEP HOLDING</div>
+<strong>What am I choosing?</strong> Don't sell. Wait for a better price.<br>
+<strong>What changes immediately?</strong> Nothing. Still own the stock.<br>
+<strong>What new situation does this create?</strong> Tomorrow I'm still in HOLD.<br>
+<strong>What work remains?</strong> <code>max_profit(day+1, "hold")</code>
+</div>
+</div>
+
+<div style="font-size:.93em;margin-top:10px"><strong>Are there other options?</strong> Can I buy another stock? No, the problem allows holding at most one at a time. Sell or keep are the only legal actions. <strong>Decision:</strong> <code>max(sell, keep)</code>.</div>
+</div>
+
+<!-- FROM SOLD -->
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:12px">FROM SOLD: "I just sold. What can I do?"</div>
+
+<div style="display:grid;gap:10px;font-size:.93em">
+<div><strong>What are my legal actions?</strong> None. The cooldown rule says I must wait one day after selling. Buying is forbidden. Selling is impossible (I don't own anything). Waiting is the only option.</div>
+<div><strong>What changes?</strong> Day advances. Cooldown is served.</div>
+<div><strong>What new situation does this create?</strong> Tomorrow I'll be in REST (free to act again).</div>
+<div><strong>What work remains?</strong> <code>max_profit(day+1, "rest")</code></div>
+</div>
+
+<div style="margin-top:10px;font-size:.93em;color:var(--muted)"><strong>Why does the SOLD state even exist?</strong> Without it, after selling I'd go straight to REST and could buy again immediately. The SOLD state is how the code enforces the one-day gap.</div>
+</div>
+
+<!-- STEP 4: THE CHOICE DIAGRAM -->
+<h3 style="color:var(--emerald);margin-top:20px">The Choice Diagram</h3>
+
+<div style="background:var(--card2);border-radius:10px;padding:18px;margin:12px 0">
+<pre style="font-size:.88em;line-height:1.8;margin:0"><code>Current Situation: It's day X. What state am I in?
+        │
+   ┌────┼────────────┐
+   │    │             │
+  REST  HOLD         SOLD
+   │    │             │
+   │    ├─ Sell       └─ Cooldown (mandatory)
+   │    │  +price        state: sold → rest
+   │    │  state → sold
+   │    │
+   │    └─ Keep holding
+   │       +0, state stays hold
+   │
+   ├─ Buy
+   │  -price
+   │  state → hold
+   │
+   └─ Wait
+      +0, state stays rest
+
+Combine: max(choices) in each state.</code></pre>
+</div>
+
+<!-- WATCH IT PLAY OUT -->
+<h3 style="color:var(--emerald);margin-top:20px">Watch it play out</h3>
+
+<p style="margin-bottom:8px">Trace <code>prices = [1, 2, 3, 0, 2]</code>, optimal path:</p>
+
+<div style="background:var(--card2);border-radius:10px;padding:16px;margin:12px 0">
+<div style="display:grid;gap:10px;font-size:.9em">
+<div>
+<strong style="color:var(--blue)">Day 0 (price $1), state: REST</strong><br>
+<span style="padding-left:20px">I'm free. Buy at $1. Cost: -$1. Tomorrow: HOLD.</span>
+</div>
+<div>
+<strong style="color:var(--red)">Day 1 (price $2), state: HOLD</strong><br>
+<span style="padding-left:20px">I own a stock. Sell at $2. Reward: +$2. Tomorrow: SOLD.</span>
+</div>
+<div>
+<strong style="color:var(--green)">Day 2 (price $3), state: SOLD</strong><br>
+<span style="padding-left:20px">Just sold. Must cooldown. No action. Tomorrow: REST.</span>
+</div>
+<div>
+<strong style="color:var(--blue)">Day 3 (price $0), state: REST</strong><br>
+<span style="padding-left:20px">Free again! Buy at $0. Cost: -$0. Tomorrow: HOLD.</span>
+</div>
+<div>
+<strong style="color:var(--red)">Day 4 (price $2), state: HOLD</strong><br>
+<span style="padding-left:20px">Sell at $2. Reward: +$2. Done.</span>
+</div>
+<div style="font-weight:700;color:var(--gold2);padding-top:6px">
+Total profit: -1 + 2 + 0 + 0 + 2 = <strong>$3</strong>
+</div>
+</div>
+</div>
+
+<p style="font-size:.9em;color:var(--muted)">Notice how the state determined the legal actions at each step. On day 2 (SOLD), buying was forbidden even though the price was good. The cooldown constraint shaped the path.</p>
+
+<!-- STEP 5: THE REUSABLE PRINCIPLE -->
+<h3 style="color:var(--emerald);margin-top:20px">The reusable principle</h3>
+
+<div style="background:rgba(16,185,129,.08);border:2px solid var(--emerald);border-radius:10px;padding:18px;margin:12px 0">
+<div style="font-size:.95em">
+The states came from the <strong>constraints</strong>, not memorization. Without the cooldown rule, you'd only need two states (own a stock or don't). The constraint "wait one day after selling" created a third state.<br><br>
+For any DP problem where your available actions depend on recent history, ask: <strong>"What distinct situations can I be in, and what's legal in each?"</strong> Each situation is a state. Each legal action is a choice. The constraints tell you both.
+</div>
+</div>
+
+<!-- TRANSITION JUSTIFICATION -->
 <h3 style="color:var(--emerald);margin-top:16px">Why each variable changes</h3>
 
 <p style="margin-bottom:10px;font-size:.93em">State: <code>max_profit(day, state)</code>. Two state variables: which day, and which state we're in (rest, hold, or sold).</p>
@@ -138,28 +323,17 @@ I'm free to act. I can:<br>
 <div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--red)">
 <div style="color:var(--red);font-weight:700;margin-bottom:8px">BUY (rest &rarr; hold)</div>
 <div style="display:grid;gap:6px;font-size:.9em">
-<div><strong>Action:</strong> Buy stock at today's price.</div>
-<div><strong>Immediate cost:</strong> <code>-prices[day]</code>. Money spent to buy the stock.</div>
-<div><strong>State changes:</strong></div>
-<div style="padding-left:20px">
-<code>day &rarr; day+1</code>: This day is done. Move to next day.<br>
-<code>state: rest &rarr; hold</code>: We now own a stock.
-</div>
+<div><strong>Immediate cost:</strong> <code>-prices[day]</code>. Money spent.</div>
+<div><strong>State changes:</strong> <code>day &rarr; day+1</code>, <code>state: rest &rarr; hold</code> (now own a stock).</div>
 <div><strong>Call:</strong> <code>-prices[day] + max_profit(day+1, "hold")</code></div>
-<div style="color:var(--muted)"><strong>Why does state change?</strong> Buying means we now hold a stock. Our future choices are different (sell or keep).</div>
 </div>
 </div>
 
 <div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--blue)">
 <div style="color:var(--blue);font-weight:700;margin-bottom:8px">WAIT (rest &rarr; rest)</div>
 <div style="display:grid;gap:6px;font-size:.9em">
-<div><strong>Action:</strong> Do nothing. Stay resting.</div>
 <div><strong>Immediate cost:</strong> <code>+0</code>. No transaction.</div>
-<div><strong>State changes:</strong></div>
-<div style="padding-left:20px">
-<code>day &rarr; day+1</code>: This day is done. Move to next day.<br>
-<code>state</code> stays rest: We didn't act. Still free to buy or wait tomorrow.
-</div>
+<div><strong>State changes:</strong> <code>day &rarr; day+1</code>, state stays rest.</div>
 <div><strong>Call:</strong> <code>max_profit(day+1, "rest")</code></div>
 </div>
 </div>
@@ -174,28 +348,17 @@ I'm free to act. I can:<br>
 <div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--green)">
 <div style="color:var(--green);font-weight:700;margin-bottom:8px">SELL (hold &rarr; sold)</div>
 <div style="display:grid;gap:6px;font-size:.9em">
-<div><strong>Action:</strong> Sell the stock at today's price.</div>
-<div><strong>Immediate reward:</strong> <code>+prices[day]</code>. Money received from selling.</div>
-<div><strong>State changes:</strong></div>
-<div style="padding-left:20px">
-<code>day &rarr; day+1</code>: This day is done.<br>
-<code>state: hold &rarr; sold</code>: We just sold. Must cooldown next.
-</div>
+<div><strong>Immediate reward:</strong> <code>+prices[day]</code>. Money received.</div>
+<div><strong>State changes:</strong> <code>day &rarr; day+1</code>, <code>state: hold &rarr; sold</code> (must cooldown next).</div>
 <div><strong>Call:</strong> <code>prices[day] + max_profit(day+1, "sold")</code></div>
-<div style="color:var(--muted)"><strong>Why sold, not rest?</strong> The cooldown rule: after selling, you must wait one day. The "sold" state enforces that constraint.</div>
 </div>
 </div>
 
 <div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--red)">
 <div style="color:var(--red);font-weight:700;margin-bottom:8px">KEEP HOLDING (hold &rarr; hold)</div>
 <div style="display:grid;gap:6px;font-size:.9em">
-<div><strong>Action:</strong> Don't sell. Keep the stock for a better price later.</div>
 <div><strong>Immediate cost:</strong> <code>+0</code>. No transaction.</div>
-<div><strong>State changes:</strong></div>
-<div style="padding-left:20px">
-<code>day &rarr; day+1</code>: This day is done.<br>
-<code>state</code> stays hold: Still own the stock.
-</div>
+<div><strong>State changes:</strong> <code>day &rarr; day+1</code>, state stays hold.</div>
 <div><strong>Call:</strong> <code>max_profit(day+1, "hold")</code></div>
 </div>
 </div>
@@ -206,16 +369,10 @@ I'm free to act. I can:<br>
 <!-- FROM SOLD -->
 <div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:10px">FROM SOLD: No choice (mandatory cooldown)</div>
-<div style="display:grid;gap:8px;font-size:.93em">
-<div><strong>Action:</strong> Mandatory rest day after selling. No trading allowed.</div>
+<div style="display:grid;gap:6px;font-size:.9em">
 <div><strong>Immediate cost:</strong> <code>+0</code>. Just waiting.</div>
-<div><strong>State changes:</strong></div>
-<div style="padding-left:20px">
-<code>day &rarr; day+1</code>: This day is done.<br>
-<code>state: sold &rarr; rest</code>: Cooldown complete. Free to act tomorrow.
-</div>
+<div><strong>State changes:</strong> <code>day &rarr; day+1</code>, <code>state: sold &rarr; rest</code> (cooldown complete).</div>
 <div><strong>Call:</strong> <code>max_profit(day+1, "rest")</code></div>
-<div style="color:var(--muted)"><strong>Why is this mandatory?</strong> The problem requires waiting one day after selling before buying again. The "sold" state exists solely to enforce this one-day gap.</div>
 </div>
 </div>
 </div>

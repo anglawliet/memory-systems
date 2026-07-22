@@ -100,69 +100,165 @@ code{font-family:'Fira Code','Courier New',monospace}
 <div style="text-align:center;font-size:1.2em;font-weight:700;color:var(--gold2);margin-top:12px">9 palindromic substrings</div>
 </div>
 
-<!-- ==================== STEP 1: CHOICES ==================== -->
+<!-- ==================== STEP 1: DISCOVERING THE CHOICES ==================== -->
 
-<h2>Step 1: What Are My Choices?</h2>
+<h2>Step 1: Discovering the Choices</h2>
 
 <div class="ws">
-<h3>For any substring: is it a palindrome?</h3>
 
-<p style="margin-bottom:12px">Pick any substring <code>text[left..right]</code>. To check if it's a palindrome, ask two questions:</p>
+<!-- STEP 1: DEFINE MY CURRENT SITUATION -->
+<h3 style="color:var(--violet)">What's my situation?</h3>
 
-<div class="two-col" style="margin:12px 0">
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
-<div style="color:var(--green);font-weight:700;margin-bottom:6px">1. Do the ends match?</div>
-<code>text[left] == text[right]</code><br>
-<span style="font-size:.88em;color:var(--muted)">If the outer characters don't match, it's NOT a palindrome. Done.</span>
-</div>
-<div style="background:rgba(167,139,250,.06);border:2px solid var(--violet);border-radius:8px;padding:14px">
-<div style="color:var(--violet);font-weight:700;margin-bottom:6px">2. Is the middle a palindrome?</div>
-<code>is_palindrome(left + 1, right - 1)</code><br>
-<span style="font-size:.88em;color:var(--muted)">Peel off the ends. Check what's left. Recursive!</span>
-</div>
+<p>I'm looking at a substring. I want to answer one question: <strong>is this substring a palindrome?</strong></p>
+
+<div style="text-align:center;margin:16px 0">
+<span style="display:inline-block;border:2px solid var(--violet);border-radius:8px;padding:10px 18px;font-size:1.3em;letter-spacing:4px;font-weight:700">a a b a a</span>
+<div style="font-size:.88em;color:var(--muted);margin-top:6px">I'm pointing at the first character (left) and the last character (right).</div>
 </div>
 
-<p style="margin-top:12px">Example with <code>"aabaa"</code>:</p>
-<pre><code>is_palindrome("aabaa", 0, 4)
-  text[0]='a' == text[4]='a'?  YES
-  Now check is_palindrome("aabaa", 1, 3)
-    text[1]='a' == text[3]='a'?  YES
-    Now check is_palindrome("aabaa", 2, 2)
-      Single char 'b'. Always a palindrome. TRUE
-    TRUE
-  TRUE</code></pre>
+<p>I don't know the answer yet. I need to make <strong>one immediate check</strong> that gives me useful information. What should I check?</p>
+
+<!-- STEP 2: WHAT CAN I DO RIGHT NOW? -->
+<h3 style="color:var(--violet);margin-top:20px">What can I check right now?</h3>
+
+<p style="margin-bottom:12px">Start from the definition. A palindrome reads the same forwards and backwards. So the <strong>first character must equal the last character</strong>. That's the most basic requirement.</p>
+
+<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:12px 0">
+<div style="color:var(--gold2);font-weight:700;font-size:1.05em;margin-bottom:10px">THE QUESTION: Do the two ends match?</div>
+<div style="font-size:.95em">
+<strong>Why this check?</strong> Because a palindrome REQUIRES first == last. If they don't match, no amount of rearranging the inside can fix it. This is the cheapest, most decisive check I can make.<br><br>
+<strong>Could I check something else instead?</strong> I could check the middle first, or compare random positions. But that's wasted work. If the ends don't match, everything inside is irrelevant. Check the ends first, and only look deeper if they pass.<br><br>
+<strong>Have I missed any actions?</strong> No. I can't skip characters, swap them, or insert new ones. The string is fixed. My only action is to <strong>compare the two end characters</strong>.
+</div>
+</div>
+
+<p>That single check produces exactly two outcomes. Each one tells me what to do next:</p>
+
+<!-- STEP 3: EACH CHOICE AS A STORY -->
+<h3 style="color:var(--violet);margin-top:20px">What happens in each outcome?</h3>
+
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:12px">OUTCOME 1: The ends match</div>
+
+<div style="text-align:center;font-size:1.2em;letter-spacing:2px;margin:8px 0">
+<span style="background:var(--green);color:#fff;padding:3px 8px;border-radius:4px">a</span> a b a <span style="background:var(--green);color:#fff;padding:3px 8px;border-radius:4px">a</span>
+</div>
+
+<div style="display:grid;gap:10px;font-size:.93em;margin-top:12px">
+<div><strong>What did I learn?</strong> The outer pair is valid. But that doesn't prove the whole thing is a palindrome. "abcba" has matching ends, but "abcXa" with matching ends and a broken middle would fail.</div>
+<div><strong>What changes?</strong> I've handled the outer pair. I can peel them off. My new situation: I'm looking at the <strong>inner substring</strong> (one character shorter on each side).</div>
+<div><strong>What stays the same?</strong> The question is identical: "is this (smaller) substring a palindrome?"</div>
+<div><strong>What work remains?</strong> Check the inner substring. Same problem, smaller input. That's recursion: <code>is_palindrome(left+1, right-1)</code></div>
+</div>
+</div>
+
+<div style="background:rgba(239,68,68,.04);border:2px solid var(--red);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--red);font-weight:800;font-size:1.05em;margin-bottom:12px">OUTCOME 2: The ends don't match</div>
+
+<div style="text-align:center;font-size:1.2em;letter-spacing:2px;margin:8px 0">
+<span style="background:var(--red);color:#fff;padding:3px 8px;border-radius:4px">a</span> b <span style="background:var(--red);color:#fff;padding:3px 8px;border-radius:4px">c</span>
+</div>
+
+<div style="display:grid;gap:10px;font-size:.93em;margin-top:12px">
+<div><strong>What did I learn?</strong> The first and last characters are different. This string cannot possibly be a palindrome.</div>
+<div><strong>What changes?</strong> Nothing. I stop.</div>
+<div><strong>What work remains?</strong> None. Return <code>False</code>. No recursion needed. Checking the inside would be pointless.</div>
+</div>
+</div>
+
+<!-- STEP 4: THE CHOICE DIAGRAM -->
+<h3 style="color:var(--violet);margin-top:20px">The Choice Diagram</h3>
+
+<div style="background:var(--card2);border-radius:10px;padding:18px;margin:12px 0">
+<pre style="font-size:.9em;line-height:1.8;margin:0"><code>Current Situation: Is text[left..right] a palindrome?
+        │
+        ▼
+  Do text[left] and text[right] match?
+        │
+   ┌────┴────┐
+   │         │
+  YES        NO
+   │         │
+   │     Return False.
+   │     (Ends differ, game over.)
+   │
+   ▼
+  Peel both ends off.
+  Check: is text[left+1..right-1] a palindrome?
+  Return whatever it returns.</code></pre>
+</div>
+
+<p style="font-size:.93em">The combine step: <code>ends_match AND is_palindrome(inside)</code>. Both must be true. There's no max or min. If the ends match but the inside isn't a palindrome, the whole thing fails.</p>
+
+<!-- WATCH IT PLAY OUT -->
+<h3 style="color:var(--violet);margin-top:20px">Watch it play out</h3>
+
+<p style="margin-bottom:8px">Trace <code>"aabaa"</code>:</p>
+
+<div style="background:var(--card2);border-radius:10px;padding:16px;margin:12px 0">
+<div style="display:grid;gap:12px;font-size:.93em">
+<div>
+<strong style="color:var(--violet)">Round 1:</strong>
+<span style="letter-spacing:2px"><span style="background:var(--green);color:#fff;padding:1px 5px;border-radius:3px">a</span> a b a <span style="background:var(--green);color:#fff;padding:1px 5px;border-radius:3px">a</span></span><br>
+<span style="padding-left:20px">left='a' == right='a'. Match! Peel off both ends. Check the inside.</span>
+</div>
+<div>
+<strong style="color:var(--violet)">Round 2:</strong>
+<span style="letter-spacing:2px"><span style="background:var(--green);color:#fff;padding:1px 5px;border-radius:3px">a</span> b <span style="background:var(--green);color:#fff;padding:1px 5px;border-radius:3px">a</span></span><br>
+<span style="padding-left:20px">left='a' == right='a'. Match! Peel off both ends. Check the inside.</span>
+</div>
+<div>
+<strong style="color:var(--violet)">Round 3:</strong>
+<span style="letter-spacing:2px"><span style="background:var(--violet);color:#fff;padding:1px 5px;border-radius:3px">b</span></span><br>
+<span style="padding-left:20px">Single character. Base case: always a palindrome. Return True.</span>
+</div>
+<div style="font-weight:700;color:var(--green);padding-top:4px">
+True AND True AND True → "aabaa" is a palindrome.
+</div>
+</div>
+</div>
 
 <div class="hi">
-<strong style="color:var(--violet)">Base cases:</strong><br>
-<code>left >= right</code> (single char or empty) &rarr; always a palindrome. Return True.<br>
-<code>text[left] != text[right]</code> &rarr; not a palindrome. Return False.
+<strong style="color:var(--violet)">Base cases (when do I stop peeling?):</strong><br>
+<code>left >= right</code> (single char or empty) → nothing left to check. Return True.<br>
+<code>text[left] != text[right]</code> → outer pair fails. Return False.
 </div>
 
+<!-- STEP 5: THE REUSABLE PRINCIPLE -->
+<h3 style="color:var(--violet);margin-top:20px">The reusable principle</h3>
+
+<div style="background:rgba(167,139,250,.08);border:2px solid var(--violet);border-radius:10px;padding:18px;margin:12px 0">
+<div style="font-size:.95em">
+The choices came from the <strong>definition of a palindrome</strong>, not from memorization. I asked: "what does palindrome mean?" and the check (compare two ends) fell out naturally.<br><br>
+To discover choices on an unseen problem, ask: <strong>"If I had to make exactly one check or one decision right now, what's the most useful thing I could do?"</strong> The definition of the problem tells you what's legal. The outcomes of that action become your branches.
+</div>
+</div>
+
+<!-- TRANSITION JUSTIFICATION -->
 <h3 style="color:var(--violet);margin-top:16px">Why each variable changes</h3>
 
 <div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:10px">CASE: text[left] == text[right] (Ends Match)</div>
 <div style="display:grid;gap:8px;font-size:.93em">
 <div><strong>Action:</strong> Outer characters match. Peel them off and check the inner substring.</div>
-<div><strong>Immediate cost:</strong> None. A matching pair just means this layer is valid. The whole answer depends on what's inside.</div>
+<div><strong>Immediate cost:</strong> None. A matching pair just means this layer is valid.</div>
 <div><strong>State changes:</strong></div>
 <div style="padding-left:20px">
-<code>left &rarr; left+1</code>: Confirmed <code>text[left]</code> matches the other end. Move inward from the left.<br>
-<code>right &rarr; right-1</code>: Confirmed <code>text[right]</code> matches the other end. Move inward from the right.
+<code>left &rarr; left+1</code>: Confirmed <code>text[left]</code> matches. Move inward from the left.<br>
+<code>right &rarr; right-1</code>: Confirmed <code>text[right]</code> matches. Move inward from the right.
 </div>
 <div><strong>Remaining subproblem:</strong> Is <code>text[left+1..right-1]</code> a palindrome?</div>
 <div><strong>Call:</strong> <code>is_palindrome(left+1, right-1)</code></div>
-<div style="color:var(--muted)"><strong>Why both change?</strong> A palindrome is symmetric. We check both ends at the same time. Each confirmed match peels one character from each side. Advancing only one pointer would leave a confirmed character in the range, which is redundant.</div>
+<div style="color:var(--muted)"><strong>Why both change?</strong> A palindrome is symmetric. We check both ends together. Each confirmed match peels one character from each side.</div>
 </div>
 </div>
 
 <div style="background:rgba(239,68,68,.04);border:2px solid var(--red);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--red);font-weight:800;font-size:1.05em;margin-bottom:10px">CASE: text[left] != text[right] (Ends Don't Match)</div>
 <div style="display:grid;gap:8px;font-size:.93em">
-<div><strong>Action:</strong> Outer characters differ. This substring is not a palindrome.</div>
+<div><strong>Action:</strong> Outer characters differ. Not a palindrome.</div>
 <div><strong>Result:</strong> Return <code>False</code> immediately. No recursion needed.</div>
-<div><strong>No state changes:</strong> We stop here. No deeper check required.</div>
-<div style="color:var(--muted)"><strong>Why stop immediately?</strong> A palindrome must read the same forwards and backwards. If the outermost characters differ, no inner arrangement can fix that.</div>
+<div style="color:var(--muted)"><strong>Why stop?</strong> If the outermost characters differ, no inner arrangement can fix that.</div>
 </div>
 </div>
 </div>

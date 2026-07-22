@@ -92,87 +92,194 @@ code{font-family:'Fira Code','Courier New',monospace}
 <p style="font-size:.9em;color:var(--muted);margin-top:8px">Both strings contain 'a', 'c', 'e' in order. That's the longest common subsequence.</p>
 </div>
 
-<!-- ==================== STEP 1: CHOICES ==================== -->
-<h2>Step 1: What Are My Choices?</h2>
+<!-- ==================== STEP 1: DISCOVERING THE CHOICES ==================== -->
+<h2>Step 1: Discovering the Choices</h2>
 
 <div class="ws">
-<h3>At each position: match or skip</h3>
 
-<p style="margin-bottom:12px">Compare <code>text1[i]</code> and <code>text2[j]</code>. Two possible situations:</p>
+<!-- STEP 1: DEFINE MY CURRENT SITUATION -->
+<h3 style="color:var(--purple)">What's my situation?</h3>
 
-<div class="two-col" style="margin:12px 0">
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
-<div style="color:var(--green);font-weight:700;margin-bottom:6px">MATCH: same character</div>
-This character is part of the LCS.<br>
-Take it. Advance both pointers.<br><br>
-<code style="color:var(--green)">1 + lcs(i + 1, j + 1)</code>
+<p>I have two strings. I'm pointing at one character in each: <code>text1[i]</code> and <code>text2[j]</code>. I want to find the longest sequence of characters that appears in both strings (in order, but not necessarily next to each other).</p>
+
+<div class="two-col" style="margin:16px 0;text-align:center">
+<div style="background:var(--card2);border-radius:8px;padding:12px">
+<div style="color:var(--purple);font-weight:700;margin-bottom:4px">text1</div>
+<span style="font-size:1.2em;letter-spacing:3px"><span style="background:var(--purple);color:#fff;padding:2px 6px;border-radius:4px">a</span> b c d e</span>
+<div style="font-size:.8em;color:var(--muted);margin-top:4px">i is pointing here</div>
 </div>
-<div style="background:rgba(245,158,11,.06);border:2px solid var(--amber);border-radius:8px;padding:14px">
-<div style="color:var(--amber);font-weight:700;margin-bottom:6px">NO MATCH: different characters</div>
-Skip one or the other. Try both, keep the better result.<br><br>
-<code style="color:var(--amber)">max(lcs(i + 1, j), lcs(i, j + 1))</code>
+<div style="background:var(--card2);border-radius:8px;padding:12px">
+<div style="color:var(--purple);font-weight:700;margin-bottom:4px">text2</div>
+<span style="font-size:1.2em;letter-spacing:3px"><span style="background:var(--purple);color:#fff;padding:2px 6px;border-radius:4px">a</span> c e</span>
+<div style="font-size:.8em;color:var(--muted);margin-top:4px">j is pointing here</div>
+</div>
+</div>
+
+<p>I need to decide: <strong>what do I do with these two characters I'm looking at right now?</strong></p>
+
+<!-- STEP 2: WHAT CAN I DO RIGHT NOW? -->
+<h3 style="color:var(--purple);margin-top:20px">What can I do right now?</h3>
+
+<p style="margin-bottom:12px">I'm comparing two characters. The most natural first check: <strong>are they the same?</strong></p>
+
+<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:12px 0">
+<div style="color:var(--gold2);font-weight:700;font-size:1.05em;margin-bottom:12px">THE KEY QUESTION: "Do these two characters match?"</div>
+<div style="font-size:.95em;display:grid;gap:10px">
+<div><strong>If they match:</strong> I found a common character. Should I use it? Yes, absolutely. If two characters are the same and in position, they're part of (or could be part of) the common subsequence. There's no reason to skip a matching pair.</div>
+<div><strong>If they don't match:</strong> At least one of these characters isn't useful right now. But which one? I don't know. Maybe <code>text1[i]</code> matches something later in text2. Maybe <code>text2[j]</code> matches something later in text1. I have to try both possibilities.</div>
+<div><strong>Could I skip both at once?</strong> No. That would throw away a character that might have matched something later. Skipping both is always worse than or equal to skipping just one.</div>
+</div>
+</div>
+
+<!-- STEP 3: EACH CHOICE AS A STORY -->
+<h3 style="color:var(--purple);margin-top:20px">What happens in each outcome?</h3>
+
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:12px">OUTCOME 1: text1[i] == text2[j] (Match)</div>
+
+<div style="text-align:center;font-size:1.1em;letter-spacing:2px;margin:8px 0">
+text1: <span style="background:var(--green);color:#fff;padding:2px 6px;border-radius:4px">a</span> b c d e &nbsp;&nbsp;
+text2: <span style="background:var(--green);color:#fff;padding:2px 6px;border-radius:4px">a</span> c e
+</div>
+
+<div style="display:grid;gap:10px;font-size:.93em;margin-top:12px">
+<div><strong>What am I choosing?</strong> Take this matching character as part of the LCS.</div>
+<div><strong>What changes immediately?</strong> LCS length grows by 1. Both characters are consumed (used up).</div>
+<div><strong>What stays the same?</strong> The remaining characters in both strings. The question is the same: "what's the LCS of what's left?"</div>
+<div><strong>What new situation does this create?</strong> I'm now pointing at <code>text1[i+1]</code> and <code>text2[j+1]</code>. Same problem, smaller input.</div>
+<div><strong>Call:</strong> <code>1 + lcs(i+1, j+1)</code></div>
+</div>
+</div>
+
+<div style="background:rgba(245,158,11,.04);border:2px solid var(--amber);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--amber);font-weight:800;font-size:1.05em;margin-bottom:12px">OUTCOME 2: text1[i] != text2[j] (No Match)</div>
+
+<div style="text-align:center;font-size:1.1em;letter-spacing:2px;margin:8px 0">
+text1: <span style="background:var(--amber);color:#fff;padding:2px 6px;border-radius:4px">b</span> c d e &nbsp;&nbsp;
+text2: <span style="background:var(--amber);color:#fff;padding:2px 6px;border-radius:4px">c</span> e
+</div>
+
+<p style="margin:12px 0;font-size:.93em">They don't match. I need to move past one of them, but which? I don't know. Try both:</p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:.9em">
+<div style="background:var(--card2);border-radius:8px;padding:14px">
+<div style="color:var(--amber);font-weight:700;margin-bottom:6px">Skip text1[i]</div>
+<strong>Why?</strong> Maybe <code>text1[i]</code> doesn't appear in text2 at all. Move past it.<br><br>
+<strong>What changes?</strong> i advances. j stays (text2[j] still needs a match).<br><br>
+<strong>Call:</strong> <code>lcs(i+1, j)</code>
+</div>
+<div style="background:var(--card2);border-radius:8px;padding:14px">
+<div style="color:var(--amber);font-weight:700;margin-bottom:6px">Skip text2[j]</div>
+<strong>Why?</strong> Maybe <code>text2[j]</code> doesn't match anything left in text1. Move past it.<br><br>
+<strong>What changes?</strong> j advances. i stays (text1[i] still needs a match).<br><br>
+<strong>Call:</strong> <code>lcs(i, j+1)</code>
+</div>
+</div>
+
+<div style="margin-top:12px;font-size:.93em"><strong>Decision:</strong> <code>max(skip_first, skip_second)</code>. Try both, keep whichever gives a longer subsequence.</div>
+</div>
+
+<!-- STEP 4: THE CHOICE DIAGRAM -->
+<h3 style="color:var(--purple);margin-top:20px">The Choice Diagram</h3>
+
+<div style="background:var(--card2);border-radius:10px;padding:18px;margin:12px 0">
+<pre style="font-size:.88em;line-height:1.8;margin:0"><code>Current Situation: comparing text1[i] and text2[j]
+        │
+   Do they match?
+        │
+   ┌────┴────┐
+   │         │
+  YES        NO
+   │         │
+  Take it.   Can't use either right now.
+  +1         Skip one, try both options:
+  Both       ├─ Skip text1[i]: lcs(i+1, j)
+  advance.   └─ Skip text2[j]: lcs(i, j+1)
+  lcs(i+1,   Take max.
+    j+1)</code></pre>
+</div>
+
+<!-- WATCH IT PLAY OUT -->
+<h3 style="color:var(--purple);margin-top:20px">Watch it play out</h3>
+
+<p style="margin-bottom:8px">Trace text1="abcde", text2="ace":</p>
+
+<div style="background:var(--card2);border-radius:10px;padding:16px;margin:12px 0">
+<div style="display:grid;gap:10px;font-size:.9em">
+<div>
+<strong style="color:var(--green)">i=0, j=0:</strong> text1[0]='a' == text2[0]='a'. <strong>Match!</strong> Take it. LCS so far: "a". Both advance.
+</div>
+<div>
+<strong style="color:var(--amber)">i=1, j=1:</strong> text1[1]='b' != text2[1]='c'. <strong>No match.</strong> Try both skips:
+<div style="padding-left:20px">
+Skip 'b': lcs("cde", "ce") → finds "ce" (length 2)<br>
+Skip 'c': lcs("bcde", "e") → finds "e" (length 1)<br>
+max(2, 1) = 2. Skipping 'b' was better.
+</div>
+</div>
+<div style="font-weight:700;color:var(--gold2);padding-top:4px">
+Result: "a" + "ce" = "ace", length <strong>3</strong>.
+</div>
 </div>
 </div>
 
 <div class="hi">
-<strong style="color:var(--purple)">Base case:</strong> either string runs out (<code>i == len(text1)</code> or <code>j == len(text2)</code>) &rarr; return 0. Nothing left to match.
+<strong style="color:var(--purple)">Base case:</strong> either string runs out (<code>i == len(text1)</code> or <code>j == len(text2)</code>) → return 0. Nothing left to match.
 </div>
 
+<!-- STEP 5: THE REUSABLE PRINCIPLE -->
+<h3 style="color:var(--purple);margin-top:20px">The reusable principle</h3>
+
+<div style="background:rgba(139,92,246,.08);border:2px solid var(--purple);border-radius:10px;padding:18px;margin:12px 0">
+<div style="font-size:.95em">
+The choices came from one question: <strong>"do these two characters match?"</strong> That's the most natural first check when comparing two sequences. The match case is free (no decision to make). The no-match case forces a decision (which to skip), so you try both.<br><br>
+For any two-sequence DP problem, ask: <strong>"What can I do with the two elements I'm currently pointing at?"</strong> The answer is almost always: use them together (if compatible) or skip one. That's the universal pattern for LCS, Edit Distance, Interleaving, and Distinct Subsequences.
+</div>
+</div>
+
+<!-- TRANSITION JUSTIFICATION -->
 <h3 style="color:var(--purple);margin-top:16px">Why each variable changes</h3>
 
 <div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:10px">CASE: text1[i] == text2[j] (Match)</div>
 <div style="display:grid;gap:8px;font-size:.93em">
-<div><strong>Action:</strong> Characters match. This character is part of the LCS. Take it.</div>
-<div><strong>Immediate reward:</strong> <code>+1</code>. Found one common character, so LCS length grows by 1.</div>
+<div><strong>Action:</strong> Take this character as part of the LCS.</div>
+<div><strong>Immediate reward:</strong> <code>+1</code>. LCS length grows by 1.</div>
 <div><strong>State changes:</strong></div>
 <div style="padding-left:20px">
-<code>i &rarr; i+1</code>: <code>text1[i]</code> consumed. It matched, so it's part of the LCS. Move past it.<br>
+<code>i &rarr; i+1</code>: <code>text1[i]</code> consumed. It matched. Move past it.<br>
 <code>j &rarr; j+1</code>: <code>text2[j]</code> consumed. Same character, same match. Move past it.
 </div>
-<div><strong>Remaining subproblem:</strong> Find the LCS of <code>text1[i+1:]</code> and <code>text2[j+1:]</code>.</div>
 <div><strong>Call:</strong> <code>1 + lcs(i+1, j+1)</code></div>
-<div style="color:var(--muted)"><strong>Why both advance?</strong> A match consumes one character from each string. Using text1[i] without consuming text2[j] (or vice versa) would leave the matched character available for a double-count.</div>
+<div style="color:var(--muted)"><strong>Why both advance?</strong> A match consumes one character from each string. Advancing only one would leave the matched character available for a double-count.</div>
 </div>
 </div>
 
 <div style="background:rgba(245,158,11,.04);border:2px solid var(--amber);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--amber);font-weight:800;font-size:1.05em;margin-bottom:10px">CASE: text1[i] != text2[j] (No Match)</div>
 
-<p style="margin-bottom:14px">Two options. Characters don't match, so skip one. Try both, keep the better result.</p>
+<p style="margin-bottom:14px">Skip one character. Try both options, keep the better result.</p>
 
 <div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--amber)">
-<div style="color:var(--amber);font-weight:700;margin-bottom:8px">Option 1: Skip text1[i]</div>
+<div style="color:var(--amber);font-weight:700;margin-bottom:8px">Skip text1[i]</div>
 <div style="display:grid;gap:6px;font-size:.9em">
-<div><strong>Action:</strong> <code>text1[i]</code> doesn't match. Skip it. Maybe a later text1 character will match <code>text2[j]</code>.</div>
-<div><strong>Immediate reward:</strong> <code>+0</code>. Skipping contributes nothing to the LCS.</div>
-<div><strong>State changes:</strong></div>
-<div style="padding-left:20px">
-<code>i &rarr; i+1</code>: <code>text1[i]</code> skipped. Move past it.<br>
-<code>j</code> stays the same: <code>text2[j]</code> hasn't been matched yet. Still waiting.
-</div>
+<div><strong>Reward:</strong> <code>+0</code>. Skipping adds nothing.</div>
+<div><strong>State changes:</strong> <code>i &rarr; i+1</code> (skipped). <code>j</code> stays (still needs a match).</div>
 <div><strong>Call:</strong> <code>lcs(i+1, j)</code></div>
-<div style="color:var(--muted)"><strong>Why doesn't j change?</strong> We only skipped a text1 character. text2[j] is still the next character we need to try matching.</div>
 </div>
 </div>
 
 <div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--amber)">
-<div style="color:var(--amber);font-weight:700;margin-bottom:8px">Option 2: Skip text2[j]</div>
+<div style="color:var(--amber);font-weight:700;margin-bottom:8px">Skip text2[j]</div>
 <div style="display:grid;gap:6px;font-size:.9em">
-<div><strong>Action:</strong> Skip <code>text2[j]</code>. Maybe <code>text1[i]</code> will match a later text2 character.</div>
-<div><strong>Immediate reward:</strong> <code>+0</code>. Skipping contributes nothing.</div>
-<div><strong>State changes:</strong></div>
-<div style="padding-left:20px">
-<code>i</code> stays the same: <code>text1[i]</code> hasn't been matched yet. Still waiting.<br>
-<code>j &rarr; j+1</code>: <code>text2[j]</code> skipped. Move past it.
-</div>
+<div><strong>Reward:</strong> <code>+0</code>. Skipping adds nothing.</div>
+<div><strong>State changes:</strong> <code>i</code> stays (still needs a match). <code>j &rarr; j+1</code> (skipped).</div>
 <div><strong>Call:</strong> <code>lcs(i, j+1)</code></div>
-<div style="color:var(--muted)"><strong>Why doesn't i change?</strong> We only skipped a text2 character. text1[i] is still available for matching.</div>
 </div>
 </div>
 
 <div style="font-size:.93em;margin-top:8px">
-<strong>Final decision:</strong> <code>result = max(skip_first, skip_second)</code>. We want the <strong>longest</strong> common subsequence, so take the better of the two skip options.
+<strong>Decision:</strong> <code>max(skip_first, skip_second)</code>. We want the <strong>longest</strong>, so take the better skip.
 </div>
 </div>
 </div>

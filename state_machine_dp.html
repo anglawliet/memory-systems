@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>State Machine DP: States, Transitions, Decisions</title>
+<title>State Machine DP: Derive It From Scratch</title>
 <style>
 :root{--bg:#1a1916;--card:#252320;--card2:#2d2a26;--gold:#d4a843;--gold2:#fbbf24;--amber:#f59e0b;--green:#22c55e;--blue:#3b82f6;--red:#ef4444;--text:#e8e2d6;--muted:#9b9484;--border:#3d3930;--sand:#c2956a;--emerald:#10b981;--teal:#14b8a6}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -42,6 +42,7 @@ code{font-family:'Fira Code','Courier New',monospace}
 .sl{font-size:.7em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
 .cell-walk{border-radius:10px;padding:16px;margin:12px 0;font-size:.95em;line-height:1.8}
 .cell-fill{background:rgba(34,197,94,.06);border:1px solid var(--green)}
+.step-num{display:inline-flex;align-items:center;justify-content:center;background:var(--emerald);color:#000;width:28px;height:28px;border-radius:50%;font-size:.85em;font-weight:800;margin-right:8px;flex-shrink:0}
 @media(max-width:600px){
   .wrap{padding:12px}
   .hdr h1{font-size:1.5em}
@@ -59,7 +60,7 @@ code{font-family:'Fira Code','Courier New',monospace}
 
 <div class="hdr">
 <h1>State Machine DP</h1>
-<p>Multiple states, clear transitions. Track the best value in each state at every step.</p>
+<p>Not memorized. States discovered from constraints, choices derived from legal actions.</p>
 </div>
 
 <div class="wrap">
@@ -82,47 +83,116 @@ code{font-family:'Fira Code','Courier New',monospace}
 <code>prices = [1, 2, 3, 0, 2]</code>
 </div>
 
-<p style="margin-bottom:8px">Best strategy: buy day 0 ($1), sell day 2 ($3), cooldown day 3, buy day 3 ($0), sell day 4 ($2). Profit = (3-1) + (2-0) = <strong style="color:var(--gold2)">$3</strong>.</p>
-
-<div class="hi">
-<strong style="color:var(--emerald)">Why is this different?</strong> You can't just "grab or skip" like knapsack. Your available choices depend on <strong>what state you're in</strong>. Holding a stock? You can sell or keep holding. Just sold? You must rest. Resting? You can buy or keep resting.
-</div>
+<p style="margin-bottom:8px">Best strategy: buy day 0 ($1), sell day 1 ($2), cooldown day 2, buy day 3 ($0), sell day 4 ($2). Profit = (2-1) + (2-0) = <strong style="color:var(--gold2)">$3</strong>.</p>
 </div>
 
-<!-- ==================== STEP 1: DISCOVERING THE CHOICES ==================== -->
-<h2>Step 1: Discovering the Choices</h2>
+<!-- ==================== STEP 0: CLASSIFICATION ==================== -->
+
+<h2><span class="step-num">0</span> Is This a DP Problem?</h2>
 
 <div class="ws">
 
-<!-- STEP 1: DEFINE MY CURRENT SITUATION -->
-<h3 style="color:var(--emerald)">What's my situation?</h3>
+<h3>What is the problem asking me to compute?</h3>
+<p>Maximum total profit from buying and selling stocks, with a cooldown constraint after each sale.</p>
 
-<p>It's a particular day. I see today's stock price. I want to maximize my total profit by the end. I need to decide: <strong>what do I do today?</strong></p>
+<h3 style="margin-top:20px">Why doesn't greedy work?</h3>
+
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:18px;margin:12px 0">
+<div style="font-size:.93em">
+<strong>Greedy idea:</strong> "Buy at the lowest, sell at the highest."<br><br>
+<strong>Why it fails:</strong> The cooldown constraint creates dependencies between transactions. Selling on day 1 means I <em>cannot</em> buy on day 2. So a locally optimal sell might prevent a globally optimal buy. I can't decide each day independently because today's action constrains tomorrow's options.
+</div>
+</div>
+
+<h3 style="margin-top:20px">Why would brute force create overlapping subproblems?</h3>
+<p>Different sequences of buy/sell decisions can lead to the same situation (same day, same state). Example: "buy day 0, sell day 1, cooldown day 2" and "wait day 0, wait day 1, wait day 2" both arrive at day 3 in the REST state. Same remaining problem.</p>
+
+<h3 style="margin-top:20px">Which family?</h3>
+<p><strong style="color:var(--emerald)">State Machine DP</strong>. My available actions depend on what state I'm in. The constraint (cooldown) creates distinct states with different legal moves.</p>
+</div>
+
+<!-- ==================== STEP 1: RECURSIVE QUESTION ==================== -->
+
+<h2><span class="step-num">1</span> The Recursive Question</h2>
+
+<div class="ws">
+<p style="margin-bottom:12px">State it entirely in English before introducing variables:</p>
+
+<div style="background:rgba(16,185,129,.12);border:2px solid var(--emerald);border-radius:10px;padding:20px;margin:12px 0;text-align:center">
+<div style="font-size:1.15em;font-weight:700;color:var(--emerald)">"What is the maximum profit I can earn from day X onward, given my current situation?"</div>
+</div>
+
+<p style="margin-top:12px">The function answers one question: from this day forward, in this situation, what's the best I can do?</p>
+
+<p>But what is "my current situation"? That's what I need to figure out next. I can't write the function signature until I know what state information matters.</p>
+</div>
+
+<!-- ==================== STEP 2: BASE CASES ==================== -->
+
+<h2><span class="step-num">2</span> Discover the Base Cases</h2>
+
+<div class="ws">
+
+<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:12px 0;text-align:center">
+<div style="font-size:1.05em;font-weight:700;color:var(--gold2)">"If I keep making decisions day after day, when must I eventually stop?"</div>
+</div>
+
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:12px">STOP: Past the last day (day == len(prices))</div>
+<div style="display:grid;gap:8px;font-size:.93em">
+<div><strong>What situation have I reached?</strong> There are no more trading days. The market is closed.</div>
+<div><strong>Why can't I continue?</strong> No prices left. Nothing to buy or sell.</div>
+<div><strong>Why is the remaining problem trivial?</strong> Zero days of trading means zero additional profit, regardless of my state.</div>
+<div><strong>What should this return?</strong> <code>0</code>.</div>
+<div><strong>Why 0?</strong> No more trades can happen. Whether I'm holding, resting, or in cooldown, there's nothing left to do. No future profit.</div>
+</div>
+</div>
+
+<div class="hi">
+<strong>Is this the only stop?</strong> Yes. Every day before the last has at least one legal action (even if it's just waiting). The only time I have zero actions is when there are no days left.
+</div>
+
+<div style="margin-top:12px;font-size:.93em;color:var(--muted)"><strong>Note:</strong> if I'm holding a stock when time runs out, it's unsold. That's a loss, not an error. The function returns 0 additional profit from this point. The cost of the unsold stock was already accounted for when I bought it.</div>
+</div>
+
+<img src="dp/images/stock_base_cases.png" alt="Stock cooldown base case: past last day returns 0 regardless of state" class="scene-img">
+
+<!-- ==================== STEPS 3-4: CHOICES ==================== -->
+
+<h2><span class="step-num">3</span> Discover the Choices</h2>
+
+<div class="ws">
+
+<h3>What is my current situation?</h3>
+<p>It's a particular day. I see today's stock price. I need to decide what to do today.</p>
 
 <div style="text-align:center;margin:16px 0;font-size:1.1em">
 <code>prices = [1, 2, 3, 0, 2]</code>
 <div style="font-size:.82em;color:var(--muted);margin-top:6px">I'm standing on some day, looking at today's price.</div>
 </div>
 
-<!-- STEP 2: WHAT CAN I DO RIGHT NOW? -->
-<h3 style="color:var(--emerald);margin-top:20px">What can I do right now?</h3>
+<h3 style="margin-top:20px">What am I allowed to do?</h3>
+<p>The problem says three actions: <strong>buy</strong>, <strong>sell</strong>, or <strong>do nothing</strong>.</p>
 
-<p style="margin-bottom:12px">Think about it in plain English. The problem says I can <strong>buy</strong>, <strong>sell</strong>, or <strong>do nothing</strong>. Three possible actions. But can I always do all three?</p>
+<h3 style="margin-top:20px">What am I forbidden from doing?</h3>
 
 <div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:12px 0">
 <div style="color:var(--gold2);font-weight:700;font-size:1.05em;margin-bottom:12px">THE KEY QUESTION: "Can I always do all three?"</div>
 <div style="font-size:.95em;display:grid;gap:10px">
-<div><strong>Can I buy?</strong> Only if I don't already own a stock. I can't buy a second one while holding the first.</div>
-<div><strong>Can I sell?</strong> Only if I currently own a stock. I can't sell something I don't have.</div>
-<div><strong>Can I do nothing?</strong> Always. Waiting is always legal.</div>
-<div><strong>Is there a constraint?</strong> Yes: <em>after selling, I must wait one day before buying again</em>. So even if I don't own a stock, I might not be allowed to buy yet.</div>
+<div><strong>Can I always buy?</strong> No. I can't buy if I already own a stock (hold at most one at a time).</div>
+<div><strong>Can I always sell?</strong> No. I can't sell if I don't own a stock.</div>
+<div><strong>Can I always do nothing?</strong> Yes. Waiting is always legal.</div>
+<div><strong>Is there an additional constraint?</strong> Yes: after selling, I must wait one day before buying again. So even if I don't own a stock, I might not be allowed to buy yet.</div>
 </div>
 </div>
 
-<p style="margin-top:12px">So my available actions <strong>depend on my current situation</strong>. That's different from knapsack where "grab or skip" is always available. Here, I need to know <strong>what situation I'm in</strong> before I can figure out my choices.</p>
+<h3 style="margin-top:20px">Why are these the only legal actions?</h3>
+<p>The problem defines exactly three actions (buy, sell, rest). But their availability <strong>depends on my current situation</strong>. That's different from knapsack where "grab or skip" is always available. Here, I need to know what situation I'm in before I can figure out my choices.</p>
+
+<p style="margin-top:12px">This means I must first discover the <strong>situations</strong>.</p>
 
 <!-- DISCOVERING THE STATES -->
-<h3 style="color:var(--emerald);margin-top:20px">What situations can I be in?</h3>
+<h3 style="margin-top:24px">What situations can I be in?</h3>
 
 <p style="margin-bottom:12px">Let me list every possible situation and ask: <strong>what's different about what I'm allowed to do?</strong></p>
 
@@ -131,17 +201,17 @@ code{font-family:'Fira Code','Courier New',monospace}
 
 <div>
 <strong>Situation A:</strong> I don't own a stock, and I didn't sell yesterday.<br>
-<span style="padding-left:20px">→ I'm <strong>free</strong>. I can buy or wait.</span>
+<span style="padding-left:20px">→ I'm <strong>free</strong>. I can buy or wait. Two legal actions.</span>
 </div>
 
 <div>
 <strong>Situation B:</strong> I own a stock.<br>
-<span style="padding-left:20px">→ I'm <strong>holding</strong>. I can sell or keep holding.</span>
+<span style="padding-left:20px">→ I'm <strong>holding</strong>. I can sell or keep holding. Two legal actions.</span>
 </div>
 
 <div>
 <strong>Situation C:</strong> I don't own a stock, but I sold yesterday.<br>
-<span style="padding-left:20px">→ I'm in <strong>cooldown</strong>. The rule says I must wait. I can't buy, can't sell. I can only wait.</span>
+<span style="padding-left:20px">→ I'm in <strong>cooldown</strong>. The rule says I must wait. Zero choices. I can only wait.</span>
 </div>
 
 </div>
@@ -149,7 +219,7 @@ code{font-family:'Fira Code','Courier New',monospace}
 
 <div style="background:rgba(16,185,129,.08);border:2px solid var(--emerald);border-radius:10px;padding:16px;margin:12px 0">
 <div style="font-size:.95em">
-<strong>How do I know these are the only three?</strong> Because the only constraint is "wait one day after selling." That creates exactly one special situation (just sold, must wait). Everything else is either "I'm holding a stock" or "I'm free to act." Three situations, three states.
+<strong>How do I know these are the only three?</strong> The only constraint is "wait one day after selling." That creates exactly one special situation (just sold, must wait). Everything else is either "I own a stock" or "I'm free to act." Three situations. Three states. No more.
 </div>
 </div>
 
@@ -169,9 +239,15 @@ I own a stock. Waiting for the right time to sell.
 I just sold. Mandatory cooldown. Can't do anything today.
 </div>
 </div>
+</div>
 
-<!-- STEP 3: EACH STATE'S CHOICES AS A STORY -->
-<h3 style="color:var(--emerald);margin-top:20px">What happens in each state?</h3>
+<img src="dp/images/stock_state_discovery.png" alt="Stock state discovery: constraints create three situations (REST, HOLD, SOLD) with different legal actions" class="scene-img">
+
+<!-- ==================== STEP 4: EXPLAIN EACH CHOICE ==================== -->
+
+<h2><span class="step-num">4</span> Explain Each Choice</h2>
+
+<div class="ws">
 
 <p style="margin-bottom:12px">Now I can derive the choices for each situation. In each state, I ask: "what actions are legal <strong>right now</strong>?"</p>
 
@@ -182,18 +258,20 @@ I just sold. Mandatory cooldown. Can't do anything today.
 <div style="display:grid;gap:14px;font-size:.93em">
 <div style="background:var(--card2);border-radius:8px;padding:14px;border-left:3px solid var(--red)">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">BUY</div>
-<strong>What am I choosing?</strong> Spend money to buy a stock at today's price.<br>
+<strong>What am I doing?</strong> Spending money to buy a stock at today's price.<br>
+<strong>Why is this legal?</strong> I don't own anything and I'm not in cooldown. Buying is allowed.<br>
 <strong>What changes immediately?</strong> I lose <code>prices[day]</code> in cash. I now own a stock.<br>
-<strong>What new situation does this create?</strong> Tomorrow I'll be in HOLD (I own something).<br>
-<strong>What work remains?</strong> From tomorrow onward, maximize profit while holding. <code>-prices[day] + max_profit(day+1, "hold")</code>
+<strong>What stays unchanged?</strong> Everything before today. Past profit is locked in.<br>
+<strong>What remains to solve?</strong> From tomorrow onward, maximize profit while holding. <code>-prices[day] + max_profit(day+1, "hold")</code>
 </div>
 
 <div style="background:var(--card2);border-radius:8px;padding:14px;border-left:3px solid var(--blue)">
 <div style="color:var(--blue);font-weight:700;margin-bottom:6px">WAIT</div>
-<strong>What am I choosing?</strong> Do nothing. Skip this day.<br>
+<strong>What am I doing?</strong> Nothing. Skip this day.<br>
+<strong>Why is this legal?</strong> Waiting is always legal.<br>
 <strong>What changes immediately?</strong> Nothing. No money spent, no stock acquired.<br>
-<strong>What new situation does this create?</strong> Tomorrow I'll still be in REST (still free).<br>
-<strong>What work remains?</strong> Same problem starting tomorrow. <code>max_profit(day+1, "rest")</code>
+<strong>What stays unchanged?</strong> Everything. My state doesn't change.<br>
+<strong>What remains to solve?</strong> Same problem starting tomorrow. <code>max_profit(day+1, "rest")</code>
 </div>
 </div>
 
@@ -207,22 +285,24 @@ I just sold. Mandatory cooldown. Can't do anything today.
 <div style="display:grid;gap:14px;font-size:.93em">
 <div style="background:var(--card2);border-radius:8px;padding:14px;border-left:3px solid var(--green)">
 <div style="color:var(--green);font-weight:700;margin-bottom:6px">SELL</div>
-<strong>What am I choosing?</strong> Sell my stock at today's price.<br>
+<strong>What am I doing?</strong> Selling my stock at today's price.<br>
+<strong>Why is this legal?</strong> I own a stock. Selling is allowed.<br>
 <strong>What changes immediately?</strong> I gain <code>prices[day]</code> in cash. I no longer own a stock.<br>
-<strong>What new situation does this create?</strong> Tomorrow I'll be in SOLD (not REST!). The cooldown rule forces me to wait one day before I can buy again.<br>
-<strong>What work remains?</strong> <code>prices[day] + max_profit(day+1, "sold")</code>
+<strong>What stays unchanged?</strong> Past transactions. Their profit is locked in.<br>
+<strong>What remains to solve?</strong> Tomorrow I'm in SOLD (not REST!). Cooldown forces one day wait. <code>prices[day] + max_profit(day+1, "sold")</code>
 </div>
 
 <div style="background:var(--card2);border-radius:8px;padding:14px;border-left:3px solid var(--red)">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">KEEP HOLDING</div>
-<strong>What am I choosing?</strong> Don't sell. Wait for a better price.<br>
+<strong>What am I doing?</strong> Not selling. Waiting for a better price.<br>
+<strong>Why is this legal?</strong> Holding is always legal.<br>
 <strong>What changes immediately?</strong> Nothing. Still own the stock.<br>
-<strong>What new situation does this create?</strong> Tomorrow I'm still in HOLD.<br>
-<strong>What work remains?</strong> <code>max_profit(day+1, "hold")</code>
+<strong>What stays unchanged?</strong> Everything.<br>
+<strong>What remains to solve?</strong> <code>max_profit(day+1, "hold")</code>
 </div>
 </div>
 
-<div style="font-size:.93em;margin-top:10px"><strong>Are there other options?</strong> Can I buy another stock? No, the problem allows holding at most one at a time. Sell or keep are the only legal actions. <strong>Decision:</strong> <code>max(sell, keep)</code>.</div>
+<div style="font-size:.93em;margin-top:10px"><strong>Are there other options?</strong> Can I buy another stock? No, hold at most one. Sell or keep are the only legal actions. <strong>Decision:</strong> <code>max(sell, keep)</code>.</div>
 </div>
 
 <!-- FROM SOLD -->
@@ -233,14 +313,13 @@ I just sold. Mandatory cooldown. Can't do anything today.
 <div><strong>What are my legal actions?</strong> None. The cooldown rule says I must wait one day after selling. Buying is forbidden. Selling is impossible (I don't own anything). Waiting is the only option.</div>
 <div><strong>What changes?</strong> Day advances. Cooldown is served.</div>
 <div><strong>What new situation does this create?</strong> Tomorrow I'll be in REST (free to act again).</div>
-<div><strong>What work remains?</strong> <code>max_profit(day+1, "rest")</code></div>
+<div><strong>What remains to solve?</strong> <code>max_profit(day+1, "rest")</code></div>
 </div>
 
-<div style="margin-top:10px;font-size:.93em;color:var(--muted)"><strong>Why does the SOLD state even exist?</strong> Without it, after selling I'd go straight to REST and could buy again immediately. The SOLD state is how the code enforces the one-day gap.</div>
+<div style="margin-top:10px;font-size:.93em;color:var(--muted)"><strong>Why does the SOLD state even exist?</strong> Without it, after selling I'd go straight to REST and could buy again immediately. The SOLD state is how the code enforces the one-day gap. The constraint created this state.</div>
 </div>
 
-<!-- STEP 4: THE CHOICE DIAGRAM -->
-<h3 style="color:var(--emerald);margin-top:20px">The Choice Diagram</h3>
+<h3 style="margin-top:20px">The Choice Diagram</h3>
 
 <div style="background:var(--card2);border-radius:10px;padding:18px;margin:12px 0">
 <pre style="font-size:.88em;line-height:1.8;margin:0"><code>Current Situation: It's day X. What state am I in?
@@ -267,7 +346,7 @@ Combine: max(choices) in each state.</code></pre>
 </div>
 
 <!-- WATCH IT PLAY OUT -->
-<h3 style="color:var(--emerald);margin-top:20px">Watch it play out</h3>
+<h3 style="margin-top:20px">Watch it play out</h3>
 
 <p style="margin-bottom:8px">Trace <code>prices = [1, 2, 3, 0, 2]</code>, optimal path:</p>
 
@@ -300,21 +379,75 @@ Total profit: -1 + 2 + 0 + 0 + 2 = <strong>$3</strong>
 </div>
 
 <p style="font-size:.9em;color:var(--muted)">Notice how the state determined the legal actions at each step. On day 2 (SOLD), buying was forbidden even though the price was good. The cooldown constraint shaped the path.</p>
+</div>
 
-<!-- STEP 5: THE REUSABLE PRINCIPLE -->
-<h3 style="color:var(--emerald);margin-top:20px">The reusable principle</h3>
+<img src="dp/images/stock_cooldown_choices.png" alt="Stock Cooldown choice diagram: state machine with HOLD, SOLD, REST states and 5 transitions" class="scene-img">
 
-<div style="background:rgba(16,185,129,.08);border:2px solid var(--emerald);border-radius:10px;padding:18px;margin:12px 0">
-<div style="font-size:.95em">
-The states came from the <strong>constraints</strong>, not memorization. Without the cooldown rule, you'd only need two states (own a stock or don't). The constraint "wait one day after selling" created a third state.<br><br>
-For any DP problem where your available actions depend on recent history, ask: <strong>"What distinct situations can I be in, and what's legal in each?"</strong> Each situation is a state. Each legal action is a choice. The constraints tell you both.
+<!-- ==================== STEP 5: STATE ==================== -->
+
+<h2><span class="step-num">5</span> Discover the State</h2>
+
+<div class="ws">
+
+<p style="margin-bottom:14px"><strong>What information must I know to uniquely describe the remaining problem?</strong></p>
+
+<div style="background:rgba(16,185,129,.06);border:2px solid var(--emerald);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--emerald);font-weight:800;font-size:1.05em;margin-bottom:12px">Candidate: day (which day am I on?)</div>
+<div style="display:grid;gap:8px;font-size:.93em">
+<div><strong>Why do I need it?</strong> Different days have different prices. "What's the max profit from day 2 onward?" is a completely different question from "from day 4 onward?"</div>
+<div><strong>What if I remove it?</strong> "What's the max profit from some day onward?" is ambiguous. I can't determine the answer without knowing which day.</div>
 </div>
 </div>
 
-<!-- TRANSITION JUSTIFICATION -->
-<h3 style="color:var(--emerald);margin-top:16px">Why each variable changes</h3>
+<div style="background:rgba(16,185,129,.06);border:2px solid var(--emerald);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--emerald);font-weight:800;font-size:1.05em;margin-bottom:12px">Candidate: current state (rest, hold, or sold)</div>
+<div style="display:grid;gap:8px;font-size:.93em">
+<div><strong>Why do I need it?</strong> Different states have different legal actions. "Max profit from day 3 in REST" lets me buy. "Max profit from day 3 in SOLD" forces me to wait. Different answers.</div>
+<div><strong>What if I remove it?</strong> "Max profit from day 3 in ??? state" is ambiguous. I can't determine which actions are legal.</div>
+</div>
+</div>
 
-<p style="margin-bottom:10px;font-size:.93em">State: <code>max_profit(day, state)</code>. Two state variables: which day, and which state we're in (rest, hold, or sold).</p>
+<div style="background:rgba(16,185,129,.06);border:2px solid var(--emerald);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--emerald);font-weight:800;font-size:1.05em;margin-bottom:12px">Candidate: which stock I bought / at what price</div>
+<div style="display:grid;gap:8px;font-size:.93em">
+<div><strong>Do I need it?</strong> No. The buy price was already subtracted as a cost when I chose to buy. The remaining problem only cares about "am I holding or not?" and "which day is it?" The exact purchase price doesn't affect future decisions.</div>
+<div><strong>Verdict:</strong> Not part of the state.</div>
+</div>
+</div>
+
+<div style="background:rgba(251,191,36,.12);border:2px solid var(--gold2);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
+<div style="font-size:1.1em;font-weight:800;color:var(--gold2)">State = (day, situation)</div>
+<div style="font-size:.93em;margin-top:6px">Two variables: which day (0 to n-1), and which of three states (rest, hold, sold). At most 3n unique subproblems.</div>
+</div>
+</div>
+
+<!-- ==================== STEP 6: STATE INVARIANT ==================== -->
+
+<h2><span class="step-num">6</span> State Invariant</h2>
+
+<div class="ws">
+
+<div style="background:rgba(16,185,129,.12);border:2px solid var(--emerald);border-radius:10px;padding:20px;margin:12px 0">
+<div style="font-size:1em;font-weight:700;color:var(--emerald);margin-bottom:8px">max_profit(day, state)</div>
+<div style="font-size:.95em">"I promise everything before this day has already been handled. Past transactions are locked in. I only care about maximizing profit from day onward, given my current state."</div>
+</div>
+
+<h3 style="margin-top:16px">Does every recursive call preserve this?</h3>
+
+<div style="font-size:.93em;margin:12px 0">
+Every call moves to <code>day+1</code>. It never revisits a previous day. It never undoes a past transaction. The state (rest/hold/sold) fully captures the consequence of past actions without storing the full history.
+<br><br>
+<strong>Verification:</strong> When I call <code>max_profit(day+1, "hold")</code>, I've already committed to buying on the current day. The buy cost is accounted for. The child call only needs to handle day+1 onward in the HOLD state. <strong>Invariant preserved.</strong>
+</div>
+</div>
+
+<!-- ==================== STEPS 7-8: TRANSITION AND RECURRENCE ==================== -->
+
+<h2><span class="step-num">7</span> Derive the Transition</h2>
+
+<div class="ws">
+
+<p style="margin-bottom:10px;font-size:.93em">State: <code>max_profit(day, state)</code>. For each transition, justify the cost, the state change, and why.</p>
 
 <!-- FROM REST -->
 <div style="background:rgba(59,130,246,.06);border:2px solid var(--blue);border-radius:10px;padding:18px;margin:14px 0">
@@ -323,8 +456,10 @@ For any DP problem where your available actions depend on recent history, ask: <
 <div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--red)">
 <div style="color:var(--red);font-weight:700;margin-bottom:8px">BUY (rest &rarr; hold)</div>
 <div style="display:grid;gap:6px;font-size:.9em">
+<div><strong>Action:</strong> Buy stock at today's price.</div>
 <div><strong>Immediate cost:</strong> <code>-prices[day]</code>. Money spent.</div>
-<div><strong>State changes:</strong> <code>day &rarr; day+1</code>, <code>state: rest &rarr; hold</code> (now own a stock).</div>
+<div><strong>State change:</strong> <code>day &rarr; day+1</code> (tomorrow), <code>state: rest &rarr; hold</code> (now own a stock).</div>
+<div><strong>Why state changes:</strong> I just acquired a stock. Tomorrow I'm holding it.</div>
 <div><strong>Call:</strong> <code>-prices[day] + max_profit(day+1, "hold")</code></div>
 </div>
 </div>
@@ -332,8 +467,10 @@ For any DP problem where your available actions depend on recent history, ask: <
 <div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--blue)">
 <div style="color:var(--blue);font-weight:700;margin-bottom:8px">WAIT (rest &rarr; rest)</div>
 <div style="display:grid;gap:6px;font-size:.9em">
+<div><strong>Action:</strong> Do nothing.</div>
 <div><strong>Immediate cost:</strong> <code>+0</code>. No transaction.</div>
-<div><strong>State changes:</strong> <code>day &rarr; day+1</code>, state stays rest.</div>
+<div><strong>State change:</strong> <code>day &rarr; day+1</code>, state stays rest.</div>
+<div><strong>Why state stays:</strong> Nothing happened. Still free tomorrow.</div>
 <div><strong>Call:</strong> <code>max_profit(day+1, "rest")</code></div>
 </div>
 </div>
@@ -348,8 +485,10 @@ For any DP problem where your available actions depend on recent history, ask: <
 <div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--green)">
 <div style="color:var(--green);font-weight:700;margin-bottom:8px">SELL (hold &rarr; sold)</div>
 <div style="display:grid;gap:6px;font-size:.9em">
+<div><strong>Action:</strong> Sell stock at today's price.</div>
 <div><strong>Immediate reward:</strong> <code>+prices[day]</code>. Money received.</div>
-<div><strong>State changes:</strong> <code>day &rarr; day+1</code>, <code>state: hold &rarr; sold</code> (must cooldown next).</div>
+<div><strong>State change:</strong> <code>day &rarr; day+1</code>, <code>state: hold &rarr; sold</code> (must cooldown next).</div>
+<div><strong>Why sold, not rest?</strong> The cooldown rule. After selling, I must wait one day. SOLD enforces that gap.</div>
 <div><strong>Call:</strong> <code>prices[day] + max_profit(day+1, "sold")</code></div>
 </div>
 </div>
@@ -357,8 +496,10 @@ For any DP problem where your available actions depend on recent history, ask: <
 <div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--red)">
 <div style="color:var(--red);font-weight:700;margin-bottom:8px">KEEP HOLDING (hold &rarr; hold)</div>
 <div style="display:grid;gap:6px;font-size:.9em">
+<div><strong>Action:</strong> Don't sell. Wait for a better price.</div>
 <div><strong>Immediate cost:</strong> <code>+0</code>. No transaction.</div>
-<div><strong>State changes:</strong> <code>day &rarr; day+1</code>, state stays hold.</div>
+<div><strong>State change:</strong> <code>day &rarr; day+1</code>, state stays hold.</div>
+<div><strong>Why state stays:</strong> Still own the same stock.</div>
 <div><strong>Call:</strong> <code>max_profit(day+1, "hold")</code></div>
 </div>
 </div>
@@ -370,22 +511,38 @@ For any DP problem where your available actions depend on recent history, ask: <
 <div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:10px">FROM SOLD: No choice (mandatory cooldown)</div>
 <div style="display:grid;gap:6px;font-size:.9em">
+<div><strong>Action:</strong> Wait. No other option.</div>
 <div><strong>Immediate cost:</strong> <code>+0</code>. Just waiting.</div>
-<div><strong>State changes:</strong> <code>day &rarr; day+1</code>, <code>state: sold &rarr; rest</code> (cooldown complete).</div>
+<div><strong>State change:</strong> <code>day &rarr; day+1</code>, <code>state: sold &rarr; rest</code> (cooldown complete).</div>
+<div><strong>Why rest?</strong> The one-day gap is served. Tomorrow I'm free to act again.</div>
 <div><strong>Call:</strong> <code>max_profit(day+1, "rest")</code></div>
 </div>
 </div>
 </div>
 
-<img src="dp/images/stock_cooldown_choices.png" alt="Stock Cooldown choice diagram: state machine with HOLD, SOLD, REST states and 5 transitions" class="scene-img">
-
 <img src="dp/images/stock_cooldown_transitions.png" alt="Stock Cooldown transition justification: 5 transitions between 3 states with cost/reward for each" class="scene-img">
 
-<!-- ==================== STEP 2: RECURSION ==================== -->
-<h2>Step 2: States &rarr; Recursion</h2>
+<!-- STEP 8: RECURRENCE -->
+
+<h2><span class="step-num">8</span> Derive the Recurrence</h2>
 
 <div class="ws">
-<h3>Each state has its own choices</h3>
+<p style="margin-bottom:12px">Now the recurrence writes itself:</p>
+
+<div style="background:var(--card2);border-radius:10px;padding:18px;margin:12px 0">
+<pre style="font-size:.88em;line-height:2;margin:0"><code>max_profit(day, state) =
+    0                                               if day == len(prices)
+
+    max(-prices[day] + max_profit(day+1, "hold"),
+        max_profit(day+1, "rest"))                  if state == "rest"
+
+    max(prices[day] + max_profit(day+1, "sold"),
+        max_profit(day+1, "hold"))                  if state == "hold"
+
+    max_profit(day+1, "rest")                       if state == "sold"</code></pre>
+</div>
+
+<h3 style="margin-top:16px">The code</h3>
 
 <pre><code>def max_profit(prices, day, state, cache):
     if day == len(prices):
@@ -420,16 +577,19 @@ max(sell, keep). Sell for today's price or hold for a better one.
 </div>
 <div style="background:var(--card2);border-radius:6px;padding:10px;font-size:.85em">
 <div style="color:var(--green);font-weight:700">SOLD</div>
-No choice. Must cool down. Go to REST.
+No choice. Must cooldown. Go to REST.
 </div>
 </div>
 </div>
 
-<!-- ==================== STEP 3: OVERLAP ==================== -->
-<h2>Step 3: Spot the Overlap</h2>
+<!-- ==================== STEP 9: MEMOIZATION ==================== -->
+
+<h2><span class="step-num">9</span> Memoization</h2>
 
 <div class="ws">
-<h3>Same (day, state) from different paths</h3>
+<h3>Why does repeated work occur?</h3>
+
+<p style="margin-bottom:12px">Different trading paths reach the same (day, state):</p>
 
 <pre style="font-size:.82em;line-height:1.8"><code>max_profit(day=0, rest)
   buy: max_profit(day=1, hold)
@@ -444,21 +604,10 @@ No choice. Must cool down. Go to REST.
       sell: max_profit(day=3, sold)             │
         cooldown: max_profit(day=4, rest) ─ ─ ─ ┘</code></pre>
 
-<div style="background:rgba(251,191,36,.12);border:2px solid var(--gold2);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
-<div style="font-size:1.1em;font-weight:800;color:var(--gold2);margin-bottom:8px">(day=3, rest) appears from multiple paths</div>
-<div style="font-size:.95em">Cache key: <code>(day, state)</code>. At most 3n unique states.</div>
-</div>
-</div>
+<h3 style="margin-top:16px">Which states repeat?</h3>
+<p><code>(day=3, rest)</code> appears from multiple trading histories. "Buy day 0, sell day 1, cooldown day 2" and "wait day 0, wait day 1, wait day 2" both arrive at day 3 in REST. The future is identical regardless of how I got here.</p>
 
-<img src="dp/images/stock_cooldown_tree.png" alt="Stock Cooldown recursion tree: same (day, state) reached from different trading paths" class="scene-img">
-
-<!-- ==================== STEP 4: MEMOIZE ==================== -->
-<h2>Step 4: Memoize</h2>
-
-<div class="ws">
-<h3>Already built into the recursion above</h3>
-
-<p>The recursion code above already includes the cache. The key insight:</p>
+<h3 style="margin-top:16px">How memoization removes repetition</h3>
 
 <div class="code-ann" style="margin-top:14px">
 <code style="color:var(--gold2)">(day, state) in cache</code><div>Two state variables: which day, which state</div>
@@ -467,15 +616,22 @@ No choice. Must cool down. Go to REST.
 </div>
 </div>
 
+<img src="dp/images/stock_cooldown_tree.png" alt="Stock Cooldown recursion tree: same (day, state) reached from different trading paths" class="scene-img">
+
 <img src="dp/images/stock_cooldown_memo.png" alt="Stock with Cooldown memoization: state machine with cache" class="scene-img">
 
-<!-- ==================== STEP 5: TABULATION ==================== -->
-<h2 style="color:var(--amber);border-bottom-color:var(--amber)">Step 5: From Recursion to Table</h2>
+<!-- ==================== STEP 10: TABULATION ==================== -->
+
+<h2 style="color:var(--amber);border-bottom-color:var(--amber)"><span class="step-num" style="background:var(--amber)">10</span> Tabulation</h2>
 
 <div class="ws" style="border-left-color:var(--amber)">
-<h3 style="color:var(--amber)">Three variables, not an array</h3>
+<h3 style="color:var(--amber)">Why the table dimensions come from the state</h3>
 
-<p style="margin-bottom:12px">Each day, compute three values: best profit if HOLD, SOLD, or REST.</p>
+<p>State = (day, situation). Day ranges from 0 to n-1. Situation is one of three values. But each day only depends on the previous day, so I just need three variables, not a full table.</p>
+
+<h3 style="color:var(--amber);margin-top:16px">Why the iteration order works</h3>
+
+<p style="margin-bottom:12px">Every transition moves to <code>day+1</code>. If I fill from day 0 forward, every dependency (the next day's values) would need to be computed first. But I'm computing profit from day X onward, so I fill <strong>backwards</strong> from the last day (or I use the tabulation trick: track three running variables forward, where each day's values only depend on the previous day's values).</p>
 
 <table class="grid-table">
 <tr><th>Day</th><th>Price</th><th style="color:var(--red)">HOLD</th><th style="color:var(--green)">SOLD</th><th style="color:var(--blue)">REST</th></tr>
@@ -486,7 +642,7 @@ No choice. Must cool down. Go to REST.
 <tr><td>4</td><td>$2</td><td>1</td><td style="color:var(--gold2);font-weight:700">3</td><td>2</td></tr>
 </table>
 
-<p style="font-size:.9em;color:var(--muted);margin-top:8px">Answer: max(SOLD, REST) at last day = max(3, 2) = <strong style="color:var(--gold2)">3</strong>. (Can't end in HOLD, you'd be stuck with unsold stock.)</p>
+<p style="font-size:.9em;color:var(--muted);margin-top:8px">Answer: max(SOLD, REST) at last day = max(3, 2) = <strong style="color:var(--gold2)">3</strong>. (Can't end in HOLD; you'd be stuck with unsold stock.)</p>
 </div>
 
 <img src="dp/images/stock_cooldown_tab.png" alt="Stock with Cooldown tabulation: three variables tracked day by day" class="scene-img">
@@ -520,11 +676,18 @@ No choice. Must cool down. Go to REST.
 </div>
 </div>
 
-<!-- ==================== THE CODE ==================== -->
-<h2 style="color:var(--amber);border-bottom-color:var(--amber)">The Tabulation Code</h2>
+<!-- ==================== STEP 11: SPACE OPTIMIZATION ==================== -->
+
+<h2 style="color:var(--amber);border-bottom-color:var(--amber)"><span class="step-num" style="background:var(--amber)">11</span> Space Optimization</h2>
 
 <div class="ws" style="border-left-color:var(--amber)">
-<h3 style="color:var(--amber)">Three variables, updated each day</h3>
+<h3 style="color:var(--amber)">Which previous states are actually needed?</h3>
+
+<p>Each day only depends on the previous day's three values (hold, sold, rest). I don't need any day before that.</p>
+
+<h3 style="color:var(--amber);margin-top:14px">Why older states can be discarded</h3>
+
+<p>Three variables are enough. No array needed. O(1) space.</p>
 
 <pre><code>def max_profit(prices):
     if not prices:
@@ -551,10 +714,88 @@ No choice. Must cool down. Go to REST.
 <code style="color:var(--amber)">new_rest = max(rest, sold)</code><div>Keep resting OR cooldown from sold</div>
 <code style="color:var(--gold2)">return max(sold, rest)</code><div>Best ending: sold or resting. Not holding.</div>
 </div>
-
-<div class="hi" style="margin-top:16px">
-<strong style="color:var(--amber)">Why no array?</strong> Each day only depends on the previous day's values. Three variables are enough. No need to store the full history.
 </div>
+
+<!-- ==================== STEP 12: PATTERN RECOGNITION ==================== -->
+
+<h2><span class="step-num">12</span> Pattern Recognition</h2>
+
+<div class="ws">
+<h3>What clues suggested this DP pattern?</h3>
+<div style="display:grid;gap:8px;font-size:.93em;margin:12px 0">
+<div><strong>"Available actions depend on my situation"</strong> → Not a simple grab/skip. I need to track which state I'm in.</div>
+<div><strong>"After selling, must wait one day"</strong> → A constraint on consecutive actions. This creates an extra state (SOLD) beyond the obvious two (have stock / don't have stock).</div>
+<div><strong>"Maximize profit"</strong> → Optimization over choices → DP.</div>
+</div>
+
+<h3 style="margin-top:16px">What should I immediately think when I see a similar problem?</h3>
+<p>"Constraints restrict my actions based on recent history. Each distinct situation is a state. Each legal action is a transition." For any problem where today's options depend on what I did recently, think state machine DP.</p>
+
+<h3 style="margin-top:16px">What generalizes to future problems?</h3>
+<div style="display:grid;gap:6px;font-size:.93em;margin:8px 0">
+<div>States come from constraints. More constraints = more states.</div>
+<div>Without the cooldown, only 2 states needed (hold/rest). The constraint added the third.</div>
+<div>Each state has its own set of legal actions. Derive them, don't memorize them.</div>
+<div>Space optimization: if each step only depends on the previous step, three variables are enough.</div>
+</div>
+</div>
+
+<!-- ==================== STEP 13: COMMON MISTAKES ==================== -->
+
+<h2><span class="step-num">13</span> Common Mistakes</h2>
+
+<div class="ws">
+
+<div style="display:grid;gap:14px">
+
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:16px">
+<div style="color:var(--red);font-weight:700;margin-bottom:6px">Wrong state: forgetting the SOLD state</div>
+<div style="font-size:.9em">Using only HOLD and REST. After selling, going directly to REST allows buying on the next day, violating the cooldown rule.</div>
+<div style="font-size:.85em;color:var(--muted);margin-top:6px"><strong>How to detect:</strong> test with prices=[1,2,3,0,2]. If your answer is higher than 3, the cooldown isn't being enforced.</div>
+</div>
+
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:16px">
+<div style="color:var(--red);font-weight:700;margin-bottom:6px">Wrong transition: sell goes to REST instead of SOLD</div>
+<div style="font-size:.9em">Writing <code>max_profit(day+1, "rest")</code> after selling instead of <code>max_profit(day+1, "sold")</code>. Same bug as above, just in the transition instead of the state design.</div>
+<div style="font-size:.85em;color:var(--muted);margin-top:6px"><strong>How to detect:</strong> trace by hand. After selling on day 1, can you buy on day 2? If yes, transition is wrong.</div>
+</div>
+
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:16px">
+<div style="color:var(--red);font-weight:700;margin-bottom:6px">Wrong initialization: hold = 0 instead of -prices[0]</div>
+<div style="font-size:.9em">If hold starts at 0, the algorithm thinks holding costs nothing. On day 0, buying means spending <code>prices[0]</code>, so hold must start as <code>-prices[0]</code>.</div>
+<div style="font-size:.85em;color:var(--muted);margin-top:6px"><strong>How to detect:</strong> if your profit is too high, check whether the buy cost is being subtracted.</div>
+</div>
+
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:16px">
+<div style="color:var(--red);font-weight:700;margin-bottom:6px">Wrong final answer: returning max(hold, sold, rest)</div>
+<div style="font-size:.9em">Including HOLD in the final answer. Ending in HOLD means you're stuck with an unsold stock, which is never optimal (you paid for it but never got the money back). Return <code>max(sold, rest)</code>.</div>
+<div style="font-size:.85em;color:var(--muted);margin-top:6px"><strong>How to detect:</strong> test with prices=[5]. Greedy would say hold = -5 (bought but never sold). If your answer is 0 (correctly: do nothing), this is fine. If it's -5, you're counting hold.</div>
+</div>
+
+</div>
+</div>
+
+<img src="dp/images/stock_mistakes.png" alt="Stock cooldown common mistakes: missing SOLD state, wrong transition after sell, wrong initialization" class="scene-img">
+
+<!-- ==================== STEP 14: FINAL MENTAL MODEL ==================== -->
+
+<h2><span class="step-num">14</span> If I Forget Everything</h2>
+
+<div class="ws">
+<p style="margin-bottom:14px">If I forget this algorithm in six months, here's how I'd rediscover it from scratch:</p>
+
+<div style="background:rgba(16,185,129,.08);border:2px solid var(--emerald);border-radius:10px;padding:18px;margin:12px 0">
+<div style="display:grid;gap:10px;font-size:.95em">
+<div><span class="step-num" style="width:24px;height:24px;font-size:.75em">1</span> "I can buy, sell, or wait. But not always all three."</div>
+<div><span class="step-num" style="width:24px;height:24px;font-size:.75em">2</span> "My legal actions depend on my situation. That means I need states."</div>
+<div><span class="step-num" style="width:24px;height:24px;font-size:.75em">3</span> "The cooldown constraint creates three situations: free, holding, just sold."</div>
+<div><span class="step-num" style="width:24px;height:24px;font-size:.75em">4</span> "Each state has its own legal actions. Derive choices per state."</div>
+<div><span class="step-num" style="width:24px;height:24px;font-size:.75em">5</span> "Different paths reach the same (day, state) = overlapping subproblems = memoize."</div>
+<div><span class="step-num" style="width:24px;height:24px;font-size:.75em">6</span> "Each day depends only on the previous day = three variables, O(1) space."</div>
+</div>
+</div>
+
+<p style="font-size:.93em">The constraint created the states. The states determined the legal actions. The actions defined the transitions. The transitions wrote the recurrence. The recurrence revealed the overlap. The overlap justified memoization. Every step followed from the one before.</p>
 </div>
 
 <!-- ==================== CHILDREN ==================== -->
@@ -580,49 +821,50 @@ Given an array of integers, find the length of the longest strictly increasing s
 <code>[10, 9, 2, 5, 3, 7, 101, 18]</code><br><br>
 Some increasing subsequences:
 <div style="display:grid;gap:4px;font-size:.9em;padding:8px 0 0 8px">
-<div>[<strong style="color:var(--green)">2, 5, 7, 101</strong>] → length 4</div>
-<div>[<strong style="color:var(--green)">2, 5, 7, 18</strong>] → length 4</div>
-<div>[<strong style="color:var(--green)">2, 3, 7, 101</strong>] → length 4</div>
-<div>[2, 5] → length 2 (valid, but not longest)</div>
+<div>[<strong style="color:var(--green)">2, 5, 7, 101</strong>] = length 4</div>
+<div>[<strong style="color:var(--green)">2, 5, 7, 18</strong>] = length 4</div>
+<div>[<strong style="color:var(--green)">2, 3, 7, 101</strong>] = length 4</div>
 </div>
 <br>Answer: <strong style="color:var(--gold2)">4</strong>. No increasing subsequence of length 5 exists.
 <div style="margin-top:8px;color:var(--muted);font-size:.9em">A subsequence keeps the original order but can skip elements. It doesn't have to be contiguous.</div>
 </div>
 
-<div class="sbox"><div class="sl" style="color:var(--emerald)">THE KEY IDEA</div>
-<code>lis[i]</code> = length of the longest increasing subsequence <strong>ending at index i</strong>. For each i, look at every j before it. If <code>nums[j] < nums[i]</code>, we can extend that subsequence. Take the longest one and add 1.</div>
+<div class="sbox"><div class="sl" style="color:var(--emerald)">CLASSIFICATION</div>
+<div style="font-size:.95em">
+<strong>Recursive question:</strong> "What is the longest increasing subsequence ending at index i?"<br>
+<strong>State:</strong> <code>lis_ending_at(index)</code>. Just one variable: which element I'm ending at.<br>
+<strong>Why not start/end like palindrome?</strong> A subsequence can skip elements. The state is just where the chain currently ends.
+</div></div>
+
+<div class="sbox"><div class="sl" style="color:var(--emerald)">CHOICES (DISCOVERED, NOT LISTED)</div>
+<div style="font-size:.95em">
+<strong>Situation:</strong> I'm at element <code>nums[index]</code>. I want to build the longest chain ending here.<br>
+<strong>What can I do?</strong> Look at every previous element. If <code>nums[prev] &lt; nums[index]</code>, I could extend that chain by appending my element.<br>
+<strong>Why check ALL prev?</strong> Any smaller previous element could end the longest chain. I don't know which without trying all.<br>
+<strong>If no valid prev exists?</strong> Start a new chain of length 1 (just this element alone).
+</div></div>
 
 <img src="dp/images/lis_choices.png" alt="LIS choice diagram: for each element, check ALL smaller previous elements. Variable lookback." class="scene-img">
 
-<h3 style="color:var(--emerald)">Why each variable changes</h3>
-
-<p style="margin-bottom:10px;font-size:.93em">State: <code>lis_ending_at(index)</code> = length of longest increasing subsequence <strong>ending at</strong> <code>nums[index]</code>.</p>
+<h3 style="color:var(--emerald)">Transitions</h3>
 
 <div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:10px">For each prev where nums[prev] &lt; nums[index]: EXTEND</div>
+<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:10px">EXTEND: nums[prev] &lt; nums[index]</div>
 <div style="display:grid;gap:8px;font-size:.93em">
-<div><strong>Action:</strong> Extend the subsequence ending at <code>prev</code> by appending <code>nums[index]</code>.</div>
-<div><strong>Immediate reward:</strong> <code>+1</code>. Adding one more element to the subsequence.</div>
-<div><strong>Why can we extend?</strong> <code>nums[prev] &lt; nums[index]</code>, so the sequence stays strictly increasing.</div>
-<div><strong>State change:</strong></div>
-<div style="padding-left:20px">
-<code>index &rarr; prev</code>: We ask "what's the best subsequence ending at prev?" to know how long the chain is before us.
-</div>
+<div><strong>Action:</strong> Extend the chain ending at <code>prev</code> by appending <code>nums[index]</code>.</div>
+<div><strong>Immediate reward:</strong> <code>+1</code>. One more element in the chain.</div>
+<div><strong>Why can we extend?</strong> <code>nums[prev] &lt; nums[index]</code>. The sequence stays strictly increasing.</div>
 <div><strong>Call:</strong> <code>1 + lis_ending_at(prev)</code></div>
-<div style="color:var(--muted)"><strong>Why check ALL prev, not just one?</strong> Any earlier element with a smaller value could be the end of the longest chain. We don't know which prev gives the longest result until we try them all.</div>
 </div>
 </div>
 
 <div style="background:rgba(245,158,11,.06);border:2px solid var(--amber);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--amber);font-weight:800;font-size:1.05em;margin-bottom:10px">No valid prev exists (or standalone is best)</div>
-<div style="display:grid;gap:8px;font-size:.93em">
-<div><strong>Action:</strong> <code>nums[index]</code> starts a new subsequence by itself.</div>
-<div><strong>Result:</strong> <code>lis_ending_at(index) = 1</code>. A single element is always an increasing subsequence of length 1.</div>
-</div>
+<div style="color:var(--amber);font-weight:800;font-size:1.05em;margin-bottom:10px">STANDALONE: no valid prev</div>
+<div style="font-size:.93em"><code>lis_ending_at(index) = 1</code>. This element alone is an increasing subsequence of length 1.</div>
 </div>
 
-<div style="font-size:.93em;margin-top:8px">
-<strong>Decision:</strong> <code>best = max(1, max(1 + lis_ending_at(prev) for valid prev))</code>. Take the longest chain we can extend, or start fresh.
+<div style="font-size:.93em">
+<strong>Decision:</strong> <code>best = max(1, max(1 + lis_ending_at(prev) for valid prev))</code>
 </div>
 
 <img src="dp/images/lis_transitions.png" alt="LIS transition justification: extend any previous smaller element's chain by 1, or start fresh at 1" class="scene-img">
@@ -688,41 +930,39 @@ One possible order:
 <div style="margin-top:8px;color:var(--muted);font-size:.9em">The tricky part: when you burst a balloon, its neighbors change. Bursting [1] makes [3] and [5] become neighbors.</div>
 </div>
 
-<div class="sbox"><div class="sl" style="color:var(--emerald)">THE KEY IDEA</div>
-<strong>Think about which balloon to burst LAST</strong>, not first. If balloon k is the last to burst in range [left, right], the coins from k are <code>nums[left-1] * nums[k] * nums[right+1]</code> (the boundaries are still there because everything else in the range is already gone). This gives clean subproblems: [left, k-1] and [k+1, right].</div>
+<div class="sbox"><div class="sl" style="color:var(--emerald)">CLASSIFICATION</div>
+<div style="font-size:.95em">
+<strong>Why is this hard?</strong> Bursting a balloon changes the neighbors of adjacent balloons. Subproblems depend on each other.<br>
+<strong>Key insight:</strong> Think about which balloon to burst <strong>LAST</strong>, not first. If balloon k is the last to burst in range [left, right], everything else is already gone, so its neighbors are the fixed boundaries left-1 and right+1.<br>
+<strong>Family:</strong> Interval DP. State = (left, right) defining a range.
+</div></div>
+
+<div class="sbox"><div class="sl" style="color:var(--emerald)">CHOICES (DISCOVERED, NOT LISTED)</div>
+<div style="font-size:.95em">
+<strong>Situation:</strong> I have balloons in range [left, right]. I need to burst them all and maximize coins.<br>
+<strong>Why not think "first to burst"?</strong> If I burst k first, its neighbors shift, making the remaining subproblem dependent on that choice. Subproblems aren't independent.<br>
+<strong>Why "last to burst" works:</strong> If k is the last in [left, right], everything else is already gone. k's neighbors are the boundaries: nums[left-1] and nums[right+1]. These are fixed, not shifted. The left and right subproblems are independent.<br>
+<strong>Choices:</strong> Try every balloon k in [left, right] as the last one burst. Take the maximum.
+</div></div>
 
 <img src="dp/images/burst_balloons_choices.png" alt="Burst Balloons choice diagram: think LAST not FIRST, interval DP with boundary values" class="scene-img">
 
-<h3 style="color:var(--emerald)">Why each variable changes</h3>
-
-<p style="margin-bottom:10px;font-size:.93em">State: <code>max_coins(left, right)</code> = max coins from bursting all balloons in <code>[left, right]</code>.</p>
+<h3 style="color:var(--emerald)">Transitions</h3>
 
 <div style="background:rgba(16,185,129,.06);border:2px solid var(--emerald);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--emerald);font-weight:800;font-size:1.05em;margin-bottom:10px">For each k in [left, right]: Burst k LAST</div>
 <div style="display:grid;gap:8px;font-size:.93em">
-<div><strong>Action:</strong> Choose balloon <code>k</code> to be the <strong>last</strong> one burst in the range <code>[left, right]</code>.</div>
-<div><strong>Immediate reward:</strong> <code>nums[left-1] * nums[k] * nums[right+1]</code>. When k is the last balloon, its neighbors are the range boundaries (everything else inside is already gone).</div>
-<div><strong>Why LAST, not first?</strong> If we burst k first, the remaining balloons shift neighbors, making subproblems depend on each other. Bursting k last means everything else is already gone, so left-1 and right+1 are the true boundaries.</div>
-<div><strong>State changes:</strong></div>
-<div style="padding-left:20px">
-Left subproblem: <code>[left, k-1]</code>. All balloons to the left of k. They are burst before k.<br>
-Right subproblem: <code>[k+1, right]</code>. All balloons to the right of k. Also burst before k.
-</div>
+<div><strong>Action:</strong> Choose balloon k as the last one burst in range [left, right].</div>
+<div><strong>Immediate reward:</strong> <code>nums[left-1] * nums[k] * nums[right+1]</code>. When k is the last balloon, its neighbors are the range boundaries.</div>
+<div><strong>Left subproblem:</strong> <code>max_coins(left, k-1)</code>. All balloons to the left of k, burst before k.</div>
+<div><strong>Right subproblem:</strong> <code>max_coins(k+1, right)</code>. All balloons to the right of k, burst before k.</div>
 <div><strong>Call:</strong> <code>nums[left-1] * nums[k] * nums[right+1] + max_coins(left, k-1) + max_coins(k+1, right)</code></div>
-<div style="color:var(--muted)"><strong>Why are subproblems independent?</strong> Since k is burst last, when we solve [left, k-1], balloon k is still there as its right boundary. When we solve [k+1, right], balloon k is still there as its left boundary. Neither subproblem affects the other's boundaries.</div>
 </div>
 </div>
 
 <div style="background:rgba(245,158,11,.06);border:2px solid var(--amber);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--amber);font-weight:800;font-size:1.05em;margin-bottom:10px">Base case: left &gt; right</div>
-<div style="display:grid;gap:8px;font-size:.93em">
-<div><strong>Action:</strong> No balloons in this range. Nothing to burst.</div>
-<div><strong>Result:</strong> Return <code>0</code>.</div>
-</div>
-</div>
-
-<div style="font-size:.93em;margin-top:8px">
-<strong>Decision:</strong> <code>best = max over all k</code>. Try every balloon as the last one burst, keep the most profitable choice.
+<div style="font-size:.93em">No balloons in this range. Return <code>0</code>.</div>
 </div>
 
 <img src="dp/images/burst_balloons_transitions.png" alt="Burst Balloons transition justification: burst k last, boundaries are left-1 and right+1, independent subproblems" class="scene-img">

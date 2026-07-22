@@ -1,0 +1,428 @@
+PALINDROME + STATE MACHINE DP IMAGES (14-step framework)
+==============================================================
+New images for the rewritten palindrome and state machine pages.
+==============================================================
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: dark purple-blue (#1E1035). Grid/matrix atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: bright purple (#8B5CF6).
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for match/free paths. Red: (#EF4444) for mismatch/cost.
+- Amber: (#F59E0B) for replace. Blue: (#3B82F6) for insert.
+- Purple accent lighting throughout.
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: Palindrome Base Cases -> palindrome_base_cases.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+Big header at top: "WHEN MUST I STOP?"
+
+Kit stands to the left, hand raised, pointing at a flowchart on the right.
+
+SECTION 1: "SINGLE CHARACTER" (GREEN card, about 40%):
+
+Show ONE letter box with the letter "b" inside it.
+Two arrows labeled "left" and "right" BOTH point at this same box.
+
+Below: "left == right"
+Below that: "Return True"
+
+Explanation text: "One character. Reads the same both ways. Always a palindrome."
+
+SECTION 2: "EMPTY" (GREEN card, about 40%):
+
+Show TWO letter boxes side by side: "a" and "a".
+Show arrows: "left" points at index 1 (past 'a'), "right" points at index 0 (before 'a').
+The arrows have CROSSED over each other.
+
+Below: "left > right"
+Below that: "Return True"
+
+Explanation text: "After peeling 'aa': left=1, right=0. All pairs confirmed. Nothing left to break."
+
+At the bottom, a GOLD accent box:
+"Why both True? Empty and single-char can't violate the palindrome property."
+
+
+================================================================================
+PROMPT 2: Palindrome Choice Discovery -> palindrome_choices.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+Big header at top: "WHAT SHOULD I CHECK?"
+
+SECTION 1: "THE DEFINITION TELLS ME" (GOLD card, about 25%):
+
+Kit thinking, with thought bubble: "A palindrome reads the same forwards and backwards..."
+
+Below Kit: Show five letter boxes: a a b a a
+With "left" arrow pointing down at the first 'a' from above.
+With "right" arrow pointing down at the last 'a' from above.
+Both arrows are on the SAME ROW of letters.
+
+Text: "So the first character MUST equal the last."
+
+SECTION 2: "MATCH" (GREEN card, about 35%):
+
+ROW 1: Five boxes: [a] a b a [a] with green highlighting on both end 'a' letters.
+Text: "a == a. Outer pair valid!"
+
+Arrow pointing down labeled "Peel both ends"
+
+ROW 2: Three boxes: [a] b [a] (the inner substring)
+Text: "Check inside: is_palindrome(left+1, right-1)"
+
+SECTION 3: "NO MATCH" (RED card, about 25%):
+
+Three boxes: [a] b [c] with red highlighting on 'a' and 'c'.
+Text: "a != c"
+
+Big text: "Return False. Game over."
+Smaller text: "Nothing inside can fix mismatched ends."
+
+Bottom: Kit with confident pose, text: "One check. Two outcomes. The definition gave me both."
+
+
+================================================================================
+PROMPT 3: Palindrome Transition Justification -> palindrome_transitions.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+Big header at top: "WHY DOES EACH POINTER MOVE?"
+
+Show one row of letter boxes for the string "aabaa" (5 boxes).
+Two pointers on this SAME row:
+  "left" arrow pointing DOWN at a letter from ABOVE the row (pointing at a left-side letter).
+  "right" arrow pointing DOWN at a letter from ABOVE the row (pointing at a right-side letter).
+Both pointers are on the SAME string. This is NOT two separate strings.
+
+SECTION 1: "MATCH (ends are equal)" (GREEN card, about 50%):
+
+Show the string "aabaa" with:
+  left pointing at index 0 ('a') on the LEFT side
+  right pointing at index 4 ('a') on the RIGHT side
+  'a' == 'a', they match!
+
+  Action: "Ends match. Peel off both. Check inner."
+  Cost: None. Match just means this layer is valid.
+  left: left -> left+1 "Confirmed left end. Move inward."
+  right: right -> right-1 "Confirmed right end. Move inward."
+  Why both? "Palindrome is symmetric. Confirming a pair handles both sides."
+
+Kit stands beside this section, pointing at the arrows.
+
+SECTION 2: "NO MATCH (ends differ)" (RED card, about 30%):
+
+Show the string "abc" with:
+  left pointing at index 0 ('a')
+  right pointing at index 2 ('c')
+  'a' != 'c'
+
+  Action: "Return False immediately."
+  "No recursion. No pointer movement."
+  Why? "Mismatched ends = impossible palindrome."
+
+
+================================================================================
+PROMPT 4: Palindrome Common Mistakes -> palindrome_mistakes.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Four sections.
+
+Big header at top: "COMMON MISTAKES"
+
+Kit appears at the top, looking concerned, with an X mark beside common errors.
+
+SECTION 1 (RED card, about 22%):
+Title: "MISSING BASE CASE: left > right"
+Show "aa": left=0, right=1. Match! Peel both.
+Then: left=1, right=0. left > right.
+"If not handled: CRASH or wrong answer"
+Fix: "Handle left > right. Return True."
+
+SECTION 2 (RED card, about 22%):
+Title: "WRONG RETURN: False FOR EMPTY"
+"If left > right returns False:"
+"aa" -> ends match -> check inside -> empty -> False
+"Result: aa is NOT a palindrome. WRONG!"
+Fix: "Empty = all pairs confirmed. Return True."
+
+SECTION 3 (RED card, about 22%):
+Title: "WRONG FILL ORDER"
+Show a 2D table. Arrow: "Row by row" with X mark.
+"is_pal[0][4] needs is_pal[1][3]. Row 1 not filled yet!"
+Fix: "Fill by LENGTH. Short substrings first."
+
+SECTION 4 (RED card, about 22%):
+Title: "CHECKING MIDDLE BEFORE ENDS"
+"If ends don't match, all inner work was pointless."
+Fix: "Check ends FIRST. Only recurse on match."
+
+
+================================================================================
+PROMPT 5: Stock Base Cases -> stock_base_cases.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). One main section.
+
+Big header at top: "WHEN MUST I STOP?"
+
+Kit stands next to a timeline of trading days: Day 0, Day 1, Day 2, Day 3, Day 4.
+After Day 4, there's a RED barrier wall labeled "MARKET CLOSED".
+
+An arrow points past Day 4 to the barrier.
+
+GREEN card below (about 60%):
+
+Title: "PAST THE LAST DAY (day == len(prices))"
+
+Show three sub-sections for each state:
+
+Sub-section A: State = REST
+  "No more days. Can't buy. Return 0."
+
+Sub-section B: State = HOLD
+  "No more days. Stock unsold. Still return 0."
+  "The buy cost was already subtracted when I bought."
+
+Sub-section C: State = SOLD
+  "No more days. Cooldown doesn't matter. Return 0."
+
+Bottom gold accent box:
+"Regardless of state: no days left = no more profit = 0"
+
+
+================================================================================
+PROMPT 6: Stock State Discovery -> stock_state_discovery.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+Big header at top: "HOW DO CONSTRAINTS CREATE STATES?"
+
+SECTION 1 (GOLD card, about 25%):
+Kit thinking with thought bubble: "I can buy, sell, or wait. But CAN I always do all three?"
+
+Below: Three action icons (BUY, SELL, WAIT) with question marks.
+Text: "Available actions DEPEND on my situation."
+
+SECTION 2 (about 45%): Three state cards side by side, each as a rounded card:
+
+Card A (BLUE border, left):
+Label: "REST"
+Icon: person standing freely
+"Don't own stock."
+"Didn't sell yesterday."
+Legal: "BUY or WAIT"
+
+Card B (RED border, center):
+Label: "HOLD"
+Icon: person holding a stock certificate
+"Own a stock."
+Legal: "SELL or KEEP"
+
+Card C (GREEN border, right):
+Label: "SOLD"
+Icon: person with a clock/timer
+"Just sold yesterday."
+"Cooldown: MUST WAIT"
+Legal: "WAIT only"
+
+SECTION 3 (about 20%):
+Arrow diagram showing: "Without cooldown: 2 states (have/don't have)"
+Then: "With cooldown: 3 states (the constraint created SOLD)"
+
+Bottom: Kit pointing, text: "States come from CONSTRAINTS, not memorization."
+
+
+================================================================================
+PROMPT 7: Stock Cooldown Choices -> stock_cooldown_choices.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). One big state machine diagram.
+
+Big header at top: "THE STATE MACHINE"
+
+Show a state machine with three nodes arranged in a triangle:
+
+Top-left: REST (blue circle)
+Top-right: HOLD (red circle)
+Bottom-center: SOLD (green circle)
+
+Arrows between them:
+
+REST -> HOLD: labeled "BUY (-price)" in red
+REST -> REST: labeled "WAIT (+0)" in blue (self-loop)
+HOLD -> SOLD: labeled "SELL (+price)" in green
+HOLD -> HOLD: labeled "KEEP (+0)" in red (self-loop)
+SOLD -> REST: labeled "COOLDOWN (+0)" in green
+
+Each arrow should be clearly labeled with the action name AND the cost/reward.
+
+Kit stands beside the diagram, pointing at the SOLD -> REST arrow.
+
+Below the diagram, a gold text box:
+"5 transitions. In each state, max(choices)."
+"SOLD has no choice: mandatory cooldown."
+
+At the bottom:
+"Start: Day 0, state REST."
+"End: max(SOLD, REST) at last day."
+
+
+================================================================================
+PROMPT 8: Stock Cooldown Transitions -> stock_cooldown_transitions.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+Big header at top: "WHY DOES EACH STATE CHANGE?"
+
+SECTION 1: "FROM REST" (BLUE card, about 30%):
+
+ROW 1 for this section:
+  BUY: "Spend prices[day]. Now own stock."
+  day -> day+1, state: rest -> hold
+  "Why hold? I just bought something."
+
+ROW 2 for this section:
+  WAIT: "Do nothing. No cost."
+  day -> day+1, state stays rest
+  "Why rest? Nothing changed."
+
+SECTION 2: "FROM HOLD" (RED card, about 30%):
+
+ROW 1 for this section:
+  SELL: "Gain prices[day]. No longer own stock."
+  day -> day+1, state: hold -> sold
+  "Why SOLD, not REST? Cooldown rule!"
+
+ROW 2 for this section:
+  KEEP: "Do nothing. Still holding."
+  day -> day+1, state stays hold
+  "Why hold? Same stock, same state."
+
+SECTION 3: "FROM SOLD" (GREEN card, about 25%):
+
+  COOLDOWN: "Mandatory wait. No action."
+  day -> day+1, state: sold -> rest
+  "Why rest? Cooldown served. Free again."
+
+Kit at the bottom, with text: "Every transition justified. No surprises."
+
+
+================================================================================
+PROMPT 9: Stock Common Mistakes -> stock_mistakes.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Four sections.
+
+Big header at top: "COMMON MISTAKES"
+
+Kit at the top looking concerned, pointing at errors.
+
+SECTION 1 (RED card, about 22%):
+Title: "MISSING SOLD STATE"
+Show only 2 states: REST and HOLD (with an X mark).
+"After selling, goes directly to REST."
+"Bug: can buy next day! Cooldown skipped."
+Fix: "Add SOLD state. Sell -> SOLD -> REST."
+
+SECTION 2 (RED card, about 22%):
+Title: "SELL -> REST (wrong transition)"
+Show arrow: HOLD -> REST with X mark.
+"Should be HOLD -> SOLD."
+"Same bug: cooldown not enforced."
+Fix: "Sell always goes to SOLD, never REST."
+
+SECTION 3 (RED card, about 22%):
+Title: "HOLD STARTS AT 0"
+Show: "hold = 0" with X mark.
+"Thinks holding costs nothing."
+"Day 0: buying costs prices[0]!"
+Fix: "hold = -prices[0]"
+
+SECTION 4 (RED card, about 22%):
+Title: "RETURNING max(hold, sold, rest)"
+"Including HOLD in the answer."
+"HOLD = unsold stock = money lost."
+Fix: "Return max(sold, rest) only."

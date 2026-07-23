@@ -90,6 +90,17 @@ code{font-family:'Fira Code','Courier New',monospace}
 <div style="text-align:center;font-size:1.2em;font-weight:700;color:var(--gold2)">LCS = "ace", length = 3</div>
 
 <p style="font-size:.9em;color:var(--muted);margin-top:8px">Both strings contain 'a', 'c', 'e' in order. That's the longest common subsequence.</p>
+
+<div style="display:grid;gap:6px;margin-top:14px;font-size:.9em">
+<div style="background:var(--card2);border-radius:6px;padding:8px 12px">
+<code>text1 = "abc"</code>, <code>text2 = "abc"</code> &rarr; <strong style="color:var(--gold2)">3</strong>
+<span style="color:var(--muted)">&mdash; Identical strings. Every character matches diagonally.</span>
+</div>
+<div style="background:var(--card2);border-radius:6px;padding:8px 12px">
+<code>text1 = "abc"</code>, <code>text2 = "def"</code> &rarr; <strong style="color:var(--gold2)">0</strong>
+<span style="color:var(--muted)">&mdash; No common characters. Every cell uses max(up, left).</span>
+</div>
+</div>
 </div>
 
 <!-- ==================== STEP 1: DISCOVERING THE CHOICES ==================== -->
@@ -471,6 +482,17 @@ A robot starts at the top-left of an <code>m x n</code> grid. It can only move <
 </div><br><br>
 One path: right, right, down, down. Another: down, right, down, right.<br>
 Answer: <strong style="color:var(--gold2)">6</strong> unique paths total.
+
+<div style="display:grid;gap:6px;margin-top:12px;font-size:.9em">
+<div style="background:var(--card);border-radius:6px;padding:8px 12px">
+<code>m = 2, n = 2</code> &rarr; <strong style="color:var(--gold2)">2</strong>
+<span style="color:var(--muted)">&mdash; Right then down, or down then right. Simplest case.</span>
+</div>
+<div style="background:var(--card);border-radius:6px;padding:8px 12px">
+<code>m = 1, n = 5</code> &rarr; <strong style="color:var(--gold2)">1</strong>
+<span style="color:var(--muted)">&mdash; Single row. Only one path: all right.</span>
+</div>
+</div>
 </div>
 
 <div class="sbox"><div class="sl" style="color:var(--purple)">THE KEY IDEA</div>
@@ -567,6 +589,17 @@ Given two words, find the minimum number of operations (insert, delete, replace)
 <div><span style="color:var(--red)">delete</span> <code>e</code> → <code>"ros<s>e</s>"</code> → <code>"ros"</code></div>
 </div>
 <br>Answer: <strong style="color:var(--gold2)">3</strong> operations (one replace, two deletes).
+
+<div style="display:grid;gap:6px;margin-top:12px;font-size:.9em">
+<div style="background:var(--card);border-radius:6px;padding:8px 12px">
+<code>word1 = "abc"</code>, <code>word2 = "abc"</code> &rarr; <strong style="color:var(--gold2)">0</strong>
+<span style="color:var(--muted)">&mdash; Same string. No edits needed.</span>
+</div>
+<div style="background:var(--card);border-radius:6px;padding:8px 12px">
+<code>word1 = "intention"</code>, <code>word2 = "execution"</code> &rarr; <strong style="color:var(--gold2)">5</strong>
+<span style="color:var(--muted)">&mdash; 3 replaces, 1 delete, 1 insert.</span>
+</div>
+</div>
 </div>
 
 <!-- ===== STEP 1: THE STATE ===== -->
@@ -923,6 +956,17 @@ s has three b's. To spell "rabbit" you need two b's. Which two do you pick?
 </div>
 <br>Answer: <strong style="color:var(--gold2)">3</strong> distinct subsequences.
 <div style="margin-top:8px;color:var(--muted);font-size:.9em">You're not rearranging anything. You're choosing which characters in s to "use" to form t, keeping the order.</div>
+
+<div style="display:grid;gap:6px;margin-top:12px;font-size:.9em">
+<div style="background:var(--card);border-radius:6px;padding:8px 12px">
+<code>s = "babgbag"</code>, <code>t = "bag"</code> &rarr; <strong style="color:var(--gold2)">5</strong>
+<span style="color:var(--muted)">&mdash; 3 b's, 2 a's, 2 g's. Five ways to spell "bag".</span>
+</div>
+<div style="background:var(--card);border-radius:6px;padding:8px 12px">
+<code>s = "aabb"</code>, <code>t = "ab"</code> &rarr; <strong style="color:var(--gold2)">4</strong>
+<span style="color:var(--muted)">&mdash; 2 a's &times; 2 b's = 4 ways to pick one of each.</span>
+</div>
+</div>
 </div>
 
 <!-- CLASSIFICATION -->

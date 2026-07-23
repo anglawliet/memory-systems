@@ -40,6 +40,7 @@ code{font-family:'Fira Code','Courier New',monospace}
 .deriv-b{display:none;padding:0 20px 16px;border-top:1px solid var(--border)}.deriv.open .deriv-b{display:block}
 .sbox{background:var(--card2);border-radius:8px;padding:12px 16px;margin:10px 0}
 .sl{font-size:.7em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.step-num{display:inline-flex;align-items:center;justify-content:center;background:var(--purple);color:#fff;width:28px;height:28px;border-radius:50%;font-size:.85em;font-weight:800;margin-right:8px;flex-shrink:0}
 @media(max-width:600px){
   .wrap{padding:12px}
   .hdr h1{font-size:1.5em}
@@ -68,6 +69,7 @@ code{font-family:'Fira Code','Courier New',monospace}
 <a href="dp_workshop.html" class="nav-link">Knapsack</a>
 </div>
 
+
 <!-- ==================== THE PROBLEM ==================== -->
 <h2>The Problem</h2>
 
@@ -94,188 +96,340 @@ code{font-family:'Fira Code','Courier New',monospace}
 <div style="display:grid;gap:6px;margin-top:14px;font-size:.9em">
 <div style="background:var(--card2);border-radius:6px;padding:8px 12px">
 <code>text1 = "abc"</code>, <code>text2 = "abc"</code> &rarr; <strong style="color:var(--gold2)">3</strong>
-<span style="color:var(--muted)">&mdash; Identical strings. Every character matches diagonally.</span>
+<span style="color:var(--muted)"> Identical strings. Every character matches.</span>
 </div>
 <div style="background:var(--card2);border-radius:6px;padding:8px 12px">
 <code>text1 = "abc"</code>, <code>text2 = "def"</code> &rarr; <strong style="color:var(--gold2)">0</strong>
-<span style="color:var(--muted)">&mdash; No common characters. Every cell uses max(up, left).</span>
+<span style="color:var(--muted)"> No common characters at all.</span>
+</div>
+<div style="background:var(--card2);border-radius:6px;padding:8px 12px">
+<code>text1 = ""</code>, <code>text2 = "abc"</code> &rarr; <strong style="color:var(--gold2)">0</strong>
+<span style="color:var(--muted)"> Empty string. Nothing to match.</span>
+</div>
+<div style="background:var(--card2);border-radius:6px;padding:8px 12px">
+<code>text1 = "a"</code>, <code>text2 = "a"</code> &rarr; <strong style="color:var(--gold2)">1</strong>
+<span style="color:var(--muted)"> Single character, same in both.</span>
 </div>
 </div>
 </div>
 
-<!-- ==================== STEP 1: DISCOVERING THE CHOICES ==================== -->
-<h2>Step 1: Discovering the Choices</h2>
+<!-- ==================== STEP 0: WHAT WOULD I TRY FIRST? ==================== -->
+<h2><span class="step-num">0</span> What Would I Try First?</h2>
 
 <div class="ws">
+<h3>The greedy instinct</h3>
 
-<!-- STEP 1: DEFINE MY CURRENT SITUATION -->
-<h3 style="color:var(--purple)">What's my situation?</h3>
+<p>Most beginners think: "Just walk through text1 left to right. For each character, grab its first available match in text2."</p>
 
-<p>I have two strings. I'm pointing at one character in each: <code>text1[i]</code> and <code>text2[j]</code>. I want to find the longest sequence of characters that appears in both strings (in order, but not necessarily next to each other).</p>
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:12px">GREEDY ON THE EASY CASE: text1 = "abcde", text2 = "ace"</div>
+<div style="display:grid;gap:8px;font-size:.93em">
+<div>text1[0] = 'a'. Scan text2 for 'a' &rarr; found at text2[0]. <strong style="color:var(--green)">Match!</strong></div>
+<div>text1[1] = 'b'. Scan text2 after index 0 &rarr; 'c', 'e'. No 'b'. <strong>Skip.</strong></div>
+<div>text1[2] = 'c'. Scan text2 after index 0 &rarr; text2[1] = 'c'. <strong style="color:var(--green)">Match!</strong></div>
+<div>text1[3] = 'd'. Scan text2 after index 1 &rarr; 'e'. No 'd'. <strong>Skip.</strong></div>
+<div>text1[4] = 'e'. Scan text2 after index 1 &rarr; text2[2] = 'e'. <strong style="color:var(--green)">Match!</strong></div>
+<div style="font-weight:700;color:var(--gold2);margin-top:4px">Greedy result: "ace", length 3. Correct!</div>
+</div>
+</div>
+
+<p>Greedy works here. It feels right. But now try a different input:</p>
+
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--red);font-weight:800;font-size:1.05em;margin-bottom:12px">GREEDY FAILS: text1 = "cab", text2 = "abc"</div>
+<div style="display:grid;gap:8px;font-size:.93em">
+<div>text1[0] = 'c'. Scan text2 for 'c' &rarr; found at text2[2]. <strong style="color:var(--green)">Match!</strong> (j moves to 3)</div>
+<div>text1[1] = 'a'. Scan text2 after index 2 &rarr; nothing left. <strong>Skip.</strong></div>
+<div>text1[2] = 'b'. Scan text2 after index 2 &rarr; nothing left. <strong>Skip.</strong></div>
+<div style="font-weight:700;color:var(--red);margin-top:4px">Greedy result: "c", length 1.</div>
+</div>
+
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin-top:14px">
+<div style="color:var(--gold2);font-weight:700;margin-bottom:6px">But the actual LCS = "ab", length 2!</div>
+<div style="font-size:.93em">
+text1 has 'a' at index 1, 'b' at index 2. text2 has 'a' at index 0, 'b' at index 1. In order in both strings. "ab" is a common subsequence of length 2.
+</div>
+</div>
+</div>
+
+<h3 style="margin-top:20px">What went wrong?</h3>
+
+<p style="font-size:.93em">Greedy grabbed 'c' at position 2 in text2, consuming the entire remaining string. That was an <strong>irreversible decision</strong>. It didn't consider that skipping 'c' would leave room for the longer match "ab".</p>
+
+<div class="hi">
+<strong style="color:var(--purple)">The irreversible-decision trap:</strong> Greedy picks the first match it finds and moves on. But sometimes the <strong>best move is to skip a valid match</strong>, because a different combination of matches later gives a longer result. We can't know which choices lead to the longest result without trying multiple paths.
+</div>
+
+<h3 style="margin-top:20px">Why brute force becomes necessary</h3>
+
+<p style="font-size:.93em">Since we can't commit to one match greedily, we need to explore: "What if I take this match? What if I skip it?" For every matching pair, both options might lead to different outcomes. That means branching, which means recursion.</p>
+</div>
+
+<img src="dp/images/lcs_greedy_fail.png" alt="Greedy works on abcde/ace but fails on cab/abc: grabbing c early blocks the longer ab match" class="scene-img">
+
+<!-- ==================== STEP 1: THE RECURSIVE QUESTION ==================== -->
+<h2><span class="step-num">1</span> The Recursive Question</h2>
+
+<div class="ws">
+<h3>What question does my function answer?</h3>
+
+<p>Before writing any code, state the question in plain English:</p>
+
+<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:12px 0;text-align:center;font-size:1.1em">
+<strong style="color:var(--gold2)">"What is the length of the longest common subsequence of text1[i:] and text2[j:]?"</strong>
+</div>
+
+<p style="margin-top:14px;font-size:.93em">I call this function <code>lcs(i, j)</code>. Before I write a single line of recursion, I define its <strong>promise</strong>:</p>
+
+<div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--purple)">
+<div style="color:var(--purple);font-weight:700;margin-bottom:6px">The Promise</div>
+<div style="font-size:.93em">
+<code>lcs(i, j)</code> returns the LCS length considering <strong>only</strong> the remaining suffixes: <code>text1[i:]</code> and <code>text2[j:]</code>.<br><br>
+Everything before index i in text1 has already been decided. Everything before index j in text2 has already been decided. Those decisions are done. This function handles what's left.
+</div>
+</div>
+</div>
+
+<!-- ==================== STEP 2: BASE CASES ==================== -->
+<h2><span class="step-num">2</span> Discover the Base Cases</h2>
+
+<div class="ws">
+<h3>If I keep making decisions, when must I eventually stop?</h3>
+
+<p style="font-size:.93em;margin-bottom:10px">Don't look at the recurrence to find base cases. Ask: <strong>"What situation makes the answer trivially obvious?"</strong></p>
+
+<div class="two-col" style="margin:12px 0">
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
+<div style="color:var(--green);font-weight:700;margin-bottom:6px">i == len(text1): text1 is exhausted</div>
+<strong>Situation:</strong> No characters left in text1.<br>
+<strong>Why stop?</strong> Can't form any common pair without characters from both strings.<br>
+<strong>Return:</strong> <code>0</code>.<br>
+<span style="font-size:.85em;color:var(--muted)">Why 0 and not something else? An empty string shares nothing with any string. The longest common subsequence between "" and anything is length 0.</span>
+</div>
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
+<div style="color:var(--green);font-weight:700;margin-bottom:6px">j == len(text2): text2 is exhausted</div>
+<strong>Situation:</strong> No characters left in text2.<br>
+<strong>Why stop?</strong> Same reason. Need both strings to form a common subsequence.<br>
+<strong>Return:</strong> <code>0</code>.<br>
+<span style="font-size:.85em;color:var(--muted)">Symmetric: running out of either string ends the search. The answer can't grow without characters from both sides.</span>
+</div>
+</div>
+</div>
+
+<img src="dp/images/lcs_base_cases.png" alt="LCS base cases: either string exhausted means 0, nothing left to match" class="scene-img">
+
+<!-- ==================== STEP 3: THE STUCK MOMENT ==================== -->
+<h2><span class="step-num">3</span> What Decision Am I Stuck On?</h2>
+
+<div class="ws">
+<h3>Freeze inside one recursive call</h3>
+
+<p style="font-size:.93em">Imagine I'm at position <code>i</code> in text1 and position <code>j</code> in text2. I see two characters: <code>text1[i]</code> and <code>text2[j]</code>.</p>
 
 <div class="two-col" style="margin:16px 0;text-align:center">
 <div style="background:var(--card2);border-radius:8px;padding:12px">
 <div style="color:var(--purple);font-weight:700;margin-bottom:4px">text1</div>
-<span style="font-size:1.2em;letter-spacing:3px"><span style="background:var(--purple);color:#fff;padding:2px 6px;border-radius:4px">a</span> b c d e</span>
-<div style="font-size:.8em;color:var(--muted);margin-top:4px">i is pointing here</div>
+<span style="font-size:1.1em;letter-spacing:3px"><span style="opacity:.4">a b</span> <span style="background:var(--purple);color:#fff;padding:2px 6px;border-radius:4px">c</span> <span style="opacity:.4">d e</span></span>
+<div style="font-size:.8em;color:var(--muted);margin-top:4px">i is here. Everything before is decided.</div>
 </div>
 <div style="background:var(--card2);border-radius:8px;padding:12px">
 <div style="color:var(--purple);font-weight:700;margin-bottom:4px">text2</div>
-<span style="font-size:1.2em;letter-spacing:3px"><span style="background:var(--purple);color:#fff;padding:2px 6px;border-radius:4px">a</span> c e</span>
-<div style="font-size:.8em;color:var(--muted);margin-top:4px">j is pointing here</div>
+<span style="font-size:1.1em;letter-spacing:3px"><span style="opacity:.4">a</span> <span style="background:var(--purple);color:#fff;padding:2px 6px;border-radius:4px">c</span> <span style="opacity:.4">e</span></span>
+<div style="font-size:.8em;color:var(--muted);margin-top:4px">j is here. Everything before is decided.</div>
 </div>
 </div>
 
-<p>I need to decide: <strong>what do I do with these two characters I'm looking at right now?</strong></p>
-
-<!-- STEP 2: WHAT CAN I DO RIGHT NOW? -->
-<h3 style="color:var(--purple);margin-top:20px">What can I do right now?</h3>
-
-<p style="margin-bottom:12px">I'm comparing two characters. The most natural first check: <strong>are they the same?</strong></p>
-
-<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:12px 0">
-<div style="color:var(--gold2);font-weight:700;font-size:1.05em;margin-bottom:12px">THE KEY QUESTION: "Do these two characters match?"</div>
-<div style="font-size:.95em;display:grid;gap:10px">
-<div><strong>If they match:</strong> I found a common character. Should I use it? Yes, absolutely. If two characters are the same and in position, they're part of (or could be part of) the common subsequence. There's no reason to skip a matching pair.</div>
-<div><strong>If they don't match:</strong> At least one of these characters isn't useful right now. But which one? I don't know. Maybe <code>text1[i]</code> matches something later in text2. Maybe <code>text2[j]</code> matches something later in text1. I have to try both possibilities.</div>
-<div><strong>Could I skip both at once?</strong> No. That would throw away a character that might have matched something later. Skipping both is always worse than or equal to skipping just one.</div>
+<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:14px 0">
+<div style="color:var(--gold2);font-weight:700;font-size:1.05em;margin-bottom:10px">What is preventing me from finishing?</div>
+<p style="font-size:.93em">I need to decide: <strong>what do I do with these two characters?</strong> The answer depends on whether they're the same or not. That's the most natural first check when comparing two sequences: <strong>do these two characters match?</strong></p>
 </div>
 </div>
 
-<!-- STEP 3: EACH CHOICE AS A STORY -->
-<h3 style="color:var(--purple);margin-top:20px">What happens in each outcome?</h3>
+<img src="dp/images/lcs_frozen_call.png" alt="Frozen inside lcs(i,j): I see text1[i] and text2[j], everything before is decided, what do I do now?" class="scene-img">
 
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:12px">OUTCOME 1: text1[i] == text2[j] (Match)</div>
+<!-- ==================== STEP 4: PROVE THE ONLY CHOICES ==================== -->
+<h2><span class="step-num">4</span> Prove These Are the Only Choices</h2>
 
-<div style="text-align:center;font-size:1.1em;letter-spacing:2px;margin:8px 0">
-text1: <span style="background:var(--green);color:#fff;padding:2px 6px;border-radius:4px">a</span> b c d e &nbsp;&nbsp;
-text2: <span style="background:var(--green);color:#fff;padding:2px 6px;border-radius:4px">a</span> c e
+<div class="ws">
+<h3>What if they match?</h3>
+
+<p style="font-size:.93em">If <code>text1[i] == text2[j]</code>, this pair could be part of the LCS. Should I always take it?</p>
+
+<p style="font-size:.93em"><strong>Is there ever a reason to skip a match?</strong> No. Taking a match gives +1. Skipping it gives +0 at best. A free match is always worth taking. (This is different from Distinct Subsequences, where skipping a match can lead to more total <em>counts</em>. Here we're maximizing length, so a guaranteed +1 is always optimal.)</p>
+
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
+<strong style="color:var(--green)">Match:</strong> Take it. Both characters consumed. +1 to the LCS. Move to <code>lcs(i+1, j+1)</code>.
 </div>
 
-<div style="display:grid;gap:10px;font-size:.93em;margin-top:12px">
-<div><strong>What am I choosing?</strong> Take this matching character as part of the LCS.</div>
-<div><strong>What changes immediately?</strong> LCS length grows by 1. Both characters are consumed (used up).</div>
-<div><strong>What stays the same?</strong> The remaining characters in both strings. The question is the same: "what's the LCS of what's left?"</div>
-<div><strong>What new situation does this create?</strong> I'm now pointing at <code>text1[i+1]</code> and <code>text2[j+1]</code>. Same problem, smaller input.</div>
-<div><strong>Call:</strong> <code>1 + lcs(i+1, j+1)</code></div>
-</div>
-</div>
+<h3 style="margin-top:20px">What if they don't match?</h3>
 
-<div style="background:rgba(245,158,11,.04);border:2px solid var(--amber);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--amber);font-weight:800;font-size:1.05em;margin-bottom:12px">OUTCOME 2: text1[i] != text2[j] (No Match)</div>
+<p style="font-size:.93em">If <code>text1[i] != text2[j]</code>, at least one character is useless right now. Which one should I skip? I don't know. Let me consider every option a beginner might think of:</p>
 
-<div style="text-align:center;font-size:1.1em;letter-spacing:2px;margin:8px 0">
-text1: <span style="background:var(--amber);color:#fff;padding:2px 6px;border-radius:4px">b</span> c d e &nbsp;&nbsp;
-text2: <span style="background:var(--amber);color:#fff;padding:2px 6px;border-radius:4px">c</span> e
+<div style="display:grid;gap:10px;margin:14px 0;font-size:.93em">
+
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="color:var(--red);font-weight:700;margin-bottom:6px">Can I skip both characters at once?</div>
+<strong>No.</strong> Skipping both throws away a character that might match something later. Maybe text1[i] matches a future text2 character, or vice versa. Skipping both is always &le; skipping just one. It's wasteful.
 </div>
 
-<p style="margin:12px 0;font-size:.93em">They don't match. I need to move past one of them, but which? I don't know. Try both:</p>
-
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:.9em">
-<div style="background:var(--card2);border-radius:8px;padding:14px">
-<div style="color:var(--amber);font-weight:700;margin-bottom:6px">Skip text1[i]</div>
-<strong>Why?</strong> Maybe <code>text1[i]</code> doesn't appear in text2 at all. Move past it.<br><br>
-<strong>What changes?</strong> i advances. j stays (text2[j] still needs a match).<br><br>
-<strong>Call:</strong> <code>lcs(i+1, j)</code>
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="color:var(--red);font-weight:700;margin-bottom:6px">Can I take a non-matching pair?</div>
+<strong>No.</strong> A common subsequence requires the <em>same</em> character at each position. A mismatched pair contributes nothing.
 </div>
-<div style="background:var(--card2);border-radius:8px;padding:14px">
-<div style="color:var(--amber);font-weight:700;margin-bottom:6px">Skip text2[j]</div>
-<strong>Why?</strong> Maybe <code>text2[j]</code> doesn't match anything left in text1. Move past it.<br><br>
-<strong>What changes?</strong> j advances. i stays (text1[i] still needs a match).<br><br>
-<strong>Call:</strong> <code>lcs(i, j+1)</code>
+
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="color:var(--red);font-weight:700;margin-bottom:6px">Can I jump ahead to find a match instead of skipping one at a time?</div>
+<strong>That's what the recursion does.</strong> By skipping text1[i], the next call tries text1[i+1] against text2[j]. Then text1[i+2], and so on. Each skip-one-at-a-time call explores all future matches. Jumping ahead is just multiple skips.
+</div>
+
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="color:var(--red);font-weight:700;margin-bottom:6px">Can I use text1[i] to match a different character in text2 (not text2[j])?</div>
+<strong>Yes, and the recursion handles it.</strong> When I skip text2[j], the next call compares text1[i] against text2[j+1]. If that matches, great. If not, it skips again. Every possible pairing is explored.
 </div>
 </div>
 
-<div style="margin-top:12px;font-size:.93em"><strong>Decision:</strong> <code>max(skip_first, skip_second)</code>. Try both, keep whichever gives a longer subsequence.</div>
+<div style="background:rgba(245,158,11,.06);border:2px solid var(--amber);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
+<strong style="color:var(--amber)">After eliminating everything illegal, only two options remain:</strong><br><br>
+<strong>Skip text1[i]:</strong> Maybe it doesn't match anything useful in text2. Move to <code>lcs(i+1, j)</code>.<br>
+<strong>Skip text2[j]:</strong> Maybe it doesn't match anything useful in text1. Move to <code>lcs(i, j+1)</code>.<br><br>
+I don't know which is better. <strong>Try both, keep the better result.</strong>
+</div>
 </div>
 
-<!-- STEP 4: THE CHOICE DIAGRAM -->
-<h3 style="color:var(--purple);margin-top:20px">The Choice Diagram</h3>
+<!-- ==================== STEP 5: PLAY OUT EACH CHOICE ==================== -->
+<h2><span class="step-num">5</span> Play Out Each Choice</h2>
+
+<div class="ws">
+<h3>Before writing recursion, simulate on a tiny example</h3>
+
+<p style="margin-bottom:12px">text1 = "abcde", text2 = "ace". Start at i=0, j=0.</p>
+
+<div style="background:var(--card2);border-radius:10px;padding:16px;margin:12px 0">
+<div style="display:grid;gap:12px;font-size:.9em">
+<div>
+<strong style="color:var(--green)">i=0, j=0:</strong> text1[0]='a', text2[0]='a'. <strong>They match!</strong><br>
+<span style="padding-left:16px">What did I just do? Matched 'a'. +1.</span><br>
+<span style="padding-left:16px">What changed? Both characters consumed. i becomes 1, j becomes 1.</span><br>
+<span style="padding-left:16px">What remains? lcs("bcde", "ce"). Same problem, smaller input.</span>
+</div>
+<div>
+<strong style="color:var(--amber)">i=1, j=1:</strong> text1[1]='b', text2[1]='c'. <strong>No match.</strong><br>
+<span style="padding-left:16px">What's confusing me? 'b' might match something later in text2, or 'c' might match something later in text1. I don't know which skip is better.</span><br>
+<span style="padding-left:16px"><strong>Branch A:</strong> skip 'b' &rarr; lcs("cde", "ce"). Try text1[2]='c' against text2[1]='c'. Match! +1.</span><br>
+<span style="padding-left:16px"><strong>Branch B:</strong> skip 'c' &rarr; lcs("bcde", "e"). Try text1[1]='b' against text2[2]='e'. No match. Keep skipping...</span>
+</div>
+<div>
+<strong style="color:var(--green)">Branch A wins</strong>: skipping 'b' led to matching 'c' then 'e', total = 1('a') + 1('c') + 1('e') = <strong style="color:var(--gold2)">3</strong>.
+</div>
+</div>
+</div>
+
+<h3 style="margin-top:20px">The Choice Diagram</h3>
 
 <div style="background:var(--card2);border-radius:10px;padding:18px;margin:12px 0">
 <pre style="font-size:.88em;line-height:1.8;margin:0"><code>Current Situation: comparing text1[i] and text2[j]
-        │
+        |
    Do they match?
-        │
-   ┌────┴────┐
-   │         │
+        |
+   +----+----+
+   |         |
   YES        NO
-   │         │
+   |         |
   Take it.   Can't use either right now.
   +1         Skip one, try both options:
-  Both       ├─ Skip text1[i]: lcs(i+1, j)
-  advance.   └─ Skip text2[j]: lcs(i, j+1)
+  Both       +-- Skip text1[i]: lcs(i+1, j)
+  advance.   +-- Skip text2[j]: lcs(i, j+1)
   lcs(i+1,   Take max.
     j+1)</code></pre>
 </div>
-
-<!-- WATCH IT PLAY OUT -->
-<h3 style="color:var(--purple);margin-top:20px">Watch it play out</h3>
-
-<p style="margin-bottom:8px">Trace text1="abcde", text2="ace":</p>
-
-<div style="background:var(--card2);border-radius:10px;padding:16px;margin:12px 0">
-<div style="display:grid;gap:10px;font-size:.9em">
-<div>
-<strong style="color:var(--green)">i=0, j=0:</strong> text1[0]='a' == text2[0]='a'. <strong>Match!</strong> Take it. LCS so far: "a". Both advance.
-</div>
-<div>
-<strong style="color:var(--amber)">i=1, j=1:</strong> text1[1]='b' != text2[1]='c'. <strong>No match.</strong> Try both skips:
-<div style="padding-left:20px">
-Skip 'b': lcs("cde", "ce") → finds "ce" (length 2)<br>
-Skip 'c': lcs("bcde", "e") → finds "e" (length 1)<br>
-max(2, 1) = 2. Skipping 'b' was better.
-</div>
-</div>
-<div style="font-weight:700;color:var(--gold2);padding-top:4px">
-Result: "a" + "ce" = "ace", length <strong>3</strong>.
-</div>
-</div>
 </div>
 
-<div class="hi">
-<strong style="color:var(--purple)">Base case:</strong> either string runs out (<code>i == len(text1)</code> or <code>j == len(text2)</code>) → return 0. Nothing left to match.
+<img src="dp/images/lcs_choices.png" alt="LCS choice diagram: match takes both and adds 1, no match tries skipping each and takes max" class="scene-img">
+
+<!-- ==================== STEP 6: DISCOVER THE STATE ==================== -->
+<h2><span class="step-num">6</span> Discover the State</h2>
+
+<div class="ws">
+<h3>Pause the recursion. Another programmer takes over.</h3>
+
+<p style="font-size:.93em;margin-bottom:12px">What information do they need to continue exactly where I stopped?</p>
+
+<div style="display:grid;gap:8px;font-size:.93em">
+<div style="background:var(--card2);border-radius:6px;padding:10px 14px;display:flex;align-items:start;gap:10px">
+<span style="color:var(--green);font-weight:700;font-size:1.1em">&#10003;</span>
+<div><strong>How far I've processed in text1?</strong> Yes. They need to know where I left off. &rarr; <code>i</code></div>
 </div>
-
-<!-- STEP 5: THE REUSABLE PRINCIPLE -->
-<h3 style="color:var(--purple);margin-top:20px">The reusable principle</h3>
-
-<div style="background:rgba(139,92,246,.08);border:2px solid var(--purple);border-radius:10px;padding:18px;margin:12px 0">
-<div style="font-size:.95em">
-The choices came from one question: <strong>"do these two characters match?"</strong> That's the most natural first check when comparing two sequences. The match case is free (no decision to make). The no-match case forces a decision (which to skip), so you try both.<br><br>
-For any two-sequence DP problem, ask: <strong>"What can I do with the two elements I'm currently pointing at?"</strong> The answer is almost always: use them together (if compatible) or skip one. That's the universal pattern for LCS, Edit Distance, Interleaving, and Distinct Subsequences.
+<div style="background:var(--card2);border-radius:6px;padding:10px 14px;display:flex;align-items:start;gap:10px">
+<span style="color:var(--green);font-weight:700;font-size:1.1em">&#10003;</span>
+<div><strong>How far I've processed in text2?</strong> Yes. Same reason. &rarr; <code>j</code></div>
+</div>
+<div style="background:var(--card2);border-radius:6px;padding:10px 14px;display:flex;align-items:start;gap:10px">
+<span style="color:var(--red);font-weight:700;font-size:1.1em">&#10007;</span>
+<div><strong>The original strings?</strong> They never change. Pass them once, don't store in state.</div>
+</div>
+<div style="background:var(--card2);border-radius:6px;padding:10px 14px;display:flex;align-items:start;gap:10px">
+<span style="color:var(--red);font-weight:700;font-size:1.1em">&#10007;</span>
+<div><strong>The LCS found so far?</strong> No. The function <em>returns</em> it. I don't accumulate a running total.</div>
+</div>
+<div style="background:var(--card2);border-radius:6px;padding:10px 14px;display:flex;align-items:start;gap:10px">
+<span style="color:var(--red);font-weight:700;font-size:1.1em">&#10007;</span>
+<div><strong>Which specific characters I matched?</strong> No. Only the count matters for this problem.</div>
 </div>
 </div>
 
-<!-- TRANSITION JUSTIFICATION -->
-<h3 style="color:var(--purple);margin-top:16px">Why each variable changes</h3>
+<div style="background:rgba(139,92,246,.08);border:2px solid var(--purple);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
+<div style="font-size:1.05em;font-weight:700;color:var(--purple);margin-bottom:6px">State = (i, j)</div>
+<div style="font-size:.93em">Two numbers. The minimum information needed to uniquely identify the remaining problem.</div>
+</div>
+
+<h3 style="margin-top:20px">What does each variable mean?</h3>
+
+<div class="two-col" style="margin:12px 0">
+<div style="background:var(--card2);border-radius:8px;padding:14px">
+<div style="color:var(--purple);font-weight:700;margin-bottom:6px">i (position in text1)</div>
+Everything before index i has already been processed. Characters text1[0..i-1] are done. I'm now looking at text1[i]. Everything from i onward is still undecided.
+</div>
+<div style="background:var(--card2);border-radius:8px;padding:14px">
+<div style="color:var(--purple);font-weight:700;margin-bottom:6px">j (position in text2)</div>
+Everything before index j has already been processed. Characters text2[0..j-1] are done. I'm now looking at text2[j]. Everything from j onward is still undecided.
+</div>
+</div>
+</div>
+
+<!-- ==================== STEP 7: DERIVE THE TRANSITIONS ==================== -->
+<h2><span class="step-num">7</span> Derive the Transitions</h2>
+
+<div class="ws">
+<h3>For each choice, what exactly changes and why?</h3>
 
 <div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:10px">CASE: text1[i] == text2[j] (Match)</div>
+<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:12px">MATCH: text1[i] == text2[j]</div>
 <div style="display:grid;gap:8px;font-size:.93em">
-<div><strong>Action:</strong> Take this character as part of the LCS.</div>
-<div><strong>Immediate reward:</strong> <code>+1</code>. LCS length grows by 1.</div>
+<div><strong>What did I just do?</strong> Matched one character. This character is part of the LCS.</div>
+<div><strong>What did I just gain?</strong> +1 to the LCS length. One character matched.</div>
+<div><strong>Why +1?</strong> The problem asks for the <em>length</em> of the longest common subsequence. Each matched character adds exactly one to that length.</div>
 <div><strong>State changes:</strong></div>
 <div style="padding-left:20px">
-<code>i &rarr; i+1</code>: <code>text1[i]</code> consumed. It matched. Move past it.<br>
-<code>j &rarr; j+1</code>: <code>text2[j]</code> consumed. Same character, same match. Move past it.
+<code>i &rarr; i+1</code>: text1[i] consumed. It matched. Move past it.<br>
+<code>j &rarr; j+1</code>: text2[j] consumed. Same character, same match. Move past it.
 </div>
-<div><strong>Call:</strong> <code>1 + lcs(i+1, j+1)</code></div>
-<div style="color:var(--muted)"><strong>Why both advance?</strong> A match consumes one character from each string. Advancing only one would leave the matched character available for a double-count.</div>
+<div style="color:var(--muted)"><strong>Why do both advance?</strong> A match consumes one character from each string. If only i advanced, text2[j] would still be available for a double-count. Both must move.</div>
+<div><strong>Remaining problem:</strong> <code>1 + lcs(i+1, j+1)</code></div>
 </div>
 </div>
 
 <div style="background:rgba(245,158,11,.04);border:2px solid var(--amber);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--amber);font-weight:800;font-size:1.05em;margin-bottom:10px">CASE: text1[i] != text2[j] (No Match)</div>
+<div style="color:var(--amber);font-weight:800;font-size:1.05em;margin-bottom:12px">NO MATCH: text1[i] != text2[j]</div>
 
 <p style="margin-bottom:14px">Skip one character. Try both options, keep the better result.</p>
 
 <div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--amber)">
 <div style="color:var(--amber);font-weight:700;margin-bottom:8px">Skip text1[i]</div>
 <div style="display:grid;gap:6px;font-size:.9em">
-<div><strong>Reward:</strong> <code>+0</code>. Skipping adds nothing.</div>
-<div><strong>State changes:</strong> <code>i &rarr; i+1</code> (skipped). <code>j</code> stays (still needs a match).</div>
+<div><strong>What did I just do?</strong> Decided text1[i] isn't useful right now. Passed over it.</div>
+<div><strong>What did I gain?</strong> Nothing. Skipping adds 0.</div>
+<div><strong>i &rarr; i+1:</strong> Skipped past text1[i].</div>
+<div><strong>j stays:</strong> text2[j] wasn't consumed. It still needs a match from a later text1 character.</div>
 <div><strong>Call:</strong> <code>lcs(i+1, j)</code></div>
 </div>
 </div>
@@ -283,27 +437,29 @@ For any two-sequence DP problem, ask: <strong>"What can I do with the two elemen
 <div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--amber)">
 <div style="color:var(--amber);font-weight:700;margin-bottom:8px">Skip text2[j]</div>
 <div style="display:grid;gap:6px;font-size:.9em">
-<div><strong>Reward:</strong> <code>+0</code>. Skipping adds nothing.</div>
-<div><strong>State changes:</strong> <code>i</code> stays (still needs a match). <code>j &rarr; j+1</code> (skipped).</div>
+<div><strong>What did I just do?</strong> Decided text2[j] isn't useful right now. Passed over it.</div>
+<div><strong>What did I gain?</strong> Nothing. Skipping adds 0.</div>
+<div><strong>i stays:</strong> text1[i] wasn't consumed. It might match a later text2 character.</div>
+<div><strong>j &rarr; j+1:</strong> Skipped past text2[j].</div>
 <div><strong>Call:</strong> <code>lcs(i, j+1)</code></div>
 </div>
 </div>
 
-<div style="font-size:.93em;margin-top:8px">
-<strong>Decision:</strong> <code>max(skip_first, skip_second)</code>. We want the <strong>longest</strong>, so take the better skip.
+<div style="font-size:.93em;margin-top:12px">
+<strong>Why max()?</strong> The problem says "longest." I tried both skips. I want whichever gives the <em>larger</em> result. Therefore <code>max(skip_first, skip_second)</code>.
 </div>
 </div>
 </div>
 
-<img src="dp/images/lcs_choices.png" alt="LCS choice diagram: match advances both, no match tries skipping each. State = (i, j)" class="scene-img">
+<img src="dp/images/lcs_transitions.png" alt="LCS transition justification: match advances both pointers and adds 1, skip advances only one pointer" class="scene-img">
 
-<img src="dp/images/lcs_transitions.png" alt="LCS transition justification: match advances both, skip text1 moves only i, skip text2 moves only j" class="scene-img">
-
-<!-- ==================== STEP 2: RECURSION ==================== -->
-<h2>Step 2: Choices &rarr; Recursion</h2>
+<!-- ==================== STEP 8: DERIVE THE RECURRENCE ==================== -->
+<h2><span class="step-num">8</span> Derive the Recurrence</h2>
 
 <div class="ws">
-<h3>The code writes itself from the choices</h3>
+<h3>Now it writes itself</h3>
+
+<p style="font-size:.93em;margin-bottom:12px">Every branch has already been justified. The code simply summarizes the reasoning above:</p>
 
 <pre><code>def lcs_length(text1, text2, i, j):
     if i == len(text1) or j == len(text2):
@@ -316,50 +472,48 @@ For any two-sequence DP problem, ask: <strong>"What can I do with the two elemen
     skip_second = lcs_length(text1, text2, i, j + 1)
     return max(skip_first, skip_second)</code></pre>
 
-<div class="two-col" style="margin-top:12px">
-<div style="background:var(--card2);border-radius:6px;padding:10px;font-size:.88em">
-<div style="color:var(--green);font-weight:700;margin-bottom:4px">1 + lcs(i+1, j+1)</div>
-Characters match. Take both, advance both.
+<div class="code-ann" style="margin-top:14px">
+<code style="color:var(--green)">i == len(text1) or j == len(text2)</code><div>Either string exhausted &rarr; 0. Nothing left to match.</div>
+<code style="color:var(--green)">1 + lcs(i+1, j+1)</code><div>Match: I just gained one character. Both consumed.</div>
+<code style="color:var(--amber)">max(skip_first, skip_second)</code><div>No match: try both skips, keep the longer result.</div>
 </div>
-<div style="background:var(--card2);border-radius:6px;padding:10px;font-size:.88em">
-<div style="color:var(--amber);font-weight:700;margin-bottom:4px">max(skip_first, skip_second)</div>
-No match. Skip from text1 or text2, keep the better.
-</div>
+
+<h3 style="margin-top:16px">Does every call preserve the promise?</h3>
+<div style="display:grid;gap:6px;font-size:.93em;margin-top:8px">
+<div style="background:var(--card2);border-radius:6px;padding:8px 12px">
+<code>lcs(i+1, j+1)</code>: "LCS of text1[i+1:] and text2[j+1:]." &#10003; Both characters consumed.</div>
+<div style="background:var(--card2);border-radius:6px;padding:8px 12px">
+<code>lcs(i+1, j)</code>: "LCS of text1[i+1:] and text2[j:]." &#10003; Skipped text1[i].</div>
+<div style="background:var(--card2);border-radius:6px;padding:8px 12px">
+<code>lcs(i, j+1)</code>: "LCS of text1[i:] and text2[j+1:]." &#10003; Skipped text2[j].</div>
 </div>
 </div>
 
-<!-- ==================== STEP 3: OVERLAP ==================== -->
-<h2>Step 3: Spot the Overlap</h2>
+<!-- ==================== STEP 9: MEMOIZATION ==================== -->
+<h2><span class="step-num">9</span> Memoization</h2>
 
 <div class="ws">
-<h3>Same (i, j) pair from different paths</h3>
+<h3>Where does repeated work appear?</h3>
+
+<p style="font-size:.93em;margin-bottom:8px">Different decision paths can arrive at the same (i, j) pair. Trace the tree on "abcde" / "ace":</p>
 
 <pre style="font-size:.82em;line-height:1.8"><code>lcs("abcde", "ace", 0, 0)
   'a'=='a' MATCH: 1 + lcs(1, 1)
     'b'!='c': max(lcs(2,1), lcs(1,2))
-      lcs(2, 1)  ─ ─ ─ ─ ─ ─ ┐
-        'c'=='c' MATCH        │
-      lcs(1, 2)               │
-        'b'!='e': max(        │
-          lcs(2, 2)  ─ ─ ─ ─ ─│─ ┐
-          lcs(1, 3)=0)        │  │
-                               │  │ BOTH paths
-    lcs(2, 2) appears from   ─ ┘  │ reach (2,2)!
-    skip_first path too  ─ ─ ─ ─ ─ ┘</code></pre>
+      lcs(2, 1)                  +
+        'c'=='c' MATCH           |
+      lcs(1, 2)                  |
+        'b'!='e': max(           |
+          lcs(2, 2)        ------+ BOTH paths
+          lcs(1, 3)=0)           | reach (2,2)!
+                                 +</code></pre>
 
-<div style="background:rgba(251,191,36,.12);border:2px solid var(--gold2);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
-<div style="font-size:1.1em;font-weight:800;color:var(--gold2);margin-bottom:8px">lcs(2, 2) computed multiple times</div>
-<div style="font-size:.95em">Different skip paths converge on the same state. Cache key: <code>(i, j)</code>.</div>
-</div>
+<div style="background:rgba(251,191,36,.12);border:2px solid var(--gold2);border-radius:10px;padding:14px;margin:14px 0;text-align:center">
+<div style="font-size:1.05em;font-weight:800;color:var(--gold2);margin-bottom:6px">lcs(2, 2) computed from two different skip paths</div>
+<div style="font-size:.93em">Different roads, same destination. Cache key: <code>(i, j)</code>.</div>
 </div>
 
-<img src="dp/images/lcs_tree.png" alt="LCS recursion tree: same (i,j) reached from different skip paths" class="scene-img">
-
-<!-- ==================== STEP 4: MEMOIZE ==================== -->
-<h2>Step 4: Memoize</h2>
-
-<div class="ws">
-<h3>Same recursion, add the cache</h3>
+<h3 style="margin-top:16px">The memoized code</h3>
 
 <pre><code>def lcs_length(text1, text2, i, j, cache):
     if i == len(text1) or j == len(text2):
@@ -378,23 +532,39 @@ No match. Skip from text1 or text2, keep the better.
     return result</code></pre>
 
 <div class="code-ann" style="margin-top:14px">
-<code style="color:var(--gold2)">(i, j) in cache</code><div>Already solved this pair?</div>
-<code style="color:var(--green)">cache[(i, j)] = result</code><div>Store the LCS length for this state</div>
-<code style="color:var(--purple)">Time: O(m * n)</code><div>One entry per (i, j) pair</div>
+<code style="color:var(--gold2)">(i, j) in cache</code><div>Already solved this pair? Return immediately.</div>
+<code style="color:var(--green)">cache[(i, j)] = result</code><div>Store the LCS length for this state before returning.</div>
+<code style="color:var(--purple)">Time: O(m &times; n)</code><div>One entry per (i, j) pair. Each computed once.</div>
 </div>
 </div>
+
+<img src="dp/images/lcs_tree.png" alt="LCS recursion tree: same (i,j) reached from different skip paths" class="scene-img">
 
 <img src="dp/images/lcs_memo.png" alt="LCS memoization: overlapping subproblems, cache key is (i, j)" class="scene-img">
 
-<!-- ==================== STEP 5: TABULATION ==================== -->
-<h2 style="color:var(--amber);border-bottom-color:var(--amber)">Step 5: From Recursion to Table</h2>
+<!-- ==================== STEP 10: TABULATION ==================== -->
+<h2 style="color:var(--amber);border-bottom-color:var(--amber)"><span class="step-num" style="background:var(--amber)">10</span> Tabulation</h2>
 
 <div class="ws" style="border-left-color:var(--amber)">
-<h3 style="color:var(--amber)">What does each cell mean?</h3>
+<h3 style="color:var(--amber)">Why the table dimensions come from the state</h3>
 
-<p><code>table[i][j]</code> = <strong>LCS length for <code>text1[:i]</code> and <code>text2[:j]</code>.</strong></p>
+<p style="font-size:.93em">State = (i, j). i ranges from 0 to len(text1). j ranges from 0 to len(text2). So the table is <code>(len(text1)+1) &times; (len(text2)+1)</code>.</p>
 
-<p style="margin:12px 0">text1 = "ace", text2 = "abcde":</p>
+<p style="font-size:.93em;margin-top:8px"><code>table[i][j]</code> = <strong>LCS length for <code>text1[:i]</code> and <code>text2[:j]</code>.</strong></p>
+
+<h3 style="color:var(--amber);margin-top:16px">Why the iteration order works</h3>
+
+<p style="font-size:.93em">Each cell depends on:</p>
+<div style="display:grid;gap:4px;font-size:.9em;margin:8px 0 14px;padding-left:16px">
+<div><code>table[i-1][j-1]</code> (diagonal, for match)</div>
+<div><code>table[i-1][j]</code> (up, for skip text1[i])</div>
+<div><code>table[i][j-1]</code> (left, for skip text2[j])</div>
+</div>
+<p style="font-size:.93em">All three are above or to the left. So filling row by row, left to right, guarantees every dependency has already been computed.</p>
+
+<h3 style="color:var(--amber);margin-top:16px">The filled table</h3>
+
+<p style="font-size:.93em;margin-bottom:8px">text1 = "ace", text2 = "abcde":</p>
 
 <table class="grid-table">
 <tr><th></th><th>""</th><th>a</th><th>b</th><th>c</th><th>d</th><th>e</th></tr>
@@ -405,10 +575,8 @@ No match. Skip from text1 or text2, keep the better.
 </table>
 
 <p style="font-size:.9em;color:var(--muted)">Gold cells = matches (came from diagonal + 1). Bottom-right = answer: 3.</p>
-</div>
 
-<div class="ws" style="border-left-color:var(--amber)">
-<h3 style="color:var(--amber)">The rules at each cell</h3>
+<h3 style="color:var(--amber);margin-top:16px">The rules at each cell</h3>
 
 <div class="two-col" style="margin:12px 0">
 <div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
@@ -422,13 +590,8 @@ No match. Skip from text1 or text2, keep the better.
 <span style="font-size:.88em">Best of: skip from text1 (up) or text2 (left).</span>
 </div>
 </div>
-</div>
 
-<!-- ==================== THE CODE ==================== -->
-<h2 style="color:var(--amber);border-bottom-color:var(--amber)">The Tabulation Code</h2>
-
-<div class="ws" style="border-left-color:var(--amber)">
-<h3 style="color:var(--amber)">Row by row, left to right</h3>
+<h3 style="color:var(--amber);margin-top:16px">The code</h3>
 
 <pre><code>def lcs_length(text1, text2):
     rows = len(text1)
@@ -453,6 +616,74 @@ No match. Skip from text1 or text2, keep the better.
 </div>
 
 <img src="dp/images/lcs_tab.png" alt="LCS tabulation: grid filled row by row, match = diagonal + 1, else max(up, left)" class="scene-img">
+
+<!-- ==================== STEP 11: SPACE OPTIMIZATION ==================== -->
+<h2 style="color:var(--amber);border-bottom-color:var(--amber)"><span class="step-num" style="background:var(--amber)">11</span> Space Optimization</h2>
+
+<div class="ws" style="border-left-color:var(--amber)">
+<h3 style="color:var(--amber)">Which previous states are actually needed?</h3>
+
+<p style="font-size:.93em">Each cell uses three neighbors: <code>table[i-1][j-1]</code>, <code>table[i-1][j]</code>, <code>table[i][j-1]</code>. All from the current row or the row directly above. No cell ever looks at two rows back.</p>
+
+<div class="hi">
+<strong style="color:var(--amber)">Keep only two rows:</strong> the previous row and the current row. After filling the current row, the previous row becomes the new "previous" and the old one is discarded. Space drops from O(m &times; n) to O(min(m, n)).
+</div>
+
+<pre><code>def lcs_length(text1, text2):
+    if len(text2) > len(text1):
+        text1, text2 = text2, text1
+    cols = len(text2)
+    prev_row = [0] * (cols + 1)
+    curr_row = [0] * (cols + 1)
+
+    for i in range(1, len(text1) + 1):
+        for j in range(1, cols + 1):
+            if text1[i - 1] == text2[j - 1]:
+                curr_row[j] = prev_row[j - 1] + 1
+            else:
+                curr_row[j] = max(prev_row[j], curr_row[j - 1])
+        prev_row, curr_row = curr_row, [0] * (cols + 1)
+
+    return prev_row[cols]</code></pre>
+</div>
+
+<!-- ==================== STEP 12: PATTERN RECOGNITION ==================== -->
+<h2><span class="step-num">12</span> If I Forget Everything</h2>
+
+<div class="ws">
+<h3>How would I rediscover this in six months?</h3>
+
+<div style="display:grid;gap:10px;font-size:.93em;margin:12px 0">
+<div style="background:var(--card2);border-radius:8px;padding:12px 16px">
+<span class="step-num" style="width:24px;height:24px;font-size:.75em">1</span> "Two strings. I need to find common characters in order. Let me try greedy."
+</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px 16px">
+<span class="step-num" style="width:24px;height:24px;font-size:.75em">2</span> "Greedy fails because taking an early match can block a longer one later."
+</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px 16px">
+<span class="step-num" style="width:24px;height:24px;font-size:.75em">3</span> "So I'm forced to try both: take the match or skip. Branching = recursion."
+</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px 16px">
+<span class="step-num" style="width:24px;height:24px;font-size:.75em">4</span> "At each (i, j): match? Take it, +1, both advance. No match? Skip one, try both, keep max."
+</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px 16px">
+<span class="step-num" style="width:24px;height:24px;font-size:.75em">5</span> "Different skip paths reach the same (i, j). Overlapping subproblems. Cache it."
+</div>
+<div style="background:var(--card2);border-radius:8px;padding:12px 16px">
+<span class="step-num" style="width:24px;height:24px;font-size:.75em">6</span> "Two pointers on two strings = 2D grid. Each cell depends on up, left, diagonal. Fill row by row."
+</div>
+</div>
+
+<div class="hi">
+<strong style="color:var(--purple)">What clues tell me this is a DP problem?</strong><br>
+"Longest" = optimization. Two strings = two dimensions. Greedy fails because decisions interact. Different decision paths converge on the same state. These are all DP signals.
+</div>
+
+<div class="hi">
+<strong style="color:var(--purple)">What generalizes?</strong><br>
+Any time I have two sequences and I'm comparing elements pairwise, the structure is: match (diagonal) or skip one (up or left). The only things that change across problems are: what happens on a match (+1 for LCS, +0 for edit distance, use+skip for distinct subsequences), what the combining operation is (max, min, add), and what the base cases are.
+</div>
+</div>
 
 <!-- ==================== CHILDREN ==================== -->
 <h2>The 2D Table Family</h2>

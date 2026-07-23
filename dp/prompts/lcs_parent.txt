@@ -1,0 +1,311 @@
+LCS PARENT DP IMAGES (15-rule discovery framework)
+==============================================================
+New images for the rewritten LCS parent section.
+==============================================================
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: dark purple-blue (#1E1035). Grid/matrix atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: bright purple (#8B5CF6).
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for match/free paths. Red: (#EF4444) for mismatch/cost.
+- Amber: (#F59E0B) for replace. Blue: (#3B82F6) for insert.
+- Purple accent lighting throughout.
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: Greedy Failure -> lcs_greedy_fail.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+Big header at top: "WHY GREEDY FAILS"
+
+SECTION 1: "GREEDY WORKS HERE" (GREEN card, about 40%):
+
+Kit on the left, smiling and pointing at the walkthrough on the right.
+
+Show two rows of letter boxes:
+Row 1 (labeled "text1"): a b c d e (5 boxes)
+Row 2 (labeled "text2"): a c e (3 boxes)
+
+Step-by-step walkthrough with arrows:
+Step 1: text1[0]='a', scan text2 for 'a', found at text2[0]. GREEN checkmark. Arrow connecting them.
+Step 2: text1[1]='b', scan text2 after 0, no 'b'. RED X. Skip.
+Step 3: text1[2]='c', scan text2 after 0, found text2[1]='c'. GREEN checkmark. Arrow connecting them.
+Step 4: text1[3]='d', scan text2 after 1, no 'd'. RED X. Skip.
+Step 5: text1[4]='e', scan text2 after 1, found text2[2]='e'. GREEN checkmark. Arrow connecting them.
+
+Result: "ace", length 3. GREEN. Correct!
+
+SECTION 2: "GREEDY FAILS HERE" (RED card, about 45%):
+
+Kit on the left, looking alarmed, palm up in a "stop" gesture.
+
+Show two rows of letter boxes:
+Row 1 (labeled "text1"): c a b (3 boxes)
+Row 2 (labeled "text2"): a b c (3 boxes)
+
+Step-by-step:
+Step 1: text1[0]='c', scan text2 for 'c', found at text2[2]. GREEN checkmark. Arrow connecting c to c.
+Step 2: text1[1]='a', scan text2 AFTER index 2, nothing left. RED X. Skip.
+Step 3: text1[2]='b', scan text2 AFTER index 2, nothing left. RED X. Skip.
+
+Greedy result: "c", length 1. RED.
+
+Below: Gold accent box:
+"Real answer: 'ab', length 2!"
+"Greedy grabbed 'c' first. That blocked 'a' and 'b'."
+"IRREVERSIBLE: can't undo a greedy choice."
+
+
+================================================================================
+PROMPT 2: Frozen Call -> lcs_frozen_call.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+Big header at top: "FROZEN INSIDE A CALL"
+
+SECTION 1: "WHERE AM I?" (GOLD card, about 50%):
+
+Kit stands in the center, frozen mid-step, looking at two strings floating in front.
+
+Two rows of letter boxes:
+Row 1 (labeled "text1"): a b c d e (5 boxes)
+  First two boxes (a, b) are faded/grayed out, labeled "already decided"
+  Box at index 2 ('c') has a bright purple highlight, with arrow labeled "i" pointing at it from above
+  Boxes d, e are normal, labeled "still ahead"
+
+Row 2 (labeled "text2"): a c e (3 boxes)
+  First box (a) is faded/grayed out, labeled "already decided"
+  Box at index 1 ('c') has a bright purple highlight, with arrow labeled "j" pointing at it from above
+  Box e is normal, labeled "still ahead"
+
+Below the strings, a thought bubble from Kit:
+"I see text1[i] = 'c' and text2[j] = 'c'. What do I do?"
+
+SECTION 2: "WHAT PREVENTS ME FROM FINISHING?" (PURPLE card, about 35%):
+
+Three items in a vertical list with icons:
+
+1. "Do they match?" (magnifying glass icon)
+   "text1[i] and text2[j], same or different?"
+
+2. "If same: should I pair them?" (chain link icon)
+   "Taking this match uses both characters."
+
+3. "If different: which do I skip?" (fork-in-road icon)
+   "Skip one from text1? Or skip one from text2?"
+
+Bottom gold accent box:
+"This is THE decision at every recursive call."
+
+
+================================================================================
+PROMPT 3: Base Cases -> lcs_base_cases.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+Big header at top: "WHEN MUST I STOP?"
+
+Kit stands to the left, hand raised, pointing at the two scenarios on the right.
+
+SECTION 1: "text1 EXHAUSTED" (GREEN card, about 40%):
+
+Show two rows of letter boxes:
+Row 1 (labeled "text1"): a b c d e (5 boxes, ALL faded/grayed out)
+Row 2 (labeled "text2"): a c e (3 boxes, some still normal/bright)
+
+An arrow labeled "i" points PAST the last box of text1, off the edge.
+Text: "i == len(text1)"
+
+Below: Big zero in a circle.
+Text: "Return 0"
+Explanation: "No text1 characters left. Can't form any common pair."
+
+Highlight text in gold: "An empty string shares nothing with any string."
+
+SECTION 2: "text2 EXHAUSTED" (GREEN card, about 40%):
+
+Show two rows of letter boxes:
+Row 1 (labeled "text1"): a b c d e (5 boxes, some still normal/bright)
+Row 2 (labeled "text2"): a c e (3 boxes, ALL faded/grayed out)
+
+An arrow labeled "j" points PAST the last box of text2, off the edge.
+Text: "j == len(text2)"
+
+Below: Big zero in a circle.
+Text: "Return 0"
+Explanation: "No text2 characters left. Same reason."
+
+At the bottom, a GOLD accent box:
+"Either string running out ends the search. Need characters from BOTH sides to match."
+
+
+================================================================================
+PROMPT 4: Choices -> lcs_choices.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+Big header at top: "WHAT DO I DO WITH THESE TWO CHARACTERS?"
+
+SECTION 1: "MATCH: text1[i] == text2[j]" (GREEN card, about 30%):
+
+Show two letter boxes side by side:
+text1[i] = 'c' and text2[j] = 'c'. Green highlight on both. Equals sign between them.
+
+Below: ONE path (no branching here for LCS).
+Label: "TAKE THE MATCH"
+"Both characters consumed. +1 to the length."
+Arrow: "i+1, j+1"
+
+Kit gives a thumbs up.
+
+Small gold text: "For LCS, a free match is always worth taking. Skipping a match can never help when maximizing length."
+
+SECTION 2: "NO MATCH: text1[i] != text2[j]" (RED card, about 40%):
+
+Show two letter boxes:
+text1[i] = 'b' and text2[j] = 'c'. Red highlight. Not-equals sign between them.
+
+TWO branching arrows from this state:
+
+LEFT BRANCH (amber border):
+Label: "SKIP text1[i]"
+"Maybe 'b' is useless here."
+Arrow: "i+1, j stays"
+Show only i pointer moving right, j stays.
+
+RIGHT BRANCH (amber border):
+Label: "SKIP text2[j]"
+"Maybe 'c' is useless here."
+Arrow: "i stays, j+1"
+Show only j pointer moving right, i stays.
+
+Below both branches:
+"result = max(skip_text1, skip_text2)"
+"LONGEST. So take the BETTER path."
+
+SECTION 3: "WHY NOT SKIP BOTH?" (small RED rejection card, about 15%):
+
+Red X mark.
+"Skipping both at once would miss cases where one of them matches something later."
+"Already covered: each skip branch tries the other character against future ones."
+
+
+================================================================================
+PROMPT 5: Transitions -> lcs_transitions.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+Big header at top: "WHY DOES EACH VARIABLE CHANGE?"
+
+Show two rows of letter boxes at the top:
+Row 1 (labeled "text1"): a b c d e
+Row 2 (labeled "text2"): a c e
+Pointer "i" on text1, pointer "j" on text2.
+
+SECTION 1: "MATCH: text1[i] == text2[j], take it" (GREEN card, about 30%):
+
+  Action: "Pair them. This match adds 1 to the LCS length."
+
+  Show i pointer moving right by 1: "i -> i+1"
+  Text: "text1[i] consumed. Used for the match."
+
+  Show j pointer moving right by 1: "j -> j+1"
+  Text: "text2[j] consumed. Same character matched."
+
+  Call: "1 + lcs(i+1, j+1)"
+
+  Why both? "A match uses one character from EACH string. Both must advance."
+
+SECTION 2: "NO MATCH, SKIP text1[i]" (AMBER card, about 25%):
+
+  Action: "text1[i] can't pair with text2[j]. Skip past it."
+
+  Show i pointer moving right by 1: "i -> i+1"
+  Text: "text1[i] skipped. Move past it."
+
+  Show j pointer staying in place: "j stays"
+  Text: "text2[j] NOT consumed. Still looking for a match."
+
+  Call: "lcs(i+1, j)"
+
+  Why j stays? "text2[j] might match a later text1 character."
+
+SECTION 3: "NO MATCH, SKIP text2[j]" (AMBER card, about 25%):
+
+  Action: "text2[j] can't pair with text1[i]. Skip past it."
+
+  Show i pointer staying: "i stays"
+  Text: "text1[i] NOT consumed. Still looking for a match."
+
+  Show j pointer moving right by 1: "j -> j+1"
+  Text: "text2[j] skipped. Move past it."
+
+  Call: "lcs(i, j+1)"
+
+  Why i stays? "text1[i] might match a later text2 character."
+
+Kit at the bottom with text: "Match: both advance. Skip: only the skipped one advances."

@@ -1,0 +1,270 @@
+UNIQUE PATHS CHILD DP IMAGES (25-section discovery framework)
+==============================================================
+New images for the Unique Paths child section.
+==============================================================
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: dark purple-blue (#1E1035). Grid/matrix atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: bright purple (#8B5CF6).
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for match/free paths. Red: (#EF4444) for mismatch/cost.
+- Amber: (#F59E0B) for replace. Blue: (#3B82F6) for insert.
+- Purple accent lighting throughout.
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: Manual Counting Fails -> unique_paths_greedy.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+Big header at top: "WHY MANUAL COUNTING FAILS"
+
+SECTION 1: "SMALL GRID: EASY" (GREEN card, about 40%):
+
+Kit on the left, smiling and drawing paths on a small 2x3 grid.
+
+Show a 2x3 grid with all 3 paths traced in different colors (green, blue, gold):
+- Path 1: Right, Right, Down (green line)
+- Path 2: Right, Down, Right (blue line)
+- Path 3: Down, Right, Right (gold line)
+
+Big text: "3 paths. Easy to count by hand!"
+GREEN checkmark.
+
+SECTION 2: "BIG GRID: IMPOSSIBLE" (RED card, about 40%):
+
+Kit on the left, looking overwhelmed, holding his head, surrounded by a massive 10x10 grid with tangled path lines going everywhere.
+
+Big text: "10 x 10 grid = 48,620 paths"
+Smaller text: "Can't draw them all. Need a formula."
+RED X mark.
+
+Bottom callout box with gold border:
+"Manual counting breaks at scale. We need recursion."
+
+
+================================================================================
+PROMPT 2: Frozen at a Cell -> unique_paths_frozen.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "FROZEN AT ONE CELL"
+
+Show a 4x5 grid. One cell in the middle (row 1, col 2) is highlighted with a bright gold spotlight/glow. A robot character (Kit) is standing ON that cell, looking down at the two possible directions.
+
+Everything ABOVE and to the LEFT of the highlighted cell is grayed out/dimmed with text "ALREADY DECIDED" in muted gray.
+
+Two bright arrows from the highlighted cell:
+- Arrow going DOWN (orange): labeled "Move Down" with text "(row+1, col)"
+- Arrow going RIGHT (red): labeled "Move Right" with text "(row, col+1)"
+
+Everything below and to the right is bright, labeled "FUTURE: still to decide"
+
+Bottom text in gold callout box:
+"From this cell, I can ONLY go down or right. That's the decision."
+
+The destination cell (bottom-right corner) has a star icon and label "DESTINATION".
+
+
+================================================================================
+PROMPT 3: Base Cases -> unique_paths_base_cases.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+Big header: "WHEN DO WE STOP?"
+
+SECTION 1: "REACHED DESTINATION" (GREEN card, about 40%):
+
+Kit standing at the bottom-right cell of a 3x4 grid, celebrating with a fist pump. The cell is glowing green with a star icon.
+
+Big text: "row == rows-1 AND col == cols-1"
+Below: "return 1"
+Explanation: "Found one complete path!"
+
+GREEN border and checkmark.
+
+SECTION 2: "LEFT THE GRID" (RED card, about 40%):
+
+Kit stepping off the edge of a grid into empty space/void, looking worried. The cell beyond the grid edge is dark with a big X.
+
+Big text: "row >= rows OR col >= cols"
+Below: "return 0"
+Explanation: "This path leads nowhere."
+
+RED border and X mark.
+
+Bottom gold callout:
+"1 = 'this path works', 0 = 'dead end'. The recursion adds them up."
+
+
+================================================================================
+PROMPT 4: Code Walkthrough -> unique_paths_code_walkthrough.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "EVERY LINE HAS A REASON"
+
+Kit standing to the left, pointing at a large code block. The code is displayed in a cream-colored card with color-coded highlighting.
+
+Show this Python code with each line colored:
+
+GREEN background line:
+  def count_paths(row, col, rows, cols):
+
+BLUE background lines:
+  if row >= rows or col >= cols:
+      return 0
+  if row == rows - 1 and col == cols - 1:
+      return 1
+
+ORANGE background line:
+  down = count_paths(row + 1, col, rows, cols)
+
+RED background line:
+  right = count_paths(row, col + 1, rows, cols)
+
+PURPLE background line:
+  return down + right
+
+Color legend at the bottom:
+- GREEN = "Promise: count paths from here to destination"
+- BLUE = "Base cases: off-grid = 0, destination = 1"
+- ORANGE = "Choice 1: go down"
+- RED = "Choice 2: go right"
+- PURPLE = "Combine: add both directions"
+
+
+================================================================================
+PROMPT 5: Execution Trace -> unique_paths_trace.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "WATCHING IT RUN: 2x3 GRID"
+
+Show a tree diagram of recursive calls. Each node is a rounded box with the call arguments.
+
+Root: count_paths(0,0) at top
+
+Level 1 (two children):
+- Left: count_paths(1,0) [orange, "down"]
+- Right: count_paths(0,1) [red, "right"]
+
+Level 2 from count_paths(1,0):
+- Left: count_paths(2,0) -> returns 0 (off grid, blue X)
+- Right: count_paths(1,1) [gold box]
+
+Level 2 from count_paths(0,1):
+- Left: count_paths(1,1) [gold box, SAME as above, circled with dotted line to show OVERLAP]
+- Right: count_paths(0,2) -> returns 1 (destination! green star)
+
+Level 3 from count_paths(1,1):
+- Left: count_paths(2,1) -> returns 0 (off grid, blue X)
+- Right: count_paths(1,2) -> returns 1 (destination! green star)
+
+Return values bubbling up: 0+1=1, 1+1=2, 1+2=3
+
+Kit at the bottom pointing at the overlapping calls with speech bubble: "Same call, same answer. Why compute it twice?"
+
+Final answer circled: "3"
+
+
+================================================================================
+PROMPT 6: Common Mistakes -> unique_paths_mistakes.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Four sections stacked.
+
+Big header: "DON'T MAKE THESE MISTAKES"
+
+Kit at the top, arms crossed, looking stern.
+
+MISTAKE 1 (RED card):
+Header: "Destination returns 0 instead of 1"
+Show code: "if at destination: return 0"
+RED X. Below: "Every path dies. Answer is always 0."
+Fix: "return 1 (found a valid path!)"
+
+MISTAKE 2 (RED card):
+Header: "Using MAX instead of ADD"
+Show: "return max(down, right)" with RED X
+vs "return down + right" with GREEN checkmark
+Below: "We COUNT paths, not find the best one."
+
+MISTAKE 3 (RED card):
+Header: "Off-grid returns 1 instead of 0"
+Show code: "if off grid: return 1"
+RED X. Below: "Counts impossible paths as valid."
+Fix: "return 0 (dead end, not a path!)"
+
+MISTAKE 4 (RED card):
+Header: "Off-by-one in grid size"
+Show: "count_paths(0, 0, m-1, n-1)" with RED X
+vs "count_paths(0, 0, m, n)" with GREEN checkmark
+Below: "rows/cols is the SIZE, not the last index."

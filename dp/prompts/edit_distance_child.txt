@@ -1,0 +1,311 @@
+EDIT DISTANCE CHILD DP IMAGES (25-section discovery framework)
+==============================================================
+New images for the Edit Distance child section.
+==============================================================
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: dark purple-blue (#1E1035). Grid/matrix atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: bright purple (#8B5CF6).
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for match/free paths. Red: (#EF4444) for mismatch/cost.
+- Amber: (#F59E0B) for replace. Blue: (#3B82F6) for insert.
+- Purple accent lighting throughout.
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: Greedy Replace Fails -> edit_distance_greedy.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+Big header at top: "WHY 'JUST REPLACE' FAILS"
+
+SECTION 1: "GREEDY: REPLACE MISMATCHES" (RED card, about 45%):
+
+Kit on the left, looking confused, pointing at the walkthrough.
+
+Show two rows of letter boxes:
+Row 1 (labeled "word1"): a b c (3 boxes)
+Row 2 (labeled "word2"): a b d c (4 boxes)
+
+Step-by-step with arrows:
+Step 1: word1[0]='a' == word2[0]='a'. GREEN checkmark. Free!
+Step 2: word1[1]='b' == word2[1]='b'. GREEN checkmark. Free!
+Step 3: word1[2]='c' != word2[2]='d'. AMBER "replace c with d". Cost: 1
+Step 4: word1 done but word2[3]='c' remains. RED "insert c". Cost: 1
+
+Big text: "Total: 2 operations" with RED X
+
+SECTION 2: "OPTIMAL: INSERT FIRST" (GREEN card, about 40%):
+
+Kit smiling, pointing at the better strategy.
+
+Same two rows but showing:
+Step 1: 'a'='a'. FREE
+Step 2: 'b'='b'. FREE
+Step 3: INSERT 'd' before 'c'. Cost: 1. Now word1 becomes "abdc"
+Step 4: 'c'='c'. FREE
+
+Big text: "Total: 1 operation" with GREEN checkmark
+
+Bottom gold callout:
+"Sometimes INSERT beats REPLACE. We must try ALL three operations."
+
+
+================================================================================
+PROMPT 2: Frozen at (i,j) -> edit_distance_frozen.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "FROZEN AT ONE POSITION"
+
+Show two horizontal rows of letter boxes:
+Row 1 (labeled "word1"): h o r s e
+Row 2 (labeled "word2"): r o s
+
+Position i=0 on word1 ('h') and j=0 on word2 ('r') are highlighted with a bright gold spotlight.
+
+Everything before i and j (nothing in this case) is grayed out with "HANDLED" label.
+
+Kit stands between the two strings, looking at the highlighted characters with a magnifying glass. Speech bubble: "h != r. What do I do?"
+
+Three option panels below:
+
+Panel 1 (AMBER): "REPLACE h with r"
+Arrow: "Both advance: (i+1, j+1)"
+Cost: "+1"
+
+Panel 2 (RED): "DELETE h from word1"
+Arrow: "Only i advances: (i+1, j)"
+Cost: "+1"
+
+Panel 3 (BLUE): "INSERT r into word1"
+Arrow: "Only j advances: (i, j+1)"
+Cost: "+1"
+
+Bottom gold callout:
+"Three operations, three futures. Pick the cheapest."
+
+
+================================================================================
+PROMPT 3: Base Cases -> edit_distance_base_cases.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+Big header: "WHEN ONE STRING RUNS OUT"
+
+SECTION 1: "word1 EXHAUSTED" (BLUE card, about 40%):
+
+Kit looking at an empty row for word1 and a row with remaining characters in word2.
+
+Show: word1 = [] (empty, grayed out)
+      word2 = [r, o, s] (3 boxes remaining, highlighted blue)
+
+Big text: "i == len(word1)"
+Below: "return len(word2) - j"
+Explanation: "Must INSERT every remaining character of word2."
+Show 3 blue "INSERT" badges, one per remaining character.
+
+Answer: "return 3"
+
+SECTION 2: "word2 EXHAUSTED" (RED card, about 40%):
+
+Kit looking at remaining word1 characters and empty word2.
+
+Show: word1 = [s, e] (2 boxes remaining, highlighted red)
+      word2 = [] (empty, grayed out)
+
+Big text: "j == len(word2)"
+Below: "return len(word1) - i"
+Explanation: "Must DELETE every remaining character of word1."
+Show 2 red "DELETE" badges, one per remaining character.
+
+Answer: "return 2"
+
+Bottom gold callout:
+"Empty target = insert everything. Empty source = delete everything."
+
+
+================================================================================
+PROMPT 4: Code Walkthrough -> edit_distance_code_walkthrough.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "EVERY LINE HAS A REASON"
+
+Kit standing to the left, pointing at a large code block displayed in a cream card.
+
+Show this Python code with color-coded highlighting:
+
+GREEN background:
+  def min_edits(i, j, word1, word2):
+
+BLUE background:
+  if i == len(word1):
+      return len(word2) - j
+  if j == len(word2):
+      return len(word1) - i
+
+YELLOW/GOLD background:
+  if word1[i] == word2[j]:
+      return min_edits(i + 1, j + 1, word1, word2)
+
+AMBER background:
+  replace = 1 + min_edits(i + 1, j + 1, word1, word2)
+
+RED background:
+  delete = 1 + min_edits(i + 1, j, word1, word2)
+
+BLUE background:
+  insert = 1 + min_edits(i, j + 1, word1, word2)
+
+PURPLE background:
+  return min(replace, delete, insert)
+
+Color legend at the bottom:
+- GREEN = "Promise: minimum edits for remaining substrings"
+- BLUE = "Base cases: empty string = length of the other"
+- YELLOW = "Match check: free pass, no operation needed"
+- AMBER = "Replace: fix this position, both advance"
+- RED = "Delete: remove from word1, only i advances"
+- BLUE (lighter) = "Insert: add from word2, only j advances"
+- PURPLE = "Combine: minimum of all three operations"
+
+
+================================================================================
+PROMPT 5: Execution Trace -> edit_distance_trace.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "WATCHING IT RUN: 'ab' to 'adb'"
+
+Show a tree diagram of recursive calls. Each node is a rounded box.
+
+Root: min_edits(0,0) at top
+word1="ab", word2="adb"
+
+Level 1: word1[0]='a' == word2[0]='a' (GREEN match, free!)
+Goes to: min_edits(1,1)
+
+Level 2: word1[1]='b' != word2[1]='d' (RED mismatch!)
+Three branches:
+- AMBER: replace -> min_edits(2,2)
+- RED: delete -> min_edits(2,1)
+- BLUE: insert -> min_edits(1,2)
+
+Level 3 from replace min_edits(2,2):
+i==len(word1), return len(word2)-j = 3-2 = 1. Total: 1+1 = 2
+
+Level 3 from delete min_edits(2,1):
+i==len(word1), return len(word2)-j = 3-1 = 2. Total: 1+2 = 3
+
+Level 3 from insert min_edits(1,2):
+word1[1]='b' == word2[2]='b' (GREEN match!)
+Goes to min_edits(2,3): both done, return 0. Total: 1+0 = 1
+
+Return values bubbling up: min(2, 3, 1) = 1
+
+Kit at the bottom pointing at the insert path with speech bubble: "INSERT wins! Just 1 operation."
+
+Final answer circled in gold: "1"
+
+
+================================================================================
+PROMPT 6: Common Mistakes -> edit_distance_mistakes.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Four sections stacked.
+
+Big header: "DON'T MAKE THESE MISTAKES"
+
+Kit at the top, arms crossed, looking stern.
+
+MISTAKE 1 (RED card):
+Header: "Forgetting +1 on each operation"
+Show: "replace = min_edits(i+1, j+1)" RED X
+vs "replace = 1 + min_edits(i+1, j+1)" GREEN check
+Below: "Each operation COSTS 1. Don't forget it!"
+
+MISTAKE 2 (RED card):
+Header: "Using MAX instead of MIN"
+Show: "return max(replace, delete, insert)" RED X
+vs "return min(replace, delete, insert)" GREEN check
+Below: "We want MINIMUM operations, not maximum."
+
+MISTAKE 3 (RED card):
+Header: "Base case returns 0 instead of remaining length"
+Show: "if i == len(word1): return 0" RED X
+vs "if i == len(word1): return len(word2) - j" GREEN check
+Below: "Empty word1 still needs insertions for remaining word2!"
+
+MISTAKE 4 (RED card):
+Header: "Swapping insert and delete pointers"
+Show: "insert: (i+1, j)" and "delete: (i, j+1)" RED X
+Below: "INSERT adds to word1 to match word2[j], so j advances."
+Below: "DELETE removes from word1, so i advances."

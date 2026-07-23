@@ -1,0 +1,269 @@
+DISTINCT SUBSEQUENCES CHILD DP IMAGES (25-section discovery framework)
+==============================================================
+New images for the Distinct Subsequences child section.
+==============================================================
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: dark purple-blue (#1E1035). Grid/matrix atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: bright purple (#8B5CF6).
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for match/free paths. Red: (#EF4444) for mismatch/cost.
+- Amber: (#F59E0B) for replace. Blue: (#3B82F6) for insert.
+- Purple accent lighting throughout.
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: Greedy Always-Use-Match Fails -> distinct_subs_greedy.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+Big header at top: "WHY 'ALWAYS USE A MATCH' FAILS"
+
+SECTION 1: "GREEDY: GRAB EVERY MATCH" (RED card, about 45%):
+
+Kit looking puzzled, pointing at the walkthrough.
+
+Show two rows of letter boxes:
+Row 1 (labeled "source"): a a b (3 boxes, orange)
+Row 2 (labeled "target"): a b (2 boxes, blue)
+
+Step-by-step:
+Step 1: source[0]='a' == target[0]='a'. USE IT! Both advance. (i=1, j=1)
+Step 2: source[1]='a' != target[1]='b'. Skip. (i=2, j=1)
+Step 3: source[2]='b' == target[1]='b'. USE IT! Both advance. (i=3, j=2)
+Done! Found 1 subsequence.
+
+Big text: "Greedy finds 1 way" RED X (wrong! actual answer is 2)
+
+SECTION 2: "MISSED: SKIP THE FIRST 'a'" (GREEN card, about 40%):
+
+Kit smiling, showing the second path.
+
+Same source row but different highlighting:
+Step 1: source[0]='a'. SKIP IT. (i=1, j=0)
+Step 2: source[1]='a' == target[0]='a'. USE IT! (i=2, j=1)
+Step 3: source[2]='b' == target[1]='b'. USE IT! (i=3, j=2)
+Done! Found ANOTHER subsequence.
+
+Big text: "Skipping a match found another way!" GREEN checkmark
+
+Bottom gold callout:
+"Answer is 2, not 1. On a match, we must count BOTH: use it AND skip it."
+
+
+================================================================================
+PROMPT 2: Frozen at Matching Position -> distinct_subs_frozen.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "FROZEN AT A MATCH"
+
+Show two horizontal rows of letter boxes:
+Row 1 (labeled "source"): r a b b b i t (7 boxes)
+Row 2 (labeled "target"): r a b b i t (6 boxes)
+
+Position i=2 on source ('b') and j=2 on target ('b') are highlighted with a bright gold spotlight. They match!
+
+Characters before i and j are grayed out with "MATCHED" label.
+
+Kit stands between the two strings, looking at the matching characters. Speech bubble: "They match! But should I USE this 'b' or SKIP to a later one?"
+
+Two option panels below:
+
+Panel 1 (GREEN): "USE this 'b'"
+"Match source[2] with target[2]."
+"Both advance: count_ways(3, 3)"
+"Remaining source: b b i t. Remaining target: b i t."
+
+Panel 2 (AMBER): "SKIP this 'b'"
+"Save it. Maybe a later 'b' works better."
+"Only source advances: count_ways(3, 2)"
+"Remaining source: b b i t. Remaining target: b b i t."
+
+Bottom gold callout:
+"Count BOTH paths. Total = use + skip. That's why the operator is +."
+
+
+================================================================================
+PROMPT 3: Code Walkthrough -> distinct_subs_code_walkthrough.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "EVERY LINE HAS A REASON"
+
+Kit standing to the left, pointing at a large code block in a cream card.
+
+Show this Python code with color-coded highlighting:
+
+GREEN background:
+  def count_ways(i, j, source, target):
+
+BLUE background:
+  if j == len(target):
+      return 1
+  if i == len(source):
+      return 0
+
+RED background:
+  ways = count_ways(i + 1, j, source, target)
+
+YELLOW/GOLD background:
+  if source[i] == target[j]:
+
+PURPLE background:
+      ways += count_ways(i + 1, j + 1, source, target)
+
+ORANGE background:
+  return ways
+
+Color legend at the bottom:
+- GREEN = "Promise: ways to spell target[j:] from source[i:]"
+- BLUE = "Base cases: target done = 1 found, source done = 0 possible"
+- RED = "Skip: always available, advance source only"
+- YELLOW = "Match check: source[i] equals target[j]?"
+- PURPLE = "Use: if match, ADD paths where we use this character"
+- ORANGE = "Return: total ways (skip paths + use paths)"
+
+Big insight callout at bottom:
+"Skip is the DEFAULT. Use is ADDED on top when characters match."
+
+
+================================================================================
+PROMPT 4: Execution Trace -> distinct_subs_trace.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "WATCHING IT RUN: source='aab', target='ab'"
+
+Tree diagram of recursive calls. Each node shows (i,j) and what happens.
+
+Root: count_ways(0,0)
+source[0]='a' == target[0]='a'. MATCH!
+Two branches:
+
+Branch LEFT (RED, "skip"): count_ways(1,0)
+source[1]='a' == target[0]='a'. MATCH!
+Two branches:
+  - skip: count_ways(2,0). source[2]='b' != target[0]='a'. Skip only.
+    count_ways(3,0). i==len(source), j<len(target). Return 0. RED.
+  - use: count_ways(2,1). source[2]='b' == target[1]='b'. MATCH!
+    skip: count_ways(3,1). i==len(source). Return 0.
+    use: count_ways(3,2). j==len(target). Return 1! GREEN star!
+    Total: 0+1 = 1
+  Total: 0+1 = 1
+
+Branch RIGHT (GREEN, "use"): count_ways(1,1)
+source[1]='a' != target[1]='b'. No match. Skip only.
+count_ways(2,1). source[2]='b' == target[1]='b'. MATCH!
+  skip: count_ways(3,1). i==len(source). Return 0.
+  use: count_ways(3,2). j==len(target). Return 1! GREEN star!
+  Total: 0+1 = 1
+
+Root total: skip(1) + use(1) = 2
+
+Kit at the bottom pointing up with speech bubble: "Two green stars, two valid subsequences. Skip + Use = 2."
+
+Final answer circled in gold: "2"
+
+
+================================================================================
+PROMPT 5: Common Mistakes -> distinct_subs_mistakes.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Five sections stacked (slightly smaller cards).
+
+Big header: "DON'T MAKE THESE MISTAKES"
+
+Kit at the top, arms crossed, looking stern.
+
+MISTAKE 1 (RED card):
+Header: "Using MAX instead of +"
+Show: "return max(skip, use)" RED X
+vs "return skip + use" GREEN check
+Below: "We COUNT ways, not find the best. Addition, not maximum."
+
+MISTAKE 2 (RED card):
+Header: "Advancing target on mismatch"
+Show: "if mismatch: count_ways(i+1, j+1)" RED X
+vs "if mismatch: count_ways(i+1, j)" GREEN check
+Below: "Target is fixed! Never skip target characters."
+
+MISTAKE 3 (RED card):
+Header: "Swapping base case values"
+Show: "target done: return 0, source done: return 1" RED X
+vs "target done: return 1, source done: return 0" GREEN check
+Below: "Target done = spelled it! (1). Source empty but target left = impossible (0)."
+
+MISTAKE 4 (RED card):
+Header: "Forgetting skip branch on match"
+Show: "if match: return count_ways(i+1, j+1)" RED X (only counts use)
+vs "if match: return skip + count_ways(i+1, j+1)" GREEN check
+Below: "Skipping a match is valid! It might lead to more total ways."
+
+MISTAKE 5 (RED card):
+Header: "Wrong 1D iteration direction"
+Show: "for j in range(0, cols):" RED X
+vs "for j in range(cols-1, -1, -1):" GREEN check
+Below: "Space-optimized version needs RIGHT-TO-LEFT to avoid overwriting."

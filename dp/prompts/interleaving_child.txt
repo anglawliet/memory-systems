@@ -1,0 +1,263 @@
+INTERLEAVING STRING CHILD DP IMAGES (25-section discovery framework)
+==============================================================
+New images for the Interleaving String child section.
+==============================================================
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: dark purple-blue (#1E1035). Grid/matrix atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: bright purple (#8B5CF6).
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for match/free paths. Red: (#EF4444) for mismatch/cost.
+- Amber: (#F59E0B) for replace. Blue: (#3B82F6) for insert.
+- Purple accent lighting throughout.
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: Greedy Pick-First Fails -> interleaving_greedy.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+Big header at top: "WHY 'PICK FIRST MATCH' FAILS"
+
+SECTION 1: "GREEDY PICKS s1 FIRST" (RED card, about 45%):
+
+Kit looking frustrated, pointing at the walkthrough.
+
+Show three rows of letter boxes:
+Row 1 (labeled "s1"): a a x (3 boxes, orange)
+Row 2 (labeled "s2"): a a y (3 boxes, blue)
+Row 3 (labeled "s3"): a a y a a x (6 boxes, purple target)
+
+Step-by-step:
+Step 1: s3[0]='a'. Both s1[0]='a' and s2[0]='a' match! Greedy picks s1. Takes s1[0].
+Step 2: s3[1]='a'. Both s1[1]='a' and s2[0]='a' match! Greedy picks s1. Takes s1[1].
+Step 3: s3[2]='y'. s1[2]='x' no match. s2[0]='a' no match.
+DEAD END! RED X.
+
+Big text: "Greedy fails. Picked wrong source." RED X
+
+SECTION 2: "TRY s2 FIRST INSTEAD" (GREEN card, about 40%):
+
+Kit smiling, pointing at success.
+
+Step 1: s3[0]='a'. Take from s2[0]='a'.
+Step 2: s3[1]='a'. Take from s2[1]='a'.
+Step 3: s3[2]='y'. Take from s2[2]='y'.
+Step 4: s3[3]='a'. Take from s1[0]='a'.
+Step 5: s3[4]='a'. Take from s1[1]='a'.
+Step 6: s3[5]='x'. Take from s1[2]='x'.
+
+Big text: "Works! Must try BOTH when tied." GREEN checkmark
+
+Bottom gold callout:
+"When both match, we must explore BOTH paths. That's DP."
+
+
+================================================================================
+PROMPT 2: Frozen at (i,j) -> interleaving_frozen.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "FROZEN AT ONE POSITION"
+
+Show three horizontal rows of letter boxes:
+Row 1 (labeled "s1"): a b _ _ (first 2 grayed "consumed", pointer i at position 2)
+Row 2 (labeled "s2"): c d _ _ (first 2 grayed "consumed", pointer j at position 2)
+Row 3 (labeled "s3"): a c b d ? ? (first 4 grayed "built so far", pointer k=i+j=4 highlighted gold)
+
+Kit standing between the rows, holding a magnifying glass at the highlighted position. Speech bubble: "s3[4] needs a source. s1[i] or s2[j]?"
+
+Big gold insight box:
+"k = i + j (always!)"
+"If I consumed i from s1 and j from s2, I must be at position i+j in s3."
+"No third variable needed!"
+
+Two option panels below:
+
+Panel 1 (ORANGE): "Take from s1"
+"If s1[i] == s3[k]: advance i"
+Arrow: "can_interleave(i+1, j)"
+
+Panel 2 (BLUE): "Take from s2"
+"If s2[j] == s3[k]: advance j"
+Arrow: "can_interleave(i, j+1)"
+
+Bottom text: "If neither matches: DEAD END, return False"
+
+
+================================================================================
+PROMPT 3: Code Walkthrough -> interleaving_code_walkthrough.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "EVERY LINE HAS A REASON"
+
+Kit standing to the left, pointing at a large code block in a cream card.
+
+Show this Python code with color-coded highlighting:
+
+GREEN background:
+  def can_interleave(i, j, s1, s2, s3):
+
+YELLOW/GOLD background:
+  k = i + j
+
+BLUE background:
+  if i == len(s1) and j == len(s2):
+      return k == len(s3)
+
+LIGHT GRAY background:
+  result = False
+
+ORANGE background:
+  if i < len(s1) and s1[i] == s3[k]:
+      result = can_interleave(i + 1, j, s1, s2, s3)
+
+RED background:
+  if not result and j < len(s2) and s2[j] == s3[k]:
+      result = can_interleave(i, j + 1, s1, s2, s3)
+
+PURPLE background:
+  return result
+
+Color legend at the bottom:
+- GREEN = "Promise: can remaining parts interleave?"
+- YELLOW = "Key insight: k is always i + j"
+- BLUE = "Base case: both consumed, check s3 complete"
+- ORANGE = "Choice 1: take from s1 if it matches"
+- RED = "Choice 2: take from s2 if it matches"
+- PURPLE = "Result: OR of both choices"
+
+
+================================================================================
+PROMPT 4: Execution Trace -> interleaving_trace.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "WATCHING IT RUN"
+
+Show at top: s1="ab", s2="cd", s3="acbd"
+
+Tree diagram of recursive calls. Each node is a rounded box showing (i,j) and the character check.
+
+Root: can_interleave(0,0), k=0, s3[0]='a'
+s1[0]='a' matches! s2[0]='c' no match.
+Only one branch:
+
+Level 1: can_interleave(1,0), k=1, s3[1]='c'
+s1[1]='b' no match. s2[0]='c' matches!
+Only one branch:
+
+Level 2: can_interleave(1,1), k=2, s3[2]='b'
+s1[1]='b' matches! s2[1]='d' no match.
+Only one branch:
+
+Level 3: can_interleave(2,1), k=3, s3[3]='d'
+i==len(s1), only s2. s2[1]='d' matches!
+Only one branch:
+
+Level 4: can_interleave(2,2), k=4
+i==len(s1) AND j==len(s2). k==len(s3)=4. Return TRUE!
+
+GREEN "True" bubbling all the way back up through every level.
+
+Kit at the bottom with speech bubble: "No branching here. Each position had only one match."
+
+Final answer: "True" in big green text.
+
+
+================================================================================
+PROMPT 5: Common Mistakes -> interleaving_mistakes.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Four sections stacked.
+
+Big header: "DON'T MAKE THESE MISTAKES"
+
+Kit at the top, arms crossed, looking stern.
+
+MISTAKE 1 (RED card):
+Header: "Forgetting the length check"
+Show: jumping straight to recursion without checking len(s1)+len(s2)==len(s3)
+RED X. Below: "If lengths don't add up, answer is always False!"
+Fix: "Add early return: if len(s1)+len(s2) != len(s3): return False"
+
+MISTAKE 2 (RED card):
+Header: "Storing k as a separate variable"
+Show: "can_interleave(i, j, k)" with 3 params. RED X
+vs "k = i + j" computed inside. GREEN check
+Below: "k is ALWAYS i+j. Extra param wastes memo space (3D instead of 2D)."
+
+MISTAKE 3 (RED card):
+Header: "Treating no-match as 'skip' instead of False"
+Show: "if neither matches: skip to next" RED X
+vs "if neither matches: return False" GREEN check
+Below: "Every s3 character MUST come from somewhere. No match = dead end."
+
+MISTAKE 4 (RED card):
+Header: "Using AND instead of OR"
+Show: "return try_s1 AND try_s2" RED X
+vs "return try_s1 OR try_s2" GREEN check
+Below: "We need ANY valid interleaving, not ALL paths to work."

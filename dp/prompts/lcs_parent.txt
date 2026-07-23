@@ -309,3 +309,213 @@ SECTION 3: "NO MATCH, SKIP text2[j]" (AMBER card, about 25%):
   Why i stays? "text1[i] might match a later text2 character."
 
 Kit at the bottom with text: "Match: both advance. Skip: only the skipped one advances."
+
+
+================================================================================
+PROMPT 6: Code Walkthrough -> lcs_code_walkthrough.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). One main section.
+
+Big header at top: "WHY EVERY LINE EXISTS"
+
+Show the COMPLETE brute-force recursive code in a large light-gray code block with large monospace font (at least 26pt). The code:
+
+def lcs_length(text1, text2, i, j):
+    if i == len(text1) or j == len(text2):
+        return 0
+    if text1[i] == text2[j]:
+        return 1 + lcs_length(text1, text2, i+1, j+1)
+    skip_first = lcs_length(text1, text2, i+1, j)
+    skip_second = lcs_length(text1, text2, i, j+1)
+    return max(skip_first, skip_second)
+
+Each line or group of lines is highlighted with a distinct background color stripe. Colored arrows point from each highlighted section to an explanation card on the right side.
+
+Line 1 (GREEN highlight stripe):
+"def lcs_length(text1, text2, i, j):"
+Arrow to GREEN card: "THE PROMISE"
+"LCS length of text1[i:] and text2[j:]"
+
+Lines 2-3 (BLUE highlight stripe):
+"if i == len(text1) or j == len(text2): return 0"
+Arrow to BLUE card: "BASE CASES"
+"Either string exhausted. Nothing left to match. Return 0."
+
+Line 4 (YELLOW highlight stripe):
+"if text1[i] == text2[j]:"
+Arrow to YELLOW card: "MATCH CHECK"
+"Do these two characters match?"
+
+Line 5 (ORANGE highlight stripe):
+"return 1 + lcs_length(text1, text2, i+1, j+1)"
+Arrow to ORANGE card: "MATCH: TAKE IT"
+"+1 for the match. Both advance."
+
+Lines 6-7 (RED highlight stripe):
+"skip_first = lcs_length(..., i+1, j)"
+"skip_second = lcs_length(..., i, j+1)"
+Arrow to RED card: "NO MATCH: TRY BOTH SKIPS"
+"Skip one pointer. Try both. +0 each."
+
+Line 8 (PURPLE highlight stripe):
+"return max(skip_first, skip_second)"
+Arrow to PURPLE card: "LONGEST = MAX"
+"Keep the better path."
+
+Kit stands at the bottom, pointing up at the code. Speech bubble: "If the code were erased, the reasoning reconstructs it."
+
+
+================================================================================
+PROMPT 7: Execution Trace -> lcs_execution_trace.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). One main section.
+
+Big header at top: "FOLLOW ONE EXAMPLE"
+
+Subtitle: text1 = "ac", text2 = "abc". Expected: LCS = "ac", length 2.
+
+Show a tree of recursive calls. Each call is a rounded card/node.
+
+TOP NODE (PURPLE border, large):
+"lcs(0, 0)"
+"text1[0]='a', text2[0]='a'"
+"MATCH! +1"
+Arrow down labeled "1 + ?"
+
+SECOND NODE (PURPLE border):
+"lcs(1, 1)"
+"text1[1]='c', text2[1]='b'"
+"NO MATCH"
+Two arrows branching down:
+
+LEFT BRANCH (RED arrow labeled "skip text1[i]"):
+"lcs(2, 1)"
+"i=2 == len('ac')"
+Big BLUE badge: "BASE: Return 0"
+
+RIGHT BRANCH (RED arrow labeled "skip text2[j]"):
+"lcs(1, 2)"
+"text1[1]='c', text2[2]='c'"
+"MATCH! +1"
+Arrow down labeled "1 + ?"
+
+BOTTOM NODE:
+"lcs(2, 3)"
+"i=2 == len('ac')"
+Big BLUE badge: "BASE: Return 0"
+
+Now show RETURN VALUES flowing BACK UP in GREEN:
+lcs(2, 3) returns 0
+lcs(1, 2) = 1 + 0 = 1 (green)
+lcs(2, 1) returns 0
+lcs(1, 1) = max(0, 1) = 1 (green, show the max comparison)
+lcs(0, 0) = 1 + 1 = 2 (big GOLD badge at top: "ANSWER: 2")
+
+Kit on the right side, watching the return values flow up. Speech bubble: "Each call returns its piece. The answer builds from the bottom up."
+
+
+================================================================================
+PROMPT 8: Operator Derivation -> lcs_operator.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+Big header at top: "WHY MAX? WHY +1? WHY NOT ADD?"
+
+SECTION 1: "WHY +1 ON MATCH?" (GREEN card, about 30%):
+
+Show text1[i]='c' and text2[j]='c' matching (green glow).
+Big "+1" in a green circle.
+
+Three sub-items:
+"Why +1?" - "Matched ONE character. One pair = one unit of length."
+"Why not +2?" - "Only one pair matched, not two."
+"Why not +0?" - "I DID accomplish something: pairing identical characters."
+
+SECTION 2: "WHY +0 ON SKIP?" (AMBER card, about 25%):
+
+Show text1[i]='b' and text2[j]='c' NOT matching (red X between them).
+Big "+0" in an amber circle.
+
+"Skipping creates no match."
+"Nothing was paired."
+"The skip just moves a pointer."
+
+SECTION 3: "WHY MAX, NOT ADD?" (PURPLE card, about 30%):
+
+Show two branches: skip_first and skip_second.
+
+LEFT side (with X mark):
+"skip_first + skip_second"
+"Addition COUNTS ALL PATHS"
+"That's for 'how many ways?' (Distinct Subsequences)"
+
+RIGHT side (with checkmark):
+"max(skip_first, skip_second)"
+"Max PICKS THE BEST PATH"
+"That's for 'longest' (LCS)"
+
+At bottom, a gold reference table:
+"longest" -> max()
+"count ways" -> +
+"shortest" -> min()
+"any valid?" -> OR
+
+Kit at the bottom pointing at the table.
+
+
+================================================================================
+PROMPT 9: Common Mistakes -> lcs_mistakes.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Four sections.
+
+Big header at top: "COMMON MISTAKES"
+
+Kit at the top looking concerned, pointing at errors.
+
+SECTION 1 (RED card, about 22%):
+Title: "+1 ON THE SKIP BRANCH"
+Show code: "return 1 + lcs(i+1, j)" with big X mark.
+"Skipping matches nothing. +0, not +1."
+Fix: "Skip adds 0. Only match adds 1."
+Detection: 'lcs("a","b") returns 1 instead of 0'
+
+SECTION 2 (RED card, about 22%):
+Title: "ADD INSTEAD OF MAX"
+Show code: "lcs(i+1,j) + lcs(i,j+1)" with big X mark.
+"Addition counts all paths."
+"LCS wants the SINGLE longest."
+Fix: "max(skip_first, skip_second)"
+
+SECTION 3 (RED card, about 22%):
+Title: "ONLY ONE POINTER ON MATCH"
+Show code: "1 + lcs(i+1, j)" with big X mark.
+Show: j stays, text2[j] gets matched AGAIN later.
+"Double-counting! Match uses BOTH characters."
+Fix: "1 + lcs(i+1, j+1)"
+
+SECTION 4 (RED card, about 22%):
+Title: "BASE CASE RETURNS 1"
+Show code: "if i == len(text1): return 1" with big X mark.
+"Running out isn't success. It's the end."
+"No match happened here."
+Fix: "return 0"

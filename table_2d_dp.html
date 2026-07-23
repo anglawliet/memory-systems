@@ -546,6 +546,8 @@ text2: <span style="opacity:.4">a</span> <span style="background:var(--purple);c
 
 <img src="dp/images/lcs_transitions.png" alt="LCS transition justification: match advances both pointers and adds 1, skip advances only one pointer" class="scene-img">
 
+<img src="dp/images/lcs_operator.png" alt="Why max and not add? Why +1 and not +0? Deriving the combining operator from the English problem" class="scene-img">
+
 <!-- ==================== 14. HOW DO WE COMBINE FUTURES? ==================== -->
 <h2><span class="step-num">13</span> How Do We Combine the Results?</h2>
 
@@ -695,6 +697,8 @@ Step 13 derived: "longest" means max(). I tried two skip paths, and I want the o
 </div>
 </div>
 
+<img src="dp/images/lcs_code_walkthrough.png" alt="Color-highlighted brute-force code: green=promise, blue=base cases, yellow=match check, orange=match branch, red=skip branches, purple=max" class="scene-img">
+
 <!-- ==================== 18. CONCRETE EXECUTION TRACE ==================== -->
 <h2><span class="step-num">17</span> Concrete Execution Trace</h2>
 
@@ -729,6 +733,8 @@ Each call returns the LCS length for <em>its</em> remaining subproblem. <code>lc
 </div>
 </div>
 </div>
+
+<img src="dp/images/lcs_execution_trace.png" alt="Full execution trace on text1=ac text2=abc: call tree with return values flowing back up to answer 2" class="scene-img">
 
 <!-- ==================== 19. WHY IS IT SLOW? ==================== -->
 <h2><span class="step-num">18</span> Why Is It Slow?</h2>
@@ -1004,6 +1010,8 @@ Tabulation uses 1-indexed table but 0-indexed strings. The correct comparison is
 
 </div>
 </div>
+
+<img src="dp/images/lcs_mistakes.png" alt="LCS common mistakes: +1 on skip, add instead of max, single pointer on match, base case returns 1" class="scene-img">
 
 <!-- ==================== 24. PATTERN RECOGNITION ==================== -->
 <h2><span class="step-num">23</span> Pattern Recognition</h2>

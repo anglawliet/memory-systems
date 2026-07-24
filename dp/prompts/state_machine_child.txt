@@ -1,0 +1,514 @@
+STATE MACHINE DP IMAGES (25-section discovery framework)
+==============================================================
+New images for the rewritten state machine page.
+==============================================================
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: dark teal-green (#0F2922). Grid/matrix atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: bright emerald (#10B981).
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for match/valid. Red: (#EF4444) for mismatch/fail.
+- Blue: (#3B82F6) for REST state. Emerald accent lighting throughout.
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: Greedy Fails on Cooldown -> stock_greedy.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+Big header: "GREEDY: BUY LOW SELL HIGH"
+
+SECTION 1: "WITHOUT COOLDOWN" (GREEN card, about 35%):
+Kit confidently pointing at a price chart line graph.
+Prices [1, 2, 4] shown as labeled dots connected by lines.
+Arrow: buy@1, sell@4. Profit = 3. GREEN check.
+"Works perfectly when there's no cooldown."
+
+SECTION 2: "WITH COOLDOWN: FAILS" (RED card, about 45%):
+Kit looking confused, a big RED X over the chart.
+
+Price chart: [1, 2, 3, 0, 2] as labeled dots connected by lines.
+
+Show greedy attempt:
+"Buy@1, sell@3 (+2). Now want to buy@0..."
+Big RED block: "DAY 3 = COOLDOWN. Can't buy!"
+"Greedy misses the optimal: buy@1, sell@2 (+1), rest, buy@0, sell@2 (+2) = $3"
+
+Bottom gold callout:
+"Cooldown means selling one day later can unlock a better total path."
+
+
+================================================================================
+PROMPT 2: Frozen on Day i -> stock_frozen.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "FROZEN ON DAY i"
+
+Show prices [1, 2, 3, 0, 2] as large boxes in a row. Day 2 (price $3) is highlighted with a gold spotlight.
+
+Kit stands below, arms crossed, speech bubble: "Same price, but what am I allowed to do?"
+
+Three scenario cards below:
+
+Card 1 (RED border): "IF HOLDING A STOCK"
+"I can SELL (+$3) or KEEP HOLDING."
+
+Card 2 (GREEN border): "IF JUST SOLD"
+"Forced cooldown. Must REST. No choice."
+
+Card 3 (BLUE border): "IF RESTING"
+"I can BUY (-$3) or KEEP RESTING."
+
+Bottom gold callout:
+"The price alone isn't enough. I need to know my STATE."
+
+
+================================================================================
+PROMPT 3: Stock Code Walkthrough -> stock_code_walkthrough.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "EVERY LINE HAS A REASON"
+
+Kit standing to the left, pointing at a large code block.
+
+Show this Python code with color-coded highlighting:
+
+BLUE background:
+  if day == len(prices):
+      return 0
+
+RED background:
+  if state == "hold":
+      keep_holding = max_profit(prices, day + 1, "hold")
+      sell_now = prices[day] + max_profit(prices, day + 1, "sold")
+      return max(keep_holding, sell_now)
+
+GREEN background:
+  if state == "sold":
+      return max_profit(prices, day + 1, "rest")
+
+BLUE background:
+  keep_resting = max_profit(prices, day + 1, "rest")
+  buy_now = -prices[day] + max_profit(prices, day + 1, "hold")
+  return max(keep_resting, buy_now)
+
+Color legend at the bottom:
+- BLUE = "Base case: past last day, 0 profit"
+- RED = "HOLD: sell or keep"
+- GREEN = "SOLD: forced rest, no max"
+- BLUE = "REST: buy or keep resting"
+
+
+================================================================================
+PROMPT 4: Stock Execution Trace -> stock_trace.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "TRACE: [1, 2, 3, 0, 2]"
+
+Show prices at top: 1 2 3 0 2 in boxes.
+
+Show the optimal path through the state machine as a timeline:
+
+Day 0: REST, price $1. BUY. Cost: -$1. Next: HOLD.
+Day 1: HOLD, price $2. SELL. Gain: +$2. Next: SOLD.
+Day 2: SOLD, price $3. Forced REST. Next: REST.
+Day 3: REST, price $0. BUY. Cost: -$0. Next: HOLD.
+Day 4: HOLD, price $2. SELL. Gain: +$2.
+
+Each row is a card with the state label color-coded (RED for hold, GREEN for sold, BLUE for rest).
+
+Running total shown: -1, +1, +1, +1, +3.
+
+Kit at bottom with gold star: "Total profit: $3"
+
+
+================================================================================
+PROMPT 5: LIS Greedy Failure -> lis_greedy.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+Big header: "GREEDY: KEEP FIRST, SKIP SMALLER"
+
+SECTION 1: "THE GREEDY PLAN" (about 35%):
+Kit scanning left to right through array boxes.
+Array: [10, 9, 2, 5, 3, 7, 101, 18]
+
+Greedy keeps 10 first. Then scans: 9 < 10 skip. 2 < 10 skip. 5 < 10 skip. 3 < 10 skip. 7 < 10 skip. 101 > 10, KEEP! 18 < 101 skip.
+Result: [10, 101]. Length 2. RED X.
+
+SECTION 2: "WHAT IT MISSED" (about 35%):
+Show the array again with elements 2, 5, 7, 101 highlighted in GREEN.
+"The real LIS: [2, 5, 7, 101]. Length 4."
+
+Kit facepalming. "Locking in 10 blocked every longer chain hiding below it."
+
+Bottom gold callout:
+"The first element I pick can shut the door on all better sequences."
+
+
+================================================================================
+PROMPT 6: LIS Frozen at Index i -> lis_frozen.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "FROZEN AT INDEX i"
+
+Array: [10, 9, 2, 5, 3, 7, 101, 18] in boxes. Index 5 (value 7) is highlighted with gold spotlight.
+
+Kit below the array with magnifying glass, speech bubble: "What's the longest chain ending exactly HERE?"
+
+Below, show the scan backwards:
+"Check all previous elements smaller than 7:"
+j=2 (value 2): 2 < 7, chain [2] + 7 = length 2
+j=3 (value 5): 5 < 7, chain [2, 5] + 7 = length 3. BEST!
+j=4 (value 3): 3 < 7, chain [2, 3] + 7 = length 3. Ties.
+
+Result: "longest_ending_at(5) = 3"
+
+Bottom gold callout:
+"State = i. For each element, scan all smaller previous elements."
+
+
+================================================================================
+PROMPT 7: LIS Code Walkthrough -> lis_code_walkthrough.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "EVERY LINE HAS A REASON"
+
+Kit pointing at a large code block.
+
+Show this Python code with color-coded highlighting:
+
+GREEN background:
+  def longest_ending_at(nums, i):
+
+BLUE background:
+  length = 1
+
+ORANGE/AMBER background:
+  for previous in range(i):
+      if nums[previous] < nums[i]:
+
+RED background:
+          length = max(length, 1 + longest_ending_at(nums, previous))
+
+EMERALD/GREEN background:
+  return length
+
+Color legend:
+- GREEN = "Promise: longest chain ending at i"
+- BLUE = "Base case: every element starts as chain of 1"
+- ORANGE = "Scan earlier indices, only smaller qualify"
+- RED = "Extend and keep the max"
+- EMERALD = "Return the answer for this index"
+
+
+================================================================================
+PROMPT 8: LIS Execution Trace -> lis_trace.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "TRACE: [10, 9, 2, 5, 3, 7, 101, 18]"
+
+Show the array at top in boxes.
+
+Below, a table/grid showing the lengths array being built:
+
+| i | value | best prev | length |
+| 0 | 10    | none      | 1      |
+| 1 | 9     | none      | 1      |
+| 2 | 2     | none      | 1      |
+| 3 | 5     | 2         | 2      |
+| 4 | 3     | 2         | 2      |
+| 5 | 7     | 5 or 3    | 3      |
+| 6 | 101   | 7         | 4      | (highlighted gold)
+| 7 | 18    | 7         | 4      | (highlighted gold)
+
+Kit pointing at the max: "max(lengths) = 4"
+
+Bottom: "Answer: 4" in big gold text.
+
+
+================================================================================
+PROMPT 9: LIS Common Mistakes -> lis_mistakes.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+Big header: "LIS: COMMON MISTAKES"
+
+MISTAKE 1 (RED card):
+"Using <= instead of <"
+Show code: `if nums[previous] <= nums[i]` with RED X
+"Strictly increasing means LESS THAN only. Equal values don't extend."
+
+MISTAKE 2 (RED card):
+"Returning lengths[-1] instead of max(lengths)"
+Show: lengths = [1, 1, 1, 2, 2, 3, 4, 4]
+"The LIS doesn't always end at the last index!"
+Arrow pointing at index 6 (value 4): "Could end anywhere."
+
+MISTAKE 3 (RED card):
+"Confusing LIS with LCS"
+"LIS: one array, compare to ITSELF. LCS: two arrays, match elements."
+Kit shaking head.
+
+Bottom gold callout: "State is ending index, not starting index. Answer is max of all, not the last one."
+
+
+================================================================================
+PROMPT 10: Burst Greedy Failure -> burst_greedy.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+Big header: "GREEDY: BURST SMALLEST FIRST"
+
+SECTION 1: "GREEDY ATTEMPT" (RED card, about 45%):
+Kit bursting balloons one by one (show them as numbered circles).
+
+Balloons: [3, 1, 5, 8] (padded with invisible 1s on edges).
+
+Step 1: Burst 1 (smallest). Neighbors 3, 5. Coins: 3*1*5 = 15.
+Step 2: Burst 3 (next smallest). Neighbors now 1, 5. Coins: 1*3*5 = 15.
+Step 3: Burst 5. Neighbors now 1, 8. Coins: 1*5*8 = 40.
+Step 4: Burst 8. Neighbors now 1, 1. Coins: 1*8*1 = 8.
+Total: 78. Big RED X.
+
+SECTION 2: "OPTIMAL ORDER" (GREEN card, about 35%):
+"Burst order: 1, 5, 3, 8 = 167!"
+Kit celebrating.
+
+Bottom gold callout:
+"A balloon's payout depends on its CURRENT neighbors, which change with every burst."
+
+
+================================================================================
+PROMPT 11: Burst Frozen in Range -> burst_frozen.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "THINK LAST, NOT FIRST"
+
+Show balloons [3, 1, 5, 8] with boundary 1s on each side: [1, 3, 1, 5, 8, 1].
+
+Kit in the center, looking at a single balloon with a question mark, speech bubble: "Which one do I burst LAST?"
+
+Two panels:
+
+Panel 1 (RED): "BURST FIRST: neighbors shift!"
+Diagram showing: burst 1, then 3 and 5 become neighbors. Messy arrows.
+"Subproblems are coupled. Can't split."
+
+Panel 2 (GREEN): "BURST LAST: neighbors are fixed!"
+Diagram showing: if k is last, its neighbors are the range boundaries (always fixed).
+"Left piece and right piece are INDEPENDENT."
+
+Bottom gold callout:
+"The 'last burst' reversal makes subproblems independent. State = (left, right)."
+
+
+================================================================================
+PROMPT 12: Burst Code Walkthrough -> burst_code_walkthrough.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "EVERY LINE HAS A REASON"
+
+Kit pointing at a large code block.
+
+Show this Python code with color-coded highlighting:
+
+GOLD/AMBER background:
+  nums = [1] + nums + [1]
+
+BLUE background:
+  if left > right:
+      return 0
+
+EMERALD background:
+  for last in range(left, right + 1):
+
+RED background:
+      coins = nums[left - 1] * nums[last] * nums[right + 1]
+
+GREEN background:
+      coins += max_coins(nums, left, last - 1)
+      coins += max_coins(nums, last + 1, right)
+
+EMERALD background:
+      best = max(best, coins)
+
+Color legend:
+- GOLD = "Pad with 1s for uniform boundary math"
+- BLUE = "Base case: empty range, 0 coins"
+- EMERALD = "Try every balloon as last burst"
+- RED = "Boundary reward: left_boundary * last * right_boundary"
+- GREEN = "Two independent sub-ranges, solved recursively"
+
+
+================================================================================
+PROMPT 13: Burst Execution Trace -> burst_trace.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "TRACE: [3, 1, 5, 8]"
+
+Show padded balloons at top: [1, 3, 1, 5, 8, 1] with indices 0-5.
+
+Show the optimal decomposition as a tree:
+
+Root: max_coins(1, 4) = 167
+  Last = 4 (balloon 8):
+  boundary: 1 * 8 * 1 = 8
+  Left: max_coins(1, 3) = 159
+    Last = 1 (balloon 3):
+    boundary: 1 * 3 * 8 = 24
+    Left: max_coins(1, 0) = 0 (empty)
+    Right: max_coins(2, 3) = 135
+      Last = 3 (balloon 5):
+      boundary: 3 * 5 * 8 = 120
+      Left: max_coins(2, 2) = 15
+        balloon 1 alone: 3 * 1 * 5 = 15
+
+Kit at bottom: "Total: 15 + 120 + 24 + 8 = 167"
+
+Answer: "167" in big gold text.
+
+
+================================================================================
+PROMPT 14: Burst Common Mistakes -> burst_mistakes.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Three sections.
+
+Big header: "BURST BALLOONS: COMMON MISTAKES"
+
+MISTAKE 1 (RED card):
+"Choosing k as FIRST burst instead of LAST"
+Diagram showing coupled subproblems when bursting first.
+"Neighbors shift, subproblems depend on each other!"
+
+MISTAKE 2 (RED card):
+"Forgetting to pad with 1s"
+Show: nums = [3, 1, 5, 8]
+"Without padding, boundary math breaks at the edges."
+Correct: nums = [1, 3, 1, 5, 8, 1]
+
+MISTAKE 3 (RED card):
+"Using original static neighbors"
+"When balloon k is last, its neighbors are the RANGE boundaries, not its original neighbors."
+Show: for range [2, 4], boundaries are nums[1] and nums[5], not the original array neighbors.
+
+Kit at bottom looking serious.
+
+Bottom gold callout: "Think LAST. Pad with 1s. Use boundary values, not static neighbors."

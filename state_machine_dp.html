@@ -71,903 +71,878 @@ code{font-family:'Fira Code','Courier New',monospace}
 <a href="dp_workshop.html" class="nav-link">Knapsack</a>
 </div>
 
-<!-- ==================== THE PROBLEM ==================== -->
+
+<!-- ==================== 1. THE PROBLEM ==================== -->
 <h2>The Problem</h2>
 
 <div class="ws">
 <h3 style="margin-bottom:12px">Best Time to Buy and Sell Stock with Cooldown (LeetCode #309)</h3>
 
-<p style="margin-bottom:12px">You have stock prices for each day. You can buy, sell, or rest. After selling, you must wait one day (cooldown) before buying again. Maximize profit.</p>
+<p style="margin-bottom:12px">Given daily stock <code>prices</code>, maximize profit with unlimited transactions. Must buy before selling, and must cooldown 1 day after every sale.</p>
 
-<div style="text-align:center;margin:16px 0;font-size:1.1em">
-<code>prices = [1, 2, 3, 0, 2]</code>
+<div style="text-align:center;margin:16px 0">
+<code style="font-size:1.1em">prices = [1, 2, 3, 0, 2]</code>
 </div>
 
-<p style="margin-bottom:8px">Best strategy: buy day 0 ($1), sell day 1 ($2), cooldown day 2, buy day 3 ($0), sell day 4 ($2). Profit = (2-1) + (2-0) = <strong style="color:var(--gold2)">$3</strong>.</p>
+<div style="display:grid;gap:6px;margin-top:14px;font-size:.9em">
+<div style="background:var(--card2);border-radius:6px;padding:8px 12px">
+<code>[1, 2, 3, 0, 2]</code> &rarr; <strong style="color:var(--gold2)">3</strong>
+<span style="color:var(--muted)"> Buy@1, sell@2, cooldown, buy@0, sell@2.</span>
+</div>
+<div style="background:var(--card2);border-radius:6px;padding:8px 12px">
+<code>[1]</code> &rarr; <strong style="color:var(--gold2)">0</strong>
+<span style="color:var(--muted)"> One day, no sell is possible.</span>
+</div>
+<div style="background:var(--card2);border-radius:6px;padding:8px 12px">
+<code>[1, 2]</code> &rarr; <strong style="color:var(--gold2)">1</strong>
+<span style="color:var(--muted)"> Buy@1, sell@2. No time for a second trade.</span>
+</div>
+<div style="background:var(--card2);border-radius:6px;padding:8px 12px">
+<code>[7, 6, 4, 3, 1]</code> &rarr; <strong style="color:var(--gold2)">0</strong>
+<span style="color:var(--muted)"> Strictly falling. Every trade loses money, so do nothing.</span>
+</div>
+<div style="background:var(--card2);border-radius:6px;padding:8px 12px">
+<code>[1, 4, 2]</code> &rarr; <strong style="color:var(--gold2)">3</strong>
+<span style="color:var(--muted)"> Buy@1, sell@4. The cooldown never even matters here.</span>
+</div>
+</div>
 </div>
 
-<!-- ==================== STEP 0: CLASSIFICATION ==================== -->
-
-<h2><span class="step-num">0</span> Is This a DP Problem?</h2>
+<!-- ==================== 2. WHAT IS IT REALLY ASKING? ==================== -->
+<h2><span class="step-num">1</span> What Is It Really Asking?</h2>
 
 <div class="ws">
+<p style="font-size:.93em;margin-bottom:10px">Three rules stack on top of each other: own at most one share at a time, wait one full day after a sale before buying again, and trade as many times as helpful.</p>
 
-<h3>What is the problem asking me to compute?</h3>
-<p>Maximum total profit from buying and selling stocks, with a cooldown constraint after each sale.</p>
-
-<h3 style="margin-top:20px">Why doesn't greedy work?</h3>
-
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:18px;margin:12px 0">
-<div style="font-size:.93em">
-<strong>Greedy idea:</strong> "Buy at the lowest, sell at the highest."<br><br>
-<strong>Why it fails:</strong> The cooldown constraint creates dependencies between transactions. Selling on day 1 means I <em>cannot</em> buy on day 2. So a locally optimal sell might prevent a globally optimal buy. I can't decide each day independently because today's action constrains tomorrow's options.
+<div class="two-col" style="margin:12px 0">
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px;font-size:.9em">
+<strong style="color:var(--green)">Unlimited transactions</strong><br>Buy/sell as many times as profitable, not just once.
 </div>
-</div>
-
-<h3 style="margin-top:20px">Why would brute force create overlapping subproblems?</h3>
-<p>Different sequences of buy/sell decisions can lead to the same situation (same day, same state). Example: "buy day 0, sell day 1, cooldown day 2" and "wait day 0, wait day 1, wait day 2" both arrive at day 3 in the REST state. Same remaining problem.</p>
-
-<h3 style="margin-top:20px">Which family?</h3>
-<p><strong style="color:var(--emerald)">State Machine DP</strong>. My available actions depend on what state I'm in. The constraint (cooldown) creates distinct states with different legal moves.</p>
-</div>
-
-<!-- ==================== STEP 1: RECURSIVE QUESTION ==================== -->
-
-<h2><span class="step-num">1</span> The Recursive Question</h2>
-
-<div class="ws">
-<p style="margin-bottom:12px">State it entirely in English before introducing variables:</p>
-
-<div style="background:rgba(16,185,129,.12);border:2px solid var(--emerald);border-radius:10px;padding:20px;margin:12px 0;text-align:center">
-<div style="font-size:1.15em;font-weight:700;color:var(--emerald)">"What is the maximum profit I can earn from day X onward, given my current situation?"</div>
-</div>
-
-<p style="margin-top:12px">The function answers one question: from this day forward, in this situation, what's the best I can do?</p>
-
-<p>But what is "my current situation"? That's what I need to figure out next. I can't write the function signature until I know what state information matters.</p>
-</div>
-
-<!-- ==================== STEP 2: BASE CASES ==================== -->
-
-<h2><span class="step-num">2</span> Discover the Base Cases</h2>
-
-<div class="ws">
-
-<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:12px 0;text-align:center">
-<div style="font-size:1.05em;font-weight:700;color:var(--gold2)">"If I keep making decisions day after day, when must I eventually stop?"</div>
-</div>
-
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:12px">STOP: Past the last day (day == len(prices))</div>
-<div style="display:grid;gap:8px;font-size:.93em">
-<div><strong>What situation have I reached?</strong> There are no more trading days. The market is closed.</div>
-<div><strong>Why can't I continue?</strong> No prices left. Nothing to buy or sell.</div>
-<div><strong>Why is the remaining problem trivial?</strong> Zero days of trading means zero additional profit, regardless of my state.</div>
-<div><strong>What should this return?</strong> <code>0</code>.</div>
-<div><strong>Why 0?</strong> No more trades can happen. Whether I'm holding, resting, or in cooldown, there's nothing left to do. No future profit.</div>
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px;font-size:.9em">
+<strong style="color:var(--red)">Cooldown</strong><br>After selling, day i+1 must be idle. Can't buy until i+2.
 </div>
 </div>
 
 <div class="hi">
-<strong>Is this the only stop?</strong> Yes. Every day before the last has at least one legal action (even if it's just waiting). The only time I have zero actions is when there are no days left.
+<strong style="color:var(--emerald)">Summary:</strong> Pick a sequence of buy/sell days (respecting the cooldown gap) that maximizes total profit.
+</div>
 </div>
 
-<div style="margin-top:12px;font-size:.93em;color:var(--muted)"><strong>Note:</strong> if I'm holding a stock when time runs out, it's unsold. That's a loss, not an error. The function returns 0 additional profit from this point. The cost of the unsold stock was already accounted for when I bought it.</div>
-</div>
-
-<img src="dp/images/stock_base_cases.png" alt="Stock cooldown base case: past last day returns 0 regardless of state" class="scene-img">
-
-<!-- ==================== STEPS 3-4: CHOICES ==================== -->
-
-<h2><span class="step-num">3</span> Discover the Choices</h2>
+<!-- ==================== 3. GREEDY: BUY LOW SELL HIGH ==================== -->
+<h2><span class="step-num">2</span> What Would I Naturally Try?</h2>
 
 <div class="ws">
+<p style="margin-bottom:10px">Instinct: buy at every local minimum, sell at every local maximum.</p>
 
-<h3>What is my current situation?</h3>
-<p>It's a particular day. I see today's stock price. I need to decide what to do today.</p>
-
-<div style="text-align:center;margin:16px 0;font-size:1.1em">
-<code>prices = [1, 2, 3, 0, 2]</code>
-<div style="font-size:.82em;color:var(--muted);margin-top:6px">I'm standing on some day, looking at today's price.</div>
-</div>
-
-<h3 style="margin-top:20px">What am I allowed to do?</h3>
-<p>The problem says three actions: <strong>buy</strong>, <strong>sell</strong>, or <strong>do nothing</strong>.</p>
-
-<h3 style="margin-top:20px">What am I forbidden from doing?</h3>
-
-<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:12px 0">
-<div style="color:var(--gold2);font-weight:700;font-size:1.05em;margin-bottom:12px">THE KEY QUESTION: "Can I always do all three?"</div>
-<div style="font-size:.95em;display:grid;gap:10px">
-<div><strong>Can I always buy?</strong> No. I can't buy if I already own a stock (hold at most one at a time).</div>
-<div><strong>Can I always sell?</strong> No. I can't sell if I don't own a stock.</div>
-<div><strong>Can I always do nothing?</strong> Yes. Waiting is always legal.</div>
-<div><strong>Is there an additional constraint?</strong> Yes: after selling, I must wait one day before buying again. So even if I don't own a stock, I might not be allowed to buy yet.</div>
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:16px;margin:12px 0">
+<div style="color:var(--green);font-weight:800;margin-bottom:8px">GREEDY ON prices = [1, 2, 4]</div>
+<div style="font-size:.93em">Local min at 1, local max at 4. Buy@1, sell@4. Profit = 3. <strong style="color:var(--gold2)">Correct, and no cooldown conflict.</strong></div>
 </div>
 </div>
 
-<h3 style="margin-top:20px">Why are these the only legal actions?</h3>
-<p>The problem defines exactly three actions (buy, sell, rest). But their availability <strong>depends on my current situation</strong>. That's different from knapsack where "grab or skip" is always available. Here, I need to know what situation I'm in before I can figure out my choices.</p>
+<!-- ==================== 4. FAILS BECAUSE COOLDOWN BLOCKS BUY-AFTER-SELL ==================== -->
+<h2><span class="step-num">3</span> Where Does That Fail?</h2>
 
-<p style="margin-top:12px">This means I must first discover the <strong>situations</strong>.</p>
-
-<!-- DISCOVERING THE STATES -->
-<h3 style="margin-top:24px">What situations can I be in?</h3>
-
-<p style="margin-bottom:12px">Let me list every possible situation and ask: <strong>what's different about what I'm allowed to do?</strong></p>
-
-<div style="background:var(--card2);border-radius:10px;padding:16px;margin:12px 0">
-<div style="display:grid;gap:14px;font-size:.93em">
-
-<div>
-<strong>Situation A:</strong> I don't own a stock, and I didn't sell yesterday.<br>
-<span style="padding-left:20px">→ I'm <strong>free</strong>. I can buy or wait. Two legal actions.</span>
+<div class="ws">
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:16px;margin:12px 0">
+<div style="color:var(--red);font-weight:800;margin-bottom:8px">GREEDY FAILS: prices = [1, 2, 3, 0, 2]</div>
+<div style="font-size:.93em">Greedy sees minima at 1 and 0, maxima at 3 and 2: buy@1, sell@3 (+2), then it wants to buy@0 on the very next day, but that's the cooldown day. Illegal.</div>
 </div>
 
-<div>
-<strong>Situation B:</strong> I own a stock.<br>
-<span style="padding-left:20px">→ I'm <strong>holding</strong>. I can sell or keep holding. Two legal actions.</span>
-</div>
-
-<div>
-<strong>Situation C:</strong> I don't own a stock, but I sold yesterday.<br>
-<span style="padding-left:20px">→ I'm in <strong>cooldown</strong>. The rule says I must wait. Zero choices. I can only wait.</span>
-</div>
-
+<div class="hi">
+<strong style="color:var(--emerald)">The trap:</strong> Local min/max ignores that a sale freezes the next day. Sometimes selling one day later (@2 instead of @3) leaves a legal buy window and a better total (3).
 </div>
 </div>
 
-<div style="background:rgba(16,185,129,.08);border:2px solid var(--emerald);border-radius:10px;padding:16px;margin:12px 0">
-<div style="font-size:.95em">
-<strong>How do I know these are the only three?</strong> The only constraint is "wait one day after selling." That creates exactly one special situation (just sold, must wait). Everything else is either "I own a stock" or "I'm free to act." Three situations. Three states. No more.
-</div>
+<img src="dp/images/stock_greedy.png" alt="Greedy buy-low-sell-high works without cooldown but fails on [1,2,3,0,2]: selling at the peak blocks the very next legal buy" class="scene-img">
+
+<!-- ==================== 5. FROZEN AT DAY I ==================== -->
+<h2><span class="step-num">4</span> What Decision Am I Stuck On?</h2>
+
+<div class="ws">
+<p style="font-size:.93em">Freeze on day <code>day</code>. Before I can decide anything, I need one more fact: <strong>am I currently holding a stock, just sold, or free to act?</strong> Same day, same price, three completely different legal moves.</p>
 </div>
 
-<p>These three situations are the <strong>states</strong>:</p>
+<img src="dp/images/stock_frozen.png" alt="Frozen on day i: the price alone isn't enough, I need to know my current state (holding, sold, or resting) before I know what I'm allowed to do" class="scene-img">
+
+<!-- ==================== 6. CHOICES DEPEND ON STATE ==================== -->
+<h2><span class="step-num">5</span> What Can I Do From Here?</h2>
+
+<div class="ws">
+<p style="margin-bottom:12px">Three situations, three answer sets:</p>
 
 <div class="three-col" style="margin:16px 0">
-<div class="state-rest">
-<div style="color:var(--blue);font-weight:700;margin-bottom:6px">REST</div>
-I don't own anything. I'm free to act.
-</div>
 <div class="state-hold">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">HOLD</div>
-I own a stock. Waiting for the right time to sell.
+<span style="font-size:.9em">Own a share. <strong>Sell</strong> (&rarr; SOLD) or <strong>keep holding</strong> (&rarr; HOLD).</span>
 </div>
 <div class="state-sold">
 <div style="color:var(--green);font-weight:700;margin-bottom:6px">SOLD</div>
-I just sold. Mandatory cooldown. Can't do anything today.
+<span style="font-size:.9em">Just sold today. Forced cooldown: <strong>rest</strong> (&rarr; REST). No choice.</span>
+</div>
+<div class="state-rest">
+<div style="color:var(--blue);font-weight:700;margin-bottom:6px">REST</div>
+<span style="font-size:.9em">Free, no stock. <strong>Buy</strong> (&rarr; HOLD) or <strong>keep resting</strong> (&rarr; REST).</span>
 </div>
 </div>
 </div>
 
-<img src="dp/images/stock_state_discovery.png" alt="Stock state discovery: constraints create three situations (REST, HOLD, SOLD) with different legal actions" class="scene-img">
+<img src="dp/images/stock_state_discovery.png" alt="Stock state discovery: the cooldown constraint carves the world into three situations, HOLD, SOLD, REST, each with different legal actions" class="scene-img">
 
-<!-- ==================== STEP 4: EXPLAIN EACH CHOICE ==================== -->
-
-<h2><span class="step-num">4</span> Explain Each Choice</h2>
+<!-- ==================== 7. WHY ONLY THESE? ==================== -->
+<h2><span class="step-num">6</span> Why Only These Choices?</h2>
 
 <div class="ws">
-
-<p style="margin-bottom:12px">Now I can derive the choices for each situation. In each state, I ask: "what actions are legal <strong>right now</strong>?"</p>
-
-<!-- FROM REST -->
-<div style="background:rgba(59,130,246,.06);border:2px solid var(--blue);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--blue);font-weight:800;font-size:1.05em;margin-bottom:12px">FROM REST: "I'm free. What can I do?"</div>
-
-<div style="display:grid;gap:14px;font-size:.93em">
-<div style="background:var(--card2);border-radius:8px;padding:14px;border-left:3px solid var(--red)">
-<div style="color:var(--red);font-weight:700;margin-bottom:6px">BUY</div>
-<strong>What am I doing?</strong> Spending money to buy a stock at today's price.<br>
-<strong>Why is this legal?</strong> I don't own anything and I'm not in cooldown. Buying is allowed.<br>
-<strong>What changes immediately?</strong> I lose <code>prices[day]</code> in cash. I now own a stock.<br>
-<strong>What stays unchanged?</strong> Everything before today. Past profit is locked in.<br>
-<strong>What remains to solve?</strong> From tomorrow onward, maximize profit while holding. <code>-prices[day] + max_profit(day+1, "hold")</code>
-</div>
-
-<div style="background:var(--card2);border-radius:8px;padding:14px;border-left:3px solid var(--blue)">
-<div style="color:var(--blue);font-weight:700;margin-bottom:6px">WAIT</div>
-<strong>What am I doing?</strong> Nothing. Skip this day.<br>
-<strong>Why is this legal?</strong> Waiting is always legal.<br>
-<strong>What changes immediately?</strong> Nothing. No money spent, no stock acquired.<br>
-<strong>What stays unchanged?</strong> Everything. My state doesn't change.<br>
-<strong>What remains to solve?</strong> Same problem starting tomorrow. <code>max_profit(day+1, "rest")</code>
-</div>
-</div>
-
-<div style="font-size:.93em;margin-top:10px"><strong>Are there other options?</strong> Can I sell? No, I don't own anything. Buy or wait are the only legal actions. <strong>Decision:</strong> <code>max(buy, wait)</code>.</div>
-</div>
-
-<!-- FROM HOLD -->
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--red);font-weight:800;font-size:1.05em;margin-bottom:12px">FROM HOLD: "I own a stock. What can I do?"</div>
-
-<div style="display:grid;gap:14px;font-size:.93em">
-<div style="background:var(--card2);border-radius:8px;padding:14px;border-left:3px solid var(--green)">
-<div style="color:var(--green);font-weight:700;margin-bottom:6px">SELL</div>
-<strong>What am I doing?</strong> Selling my stock at today's price.<br>
-<strong>Why is this legal?</strong> I own a stock. Selling is allowed.<br>
-<strong>What changes immediately?</strong> I gain <code>prices[day]</code> in cash. I no longer own a stock.<br>
-<strong>What stays unchanged?</strong> Past transactions. Their profit is locked in.<br>
-<strong>What remains to solve?</strong> Tomorrow I'm in SOLD (not REST!). Cooldown forces one day wait. <code>prices[day] + max_profit(day+1, "sold")</code>
-</div>
-
-<div style="background:var(--card2);border-radius:8px;padding:14px;border-left:3px solid var(--red)">
-<div style="color:var(--red);font-weight:700;margin-bottom:6px">KEEP HOLDING</div>
-<strong>What am I doing?</strong> Not selling. Waiting for a better price.<br>
-<strong>Why is this legal?</strong> Holding is always legal.<br>
-<strong>What changes immediately?</strong> Nothing. Still own the stock.<br>
-<strong>What stays unchanged?</strong> Everything.<br>
-<strong>What remains to solve?</strong> <code>max_profit(day+1, "hold")</code>
-</div>
-</div>
-
-<div style="font-size:.93em;margin-top:10px"><strong>Are there other options?</strong> Can I buy another stock? No, hold at most one. Sell or keep are the only legal actions. <strong>Decision:</strong> <code>max(sell, keep)</code>.</div>
-</div>
-
-<!-- FROM SOLD -->
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:12px">FROM SOLD: "I just sold. What can I do?"</div>
-
 <div style="display:grid;gap:10px;font-size:.93em">
-<div><strong>What are my legal actions?</strong> None. The cooldown rule says I must wait one day after selling. Buying is forbidden. Selling is impossible (I don't own anything). Waiting is the only option.</div>
-<div><strong>What changes?</strong> Day advances. Cooldown is served.</div>
-<div><strong>What new situation does this create?</strong> Tomorrow I'll be in REST (free to act again).</div>
-<div><strong>What remains to solve?</strong> <code>max_profit(day+1, "rest")</code></div>
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:12px">
+<strong style="color:var(--red)">Can I sell without holding?</strong> No. Nothing to sell.
 </div>
-
-<div style="margin-top:10px;font-size:.93em;color:var(--muted)"><strong>Why does the SOLD state even exist?</strong> Without it, after selling I'd go straight to REST and could buy again immediately. The SOLD state is how the code enforces the one-day gap. The constraint created this state.</div>
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:12px">
+<strong style="color:var(--red)">Can I buy the day right after a sell?</strong> No. That's the cooldown rule, which is exactly why SOLD exists as its own state instead of collapsing into REST.
 </div>
-
-<h3 style="margin-top:20px">The Choice Diagram</h3>
-
-<div style="background:var(--card2);border-radius:10px;padding:18px;margin:12px 0">
-<pre style="font-size:.88em;line-height:1.8;margin:0"><code>Current Situation: It's day X. What state am I in?
-        │
-   ┌────┼────────────┐
-   │    │             │
-  REST  HOLD         SOLD
-   │    │             │
-   │    ├─ Sell       └─ Cooldown (mandatory)
-   │    │  +price        state: sold → rest
-   │    │  state → sold
-   │    │
-   │    └─ Keep holding
-   │       +0, state stays hold
-   │
-   ├─ Buy
-   │  -price
-   │  state → hold
-   │
-   └─ Wait
-      +0, state stays rest
-
-Combine: max(choices) in each state.</code></pre>
-</div>
-
-<!-- WATCH IT PLAY OUT -->
-<h3 style="margin-top:20px">Watch it play out</h3>
-
-<p style="margin-bottom:8px">Trace <code>prices = [1, 2, 3, 0, 2]</code>, optimal path:</p>
-
-<div style="background:var(--card2);border-radius:10px;padding:16px;margin:12px 0">
-<div style="display:grid;gap:10px;font-size:.9em">
-<div>
-<strong style="color:var(--blue)">Day 0 (price $1), state: REST</strong><br>
-<span style="padding-left:20px">I'm free. Buy at $1. Cost: -$1. Tomorrow: HOLD.</span>
-</div>
-<div>
-<strong style="color:var(--red)">Day 1 (price $2), state: HOLD</strong><br>
-<span style="padding-left:20px">I own a stock. Sell at $2. Reward: +$2. Tomorrow: SOLD.</span>
-</div>
-<div>
-<strong style="color:var(--green)">Day 2 (price $3), state: SOLD</strong><br>
-<span style="padding-left:20px">Just sold. Must cooldown. No action. Tomorrow: REST.</span>
-</div>
-<div>
-<strong style="color:var(--blue)">Day 3 (price $0), state: REST</strong><br>
-<span style="padding-left:20px">Free again! Buy at $0. Cost: -$0. Tomorrow: HOLD.</span>
-</div>
-<div>
-<strong style="color:var(--red)">Day 4 (price $2), state: HOLD</strong><br>
-<span style="padding-left:20px">Sell at $2. Reward: +$2. Done.</span>
-</div>
-<div style="font-weight:700;color:var(--gold2);padding-top:6px">
-Total profit: -1 + 2 + 0 + 0 + 2 = <strong>$3</strong>
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:12px">
+<strong style="color:var(--red)">Can I hold two stocks at once?</strong> No. At most one share, so a second buy from HOLD is illegal.
 </div>
 </div>
 </div>
 
-<p style="font-size:.9em;color:var(--muted)">Notice how the state determined the legal actions at each step. On day 2 (SOLD), buying was forbidden even though the price was good. The cooldown constraint shaped the path.</p>
-</div>
+<img src="dp/images/stock_cooldown_choices.png" alt="Stock cooldown choice diagram: state machine with HOLD, SOLD, REST states and 5 legal transitions between them" class="scene-img">
 
-<img src="dp/images/stock_cooldown_choices.png" alt="Stock Cooldown choice diagram: state machine with HOLD, SOLD, REST states and 5 transitions" class="scene-img">
-
-<!-- ==================== STEP 5: STATE ==================== -->
-
-<h2><span class="step-num">5</span> Discover the State</h2>
+<!-- ==================== 8. SIMULATE ON [1,2,3,0,2] ==================== -->
+<h2><span class="step-num">7</span> Watch Each Choice Play Out</h2>
 
 <div class="ws">
+<p style="margin-bottom:10px">Optimal path through <code>prices = [1, 2, 3, 0, 2]</code>:</p>
 
-<p style="margin-bottom:14px"><strong>What information must I know to uniquely describe the remaining problem?</strong></p>
-
-<div style="background:rgba(16,185,129,.06);border:2px solid var(--emerald);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--emerald);font-weight:800;font-size:1.05em;margin-bottom:12px">Candidate: day (which day am I on?)</div>
-<div style="display:grid;gap:8px;font-size:.93em">
-<div><strong>Why do I need it?</strong> Different days have different prices. "What's the max profit from day 2 onward?" is a completely different question from "from day 4 onward?"</div>
-<div><strong>What if I remove it?</strong> "What's the max profit from some day onward?" is ambiguous. I can't determine the answer without knowing which day.</div>
+<div style="background:var(--card2);border-radius:10px;padding:16px;font-size:.9em">
+<div style="display:grid;gap:6px">
+<div><strong style="color:var(--blue)">Day 0, REST</strong>, price $1 &rarr; buy. &minus;$1. Tomorrow: HOLD.</div>
+<div><strong style="color:var(--red)">Day 1, HOLD</strong>, price $2 &rarr; sell. +$2. Tomorrow: SOLD.</div>
+<div><strong style="color:var(--green)">Day 2, SOLD</strong>, price $3 &rarr; forced rest, ignore the price. Tomorrow: REST.</div>
+<div><strong style="color:var(--blue)">Day 3, REST</strong>, price $0 &rarr; buy. &minus;$0. Tomorrow: HOLD.</div>
+<div><strong style="color:var(--red)">Day 4, HOLD</strong>, price $2 &rarr; sell. +$2.</div>
+<div style="font-weight:700;color:var(--gold2);padding-top:4px">Total: &minus;1+2+0+0+2 = <strong>$3</strong></div>
 </div>
-</div>
-
-<div style="background:rgba(16,185,129,.06);border:2px solid var(--emerald);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--emerald);font-weight:800;font-size:1.05em;margin-bottom:12px">Candidate: current state (rest, hold, or sold)</div>
-<div style="display:grid;gap:8px;font-size:.93em">
-<div><strong>Why do I need it?</strong> Different states have different legal actions. "Max profit from day 3 in REST" lets me buy. "Max profit from day 3 in SOLD" forces me to wait. Different answers.</div>
-<div><strong>What if I remove it?</strong> "Max profit from day 3 in ??? state" is ambiguous. I can't determine which actions are legal.</div>
 </div>
 </div>
 
-<div style="background:rgba(16,185,129,.06);border:2px solid var(--emerald);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--emerald);font-weight:800;font-size:1.05em;margin-bottom:12px">Candidate: which stock I bought / at what price</div>
-<div style="display:grid;gap:8px;font-size:.93em">
-<div><strong>Do I need it?</strong> No. The buy price was already subtracted as a cost when I chose to buy. The remaining problem only cares about "am I holding or not?" and "which day is it?" The exact purchase price doesn't affect future decisions.</div>
-<div><strong>Verdict:</strong> Not part of the state.</div>
-</div>
-</div>
-
-<div style="background:rgba(251,191,36,.12);border:2px solid var(--gold2);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
-<div style="font-size:1.1em;font-weight:800;color:var(--gold2)">State = (day, situation)</div>
-<div style="font-size:.93em;margin-top:6px">Two variables: which day (0 to n-1), and which of three states (rest, hold, sold). At most 3n unique subproblems.</div>
-</div>
-</div>
-
-<!-- ==================== STEP 6: STATE INVARIANT ==================== -->
-
-<h2><span class="step-num">6</span> State Invariant</h2>
+<!-- ==================== 9. STATE = (DAY, STATE_TYPE) ==================== -->
+<h2><span class="step-num">8</span> What Must I Remember? (The State)</h2>
 
 <div class="ws">
+<div class="sbox"><div class="sl" style="color:var(--emerald)">day</div>Different days have different prices. Needed.</div>
+<div class="sbox"><div class="sl" style="color:var(--emerald)">state_type (hold / sold / rest)</div>Same day, different legal moves depending on this. Needed.</div>
+<div class="sbox"><div class="sl" style="color:var(--red)">purchase price</div>Already spent and subtracted when bought. Doesn't affect future choices, not needed.</div>
 
-<div style="background:rgba(16,185,129,.12);border:2px solid var(--emerald);border-radius:10px;padding:20px;margin:12px 0">
-<div style="font-size:1em;font-weight:700;color:var(--emerald);margin-bottom:8px">max_profit(day, state)</div>
-<div style="font-size:.95em">"I promise everything before this day has already been handled. Past transactions are locked in. I only care about maximizing profit from day onward, given my current state."</div>
-</div>
-
-<h3 style="margin-top:16px">Does every recursive call preserve this?</h3>
-
-<div style="font-size:.93em;margin:12px 0">
-Every call moves to <code>day+1</code>. It never revisits a previous day. It never undoes a past transaction. The state (rest/hold/sold) fully captures the consequence of past actions without storing the full history.
-<br><br>
-<strong>Verification:</strong> When I call <code>max_profit(day+1, "hold")</code>, I've already committed to buying on the current day. The buy cost is accounted for. The child call only needs to handle day+1 onward in the HOLD state. <strong>Invariant preserved.</strong>
+<div style="background:rgba(251,191,36,.12);border:2px solid var(--gold2);border-radius:10px;padding:14px;margin:14px 0;text-align:center">
+<strong style="color:var(--gold2)">State = (day, state_type)</strong>
 </div>
 </div>
 
-<!-- ==================== STEPS 7-8: TRANSITION AND RECURRENCE ==================== -->
-
-<h2><span class="step-num">7</span> Derive the Transition</h2>
+<!-- ==================== 10. VARIABLES MEANING ==================== -->
+<h2><span class="step-num">9</span> What Do the Variables Mean?</h2>
 
 <div class="ws">
-
-<p style="margin-bottom:10px;font-size:.93em">State: <code>max_profit(day, state)</code>. For each transition, justify the cost, the state change, and why.</p>
-
-<!-- FROM REST -->
-<div style="background:rgba(59,130,246,.06);border:2px solid var(--blue);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--blue);font-weight:800;font-size:1.05em;margin-bottom:10px">FROM REST: Two choices</div>
-
-<div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--red)">
-<div style="color:var(--red);font-weight:700;margin-bottom:8px">BUY (rest &rarr; hold)</div>
-<div style="display:grid;gap:6px;font-size:.9em">
-<div><strong>Action:</strong> Buy stock at today's price.</div>
-<div><strong>Immediate cost:</strong> <code>-prices[day]</code>. Money spent.</div>
-<div><strong>State change:</strong> <code>day &rarr; day+1</code> (tomorrow), <code>state: rest &rarr; hold</code> (now own a stock).</div>
-<div><strong>Why state changes:</strong> I just acquired a stock. Tomorrow I'm holding it.</div>
-<div><strong>Call:</strong> <code>-prices[day] + max_profit(day+1, "hold")</code></div>
+<div class="two-col">
+<div style="background:var(--card2);border-radius:8px;padding:14px;font-size:.9em">
+<strong style="color:var(--emerald)">day</strong><br>Before day: decided, locked in. From day onward: still to be solved.
 </div>
-</div>
-
-<div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--blue)">
-<div style="color:var(--blue);font-weight:700;margin-bottom:8px">WAIT (rest &rarr; rest)</div>
-<div style="display:grid;gap:6px;font-size:.9em">
-<div><strong>Action:</strong> Do nothing.</div>
-<div><strong>Immediate cost:</strong> <code>+0</code>. No transaction.</div>
-<div><strong>State change:</strong> <code>day &rarr; day+1</code>, state stays rest.</div>
-<div><strong>Why state stays:</strong> Nothing happened. Still free tomorrow.</div>
-<div><strong>Call:</strong> <code>max_profit(day+1, "rest")</code></div>
-</div>
-</div>
-
-<div style="font-size:.93em"><strong>Decision:</strong> <code>max(buy, wait)</code>.</div>
-</div>
-
-<!-- FROM HOLD -->
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--red);font-weight:800;font-size:1.05em;margin-bottom:10px">FROM HOLD: Two choices</div>
-
-<div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--green)">
-<div style="color:var(--green);font-weight:700;margin-bottom:8px">SELL (hold &rarr; sold)</div>
-<div style="display:grid;gap:6px;font-size:.9em">
-<div><strong>Action:</strong> Sell stock at today's price.</div>
-<div><strong>Immediate reward:</strong> <code>+prices[day]</code>. Money received.</div>
-<div><strong>State change:</strong> <code>day &rarr; day+1</code>, <code>state: hold &rarr; sold</code> (must cooldown next).</div>
-<div><strong>Why sold, not rest?</strong> The cooldown rule. After selling, I must wait one day. SOLD enforces that gap.</div>
-<div><strong>Call:</strong> <code>prices[day] + max_profit(day+1, "sold")</code></div>
-</div>
-</div>
-
-<div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--red)">
-<div style="color:var(--red);font-weight:700;margin-bottom:8px">KEEP HOLDING (hold &rarr; hold)</div>
-<div style="display:grid;gap:6px;font-size:.9em">
-<div><strong>Action:</strong> Don't sell. Wait for a better price.</div>
-<div><strong>Immediate cost:</strong> <code>+0</code>. No transaction.</div>
-<div><strong>State change:</strong> <code>day &rarr; day+1</code>, state stays hold.</div>
-<div><strong>Why state stays:</strong> Still own the same stock.</div>
-<div><strong>Call:</strong> <code>max_profit(day+1, "hold")</code></div>
-</div>
-</div>
-
-<div style="font-size:.93em"><strong>Decision:</strong> <code>max(sell, keep)</code>.</div>
-</div>
-
-<!-- FROM SOLD -->
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:10px">FROM SOLD: No choice (mandatory cooldown)</div>
-<div style="display:grid;gap:6px;font-size:.9em">
-<div><strong>Action:</strong> Wait. No other option.</div>
-<div><strong>Immediate cost:</strong> <code>+0</code>. Just waiting.</div>
-<div><strong>State change:</strong> <code>day &rarr; day+1</code>, <code>state: sold &rarr; rest</code> (cooldown complete).</div>
-<div><strong>Why rest?</strong> The one-day gap is served. Tomorrow I'm free to act again.</div>
-<div><strong>Call:</strong> <code>max_profit(day+1, "rest")</code></div>
+<div style="background:var(--card2);border-radius:8px;padding:14px;font-size:.9em">
+<strong style="color:var(--emerald)">state_type</strong><br>What I'm allowed to do starting today: hold&rarr;sell/keep, sold&rarr;rest only, rest&rarr;buy/keep.
 </div>
 </div>
 </div>
 
-<img src="dp/images/stock_cooldown_transitions.png" alt="Stock Cooldown transition justification: 5 transitions between 3 states with cost/reward for each" class="scene-img">
-
-<!-- STEP 8: RECURRENCE -->
-
-<h2><span class="step-num">8</span> Derive the Recurrence</h2>
+<!-- ==================== 11. PROMISE ==================== -->
+<h2><span class="step-num">10</span> What Does the Function Promise?</h2>
 
 <div class="ws">
-<p style="margin-bottom:12px">Now the recurrence writes itself:</p>
-
-<div style="background:var(--card2);border-radius:10px;padding:18px;margin:12px 0">
-<pre style="font-size:.88em;line-height:2;margin:0"><code>max_profit(day, state) =
-    0                                               if day == len(prices)
-
-    max(-prices[day] + max_profit(day+1, "hold"),
-        max_profit(day+1, "rest"))                  if state == "rest"
-
-    max(prices[day] + max_profit(day+1, "sold"),
-        max_profit(day+1, "hold"))                  if state == "hold"
-
-    max_profit(day+1, "rest")                       if state == "sold"</code></pre>
+<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:16px;text-align:center;font-size:1.05em">
+<strong style="color:var(--gold2)">max_profit(day, state) returns the best profit obtainable from day onward, given I start today already in state.</strong>
+</div>
+<p style="font-size:.9em;margin-top:12px">Original problem: <code>max_profit(0, rest)</code> (day 0, no stock, no cooldown owed).</p>
 </div>
 
-<h3 style="margin-top:16px">The code</h3>
+<!-- ==================== 12. BASE CASES: LAST DAY ==================== -->
+<h2><span class="step-num">11</span> When Must We Stop? (Base Cases)</h2>
 
+<div class="ws">
+<p style="font-size:.93em">When <code>day == len(prices)</code>, there are no more days to act on. No matter the state, nothing more can be gained.</p>
+<div class="hi"><strong style="color:var(--emerald)">max_profit(len(prices), any state) = 0</strong></div>
+</div>
+
+<!-- ==================== 13. TRANSITIONS FOR EACH STATE ==================== -->
+<h2><span class="step-num">12</span> What Smaller Problem Remains? (Transitions)</h2>
+
+<div class="ws">
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:14px;margin:10px 0;font-size:.93em">
+<strong style="color:var(--red)">HOLD</strong>: sell &rarr; <code>prices[day] + max_profit(day+1, sold)</code>, or keep &rarr; <code>max_profit(day+1, hold)</code>.
+</div>
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:14px;margin:10px 0;font-size:.93em">
+<strong style="color:var(--green)">SOLD</strong>: only rest &rarr; <code>max_profit(day+1, rest)</code>. No choice, no price change.
+</div>
+<div style="background:rgba(59,130,246,.06);border:2px solid var(--blue);border-radius:10px;padding:14px;margin:10px 0;font-size:.93em">
+<strong style="color:var(--blue)">REST</strong>: buy &rarr; <code>-prices[day] + max_profit(day+1, hold)</code>, or keep resting &rarr; <code>max_profit(day+1, rest)</code>.
+</div>
+</div>
+
+<img src="dp/images/stock_cooldown_transitions.png" alt="Stock cooldown transition justification: 5 transitions between HOLD, SOLD, REST with the cost or reward attached to each" class="scene-img">
+
+<!-- ==================== 14. OPERATOR: MAX ==================== -->
+<h2><span class="step-num">13</span> How Do We Combine the Results?</h2>
+
+<div class="ws">
+<p style="font-size:.93em">The problem says <strong>maximize</strong> profit. Whenever a state has two legal moves, take <code>max()</code> of both futures.</p>
+</div>
+
+<!-- ==================== 15. RECURRENCE ==================== -->
+<h2><span class="step-num">14</span> The Recurrence</h2>
+
+<div class="ws">
+<pre style="margin:0;font-size:.9em;line-height:2"><code>                    &#9484; 0                                                     if day == len(prices)
+hold_profit(day) = &#9474; max(hold_profit(day+1), prices[day] + sold_profit(day+1))  otherwise
+
+                    &#9484; 0                                                     if day == len(prices)
+sold_profit(day) = &#9474; rest_profit(day+1)                                       otherwise
+
+                    &#9484; 0                                                     if day == len(prices)
+rest_profit(day) = &#9474; max(rest_profit(day+1), -prices[day] + hold_profit(day+1)) otherwise</code></pre>
+<p style="font-size:.9em;margin-top:10px">Answer: <code>rest_profit(0)</code>.</p>
+</div>
+
+<!-- ==================== 16. BRUTE-FORCE CODE ==================== -->
+<h2><span class="step-num">15</span> Brute-Force Code</h2>
+
+<div class="ws">
+<pre><code>def max_profit(prices, day, state):
+    if day == len(prices):
+        return 0
+
+    if state == "hold":
+        keep_holding = max_profit(prices, day + 1, "hold")
+        sell_now = prices[day] + max_profit(prices, day + 1, "sold")
+        return max(keep_holding, sell_now)
+
+    if state == "sold":
+        return max_profit(prices, day + 1, "rest")
+
+    keep_resting = max_profit(prices, day + 1, "rest")
+    buy_now = -prices[day] + max_profit(prices, day + 1, "hold")
+    return max(keep_resting, buy_now)
+
+max_profit(prices, 0, "rest")</code></pre>
+</div>
+
+<!-- ==================== 17. CODE WALKTHROUGH ==================== -->
+<h2><span class="step-num">16</span> Why Every Line Exists</h2>
+
+<div class="ws">
+<div class="code-ann">
+<code style="color:var(--blue)">if day == len(prices): return 0</code><div>Step 11 base case.</div>
+<code style="color:var(--red)">if state == "hold": ...</code><div>Step 12 HOLD branch: max(keep, sell).</div>
+<code style="color:var(--green)">if state == "sold": ...</code><div>Step 12 SOLD branch: forced rest, no max needed.</div>
+<code style="color:var(--blue)">keep_resting / buy_now</code><div>Step 12 REST branch: max(keep, buy).</div>
+</div>
+</div>
+
+<img src="dp/images/stock_code_walkthrough.png" alt="Color-highlighted stock cooldown code: blue=base case, red=HOLD branch, green=SOLD branch, blue=REST branch, each mapped to its derivation step" class="scene-img">
+
+<!-- ==================== 18. EXECUTION TRACE ==================== -->
+<h2><span class="step-num">17</span> Concrete Execution Trace</h2>
+
+<div class="ws">
+<p style="font-size:.93em">Trace <code>max_profit(prices, 0, "rest")</code> on <code>[1, 2, 3, 0, 2]</code>. Every call resolves down to base cases returning 0, then the max()s and price adjustments build the answer back up to <strong style="color:var(--gold2)">3</strong>.</p>
+</div>
+
+<img src="dp/images/stock_trace.png" alt="Full execution trace of max_profit on prices=[1,2,3,0,2] starting from rest at day 0: call tree with return values flowing back up to answer 3" class="scene-img">
+
+<!-- ==================== 19. WHY SLOW ==================== -->
+<h2><span class="step-num">18</span> Why Is It Slow?</h2>
+
+<div class="ws">
+<p style="font-size:.93em">Every call branches into up to 2 children, and different buy/sell/wait sequences land on the exact same <code>(day, state)</code> pair. Recomputed every time, causing exponential blowup without caching.</p>
+</div>
+
+<!-- ==================== 20. MEMOIZATION ==================== -->
+<h2><span class="step-num">19</span> Memoization</h2>
+
+<div class="ws">
+<p style="font-size:.93em;margin-bottom:10px">Cache key: <code>(day, state)</code>. At most <code>3 &times; len(prices)</code> entries.</p>
 <pre><code>def max_profit(prices, day, state, cache):
     if day == len(prices):
         return 0
     if (day, state) in cache:
         return cache[(day, state)]
 
-    if state == "rest":
-        buy = -prices[day] + max_profit(prices, day + 1, "hold", cache)
-        wait = max_profit(prices, day + 1, "rest", cache)
-        result = max(buy, wait)
-    elif state == "hold":
-        sell = prices[day] + max_profit(prices, day + 1, "sold", cache)
-        keep = max_profit(prices, day + 1, "hold", cache)
-        result = max(sell, keep)
-    else:
+    if state == "hold":
+        result = max(max_profit(prices, day + 1, "hold", cache),
+                      prices[day] + max_profit(prices, day + 1, "sold", cache))
+    elif state == "sold":
         result = max_profit(prices, day + 1, "rest", cache)
+    else:
+        result = max(max_profit(prices, day + 1, "rest", cache),
+                      -prices[day] + max_profit(prices, day + 1, "hold", cache))
 
     cache[(day, state)] = result
-    return result
-
-max_profit(prices, 0, "rest", {})</code></pre>
-
-<div class="three-col" style="margin-top:12px">
-<div style="background:var(--card2);border-radius:6px;padding:10px;font-size:.85em">
-<div style="color:var(--blue);font-weight:700">REST</div>
-max(buy, wait). Buy costs money now but opens future sells.
-</div>
-<div style="background:var(--card2);border-radius:6px;padding:10px;font-size:.85em">
-<div style="color:var(--red);font-weight:700">HOLD</div>
-max(sell, keep). Sell for today's price or hold for a better one.
-</div>
-<div style="background:var(--card2);border-radius:6px;padding:10px;font-size:.85em">
-<div style="color:var(--green);font-weight:700">SOLD</div>
-No choice. Must cooldown. Go to REST.
-</div>
-</div>
+    return result</code></pre>
 </div>
 
-<!-- ==================== STEP 9: MEMOIZATION ==================== -->
+<img src="dp/images/stock_cooldown_memo.png" alt="Stock with cooldown memoization: overlapping subproblems on (day, state), cache key is (day, state)" class="scene-img">
 
-<h2><span class="step-num">9</span> Memoization</h2>
-
-<div class="ws">
-<h3>Why does repeated work occur?</h3>
-
-<p style="margin-bottom:12px">Different trading paths reach the same (day, state):</p>
-
-<pre style="font-size:.82em;line-height:1.8"><code>max_profit(day=0, rest)
-  buy: max_profit(day=1, hold)
-    sell: max_profit(day=2, sold)
-      cooldown: max_profit(day=3, rest)  ─ ─ ─ ┐
-    keep: max_profit(day=2, hold)               │
-      sell: max_profit(day=3, sold)             │ SAME!
-        cooldown: max_profit(day=4, rest)       │
-      keep: max_profit(day=3, hold)             │
-  wait: max_profit(day=1, rest)                 │
-    buy: max_profit(day=2, hold)                │
-      sell: max_profit(day=3, sold)             │
-        cooldown: max_profit(day=4, rest) ─ ─ ─ ┘</code></pre>
-
-<h3 style="margin-top:16px">Which states repeat?</h3>
-<p><code>(day=3, rest)</code> appears from multiple trading histories. "Buy day 0, sell day 1, cooldown day 2" and "wait day 0, wait day 1, wait day 2" both arrive at day 3 in REST. The future is identical regardless of how I got here.</p>
-
-<h3 style="margin-top:16px">How memoization removes repetition</h3>
-
-<div class="code-ann" style="margin-top:14px">
-<code style="color:var(--gold2)">(day, state) in cache</code><div>Two state variables: which day, which state</div>
-<code style="color:var(--green)">3 states x n days</code><div>At most 3n entries in the cache</div>
-<code style="color:var(--emerald)">Start: day 0, state "rest"</code><div>Begin free to buy</div>
-</div>
-</div>
-
-<img src="dp/images/stock_cooldown_tree.png" alt="Stock Cooldown recursion tree: same (day, state) reached from different trading paths" class="scene-img">
-
-<img src="dp/images/stock_cooldown_memo.png" alt="Stock with Cooldown memoization: state machine with cache" class="scene-img">
-
-<!-- ==================== STEP 10: TABULATION ==================== -->
-
-<h2 style="color:var(--amber);border-bottom-color:var(--amber)"><span class="step-num" style="background:var(--amber)">10</span> Tabulation</h2>
+<!-- ==================== 21. TABULATION ==================== -->
+<h2 style="color:var(--amber);border-bottom-color:var(--amber)"><span class="step-num" style="background:var(--amber)">20</span> Tabulation</h2>
 
 <div class="ws" style="border-left-color:var(--amber)">
-<h3 style="color:var(--amber)">Why the table dimensions come from the state</h3>
-
-<p>State = (day, situation). Day ranges from 0 to n-1. Situation is one of three values. But each day only depends on the previous day, so I just need three variables, not a full table.</p>
-
-<h3 style="color:var(--amber);margin-top:16px">Why the iteration order works</h3>
-
-<p style="margin-bottom:12px">Every transition moves to <code>day+1</code>. If I fill from day 0 forward, every dependency (the next day's values) would need to be computed first. But I'm computing profit from day X onward, so I fill <strong>backwards</strong> from the last day (or I use the tabulation trick: track three running variables forward, where each day's values only depend on the previous day's values).</p>
-
-<table class="grid-table">
-<tr><th>Day</th><th>Price</th><th style="color:var(--red)">HOLD</th><th style="color:var(--green)">SOLD</th><th style="color:var(--blue)">REST</th></tr>
-<tr><td>0</td><td>$1</td><td>-1</td><td>0</td><td>0</td></tr>
-<tr><td>1</td><td>$2</td><td>-1</td><td>1</td><td>0</td></tr>
-<tr><td>2</td><td>$3</td><td>-1</td><td>2</td><td>1</td></tr>
-<tr><td>3</td><td>$0</td><td style="color:var(--green);font-weight:700">1</td><td>-1</td><td style="color:var(--green);font-weight:700">2</td></tr>
-<tr><td>4</td><td>$2</td><td>1</td><td style="color:var(--gold2);font-weight:700">3</td><td>2</td></tr>
-</table>
-
-<p style="font-size:.9em;color:var(--muted);margin-top:8px">Answer: max(SOLD, REST) at last day = max(3, 2) = <strong style="color:var(--gold2)">3</strong>. (Can't end in HOLD; you'd be stuck with unsold stock.)</p>
-</div>
-
-<img src="dp/images/stock_cooldown_tab.png" alt="Stock with Cooldown tabulation: three variables tracked day by day" class="scene-img">
-
-<div class="ws" style="border-left-color:var(--amber)">
-<h3 style="color:var(--amber)">Day 3 walkthrough: the buy-the-dip moment</h3>
-
-<div class="cell-walk cell-fill">
-<div style="color:var(--green);font-weight:700;margin-bottom:8px">Price drops to $0. Time to buy!</div>
-
-<div class="three-col" style="margin:8px 0">
-<div class="state-hold">
-<div style="color:var(--red);font-weight:700;font-size:.85em">NEW HOLD</div>
-<code>max(prev_hold, prev_rest - price)</code><br>
-<code>max(-1, 1 - 0) = <strong>1</strong></code><br>
-<span style="font-size:.82em;color:var(--muted)">Buy at $0 with $1 rest profit!</span>
-</div>
-<div class="state-sold">
-<div style="color:var(--green);font-weight:700;font-size:.85em">NEW SOLD</div>
-<code>prev_hold + price</code><br>
-<code>-1 + 0 = <strong>-1</strong></code><br>
-<span style="font-size:.82em;color:var(--muted)">Selling at $0 loses money.</span>
-</div>
-<div class="state-rest">
-<div style="color:var(--blue);font-weight:700;font-size:.85em">NEW REST</div>
-<code>max(prev_rest, prev_sold)</code><br>
-<code>max(1, 2) = <strong>2</strong></code><br>
-<span style="font-size:.82em;color:var(--muted)">Yesterday's sold profit flows through.</span>
-</div>
-</div>
-</div>
-</div>
-
-<!-- ==================== STEP 11: SPACE OPTIMIZATION ==================== -->
-
-<h2 style="color:var(--amber);border-bottom-color:var(--amber)"><span class="step-num" style="background:var(--amber)">11</span> Space Optimization</h2>
-
-<div class="ws" style="border-left-color:var(--amber)">
-<h3 style="color:var(--amber)">Which previous states are actually needed?</h3>
-
-<p>Each day only depends on the previous day's three values (hold, sold, rest). I don't need any day before that.</p>
-
-<h3 style="color:var(--amber);margin-top:14px">Why older states can be discarded</h3>
-
-<p>Three variables are enough. No array needed. O(1) space.</p>
+<p style="font-size:.93em">3 states &rarr; 3 parallel arrays instead of one grid: <code>hold_profit[day]</code>, <code>sold_profit[day]</code>, <code>rest_profit[day]</code>, filled forward from day 0.</p>
 
 <pre><code>def max_profit(prices):
-    if not prices:
-        return 0
+    n = len(prices)
+    hold_profit = [0] * n
+    sold_profit = [0] * n
+    rest_profit = [0] * n
 
-    hold = -prices[0]
-    sold = 0
-    rest = 0
+    hold_profit[0] = -prices[0]
 
-    for day in range(1, len(prices)):
-        new_hold = max(hold, rest - prices[day])
-        new_sold = hold + prices[day]
-        new_rest = max(rest, sold)
-        hold, sold, rest = new_hold, new_sold, new_rest
+    for day in range(1, n):
+        hold_profit[day] = max(hold_profit[day - 1], rest_profit[day - 1] - prices[day])
+        sold_profit[day] = hold_profit[day - 1] + prices[day]
+        rest_profit[day] = max(rest_profit[day - 1], sold_profit[day - 1])
 
-    return max(sold, rest)</code></pre>
+    return max(sold_profit[n - 1], rest_profit[n - 1])</code></pre>
 
 <div class="code-ann" style="margin-top:14px">
-<code style="color:var(--red)">hold = -prices[0]</code><div>Buy on day 0. Costs money, so negative.</div>
-<code style="color:var(--green)">sold = 0</code><div>Haven't sold anything yet.</div>
-<code style="color:var(--blue)">rest = 0</code><div>Haven't done anything yet.</div>
-<code style="color:var(--amber)">new_hold = max(hold, rest - prices[day])</code><div>Keep holding OR buy today from rest</div>
-<code style="color:var(--amber)">new_sold = hold + prices[day]</code><div>Sell today (must be holding)</div>
-<code style="color:var(--amber)">new_rest = max(rest, sold)</code><div>Keep resting OR cooldown from sold</div>
-<code style="color:var(--gold2)">return max(sold, rest)</code><div>Best ending: sold or resting. Not holding.</div>
+<code style="color:var(--gold2)">hold_profit[0] = -prices[0]</code><div>Day 0 base row: buy immediately, sold/rest = 0 (nothing happened yet).</div>
+<code style="color:var(--amber)">hold_profit[day]</code><div>Was already holding, or just bought from rest yesterday.</div>
+<code style="color:var(--amber)">sold_profit[day]</code><div>Was holding yesterday, sell today.</div>
+<code style="color:var(--amber)">rest_profit[day]</code><div>Was resting, or finished cooldown from being sold yesterday.</div>
+<code style="color:var(--sand)">return max(sold, rest)</code><div>Ending HOLD is never better than having sold or never bought.</div>
 </div>
 </div>
 
-<!-- ==================== STEP 12: PATTERN RECOGNITION ==================== -->
+<img src="dp/images/stock_cooldown_tab.png" alt="Stock with cooldown tabulation: three variables tracked day by day, each fed by the previous day's array values" class="scene-img">
 
-<h2><span class="step-num">12</span> Pattern Recognition</h2>
+<!-- ==================== 22. SPACE OPTIMIZATION ==================== -->
+<h2 style="color:var(--amber);border-bottom-color:var(--amber)"><span class="step-num" style="background:var(--amber)">21</span> Space Optimization</h2>
+
+<div class="ws" style="border-left-color:var(--amber)">
+<p style="font-size:.93em">Each day only reads yesterday's 3 values. Drop the arrays for 3 rolling variables: O(n) &rarr; O(1) space.</p>
+
+<pre><code>def max_profit(prices):
+    hold_profit, sold_profit, rest_profit = -prices[0], 0, 0
+
+    for day in range(1, len(prices)):
+        prev_hold, prev_sold, prev_rest = hold_profit, sold_profit, rest_profit
+        hold_profit = max(prev_hold, prev_rest - prices[day])
+        sold_profit = prev_hold + prices[day]
+        rest_profit = max(prev_rest, prev_sold)
+
+    return max(sold_profit, rest_profit)</code></pre>
+</div>
+
+<!-- ==================== 23. COMMON MISTAKES ==================== -->
+<h2><span class="step-num">22</span> Common Mistakes</h2>
 
 <div class="ws">
-<h3>What clues suggested this DP pattern?</h3>
-<div style="display:grid;gap:8px;font-size:.93em;margin:12px 0">
-<div><strong>"Available actions depend on my situation"</strong> → Not a simple grab/skip. I need to track which state I'm in.</div>
-<div><strong>"After selling, must wait one day"</strong> → A constraint on consecutive actions. This creates an extra state (SOLD) beyond the obvious two (have stock / don't have stock).</div>
-<div><strong>"Maximize profit"</strong> → Optimization over choices → DP.</div>
+<div style="display:grid;gap:12px;font-size:.93em">
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<strong style="color:var(--red)">Skipping the SOLD state, going straight sold&rarr;rest</strong><br>Collapses cooldown away. Selling would let you rebuy the very next day.
 </div>
-
-<h3 style="margin-top:16px">What should I immediately think when I see a similar problem?</h3>
-<p>"Constraints restrict my actions based on recent history. Each distinct situation is a state. Each legal action is a transition." For any problem where today's options depend on what I did recently, think state machine DP.</p>
-
-<h3 style="margin-top:16px">What generalizes to future problems?</h3>
-<div style="display:grid;gap:6px;font-size:.93em;margin:8px 0">
-<div>States come from constraints. More constraints = more states.</div>
-<div>Without the cooldown, only 2 states needed (hold/rest). The constraint added the third.</div>
-<div>Each state has its own set of legal actions. Derive them, don't memorize them.</div>
-<div>Space optimization: if each step only depends on the previous step, three variables are enough.</div>
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<strong style="color:var(--red)">Giving SOLD a choice</strong><br><code>max(rest_profit(day+1), ...)</code> in the SOLD branch &larr; wrong. SOLD has exactly one legal move.
+</div>
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<strong style="color:var(--red)">Wrong tabulation base row</strong><br><code>hold_profit[0] = 0</code> instead of <code>-prices[0]</code> &larr; wrong. Buying on day 0 costs money immediately.
+</div>
 </div>
 </div>
 
-<!-- ==================== STEP 13: COMMON MISTAKES ==================== -->
+<img src="dp/images/stock_mistakes.png" alt="Stock cooldown common mistakes: missing SOLD state, wrong transition after sell, wrong day-0 initialization" class="scene-img">
 
-<h2><span class="step-num">13</span> Common Mistakes</h2>
+<!-- ==================== 24. PATTERN RECOGNITION ==================== -->
+<h2><span class="step-num">23</span> Pattern Recognition</h2>
 
 <div class="ws">
-
-<div style="display:grid;gap:14px">
-
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:16px">
-<div style="color:var(--red);font-weight:700;margin-bottom:6px">Wrong state: forgetting the SOLD state</div>
-<div style="font-size:.9em">Using only HOLD and REST. After selling, going directly to REST allows buying on the next day, violating the cooldown rule.</div>
-<div style="font-size:.85em;color:var(--muted);margin-top:6px"><strong>How to detect:</strong> test with prices=[1,2,3,0,2]. If your answer is higher than 3, the cooldown isn't being enforced.</div>
-</div>
-
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:16px">
-<div style="color:var(--red);font-weight:700;margin-bottom:6px">Wrong transition: sell goes to REST instead of SOLD</div>
-<div style="font-size:.9em">Writing <code>max_profit(day+1, "rest")</code> after selling instead of <code>max_profit(day+1, "sold")</code>. Same bug as above, just in the transition instead of the state design.</div>
-<div style="font-size:.85em;color:var(--muted);margin-top:6px"><strong>How to detect:</strong> trace by hand. After selling on day 1, can you buy on day 2? If yes, transition is wrong.</div>
-</div>
-
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:16px">
-<div style="color:var(--red);font-weight:700;margin-bottom:6px">Wrong initialization: hold = 0 instead of -prices[0]</div>
-<div style="font-size:.9em">If hold starts at 0, the algorithm thinks holding costs nothing. On day 0, buying means spending <code>prices[0]</code>, so hold must start as <code>-prices[0]</code>.</div>
-<div style="font-size:.85em;color:var(--muted);margin-top:6px"><strong>How to detect:</strong> if your profit is too high, check whether the buy cost is being subtracted.</div>
-</div>
-
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:16px">
-<div style="color:var(--red);font-weight:700;margin-bottom:6px">Wrong final answer: returning max(hold, sold, rest)</div>
-<div style="font-size:.9em">Including HOLD in the final answer. Ending in HOLD means you're stuck with an unsold stock, which is never optimal (you paid for it but never got the money back). Return <code>max(sold, rest)</code>.</div>
-<div style="font-size:.85em;color:var(--muted);margin-top:6px"><strong>How to detect:</strong> test with prices=[5]. Greedy would say hold = -5 (bought but never sold). If your answer is 0 (correctly: do nothing), this is fine. If it's -5, you're counting hold.</div>
-</div>
-
+<div class="hi">
+<strong style="color:var(--emerald)">When I see</strong> "sequence of days/steps" + "a rule that restricts my next move based on what I just did," <strong style="color:var(--emerald)">I should consider</strong> state machine DP: enumerate the situations the constraint creates, then derive each state's legal moves.
 </div>
 </div>
 
-<img src="dp/images/stock_mistakes.png" alt="Stock cooldown common mistakes: missing SOLD state, wrong transition after sell, wrong initialization" class="scene-img">
-
-<!-- ==================== STEP 14: FINAL MENTAL MODEL ==================== -->
-
-<h2><span class="step-num">14</span> If I Forget Everything</h2>
+<!-- ==================== 25. REDISCOVER ==================== -->
+<h2><span class="step-num">24</span> Rediscover It Six Months Later</h2>
 
 <div class="ws">
-<p style="margin-bottom:14px">If I forget this algorithm in six months, here's how I'd rediscover it from scratch:</p>
-
-<div style="background:rgba(16,185,129,.08);border:2px solid var(--emerald);border-radius:10px;padding:18px;margin:12px 0">
-<div style="display:grid;gap:10px;font-size:.95em">
-<div><span class="step-num" style="width:24px;height:24px;font-size:.75em">1</span> "I can buy, sell, or wait. But not always all three."</div>
-<div><span class="step-num" style="width:24px;height:24px;font-size:.75em">2</span> "My legal actions depend on my situation. That means I need states."</div>
-<div><span class="step-num" style="width:24px;height:24px;font-size:.75em">3</span> "The cooldown constraint creates three situations: free, holding, just sold."</div>
-<div><span class="step-num" style="width:24px;height:24px;font-size:.75em">4</span> "Each state has its own legal actions. Derive choices per state."</div>
-<div><span class="step-num" style="width:24px;height:24px;font-size:.75em">5</span> "Different paths reach the same (day, state) = overlapping subproblems = memoize."</div>
-<div><span class="step-num" style="width:24px;height:24px;font-size:.75em">6</span> "Each day depends only on the previous day = three variables, O(1) space."</div>
+<div style="display:grid;gap:8px;font-size:.93em">
+<div class="sbox"><span class="step-num" style="width:22px;height:22px;font-size:.7em">1</span>"Buy low sell high fails: cooldown blocks a buy right after a sell."</div>
+<div class="sbox"><span class="step-num" style="width:22px;height:22px;font-size:.7em">2</span>"Frozen on a day, I need one more fact to know my legal moves: am I holding, just sold, or resting?"</div>
+<div class="sbox"><span class="step-num" style="width:22px;height:22px;font-size:.7em">3</span>"State = (day, state_type). HOLD: sell or keep. SOLD: forced rest. REST: buy or keep."</div>
+<div class="sbox"><span class="step-num" style="width:22px;height:22px;font-size:.7em">4</span>"Maximize means max() at every choice. Base case: past the last day, everything is 0."</div>
+<div class="sbox"><span class="step-num" style="width:22px;height:22px;font-size:.7em">5</span>"Overlapping (day, state) pairs from different trading paths &rarr; memoize, then 3 rolling variables."</div>
 </div>
 </div>
 
-<p style="font-size:.93em">The constraint created the states. The states determined the legal actions. The actions defined the transitions. The transitions wrote the recurrence. The recurrence revealed the overlap. The overlap justified memoization. Every step followed from the one before.</p>
-</div>
 
 <!-- ==================== CHILDREN ==================== -->
 <h2>The State Machine Family</h2>
 
 <div style="background:rgba(16,185,129,.15);border:2px solid var(--emerald);border-radius:8px;padding:14px;text-align:center;margin-bottom:16px">
 <strong style="color:var(--emerald);font-size:1.1em">STOCK WITH COOLDOWN (parent)</strong><br>
-<span style="font-size:.88em;color:var(--muted)">States + transitions. Each step, update every state from the previous step's states.</span>
+<span style="font-size:.88em;color:var(--muted)">Constraints create discrete states (HOLD, SOLD, REST). Each state's legal moves become the transitions.</span>
 </div>
 
 <div style="display:grid;gap:10px">
-
-<!-- ==================== CHILD 1: LIS ==================== -->
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">1</span> Longest Increasing Subsequence</h3><span class="deriv-a">&#9654;</span></div>
-<div class="deriv-b">
+<div class="deriv-b" onclick="event.stopPropagation()">
 
-<div class="sbox"><div class="sl" style="color:var(--emerald)">LEETCODE #300</div>
-Given an array of integers, find the length of the longest strictly increasing subsequence.</div>
+<!-- ==================== 0. THE PROBLEM ==================== -->
+<h3 style="margin-top:0">Longest Increasing Subsequence (LeetCode #300)</h3>
 
-<div style="background:var(--card2);border-radius:10px;padding:16px;margin:12px 0;font-size:.93em">
-<div style="font-weight:700;margin-bottom:8px">Example:</div>
-<code>[10, 9, 2, 5, 3, 7, 101, 18]</code><br><br>
-Some increasing subsequences:
-<div style="display:grid;gap:4px;font-size:.9em;padding:8px 0 0 8px">
-<div>[<strong style="color:var(--green)">2, 5, 7, 101</strong>] = length 4</div>
-<div>[<strong style="color:var(--green)">2, 5, 7, 18</strong>] = length 4</div>
-<div>[<strong style="color:var(--green)">2, 3, 7, 101</strong>] = length 4</div>
-</div>
-<br>Answer: <strong style="color:var(--gold2)">4</strong>. No increasing subsequence of length 5 exists.
-<div style="margin-top:8px;color:var(--muted);font-size:.9em">A subsequence keeps the original order but can skip elements. It doesn't have to be contiguous.</div>
+<div class="ws">
+<p style="margin-bottom:12px">Given an integer array <code>nums</code>, return the length of the longest strictly increasing subsequence.</p>
+
+<div style="background:var(--card2);border-radius:10px;padding:16px;margin:12px 0;font-size:.93em;text-align:center">
+<div style="font-weight:700;margin-bottom:8px"><code>nums = [10, 9, 2, 5, 3, 7, 101, 18]</code></div>
+<div>One longest chain: <strong style="color:var(--green)">2, 5, 7, 101</strong> (or 2, 3, 7, 18)</div>
+<div style="font-size:1.1em;font-weight:700;color:var(--gold2);margin-top:6px">Answer: 4</div>
 </div>
 
-<div class="sbox"><div class="sl" style="color:var(--emerald)">CLASSIFICATION</div>
-<div style="font-size:.95em">
-<strong>Recursive question:</strong> "What is the longest increasing subsequence ending at index i?"<br>
-<strong>State:</strong> <code>lis_ending_at(index)</code>. Just one variable: which element I'm ending at.<br>
-<strong>Why not start/end like palindrome?</strong> A subsequence can skip elements. The state is just where the chain currently ends.
-</div></div>
+<div style="display:grid;gap:6px;margin-top:12px;font-size:.9em">
+<div style="background:var(--card2);border-radius:6px;padding:8px 12px"><code>[0, 1, 0, 3, 2, 3]</code> &rarr; <strong style="color:var(--gold2)">4</strong></div>
+<div style="background:var(--card2);border-radius:6px;padding:8px 12px"><code>[7, 7, 7, 7]</code> &rarr; <strong style="color:var(--gold2)">1</strong> (strictly increasing, equal doesn't extend)</div>
+</div>
+</div>
 
-<div class="sbox"><div class="sl" style="color:var(--emerald)">CHOICES (DISCOVERED, NOT LISTED)</div>
-<div style="font-size:.95em">
-<strong>Situation:</strong> I'm at element <code>nums[index]</code>. I want to build the longest chain ending here.<br>
-<strong>What can I do?</strong> Look at every previous element. If <code>nums[prev] &lt; nums[index]</code>, I could extend that chain by appending my element.<br>
-<strong>Why check ALL prev?</strong> Any smaller previous element could end the longest chain. I don't know which without trying all.<br>
-<strong>If no valid prev exists?</strong> Start a new chain of length 1 (just this element alone).
-</div></div>
+<!-- ==================== 1. WHAT IS IT REALLY ASKING? ==================== -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">1</span> What Is It Really Asking?</h3>
 
-<img src="dp/images/lis_choices.png" alt="LIS choice diagram: for each element, check ALL smaller previous elements. Variable lookback." class="scene-img">
+<div class="ws">
+<p style="font-size:.93em">A subsequence keeps the original order but can skip elements freely. We only need the length, not the actual chain, and each step must be strictly greater than the last.</p>
+</div>
 
-<h3 style="color:var(--emerald)">Transitions</h3>
+<!-- ==================== 2. WHAT WOULD I NATURALLY TRY? ==================== -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">2</span> What Would I Naturally Try?</h3>
 
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:10px">EXTEND: nums[prev] &lt; nums[index]</div>
+<div class="ws">
+<p style="font-size:.93em">Scan left to right, keep the first number, and keep any later number bigger than the last one kept.</p>
+</div>
+
+<!-- ==================== 3. WHERE DOES THAT FAIL? ==================== -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">3</span> Where Does That Fail?</h3>
+
+<div class="ws">
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:16px;margin:14px 0">
+<div style="color:var(--red);font-weight:800;margin-bottom:10px">GREEDY ON [10, 9, 2, 5, 3, 7, 101, 18]</div>
+<div style="font-size:.93em">Keep 10 first. Everything until 101 is smaller, so it all gets skipped. Kept = [10, 101]. <strong>Length 2</strong>, but the real answer is 4.</div>
+</div>
+<div class="hi"><strong style="color:var(--emerald)">The trap:</strong> the first number I lock in can block every longer chain hiding among the smaller numbers after it.</div>
+</div>
+
+<img src="dp/images/lis_greedy.png" alt="LIS greedy failure: locking in 10 first blocks the longer chain 2,5,7,101, greedy returns 2 instead of 4" class="scene-img">
+
+<!-- ==================== 4. WHAT DECISION AM I STUCK ON? ==================== -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">4</span> What Decision Am I Stuck On?</h3>
+
+<div class="ws">
+<p style="font-size:.93em">Freeze on element <code>nums[i]</code>, mid-array. Should it be included in the chain ending here, or skipped?</p>
+</div>
+
+<img src="dp/images/lis_frozen.png" alt="Frozen at index i in the array: include nums[i] in the chain, or skip it?" class="scene-img">
+
+<!-- ==================== 5. WHAT CAN I DO WITH THIS ONE ELEMENT? ==================== -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">5</span> What Can I Do With This ONE Element?</h3>
+
+<div class="ws">
+<p style="font-size:.93em;margin-bottom:10px">Standing at index <code>i</code>, building the longest chain that ends exactly here.</p>
+
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:14px;margin:10px 0;font-size:.93em">
+<strong style="color:var(--green)">Extend:</strong> for any earlier index <code>j</code> with <code>nums[j] &lt; nums[i]</code>, append <code>nums[i]</code> to that chain.
+</div>
+<div style="background:rgba(245,158,11,.06);border:2px solid var(--amber);border-radius:10px;padding:14px;margin:10px 0;font-size:.93em">
+<strong style="color:var(--amber)">Start fresh:</strong> no valid earlier index, chain of length 1.
+</div>
+</div>
+
+<!-- ==================== 6. WHY ONLY THESE CHOICES? ==================== -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">6</span> Why Only These Choices?</h3>
+
+<div class="ws">
 <div style="display:grid;gap:8px;font-size:.93em">
-<div><strong>Action:</strong> Extend the chain ending at <code>prev</code> by appending <code>nums[index]</code>.</div>
-<div><strong>Immediate reward:</strong> <code>+1</code>. One more element in the chain.</div>
-<div><strong>Why can we extend?</strong> <code>nums[prev] &lt; nums[index]</code>. The sequence stays strictly increasing.</div>
-<div><strong>Call:</strong> <code>1 + lis_ending_at(prev)</code></div>
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:12px"><strong style="color:var(--red)">Reorder elements?</strong> No, a subsequence must preserve the original order.</div>
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:12px"><strong style="color:var(--red)">Extend with nums[j] &ge; nums[i]?</strong> No, the problem demands strictly increasing.</div>
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:12px"><strong style="color:var(--red)">Extend from a later index?</strong> No, only indices before <code>i</code> are decided.</div>
 </div>
 </div>
 
-<div style="background:rgba(245,158,11,.06);border:2px solid var(--amber);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--amber);font-weight:800;font-size:1.05em;margin-bottom:10px">STANDALONE: no valid prev</div>
-<div style="font-size:.93em"><code>lis_ending_at(index) = 1</code>. This element alone is an increasing subsequence of length 1.</div>
-</div>
+<!-- ==================== 7. WATCH EACH CHOICE PLAY OUT ==================== -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">7</span> Watch Each Choice Play Out</h3>
 
-<div style="font-size:.93em">
-<strong>Decision:</strong> <code>best = max(1, max(1 + lis_ending_at(prev) for valid prev))</code>
-</div>
-
-<img src="dp/images/lis_transitions.png" alt="LIS transition justification: extend any previous smaller element's chain by 1, or start fresh at 1" class="scene-img">
-
-<h3 style="color:var(--emerald)">Recursion</h3>
-<pre><code>def lis_ending_at(nums, index, cache):
-    if index in cache:
-        return cache[index]
-
-    best = 1
-    for prev in range(index):
-        if nums[prev] < nums[index]:
-            best = max(best, 1 + lis_ending_at(nums, prev, cache))
-
-    cache[index] = best
-    return best
-
-def longest_increasing(nums):
-    cache = {}
-    return max(lis_ending_at(nums, i, cache) for i in range(len(nums)))</code></pre>
-
-<img src="dp/images/lis_memo.png" alt="LIS memoization: for each element, check all previous smaller elements" class="scene-img">
-
-<h3 style="color:var(--amber)">Tabulation</h3>
-<pre><code>def longest_increasing(nums):
-    n = len(nums)
-    lis = [1] * n
-
-    for i in range(1, n):
-        for prev in range(i):
-            if nums[prev] < nums[i]:
-                lis[i] = max(lis[i], lis[prev] + 1)
-
-    return max(lis)</code></pre>
-
-<img src="dp/images/lis_tab.png" alt="LIS tabulation: 1D array, each cell checks all previous cells with smaller values" class="scene-img">
-
-<div class="hi">
-<strong style="color:var(--amber)">Not a typical state machine,</strong> but each element's "state" is the length of the best subsequence ending there. The transition: can I extend any earlier subsequence? O(n&sup2;) with DP, O(n log n) with binary search (patience sorting).
-</div>
+<div class="ws">
+<p style="font-size:.93em;margin-bottom:10px"><code>nums = [1, 3, 2]</code>. At index 2 (value 2): <code>j=0</code> (value 1) qualifies, <code>j=1</code> (value 3) does not.</p>
+<div style="background:var(--card2);border-radius:10px;padding:14px;font-size:.9em">
+<div>chain ending at 0: [1], length 1</div>
+<div>chain ending at 1: [1, 3], length 2</div>
+<div>chain ending at 2: extend from j=0 &rarr; [1, 2], length 2</div>
 </div>
 </div>
 
-<!-- ==================== CHILD 2: BURST BALLOONS ==================== -->
+<img src="dp/images/lis_choices.png" alt="LIS choice diagram: for each element, check all smaller previous elements, extend the best one" class="scene-img">
+
+<!-- ==================== 8. WHAT MUST I REMEMBER? ==================== -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">8</span> What Must I Remember? (The State)</h3>
+
+<div class="ws">
+<p style="font-size:.93em">Only the index <code>i</code> matters, since <code>nums[i]</code> is fixed by it and that value is what constrains every future extension.</p>
+<div style="background:rgba(16,185,129,.08);border:2px solid var(--emerald);border-radius:10px;padding:14px;margin:12px 0;text-align:center">
+<div style="font-weight:700;color:var(--emerald)">State = i</div>
+<div style="font-size:.9em">nums[i] plays the role a state machine's "current state" plays: it decides which future values are legal next.</div>
+</div>
+</div>
+
+<!-- ==================== 9. WHAT DO THE VARIABLES MEAN? ==================== -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">9</span> What Do the Variables Mean?</h3>
+
+<div class="ws">
+<div style="display:grid;gap:8px;font-size:.93em">
+<div style="background:var(--card2);border-radius:6px;padding:10px 14px"><code>i</code>: index the chain currently ends at.</div>
+<div style="background:var(--card2);border-radius:6px;padding:10px 14px"><code>j</code> (previous): candidate earlier index being tested as the chain's second-to-last element.</div>
+</div>
+</div>
+
+<!-- ==================== 10. WHAT DOES THE FUNCTION PROMISE? ==================== -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">10</span> What Does the Function Promise?</h3>
+
+<div class="ws">
+<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:16px;text-align:center;font-size:1.05em">
+<strong style="color:var(--gold2)">longest_ending_at(i) returns the length of the longest strictly increasing subsequence that ends exactly at nums[i].</strong>
+</div>
+<p style="font-size:.93em;margin-top:12px">The final answer is <code>max</code> over every <code>i</code>, since the true LIS can end anywhere.</p>
+</div>
+
+<!-- ==================== 11. WHEN MUST WE STOP? ==================== -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">11</span> When Must We Stop? (Base Cases)</h3>
+
+<div class="ws">
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
+<div style="color:var(--green);font-weight:700;margin-bottom:6px">No earlier index qualifies</div>
+Nothing to extend. <code>nums[i]</code> alone is a chain. <strong>Return 1.</strong>
+</div>
+</div>
+
+<!-- ==================== 12. WHAT SMALLER PROBLEM REMAINS? ==================== -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">12</span> What Smaller Problem Remains? (Transitions)</h3>
+
+<div class="ws">
+<p style="font-size:.93em">For every <code>previous</code> in <code>range(i)</code> where <code>nums[previous] &lt; nums[i]</code>: the remaining subproblem is <code>longest_ending_at(previous)</code>, plus 1 for <code>nums[i]</code> itself.</p>
+</div>
+
+<!-- ==================== 13. HOW DO WE COMBINE FUTURES? ==================== -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">13</span> How Do We Combine Futures?</h3>
+
+<div class="ws">
+<p style="font-size:.93em">The word is "longest": take the biggest of every valid extension, not their sum.</p>
+<div class="hi"><strong style="color:var(--emerald)">"Longest / best"</strong> &rarr; <code>max()</code>.</div>
+</div>
+
+<!-- ==================== 14. THE RECURRENCE ==================== -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">14</span> The Recurrence</h3>
+
+<div class="ws">
+<pre style="margin:0;font-size:.9em;line-height:2"><code>                    &#9484; 1                                                if no previous &lt; i with nums[previous] &lt; nums[i]
+longest_ending_at(i) =&#9474; max(1 + longest_ending_at(previous))            over previous &lt; i with nums[previous] &lt; nums[i]
+                    &#9492; answer = max(longest_ending_at(i) for all i)</code></pre>
+</div>
+
+<!-- ==================== 15. BRUTE-FORCE CODE ==================== -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">15</span> Brute-Force Code</h3>
+
+<div class="ws">
+<pre><code>def longest_ending_at(nums, i):
+    length = 1
+    for previous in range(i):
+        if nums[previous] < nums[i]:
+            length = max(length, 1 + longest_ending_at(nums, previous))
+    return length
+
+def longest_increasing_subsequence(nums):
+    return max(longest_ending_at(nums, i) for i in range(len(nums)))</code></pre>
+</div>
+
+<!-- ==================== 16. WHY EVERY LINE EXISTS ==================== -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">16</span> Why Every Line Exists</h3>
+
+<div class="ws">
+<pre style="line-height:2.2"><code><span style="background:rgba(34,197,94,.15);padding:2px 4px;border-radius:3px">def longest_ending_at(nums, i):</span>
+<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">    length = 1</span>
+<span style="background:rgba(245,158,11,.15);padding:2px 4px;border-radius:3px">    for previous in range(i):</span>
+<span style="background:rgba(245,158,11,.15);padding:2px 4px;border-radius:3px">        if nums[previous] < nums[i]:</span>
+<span style="background:rgba(239,68,68,.15);padding:2px 4px;border-radius:3px">            length = max(length, 1 + longest_ending_at(nums, previous))</span>
+<span style="background:rgba(16,185,129,.15);padding:2px 4px;border-radius:3px">    return length</span></code></pre>
+
+<div style="display:grid;gap:8px;margin-top:14px;font-size:.9em">
+<div style="border-left:4px solid var(--blue);padding:8px 14px;background:var(--card2);border-radius:0 6px 6px 0"><strong style="color:var(--blue)">Blue: Base case</strong>: every index starts as a chain of 1 (Step 11).</div>
+<div style="border-left:4px solid var(--amber);padding:8px 14px;background:var(--card2);border-radius:0 6px 6px 0"><strong style="color:var(--amber)">Orange: Scanning earlier indices</strong>: only smaller values qualify as extensions.</div>
+<div style="border-left:4px solid var(--red);padding:8px 14px;background:var(--card2);border-radius:0 6px 6px 0"><strong style="color:var(--red)">Red: Extending and combining</strong>: "longest" means max, not sum.</div>
+<div style="border-left:4px solid var(--emerald);padding:8px 14px;background:var(--card2);border-radius:0 6px 6px 0"><strong style="color:var(--emerald)">Green: Return the promise</strong>: length of the chain ending exactly at i.</div>
+</div>
+</div>
+
+<img src="dp/images/lis_code_walkthrough.png" alt="Color-highlighted LIS code: blue=base case, orange=scanning earlier indices, red=extend and max, green=return" class="scene-img">
+
+<!-- ==================== 17. CONCRETE EXECUTION TRACE ==================== -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">17</span> Concrete Execution Trace</h3>
+
+<div class="ws">
+<p style="font-size:.93em;margin-bottom:10px"><code>nums = [10, 9, 2, 5, 3, 7, 101, 18]</code>. Expected answer: 4.</p>
+<table class="grid-table" style="font-size:.85em">
+<tr><th>i</th><th>nums[i]</th><th>best previous</th><th>length</th></tr>
+<tr><td>0</td><td>10</td><td>none</td><td>1</td></tr>
+<tr><td>1</td><td>9</td><td>none</td><td>1</td></tr>
+<tr><td>2</td><td>2</td><td>none</td><td>1</td></tr>
+<tr><td>3</td><td>5</td><td>2 (val 2)</td><td>2</td></tr>
+<tr><td>4</td><td>3</td><td>2 (val 2)</td><td>2</td></tr>
+<tr><td>5</td><td>7</td><td>3 or 4 (val 5, 3)</td><td>3</td></tr>
+<tr><td>6</td><td>101</td><td>5 (val 7)</td><td class="diag">4</td></tr>
+<tr><td>7</td><td>18</td><td>5 (val 7)</td><td>4</td></tr>
+</table>
+<div style="font-size:.9em;color:var(--muted);margin-top:8px">Max of the length column: <strong style="color:var(--gold2)">4</strong>.</div>
+</div>
+
+<img src="dp/images/lis_trace.png" alt="LIS execution trace on [10,9,2,5,3,7,101,18]: lengths array building up to answer 4" class="scene-img">
+
+<!-- ==================== 18. WHY IS IT SLOW? ==================== -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">18</span> Why Is It Slow?</h3>
+
+<div class="ws">
+<p style="font-size:.93em">Index 5's loop calls <code>longest_ending_at(2)</code>, and so does index 6's loop, and index 7's, each redoing the same work. Without caching this recomputation compounds exponentially.</p>
+</div>
+
+<!-- ==================== 19. MEMOIZATION ==================== -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">19</span> Memoization</h3>
+
+<div class="ws">
+<p style="font-size:.93em">Same index <code>i</code> always gives the same length. Cache keyed by <code>i</code>, at most n entries, dropping runtime to O(n&sup2;).</p>
+<pre style="line-height:2"><code><span style="background:rgba(0,128,128,.15);padding:2px 4px;border-radius:3px">def longest_ending_at(nums, i, cache):</span>
+<span style="background:rgba(0,128,128,.15);padding:2px 4px;border-radius:3px">    if i in cache:</span>
+<span style="background:rgba(0,128,128,.15);padding:2px 4px;border-radius:3px">        return cache[i]</span>
+
+    length = 1
+    for previous in range(i):
+        if nums[previous] < nums[i]:
+            length = max(length, 1 + longest_ending_at(nums, previous, cache))
+
+<span style="background:rgba(0,128,128,.15);padding:2px 4px;border-radius:3px">    cache[i] = length</span>
+<span style="background:rgba(0,128,128,.15);padding:2px 4px;border-radius:3px">    return cache[i]</span></code></pre>
+</div>
+
+<img src="dp/images/lis_memo.png" alt="LIS memoization: for each index, check all previous smaller elements, cache keyed by index" class="scene-img">
+
+<!-- ==================== 20. TABULATION ==================== -->
+<h3 style="color:var(--amber)"><span class="step-num" style="width:22px;height:22px;font-size:.7em;background:var(--amber)">20</span> Tabulation</h3>
+
+<div class="ws" style="border-left-color:var(--amber)">
+<p style="font-size:.93em">State = <code>i</code> &rarr; a 1D array <code>lengths</code>, filled left to right so every <code>previous &lt; i</code> is already computed.</p>
+<pre><code>def longest_increasing_subsequence(nums):
+    lengths = [1] * len(nums)
+
+    for i in range(1, len(nums)):
+        for previous in range(i):
+            if nums[previous] < nums[i]:
+                lengths[i] = max(lengths[i], lengths[previous] + 1)
+
+    return max(lengths)</code></pre>
+</div>
+
+<img src="dp/images/lis_tab.png" alt="LIS tabulation: 1D array, each cell checks all previous cells with smaller values, answer is the max" class="scene-img">
+
+<!-- ==================== 21. SPACE OPTIMIZATION ==================== -->
+<h3 style="color:var(--amber)"><span class="step-num" style="width:22px;height:22px;font-size:.7em;background:var(--amber)">21</span> Space Optimization</h3>
+
+<div class="ws" style="border-left-color:var(--amber)">
+<p style="font-size:.93em">The <code>lengths</code> array is already O(n), the minimum needed to answer for every ending index. Dropping the O(n&sup2;) scan for a smarter algorithm (patience sorting with binary search) gets O(n log n) time in the same O(n) space, but that trades DP for a different technique entirely.</p>
+</div>
+
+<!-- ==================== 22. COMMON MISTAKES ==================== -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">22</span> Common Mistakes</h3>
+
+<div class="ws">
+<div style="display:grid;gap:10px;font-size:.93em">
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:12px">
+<div style="color:var(--red);font-weight:700;margin-bottom:4px">Using &le; instead of &lt;</div>
+<code style="color:var(--red)">if nums[previous] <= nums[i]</code> &larr; WRONG. Allows equal values, breaking "strictly increasing".
+</div>
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:12px">
+<div style="color:var(--red);font-weight:700;margin-bottom:4px">Returning the max in the array instead of the LIS</div>
+Answer is <code>max(lengths)</code>, not <code>lengths[-1]</code>: the longest chain rarely ends at the last element.
+</div>
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:12px">
+<div style="color:var(--red);font-weight:700;margin-bottom:4px">Confusing it with longest common subsequence</div>
+LIS compares each element only to the elements before it in the same array, not to a second array.
+</div>
+</div>
+</div>
+
+<img src="dp/images/lis_mistakes.png" alt="LIS common mistakes: using less-or-equal instead of strictly less, returning the wrong cell, confusing with LCS" class="scene-img">
+
+<!-- ==================== 23. PATTERN RECOGNITION ==================== -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">23</span> Pattern Recognition</h3>
+
+<div class="ws">
+<div class="hi"><strong style="color:var(--emerald)">Clue:</strong> "longest/shortest subsequence with an ordering constraint" &rarr; state = ending index, transition scans all valid earlier indices, operator is max.</div>
+<div class="hi"><strong style="color:var(--emerald)">State machine link:</strong> nums[i] itself acts like a "current state" that gates which future values are legal, the same role a discrete state (held/sold) plays elsewhere in this page.</div>
+</div>
+
+<!-- ==================== 24. REDISCOVER IT SIX MONTHS LATER ==================== -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">24</span> Rediscover It Six Months Later</h3>
+
+<div class="ws">
+<div style="display:grid;gap:8px;font-size:.93em">
+<div style="background:var(--card2);border-radius:8px;padding:10px 14px"><span class="step-num" style="width:22px;height:22px;font-size:.7em">1</span> "Greedy locks in the first number and blocks longer chains. Doesn't work."</div>
+<div style="background:var(--card2);border-radius:8px;padding:10px 14px"><span class="step-num" style="width:22px;height:22px;font-size:.7em">2</span> "Freeze at index i: extend any earlier smaller element's chain, or start fresh."</div>
+<div style="background:var(--card2);border-radius:8px;padding:10px 14px"><span class="step-num" style="width:22px;height:22px;font-size:.7em">3</span> "State = i. Promise: length of the chain ending exactly here."</div>
+<div style="background:var(--card2);border-radius:8px;padding:10px 14px"><span class="step-num" style="width:22px;height:22px;font-size:.7em">4</span> "'Longest' means max, not sum. Scan all previous &lt; i with nums[previous] &lt; nums[i]."</div>
+<div style="background:var(--card2);border-radius:8px;padding:10px 14px"><span class="step-num" style="width:22px;height:22px;font-size:.7em">5</span> "Same index recomputed across many later loops, cache it. 1D table, answer is max(lengths), O(n log n) exists via patience sorting."</div>
+</div>
+</div>
+
+</div></div>
+
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">2</span> Burst Balloons</h3><span class="deriv-a">&#9654;</span></div>
-<div class="deriv-b">
+<div class="deriv-b" onclick="event.stopPropagation()">
 
 <div class="sbox"><div class="sl" style="color:var(--emerald)">LEETCODE #312</div>
-Given n balloons with values, burst them one at a time. When you burst balloon i, you earn <code>nums[i-1] * nums[i] * nums[i+1]</code> (product of it and its current neighbors). Maximize total coins. Boundaries are 1.</div>
+Burst balloons one at a time to maximize coins. Bursting balloon <code>i</code> earns <code>nums[i-1] * nums[i] * nums[i+1]</code>, then its former neighbors become adjacent.</div>
 
-<div style="background:var(--card2);border-radius:10px;padding:16px;margin:12px 0;font-size:.93em">
-<div style="font-weight:700;margin-bottom:8px">Example:</div>
-<code>nums = [3, 1, 5, 8]</code> → with boundaries: <code>[1, 3, 1, 5, 8, 1]</code><br><br>
-One possible order:
-<div style="display:grid;gap:4px;font-size:.9em;padding:8px 0 0 8px">
-<div>Burst <strong>1</strong> (neighbors 3, 5): 3&times;1&times;5 = <strong>15</strong>. Remaining: [3, 5, 8]</div>
-<div>Burst <strong>5</strong> (neighbors 3, 8): 3&times;5&times;8 = <strong>120</strong>. Remaining: [3, 8]</div>
-<div>Burst <strong>3</strong> (neighbors 1, 8): 1&times;3&times;8 = <strong>24</strong>. Remaining: [8]</div>
-<div>Burst <strong>8</strong> (neighbors 1, 1): 1&times;8&times;1 = <strong>8</strong>. Remaining: []</div>
-</div>
-<br>Total: 15 + 120 + 24 + 8 = <strong style="color:var(--gold2)">167</strong> (this happens to be optimal).
-<div style="margin-top:8px;color:var(--muted);font-size:.9em">The tricky part: when you burst a balloon, its neighbors change. Bursting [1] makes [3] and [5] become neighbors.</div>
+<div style="display:grid;gap:6px;margin:12px 0;font-size:.9em">
+<div style="background:var(--card2);border-radius:6px;padding:8px 12px"><code>[3, 1, 5, 8]</code> &rarr; <strong style="color:var(--gold2)">167</strong></div>
+<div style="background:var(--card2);border-radius:6px;padding:8px 12px"><code>[1, 5]</code> &rarr; <strong style="color:var(--gold2)">10</strong></div>
+<div style="background:var(--card2);border-radius:6px;padding:8px 12px"><code>[1]</code> &rarr; <strong style="color:var(--gold2)">1</strong></div>
+<div style="background:var(--card2);border-radius:6px;padding:8px 12px"><code>[3, 1, 5]</code> &rarr; <strong style="color:var(--gold2)">35</strong></div>
 </div>
 
-<div class="sbox"><div class="sl" style="color:var(--emerald)">CLASSIFICATION</div>
-<div style="font-size:.95em">
-<strong>Why is this hard?</strong> Bursting a balloon changes the neighbors of adjacent balloons. Subproblems depend on each other.<br>
-<strong>Key insight:</strong> Think about which balloon to burst <strong>LAST</strong>, not first. If balloon k is the last to burst in range [left, right], everything else is already gone, so its neighbors are the fixed boundaries left-1 and right+1.<br>
-<strong>Family:</strong> Interval DP. State = (left, right) defining a range.
-</div></div>
+<!-- 1 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">1</span> What Is It Really Asking?</h3>
+<p style="font-size:.93em">Bursting a balloon pays the product of it and whatever balloons currently sit beside it, then the gap closes and its old neighbors touch.</p>
 
-<div class="sbox"><div class="sl" style="color:var(--emerald)">CHOICES (DISCOVERED, NOT LISTED)</div>
-<div style="font-size:.95em">
-<strong>Situation:</strong> I have balloons in range [left, right]. I need to burst them all and maximize coins.<br>
-<strong>Why not think "first to burst"?</strong> If I burst k first, its neighbors shift, making the remaining subproblem dependent on that choice. Subproblems aren't independent.<br>
-<strong>Why "last to burst" works:</strong> If k is the last in [left, right], everything else is already gone. k's neighbors are the boundaries: nums[left-1] and nums[right+1]. These are fixed, not shifted. The left and right subproblems are independent.<br>
-<strong>Choices:</strong> Try every balloon k in [left, right] as the last one burst. Take the maximum.
-</div></div>
+<!-- 2 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">2</span> What Would I Naturally Try?</h3>
+<p style="font-size:.93em">Burst the smallest balloon first, on the theory that it "wastes" the least value while it's still surrounded by other balloons.</p>
 
+<!-- 3 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">3</span> Where Does That Fail?</h3>
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:16px;margin:12px 0;font-size:.93em">
+<div style="color:var(--red);font-weight:800;margin-bottom:8px">GREEDY ON [3, 1, 5, 8]: burst smallest first</div>
+<div>Burst 1 (neighbors 3, 5): 3&times;1&times;5 = 15. Remaining [3, 5, 8]</div>
+<div>Burst 3 (neighbors 1, 5): 1&times;3&times;5 = 15. Remaining [5, 8]</div>
+<div>Burst 5 (neighbors 1, 8): 1&times;5&times;8 = 40. Remaining [8]</div>
+<div>Burst 8 (neighbors 1, 1): 1&times;8&times;1 = 8</div>
+<div style="font-weight:700;color:var(--red);margin-top:6px">Total: 78. Optimal is 167.</div>
+</div>
+<p style="font-size:.93em">A balloon's payout depends on its <em>current</em> neighbors, and those neighbors change every time something nearby gets burst.</p>
+<img src="dp/images/burst_greedy.png" alt="Greedy burst-smallest-first on [3,1,5,8] scores 78, far below the optimal 167" class="scene-img">
+
+<!-- 4 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">4</span> What Decision Am I Stuck On?</h3>
+<p style="font-size:.93em">Frozen on range [left, right]: if I burst any balloon first, its neighbors shift, so the leftover subproblem depends on that choice and isn't independent.</p>
+<div class="hi"><strong style="color:var(--emerald)">The reversal:</strong> think about which balloon is burst <strong>LAST</strong> in the range, not first. Everything else is already gone, so its neighbors are just the fixed boundaries.</div>
+<img src="dp/images/burst_frozen.png" alt="Frozen inside range [left, right]: which balloon do I burst last, so its neighbors are fixed boundaries?" class="scene-img">
+
+<!-- 5 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">5</span> What Can I Do With This Range?</h3>
+<p style="font-size:.93em">For each balloon <code>k</code> in [left, right], pretend it's the last one burst. Its neighbors at that moment are the range's outer boundaries, <code>nums[left-1]</code> and <code>nums[right+1]</code>.</p>
+
+<!-- 6 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">6</span> Why Only These Choices?</h3>
+<p style="font-size:.93em">Burst-first couples the subproblems because neighbors shift; burst-last decouples them because the boundaries never move. I don't know which balloon should go last, so I try every <code>k</code> and keep the max.</p>
+
+<!-- 7 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">7</span> Watch Each Choice Play Out</h3>
+<p style="font-size:.93em">On [3, 1, 5] (boundaries are 1 on both sides), try each balloon as the last burst:</p>
+<div style="display:grid;gap:6px;margin:10px 0;font-size:.9em">
+<div style="background:var(--card2);border-radius:6px;padding:8px 12px">3 last: 1&times;3&times;1 + (burst 1 alone) = 3 + 15 = 18</div>
+<div style="background:var(--card2);border-radius:6px;padding:8px 12px">1 last: 1&times;1&times;1 + (burst 3) + (burst 5) = 1 + 3 + 5 = 9</div>
+<div style="background:rgba(16,185,129,.08);border:1px solid var(--emerald);border-radius:6px;padding:8px 12px"><strong style="color:var(--emerald)">5 last:</strong> 1&times;5&times;1 + (burst 1, then 3 in [3,1]) = 5 + 30 = <strong>35</strong></div>
+</div>
+<p style="font-size:.93em">Best is 5 burst last, order 1&rarr;3&rarr;5 = 15+15+5 = 35, matching the answer above.</p>
 <img src="dp/images/burst_balloons_choices.png" alt="Burst Balloons choice diagram: think LAST not FIRST, interval DP with boundary values" class="scene-img">
 
-<h3 style="color:var(--emerald)">Transitions</h3>
+<!-- 8 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">8</span> What Must I Remember? (State)</h3>
+<p style="font-size:.93em">Just the range of balloons not yet burst: <code>(left, right)</code>.</p>
 
-<div style="background:rgba(16,185,129,.06);border:2px solid var(--emerald);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--emerald);font-weight:800;font-size:1.05em;margin-bottom:10px">For each k in [left, right]: Burst k LAST</div>
-<div style="display:grid;gap:8px;font-size:.93em">
-<div><strong>Action:</strong> Choose balloon k as the last one burst in range [left, right].</div>
-<div><strong>Immediate reward:</strong> <code>nums[left-1] * nums[k] * nums[right+1]</code>. When k is the last balloon, its neighbors are the range boundaries.</div>
-<div><strong>Left subproblem:</strong> <code>max_coins(left, k-1)</code>. All balloons to the left of k, burst before k.</div>
-<div><strong>Right subproblem:</strong> <code>max_coins(k+1, right)</code>. All balloons to the right of k, burst before k.</div>
-<div><strong>Call:</strong> <code>nums[left-1] * nums[k] * nums[right+1] + max_coins(left, k-1) + max_coins(k+1, right)</code></div>
+<!-- 9 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">9</span> What Do The Variables Mean?</h3>
+<p style="font-size:.93em"><code>left</code> and <code>right</code> are the endpoints of the unburst range; <code>nums[left-1]</code> and <code>nums[right+1]</code> are the fixed boundary values just outside it.</p>
+
+<!-- 10 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">10</span> What Does The Function Promise?</h3>
+<p style="font-size:.93em"><code>max_coins(left, right)</code> returns the most coins obtainable from bursting every balloon in [left, right], given those two boundary values are fixed.</p>
+
+<!-- 11 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">11</span> When Must We Stop? (Base Case)</h3>
+<div style="background:rgba(245,158,11,.06);border:2px solid var(--amber);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em"><strong>left &gt; right:</strong> no balloons left in the range, return 0.</div>
+
+<!-- 12 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">12</span> What Smaller Problem Remains? (Transitions)</h3>
+<div style="background:rgba(16,185,129,.06);border:2px solid var(--emerald);border-radius:10px;padding:16px;margin:12px 0;font-size:.93em">
+<div><strong>Action:</strong> choose balloon <code>k</code> as the last burst in [left, right].</div>
+<div><strong>Reward:</strong> <code>nums[left-1] * nums[k] * nums[right+1]</code></div>
+<div><strong>Left piece:</strong> <code>max_coins(left, k-1)</code>, everything left of k, burst before k.</div>
+<div><strong>Right piece:</strong> <code>max_coins(k+1, right)</code>, everything right of k, burst before k.</div>
 </div>
+
+<!-- 13 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">13</span> How Do We Combine The Results?</h3>
+<p style="font-size:.93em">Take the <code>max</code> over every candidate <code>k</code>, since we want the most coins and don't know the best last balloon in advance.</p>
+
+<!-- 14 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">14</span> The Recurrence</h3>
+<div class="hi" style="text-align:center;font-size:.95em">
+<code>max_coins(left, right) = max<sub>k in [left, right]</sub> ( nums[left-1] * nums[k] * nums[right+1] + max_coins(left, k-1) + max_coins(k+1, right) )</code>
 </div>
 
-<div style="background:rgba(245,158,11,.06);border:2px solid var(--amber);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--amber);font-weight:800;font-size:1.05em;margin-bottom:10px">Base case: left &gt; right</div>
-<div style="font-size:.93em">No balloons in this range. Return <code>0</code>.</div>
+<!-- 15 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">15</span> Brute-Force Code</h3>
+<pre><code>def max_coins(nums, left, right):
+    if left > right:
+        return 0
+
+    best = 0
+    for last in range(left, right + 1):
+        coins = nums[left - 1] * nums[last] * nums[right + 1]
+        coins += max_coins(nums, left, last - 1)
+        coins += max_coins(nums, last + 1, right)
+        best = max(best, coins)
+
+    return best
+
+def burst_balloons(nums):
+    nums = [1] + nums + [1]
+    return max_coins(nums, 1, len(nums) - 2)</code></pre>
+
+<!-- 16 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">16</span> Why Every Line Exists</h3>
+<p style="font-size:.93em">Padding with 1s makes the boundary math work uniformly at the edges. The loop over <code>last</code> is the "try every balloon as last burst" idea from Step 5; the two recursive calls are the independent left and right pieces from Step 12.</p>
+<img src="dp/images/burst_code_walkthrough.png" alt="Color-highlighted Burst Balloons code: padding, base case, loop over last, boundary reward, two recursive pieces" class="scene-img">
+
+<!-- 17 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">17</span> Concrete Execution Trace</h3>
+<p style="font-size:.93em">On [3, 1, 5, 8], the winning path builds bottom-up:</p>
+<div style="display:grid;gap:6px;margin:10px 0;font-size:.9em">
+<div style="background:var(--card2);border-radius:6px;padding:8px 12px">burst 1 alone (neighbors 3, 5): 3&times;1&times;5 = <strong>15</strong></div>
+<div style="background:var(--card2);border-radius:6px;padding:8px 12px">then 5 last in [1,5] (neighbors 3, 8): 3&times;5&times;8 = 120, subtotal <strong>135</strong></div>
+<div style="background:var(--card2);border-radius:6px;padding:8px 12px">then 3 last in [3,1,5] (neighbors 1, 8): 1&times;3&times;8 = 24, subtotal <strong>159</strong></div>
+<div style="background:rgba(16,185,129,.08);border:1px solid var(--emerald);border-radius:6px;padding:8px 12px">then 8 last overall (neighbors 1, 1): 1&times;8&times;1 = 8, total <strong style="color:var(--emerald)">167</strong></div>
 </div>
+<p style="font-size:.93em">Each row is a range choosing its own "last" balloon; the boundary values change depending on what's still standing outside that range.</p>
+<img src="dp/images/burst_trace.png" alt="Execution trace on [3,1,5,8]: building up dp values for ranges of increasing length, ending at 167" class="scene-img">
 
-<img src="dp/images/burst_balloons_transitions.png" alt="Burst Balloons transition justification: burst k last, boundaries are left-1 and right+1, independent subproblems" class="scene-img">
+<!-- 18 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">18</span> Why Is It Slow?</h3>
+<p style="font-size:.93em">The same range <code>(left, right)</code> gets recomputed across different branches of the recursion tree, so brute force is exponential without caching.</p>
 
-<h3 style="color:var(--emerald)">Recursion</h3>
+<!-- 19 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">19</span> Memoization</h3>
 <pre><code>def max_coins(nums, left, right, cache):
     if left > right:
         return 0
@@ -987,10 +962,11 @@ One possible order:
 def burst_balloons(nums):
     nums = [1] + nums + [1]
     return max_coins(nums, 1, len(nums) - 2, {})</code></pre>
-
 <img src="dp/images/burst_balloons_memo.png" alt="Burst Balloons memoization: interval DP, choose last balloon to burst" class="scene-img">
 
-<h3 style="color:var(--amber)">Tabulation</h3>
+<!-- 20 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">20</span> Tabulation</h3>
+<p style="font-size:.93em">Fill by increasing range length, like palindrome DP, since <code>table[left][right]</code> needs shorter sub-ranges inside it already solved.</p>
 <pre><code>def burst_balloons(nums):
     nums = [1] + nums + [1]
     n = len(nums)
@@ -1006,14 +982,36 @@ def burst_balloons(nums):
                 table[left][right] = max(table[left][right], coins)
 
     return table[1][n - 2]</code></pre>
-
 <img src="dp/images/burst_balloons_tab.png" alt="Burst Balloons tabulation: interval table filled by increasing range length" class="scene-img">
 
-<div class="hi">
-<strong style="color:var(--amber)">Interval DP:</strong> <code>table[left][right]</code> = max coins from bursting all balloons in [left, right]. Fill by increasing interval length (like palindrome DP). The twist: "burst last" reversal makes subproblems independent.
+<!-- 21 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">21</span> Space Optimization</h3>
+<p style="font-size:.93em">Not much room here: every range's answer depends on many different shorter sub-ranges nested inside it, so the full 2D table has to stay.</p>
+
+<!-- 22 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">22</span> Common Mistakes</h3>
+<div style="display:grid;gap:8px;margin:10px 0;font-size:.9em">
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:10px 14px">Choosing <code>k</code> as the balloon burst <strong>first</strong> instead of last, which makes neighbors shift mid-computation.</div>
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:10px 14px">Forgetting to pad <code>nums</code> with 1s on both ends before recursing.</div>
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:10px 14px">Using the original, static neighbors instead of the range's current boundaries.</div>
 </div>
+<img src="dp/images/burst_mistakes.png" alt="Burst Balloons common mistakes: bursting first not last, missing padding, static neighbors" class="scene-img">
+
+<!-- 23 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">23</span> Pattern Recognition</h3>
+<p style="font-size:.93em">Interval DP family: Burst Balloons, Matrix Chain Multiplication, Palindrome Partitioning all fill a table by increasing range length, choosing a split (or last) point inside each range.</p>
+
+<!-- 24 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">24</span> Complexity</h3>
+<p style="font-size:.93em">O(n&sup3;) time (n&sup2; ranges, O(n) choices of <code>k</code> each), O(n&sup2;) space for the table.</p>
+
+<!-- 25 -->
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">25</span> Rediscover It Six Months Later</h3>
+<div class="hi" style="font-size:.93em">
+"State is a range (left, right). Bursting first shifts neighbors, so think about which balloon is burst LAST instead, its neighbors are just the boundaries. Try every k in the range as last, take the max, fill by increasing range length."
 </div>
-</div>
+
+</div></div>
 
 </div>
 

@@ -1,0 +1,266 @@
+PALINDROME DP IMAGES (25-section discovery framework)
+==============================================================
+New images for the rewritten palindrome page.
+==============================================================
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic (1024x1792).
+
+TEXT RULES:
+- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- Every element must be readable on a phone held vertically WITHOUT zooming.
+- Maximum 15 words per explanation. Let the visuals carry the meaning.
+- White space is OK. Don't cram. Better to be clear than dense.
+- All text rendered in a clean sans-serif font (like Nunito or Poppins).
+  NO chalk-style text, NO handwritten fonts, NO serif fonts.
+
+CHARACTER (Kit, appears in EVERY image with this EXACT look):
+- Young person, mid-20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+- Face: sharp dark eyes, confident smirk, light stubble. Round head.
+- Outfit (EVERY image, NO exceptions):
+  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
+  * DARK BLUE UTILITY BELT around the waist.
+  * FINGERLESS BLACK GLOVES on both hands.
+  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
+- Build: lean and athletic. Calm, calculated confidence.
+- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
+  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+
+ART STYLE:
+- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
+- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
+- Clean vector-like line quality on diagrams and text boxes.
+
+COLOR PALETTE:
+- Background: dark purple-blue (#1E1035). Grid/matrix atmosphere.
+- Section cards: cream/warm-white (#FFF8F0) with rounded corners, subtle shadow.
+- Headers: bright violet (#A78BFA).
+- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
+- Gold accents: (#F59E0B) for callouts and highlights.
+- Green: (#22C55E) for match/valid. Red: (#EF4444) for mismatch/fail.
+- Violet accent lighting throughout.
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: Naive O(n^3) Is Wasteful -> palindrome_greedy.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Two sections.
+
+Big header at top: "WHY BRUTE FORCE IS WASTEFUL"
+
+SECTION 1: "NAIVE: REVERSE AND COMPARE" (RED card, about 45%):
+
+Kit on the left looking tired, surrounded by reversed strings.
+
+Show the string "a a b a a" in letter boxes.
+
+Three checks stacked:
+Check 1: "aabaa" reversed = "aabaa". Match! GREEN check. "But I checked ALL 5 chars."
+Check 2: "aba" reversed = "aba". Match! GREEN check. "Rechecked the SAME inner chars."
+Check 3: "b" reversed = "b". Match! GREEN check. "Already knew this from check 2."
+
+Big red arrow pointing at the overlap: "Inner substrings rechecked every time!"
+
+Big text: "O(n^3): n^2 substrings, each takes O(n) to reverse." RED highlight.
+
+SECTION 2: "THE INSIGHT" (GREEN card, about 35%):
+
+Kit smiling, pointing at a diagram showing nested rectangles.
+
+Show "aabaa" with nested boxes:
+Outer box: "aabaa" (checking ends 'a'='a', then inner)
+Middle box: "aba" (checking ends 'a'='a', then inner)
+Inner box: "b" (base case: True)
+
+Big text: "If I know 'aba' is a palindrome, I just check the outer ends."
+Below: "Same question, smaller input. Cache it!"
+
+Bottom gold callout:
+"Don't re-verify inner substrings. Cache (left, right) results."
+
+
+================================================================================
+PROMPT 2: Frozen at (left, right) -> palindrome_frozen.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "FROZEN AT (LEFT, RIGHT)"
+
+Show the string "a a b a a" in large letter boxes in a row.
+
+Position left=0 ('a') and right=4 ('a') are highlighted with bright gold spotlights. The characters between them are slightly dimmed.
+
+Kit stands below the string, holding a magnifying glass pointing at both ends simultaneously. Speech bubble: "Do these two match?"
+
+Two outcome panels below:
+
+Panel 1 (GREEN): "MATCH: text[left] == text[right]"
+"Ends pass. Check the inside: is_palindrome(left+1, right-1)"
+Arrow pointing inward to the substring "aba"
+
+Panel 2 (RED): "NO MATCH: text[left] != text[right]"
+"Game over. Return False. Nothing inside can fix it."
+Big X mark.
+
+Bottom gold callout:
+"One check, two outcomes. No choices to make, just observe."
+
+
+================================================================================
+PROMPT 3: Code Walkthrough -> palindrome_code_walkthrough.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "EVERY LINE HAS A REASON"
+
+Kit standing to the left, pointing at a large code block in a cream card.
+
+Show this Python code with color-coded highlighting:
+
+GREEN background:
+  def is_palindrome(text, left, right):
+
+BLUE background:
+  if left >= right:
+      return True
+
+YELLOW/GOLD background:
+  if text[left] != text[right]:
+      return False
+
+VIOLET background:
+  return is_palindrome(text, left + 1, right - 1)
+
+Color legend at the bottom:
+- GREEN = "Promise: is text[left..right] a palindrome?"
+- BLUE = "Base case: single char or empty = True"
+- YELLOW = "No match: ends differ, instantly False"
+- VIOLET = "Match: peel ends, check inside"
+
+
+================================================================================
+PROMPT 4: Execution Trace -> palindrome_trace.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "WATCHING IT RUN: 'aabaa'"
+
+Show the string at top: a a b a a (in boxes)
+
+Tree diagram of nested calls (not a branching tree, a CHAIN since palindrome has only one recursive path):
+
+Level 0: is_palindrome(0, 4)
+text[0]='a', text[4]='a'. MATCH! GREEN checkmark.
+Arrow down labeled "check inside"
+
+Level 1: is_palindrome(1, 3)
+text[1]='a', text[3]='a'. MATCH! GREEN checkmark.
+Arrow down labeled "check inside"
+
+Level 2: is_palindrome(2, 2)
+Single character 'b'. BASE CASE. Return True. GREEN star.
+
+Return values chain back up:
+True flows up through all levels.
+"True AND True AND True = 'aabaa' IS a palindrome"
+
+Kit at the bottom with speech bubble: "No branching. Just peeling layers inward."
+
+Final answer: "True" in big green text.
+
+
+================================================================================
+PROMPT 5: Longest Palindrome Trace -> longest_pal_trace.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "FINDING THE LONGEST: 'babad'"
+
+Show the string at top: b a b a d (in boxes)
+
+Show a grid/table of all (left, right) palindrome checks:
+
+All single chars: b, a, b, a, d = all True (length 1)
+Length 2: "ba" False, "ab" False, "ba" False, "ad" False
+Length 3: "bab" True (length 3, NEW BEST!), "aba" True (length 3, ties), "bad" False
+Length 4: "baba" False, "abad" False
+Length 5: "babad" False
+
+Kit pointing at "bab" with a gold star: "Longest palindrome found: length 3"
+
+Answer: "bab" in big gold text.
+
+Bottom callout: "Same table as counting. Just track the biggest True cell."
+
+
+================================================================================
+PROMPT 6: Longest Palindrome Code Walkthrough -> longest_pal_code_walkthrough.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Create a tall portrait infographic (1024x1792). Single scene.
+
+Big header: "COUNT vs LONGEST: ONE LINE CHANGES"
+
+Show two code blocks side by side (or stacked):
+
+LEFT CODE (violet border, labeled "COUNT"):
+```
+if is_pal[left][right]:
+    count += 1
+```
+
+RIGHT CODE (green border, labeled "LONGEST"):
+```
+if is_pal[left][right]:
+    if length > max_length:
+        start = left
+        max_length = length
+```
+
+Kit in the middle pointing at both, speech bubble: "Same table. Different bookkeeping."
+
+Below, a small comparison table:
+| | Count (#647) | Longest (#5) |
+| When True | count += 1 | track if longest |
+| Returns | integer (count) | string (substring) |
+| Table | identical | identical |
+
+Bottom gold callout:
+"Build the is_pal table once. Use it for any palindrome question."

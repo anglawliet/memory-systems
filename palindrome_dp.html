@@ -78,379 +78,179 @@ code{font-family:'Fira Code','Courier New',monospace}
 <a href="state_machine_dp.html" class="nav-link">State Machine</a>
 </div>
 
-<!-- ==================== THE PROBLEM ==================== -->
+<!-- ==================== 1. THE PROBLEM ==================== -->
 <h2>The Problem</h2>
 
 <div class="ws">
 <h3 style="margin-bottom:12px">Palindromic Substrings (LeetCode #647)</h3>
+<p style="margin-bottom:12px">Given a string <code>text</code>, count how many of its substrings are palindromes.</p>
 
-<p style="margin-bottom:12px">Given a string, count how many substrings are palindromes. A palindrome reads the same forwards and backwards.</p>
-
-<div style="text-align:center;margin:16px 0">
-<span style="display:inline-block;border:2px solid var(--violet);border-radius:8px;padding:8px 16px;font-size:1.3em;font-weight:700;letter-spacing:4px;color:var(--violet)">a a b a a</span>
+<table class="grid-table">
+<tr><th>text</th><th>count</th><th>why</th></tr>
+<tr><td><code>"aab"</code></td><td class="pal">4</td><td class="no">a, a, b, aa</td></tr>
+<tr><td><code>"abc"</code></td><td class="pal">3</td><td class="no">a, b, c</td></tr>
+<tr><td><code>"aaa"</code></td><td class="pal">6</td><td class="no">a, a, a, aa, aa, aaa</td></tr>
+<tr><td><code>"a"</code></td><td class="pal">1</td><td class="no">a</td></tr>
+<tr><td><code>"aabaa"</code></td><td class="pal">9</td><td class="no">5 single + aa + aa + aba + aabaa</td></tr>
+</table>
 </div>
 
-<p style="margin-bottom:8px"><strong>Palindromic substrings:</strong></p>
-<div style="margin:8px 0;font-size:.92em;line-height:2">
-<span style="display:inline-block;border:1px solid var(--green);border-radius:4px;padding:2px 10px;margin:2px;color:var(--green)">"a" x5</span>
-<span style="display:inline-block;border:1px solid var(--green);border-radius:4px;padding:2px 10px;margin:2px;color:var(--green)">"aa" x2</span>
-<span style="display:inline-block;border:1px solid var(--green);border-radius:4px;padding:2px 10px;margin:2px;color:var(--green)">"aba"</span>
-<span style="display:inline-block;border:1px solid var(--green);border-radius:4px;padding:2px 10px;margin:2px;color:var(--green)">"aabaa"</span>
-</div>
-
-<div style="text-align:center;font-size:1.2em;font-weight:700;color:var(--gold2);margin-top:12px">9 palindromic substrings</div>
-</div>
-
-<!-- ==================== STEP 0: CLASSIFICATION ==================== -->
-
-<h2><span class="step-num">0</span> Is This a DP Problem?</h2>
+<!-- ==================== 2. WHAT IS IT REALLY ASKING? ==================== -->
+<h2><span class="step-num">1</span> What Is It Really Asking?</h2>
 
 <div class="ws">
-
-<h3>What is the problem asking me to compute?</h3>
-<p>Count every substring that reads the same forwards and backwards. For a string of length n, there are n(n+1)/2 substrings to check.</p>
-
-<h3 style="margin-top:20px">Why doesn't greedy work?</h3>
-<p>There's no greedy strategy here. I can't pick a starting point and greedily expand. I have to check every possible substring independently. No shortcut lets me skip substrings.</p>
-
-<h3 style="margin-top:20px">Why would brute force create overlapping subproblems?</h3>
-
-<div style="background:var(--card2);border-radius:10px;padding:18px;margin:12px 0">
-<div style="font-size:.93em">
-Checking <code>"aabaa"</code>: is it a palindrome?<br>
-<span style="padding-left:20px">→ Ends match ('a' == 'a'). Check the inside: is <code>"aba"</code> a palindrome?</span><br><br>
-But <code>"aba"</code> is also a substring I need to check independently.<br>
-<strong style="color:var(--gold2)">Same question, computed twice.</strong> That's an overlapping subproblem.
-</div>
+<p>For every possible <code>(left, right)</code> pair, ask one yes/no question: <strong>is <code>text[left..right]</code> a palindrome?</strong> Count the yeses.</p>
+<div class="hi"><strong style="color:var(--violet)">One string, not two.</strong> The state lives inside a single string, not across two.</div>
 </div>
 
-<h3 style="margin-top:20px">Which family?</h3>
-<p><strong style="color:var(--violet)">String DP</strong>. I'm checking a property of a range of characters. The result for a longer range depends on the result for a shorter inner range.</p>
-</div>
-
-<!-- ==================== STEP 1: RECURSIVE QUESTION ==================== -->
-
-<h2><span class="step-num">1</span> The Recursive Question</h2>
+<!-- ==================== 3. WHAT WOULD I NATURALLY TRY? ==================== -->
+<h2><span class="step-num">2</span> What Would I Naturally Try?</h2>
 
 <div class="ws">
-<p style="margin-bottom:12px">Before writing any recursion, answer this in plain English:</p>
-
-<div style="background:rgba(167,139,250,.12);border:2px solid var(--violet);border-radius:10px;padding:20px;margin:12px 0;text-align:center">
-<div style="font-size:1.15em;font-weight:700;color:var(--violet)">"Is the substring text[left..right] a palindrome?"</div>
+<p>For every substring, reverse it and compare to the original.</p>
+<pre><code>for left in range(n):
+    for right in range(left, n):
+        sub = text[left:right+1]
+        if sub == sub[::-1]:
+            count += 1</code></pre>
+<p style="font-size:.9em;color:var(--muted)">O(n²) substrings, each reversed and compared in O(n) → O(n³).</p>
 </div>
 
-<p style="margin-top:12px">This function answers exactly one question. It takes two positions (left and right) and returns True or False for that specific substring.</p>
-
-<p>The <strong>counting</strong> happens outside. I check every (left, right) pair and count how many return True. The recursive function only answers: is this one substring a palindrome?</p>
-</div>
-
-<!-- ==================== STEP 2: BASE CASES ==================== -->
-
-<h2><span class="step-num">2</span> Discover the Base Cases</h2>
+<!-- ==================== 4. WHERE DOES THAT FAIL? ==================== -->
+<h2><span class="step-num">3</span> Where Does That Fail?</h2>
 
 <div class="ws">
-
-<p style="margin-bottom:14px">Do not derive base cases from the recurrence. Instead ask:</p>
-
-<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:12px 0;text-align:center">
-<div style="font-size:1.05em;font-weight:700;color:var(--gold2)">"If I keep making decisions, when must I eventually stop?"</div>
+<p>Checking <code>"aabaa"</code> re-verifies the inner <code>"aba"</code> from scratch, even though <code>"aba"</code> is checked again on its own as a separate substring.</p>
+<div class="hi"><strong style="color:var(--red)">Wasted work:</strong> the same inner range gets re-verified by every outer range that contains it.</div>
 </div>
 
-<p>The recursive function peels off one character from each end and checks the inside. Each call shrinks the substring by 2. Eventually the substring becomes too small to peel further. That's when I stop.</p>
+<img src="dp/images/palindrome_greedy.png" alt="Naive O(n^3) reversal wastes work rechecking inner substrings already verified by outer checks" class="scene-img">
 
-<!-- BASE CASE 1 -->
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:12px">STOP: Single character (left == right)</div>
-
-<div style="text-align:center;margin:10px 0">
-<span style="display:inline-block;background:var(--green);color:#fff;padding:4px 12px;border-radius:6px;font-size:1.3em;font-weight:700">b</span>
-</div>
-
-<div style="display:grid;gap:8px;font-size:.93em;margin-top:10px">
-<div><strong>What situation have I reached?</strong> One character left. Nothing to compare it against.</div>
-<div><strong>Why can't I continue?</strong> Peeling requires two ends. One character has no "other end."</div>
-<div><strong>What should this return?</strong> <code>True</code>.</div>
-<div><strong>Why True?</strong> "b" reversed is "b". A single character reads the same in both directions. That's the definition of a palindrome.</div>
-</div>
-</div>
-
-<!-- BASE CASE 2 -->
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:12px">STOP: Empty substring (left > right)</div>
-
-<div style="text-align:center;margin:10px 0;font-size:.95em;color:var(--muted)">(nothing here)</div>
-
-<div style="display:grid;gap:8px;font-size:.93em;margin-top:10px">
-<div><strong>What situation have I reached?</strong> Left pointer has crossed past right. The substring is empty.</div>
-<div><strong>When does this happen?</strong> After peeling both ends from a length-2 palindrome. Example: <code>"aa"</code> has matching ends. Peel both: left becomes 1, right becomes 0. Empty.</div>
-<div><strong>What should this return?</strong> <code>True</code>.</div>
-<div><strong>Why True and not False?</strong> All the outer layers have already confirmed matching. An empty center doesn't break anything. It means every pair was checked and passed. Returning False here would incorrectly reject <code>"aa"</code>.</div>
-</div>
-</div>
-
-<div class="hi">
-<strong>Why are these the only two stops?</strong> Any substring with 2+ characters has two ends to compare. The function always has work to do until the substring shrinks to 0 or 1 characters.
-</div>
-
-<h3 style="margin-top:16px">Base Case Diagram</h3>
-
-<div style="background:var(--card2);border-radius:10px;padding:18px;margin:12px 0">
-<pre style="font-size:.9em;line-height:1.8;margin:0"><code>is_palindrome(left, right)
-        │
-   left >= right?
-        │
-   ┌────┴────┐
-   │         │
-  YES        NO
-   │         │
-  Return    (continue to
-  True.     choices...)</code></pre>
-</div>
-</div>
-
-<img src="dp/images/palindrome_base_cases.png" alt="Palindrome base cases: single character returns True, empty returns True, why each is correct" class="scene-img">
-
-<!-- ==================== STEPS 3-4: CHOICES ==================== -->
-
-<h2><span class="step-num">3</span> Discover the Choices</h2>
+<!-- ==================== 5. FROZEN AT (LEFT, RIGHT) ==================== -->
+<h2><span class="step-num">4</span> Frozen at (left, right)</h2>
 
 <div class="ws">
-
-<p style="margin-bottom:12px">I'm inside one recursive call. The substring has at least 2 characters (base cases didn't trigger). Now:</p>
-
-<h3>What is my current situation?</h3>
-<p>I'm looking at <code>text[left..right]</code>. I want to know: is this a palindrome?</p>
-
-<div style="text-align:center;margin:16px 0">
-<span style="display:inline-block;border:2px solid var(--violet);border-radius:8px;padding:10px 18px;font-size:1.3em;letter-spacing:4px;font-weight:700">a a b a a</span>
-<div style="font-size:.88em;color:var(--muted);margin-top:6px">I'm pointing at the first character (left) and the last character (right).</div>
-</div>
-
-<h3 style="margin-top:20px">What am I allowed to do?</h3>
-<p>The string is fixed. I can't skip characters, swap them, insert new ones, or rearrange anything. I can only <strong>observe</strong>.</p>
-
-<p style="margin-top:10px">So the question isn't "what action should I take?" but <strong>"what should I check?"</strong></p>
-
-<h3 style="margin-top:20px">What am I forbidden from doing?</h3>
-<p>Modifying the string. This isn't an optimization where I choose between options. This is a <strong>verification</strong> where I inspect the data.</p>
-
-<h3 style="margin-top:20px">Why are these the only legal actions?</h3>
-
-<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:12px 0">
-<div style="color:var(--gold2);font-weight:700;font-size:1.05em;margin-bottom:10px">THE CHECK: Do the two end characters match?</div>
-<div style="font-size:.95em">
-A palindrome reads the same forwards and backwards. That means the first character <strong>must</strong> equal the last character. If they don't match, nothing inside can fix it. This is the cheapest and most decisive single check I can make.<br><br>
-<strong>Could I check the middle first?</strong> I could, but if the ends don't match, I wasted work on the middle. Checking ends first eliminates the most work on failure.<br><br>
-<strong>Could I check two random positions?</strong> That tells me nothing useful. The ends are the only positions guaranteed to matter for a palindrome.<br><br>
-<strong>Have I missed any checks?</strong> No. One check, two outcomes.
-</div>
+<p>I'm mid-check on <code>text[left..right]</code>. Everything outside this range is irrelevant right now.</p>
+<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:14px;margin:12px 0;text-align:center;font-size:.95em">
+<strong style="color:var(--gold2)">What's the one question I must answer to move forward?</strong> Do the two end characters match?
 </div>
 </div>
 
-<!-- ==================== STEP 4: EXPLAIN EACH CHOICE ==================== -->
+<img src="dp/images/palindrome_frozen.png" alt="Frozen inside is_palindrome(left, right): only text[left] and text[right] matter right now" class="scene-img">
 
-<h2><span class="step-num">4</span> Explain Each Outcome</h2>
+<!-- ==================== 6. WHAT CAN I DO? ==================== -->
+<h2><span class="step-num">5</span> What Can I Do?</h2>
 
 <div class="ws">
-
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:12px">OUTCOME 1: The ends match (text[left] == text[right])</div>
-
-<div style="text-align:center;font-size:1.2em;letter-spacing:2px;margin:8px 0">
-<span style="background:var(--green);color:#fff;padding:3px 8px;border-radius:4px">a</span> a b a <span style="background:var(--green);color:#fff;padding:3px 8px;border-radius:4px">a</span>
+<p>Only one legal move: compare <code>text[left]</code> to <code>text[right]</code>. No skipping, no swapping, just observing.</p>
 </div>
 
-<div style="display:grid;gap:10px;font-size:.93em;margin-top:12px">
-<div><strong>What am I doing?</strong> Confirming the outer pair is valid.</div>
-<div><strong>Why is this a legal move?</strong> A palindrome requires first == last. They do match, so this layer passes.</div>
-<div><strong>What changes immediately?</strong> The outer pair is handled. My focus shrinks to the <strong>inner substring</strong>, one character shorter on each side.</div>
-<div><strong>What stays unchanged?</strong> The question is identical: "is this (smaller) substring a palindrome?"</div>
-<div><strong>What remains to solve?</strong> Check the inner substring. Same problem, smaller input. <code>is_palindrome(left+1, right-1)</code></div>
-</div>
-</div>
-
-<div style="background:rgba(239,68,68,.04);border:2px solid var(--red);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--red);font-weight:800;font-size:1.05em;margin-bottom:12px">OUTCOME 2: The ends don't match (text[left] != text[right])</div>
-
-<div style="text-align:center;font-size:1.2em;letter-spacing:2px;margin:8px 0">
-<span style="background:var(--red);color:#fff;padding:3px 8px;border-radius:4px">a</span> b <span style="background:var(--red);color:#fff;padding:3px 8px;border-radius:4px">c</span>
-</div>
-
-<div style="display:grid;gap:10px;font-size:.93em;margin-top:12px">
-<div><strong>What am I doing?</strong> Observing that the outer characters differ.</div>
-<div><strong>Why is this a legal move?</strong> It's an observation, not a choice.</div>
-<div><strong>What changes immediately?</strong> Nothing. I stop.</div>
-<div><strong>What stays unchanged?</strong> Nothing matters anymore.</div>
-<div><strong>What remains to solve?</strong> Nothing. Return <code>False</code>. The inside is irrelevant.</div>
-</div>
-</div>
-
-<h3 style="margin-top:16px">The Choice Diagram</h3>
-
-<div style="background:var(--card2);border-radius:10px;padding:18px;margin:12px 0">
-<pre style="font-size:.9em;line-height:1.8;margin:0"><code>is_palindrome(left, right)   [base cases already handled]
-        │
-  Do text[left] and text[right] match?
-        │
-   ┌────┴────┐
-   │         │
-  YES        NO
-   │         │
-   │     Return False.
-   │     (Ends differ, game over.)
-   │
-   ▼
-  Peel both ends off.
-  Return is_palindrome(left+1, right-1)</code></pre>
-</div>
-
-<p style="font-size:.93em">The combine step: <code>ends_match AND is_palindrome(inside)</code>. Both must be true. There's no max or min here. If the ends match but the inside isn't a palindrome, the whole thing fails.</p>
-
-<!-- WATCH IT PLAY OUT -->
-<h3 style="margin-top:20px">Watch it play out</h3>
-
-<p style="margin-bottom:8px">Trace <code>"aabaa"</code>:</p>
-
-<div style="background:var(--card2);border-radius:10px;padding:16px;margin:12px 0">
-<div style="display:grid;gap:12px;font-size:.93em">
-<div>
-<strong style="color:var(--violet)">Round 1 (left=0, right=4):</strong>
-<span style="letter-spacing:2px"><span style="background:var(--green);color:#fff;padding:1px 5px;border-radius:3px">a</span> a b a <span style="background:var(--green);color:#fff;padding:1px 5px;border-radius:3px">a</span></span><br>
-<span style="padding-left:20px">'a' == 'a'. Match! Peel off both ends. Check is_palindrome(1, 3).</span>
-</div>
-<div>
-<strong style="color:var(--violet)">Round 2 (left=1, right=3):</strong>
-<span style="letter-spacing:2px"><span style="background:var(--green);color:#fff;padding:1px 5px;border-radius:3px">a</span> b <span style="background:var(--green);color:#fff;padding:1px 5px;border-radius:3px">a</span></span><br>
-<span style="padding-left:20px">'a' == 'a'. Match! Peel off both ends. Check is_palindrome(2, 2).</span>
-</div>
-<div>
-<strong style="color:var(--violet)">Round 3 (left=2, right=2):</strong>
-<span style="letter-spacing:2px"><span style="background:var(--violet);color:#fff;padding:1px 5px;border-radius:3px">b</span></span><br>
-<span style="padding-left:20px">Single character. Base case. Return True.</span>
-</div>
-<div style="font-weight:700;color:var(--green);padding-top:4px">
-True AND True AND True = "aabaa" is a palindrome.
-</div>
-</div>
-</div>
-</div>
-
-<img src="dp/images/palindrome_choices.png" alt="Palindrome choice diagram: outer letters match? Check inner. Two outcomes from one check." class="scene-img">
-
-<!-- ==================== STEPS 5-6: STATE ==================== -->
-
-<h2><span class="step-num">5</span> Discover the State</h2>
+<!-- ==================== 7. WHY ONLY THESE? ==================== -->
+<h2><span class="step-num">6</span> Why Only These?</h2>
 
 <div class="ws">
-
-<p style="margin-bottom:14px">Ask: <strong>what information must I know to uniquely describe the remaining problem?</strong></p>
-
-<p style="margin-bottom:12px">Consider every piece of information that changes between calls:</p>
-
-<div style="background:rgba(167,139,250,.06);border:2px solid var(--violet);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--violet);font-weight:800;font-size:1.05em;margin-bottom:12px">Candidate: left (starting position)</div>
-<div style="display:grid;gap:8px;font-size:.93em">
-<div><strong>Why do I need it?</strong> Different starting positions give different substrings. <code>text[0..4]</code> is "aabaa", <code>text[1..4]</code> is "abaa". Different strings, different answers.</div>
-<div><strong>What if I remove it?</strong> "Is text[?..4] a palindrome?" is ambiguous. Five substrings end at position 4. I can't tell which one I'm checking.</div>
-</div>
+<p>A palindrome's definition <em>requires</em> first == last. That's not a choice I'm making, it's a fact I'm checking. One check, two outcomes.</p>
 </div>
 
-<div style="background:rgba(167,139,250,.06);border:2px solid var(--violet);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--violet);font-weight:800;font-size:1.05em;margin-bottom:12px">Candidate: right (ending position)</div>
-<div style="display:grid;gap:8px;font-size:.93em">
-<div><strong>Why do I need it?</strong> Different ending positions give different substrings. <code>text[0..4]</code> is "aabaa", <code>text[0..2]</code> is "aab". Different answers.</div>
-<div><strong>What if I remove it?</strong> "Is text[0..?] a palindrome?" is ambiguous. Same problem.</div>
-</div>
-</div>
-
-<div style="background:rgba(167,139,250,.06);border:2px solid var(--violet);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--violet);font-weight:800;font-size:1.05em;margin-bottom:12px">Candidate: the text itself</div>
-<div style="display:grid;gap:8px;font-size:.93em">
-<div><strong>Does it change between calls?</strong> No. The text is constant. I never modify it.</div>
-<div><strong>Verdict:</strong> Not part of the state. It's a global constant.</div>
-</div>
-</div>
-
-<div style="background:rgba(251,191,36,.12);border:2px solid var(--gold2);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
-<div style="font-size:1.1em;font-weight:800;color:var(--gold2)">State = (left, right)</div>
-<div style="font-size:.93em;margin-top:6px">Two integers. This uniquely identifies "is text[left..right] a palindrome?"</div>
-</div>
-</div>
-
-<!-- STEP 6: STATE INVARIANT -->
-
-<h2><span class="step-num">6</span> State Invariant</h2>
+<!-- ==================== 8. WATCH EACH CHOICE PLAY OUT ==================== -->
+<h2><span class="step-num">7</span> Watch Each Choice Play Out</h2>
 
 <div class="ws">
-<p style="margin-bottom:12px">Before writing the recurrence, define what the recursive function <strong>promises</strong>:</p>
-
-<div style="background:rgba(167,139,250,.12);border:2px solid var(--violet);border-radius:10px;padding:20px;margin:12px 0">
-<div style="font-size:1em;font-weight:700;color:var(--violet);margin-bottom:8px">is_palindrome(left, right)</div>
-<div style="font-size:.95em">"I promise to determine whether text[left..right] is a palindrome. I don't need anything outside this range. Everything outside [left, right] is either already confirmed or irrelevant."</div>
+<div class="two-col" style="margin:12px 0">
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
+<strong style="color:var(--green)">Match</strong>
+<div style="font-size:.9em;margin-top:6px">Ends confirmed. Check the inside: <code>is_palindrome(left+1, right-1)</code>.</div>
 </div>
-
-<h3 style="margin-top:16px">Does every recursive call preserve this?</h3>
-
-<div style="font-size:.93em;margin:12px 0">
-<strong>The only recursive call:</strong> <code>is_palindrome(left+1, right-1)</code><br><br>
-This asks about <code>text[left+1..right-1]</code>, which is a subset of <code>[left, right]</code>. The inner call never looks outside the original range. <strong>Invariant preserved.</strong><br><br>
-<strong>Why this matters:</strong> When I call <code>is_palindrome(left+1, right-1)</code>, I've already confirmed <code>text[left] == text[right]</code>. The outer pair is handled. The inner call only needs to worry about the inside. No information leaks in either direction.
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<strong style="color:var(--red)">No match</strong>
+<div style="font-size:.9em;margin-top:6px">Ends differ, game over. <code>return False</code> immediately, no recursion.</div>
+</div>
 </div>
 </div>
 
-<!-- ==================== STEPS 7-8: TRANSITION AND RECURRENCE ==================== -->
+<img src="dp/images/palindrome_choices.png" alt="Palindrome choice diagram: ends match then check inside, ends differ then return False" class="scene-img">
 
-<h2><span class="step-num">7</span> Derive the Transition</h2>
+<!-- ==================== 9. STATE ==================== -->
+<h2><span class="step-num">8</span> What Must I Remember? (The State)</h2>
 
 <div class="ws">
-
-<p style="margin-bottom:12px">For every transition, explain: what action, what cost, which variables change, which stay, and why.</p>
-
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:10px">MATCH: text[left] == text[right]</div>
-<div style="display:grid;gap:8px;font-size:.93em">
-<div><strong>Action:</strong> Confirmed the outer pair matches. Peel them off.</div>
-<div><strong>Cost/reward:</strong> None. A match doesn't add to a count. It just means this layer is valid.</div>
-<div><strong>State changes:</strong></div>
-<div style="padding-left:20px">
-<code>left &rarr; left+1</code>: text[left] confirmed. Move inward from the left. This character is consumed.<br>
-<code>right &rarr; right-1</code>: text[right] confirmed. Move inward from the right. This character is consumed.
-</div>
-<div><strong>Why do BOTH change?</strong> A palindrome is symmetric. Confirming a pair means both ends are done simultaneously. You can't confirm just one end of a pair.</div>
-<div><strong>Remaining subproblem:</strong> <code>is_palindrome(left+1, right-1)</code></div>
+<div style="background:rgba(139,92,246,.08);border:2px solid var(--violet);border-radius:10px;padding:16px;text-align:center">
+<div style="font-size:1.05em;font-weight:700;color:var(--violet)">State = (left, right)</div>
+<div style="font-size:.9em;margin-top:4px">The text itself never changes, so it's not part of the state.</div>
 </div>
 </div>
 
-<div style="background:rgba(239,68,68,.04);border:2px solid var(--red);border-radius:10px;padding:18px;margin:14px 0">
-<div style="color:var(--red);font-weight:800;font-size:1.05em;margin-bottom:10px">NO MATCH: text[left] != text[right]</div>
-<div style="display:grid;gap:8px;font-size:.93em">
-<div><strong>Action:</strong> Observed that the outer characters differ.</div>
-<div><strong>Result:</strong> Return <code>False</code> immediately. No recursion needed.</div>
-<div><strong>Why no recursion?</strong> If the outermost characters differ, the string cannot be a palindrome. No inner check can change that. The answer is definitively False.</div>
-</div>
-</div>
-</div>
-
-<img src="dp/images/palindrome_transitions.png" alt="Palindrome transition justification: left moves right, right moves left, both shrink inward on match" class="scene-img">
-
-<!-- STEP 8: RECURRENCE -->
-
-<h2><span class="step-num">8</span> Derive the Recurrence</h2>
+<!-- ==================== 10. VARIABLES ==================== -->
+<h2><span class="step-num">9</span> What Do the Variables Mean?</h2>
 
 <div class="ws">
-<p style="margin-bottom:12px">Now the recurrence writes itself from what I derived. No step was skipped.</p>
-
-<div style="background:var(--card2);border-radius:10px;padding:18px;margin:12px 0">
-<pre style="font-size:.9em;line-height:2;margin:0"><code>is_palindrome(left, right) =
-    True                                    if left >= right
-    False                                   if text[left] != text[right]
-    is_palindrome(left+1, right-1)          if text[left] == text[right]</code></pre>
+<div class="two-col">
+<div class="sbox"><div class="sl" style="color:var(--violet)">left</div>Start of the substring being checked.</div>
+<div class="sbox"><div class="sl" style="color:var(--violet)">right</div>End of the substring being checked.</div>
+</div>
 </div>
 
-<p style="font-size:.93em;margin-top:12px">For counting: <code>count = sum of is_palindrome(left, right) for all 0 &lt;= left &lt;= right &lt; n</code></p>
+<!-- ==================== 11. THE PROMISE ==================== -->
+<h2><span class="step-num">10</span> What Does the Function Promise?</h2>
 
-<h3 style="margin-top:16px">The code</h3>
+<div class="ws">
+<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:16px;text-align:center;font-size:1.05em">
+<strong style="color:var(--gold2)">is_palindrome(left, right) returns True if text[left..right] reads the same forwards and backwards.</strong>
+</div>
+<p style="margin-top:10px;font-size:.93em">This is <strong>verification</strong>, not optimization. There's no "best" answer to maximize, just true or false.</p>
+</div>
 
+<!-- ==================== 12. BASE CASES ==================== -->
+<h2><span class="step-num">11</span> When Must We Stop? (Base Cases)</h2>
+
+<div class="ws">
+<div class="two-col">
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
+<strong style="color:var(--green)">left == right</strong>
+<div style="font-size:.9em;margin-top:6px">Single character. Reads the same either way. Return True.</div>
+</div>
+<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
+<strong style="color:var(--green)">left &gt; right</strong>
+<div style="font-size:.9em;margin-top:6px">Empty inside. All outer layers already matched. Return True.</div>
+</div>
+</div>
+</div>
+
+<img src="dp/images/palindrome_base_cases.png" alt="Palindrome base cases: single char returns True, empty range returns True" class="scene-img">
+
+<!-- ==================== 13. TRANSITIONS ==================== -->
+<h2><span class="step-num">12</span> What Smaller Problem Remains? (Transitions)</h2>
+
+<div class="ws">
+<div class="code-ann">
+<code>match</code><div><code>left+1, right-1</code>. Both ends consumed, shrink inward.</div>
+<code>no match</code><div><code>return False</code>. No smaller problem to solve.</div>
+</div>
+</div>
+
+<img src="dp/images/palindrome_transitions.png" alt="Palindrome transitions: match shrinks to left+1, right-1, no match stops immediately" class="scene-img">
+
+<!-- ==================== 14. OPERATOR ==================== -->
+<h2><span class="step-num">13</span> How Do We Combine Results?</h2>
+
+<div class="ws">
+<p>Both the outer match <strong>and</strong> the inner result must hold. Not max, not min, not addition.</p>
+<div class="hi"><code>ends_match AND is_palindrome(inside)</code>. One False anywhere kills the whole answer.</div>
+</div>
+
+<!-- ==================== 15. THE RECURRENCE ==================== -->
+<h2><span class="step-num">14</span> The Recurrence</h2>
+
+<div class="ws">
+<pre style="margin:0"><code>                    ┌ True                                    if left &gt;= right
+is_palindrome(l,r) =┤ text[l]==text[r] AND is_palindrome(l+1,r-1)  if text[l]==text[r]
+                    └ False                                   otherwise</code></pre>
+</div>
+
+<!-- ==================== 16. BRUTE-FORCE CODE ==================== -->
+<h2><span class="step-num">15</span> Brute-Force Code</h2>
+
+<div class="ws">
 <pre><code>def is_palindrome(text, left, right):
     if left >= right:
         return True
@@ -458,274 +258,168 @@ This asks about <code>text[left+1..right-1]</code>, which is a subset of <code>[
         return False
     return is_palindrome(text, left + 1, right - 1)
 
-def count_palindromes(text):
+def count_palindromic_substrings(text):
+    n = len(text)
     count = 0
-    for left in range(len(text)):
-        for right in range(left, len(text)):
+    for left in range(n):
+        for right in range(left, n):
             if is_palindrome(text, left, right):
                 count += 1
     return count</code></pre>
 
-<p style="font-size:.9em;color:var(--muted);margin-top:8px">This is correct but slow. For each of n&sup2; substrings, the recursive check can take O(n). Total: O(n&sup3;). We'll fix this with memoization.</p>
+<table class="grid-table" style="text-align:left;font-size:.85em;margin-top:12px">
+<tr><th style="width:45%">Reasoning</th><th style="width:55%">Code</th></tr>
+<tr><td>Base case: too small to peel</td><td><code>if left &gt;= right: return True</code></td></tr>
+<tr><td>Ends differ, stop</td><td><code>if text[left] != text[right]: return False</code></td></tr>
+<tr><td>Ends match, check inside</td><td><code>return is_palindrome(text, left+1, right-1)</code></td></tr>
+<tr><td>Check every (left, right) pair</td><td>nested loop over <code>left</code>, <code>right</code></td></tr>
+</table>
 </div>
 
-<!-- ==================== STEP 9: MEMOIZATION ==================== -->
-
-<h2><span class="step-num">9</span> Memoization</h2>
+<!-- ==================== 17. CODE WALKTHROUGH ==================== -->
+<h2><span class="step-num">16</span> Why Every Line Exists</h2>
 
 <div class="ws">
-<h3>Why does repeated work occur?</h3>
+<pre style="line-height:2.2"><code><span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">    if left >= right:</span>
+<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">        return True</span>
+<span style="background:rgba(239,68,68,.15);padding:2px 4px;border-radius:3px">    if text[left] != text[right]:</span>
+<span style="background:rgba(239,68,68,.15);padding:2px 4px;border-radius:3px">        return False</span>
+<span style="background:rgba(34,197,94,.15);padding:2px 4px;border-radius:3px">    return is_palindrome(text, left + 1, right - 1)</span></code></pre>
+<div style="display:grid;gap:6px;margin-top:10px;font-size:.88em">
+<div style="border-left:4px solid var(--blue);padding:6px 12px;background:var(--card2)"><strong style="color:var(--blue)">Blue:</strong> base cases from Step 11.</div>
+<div style="border-left:4px solid var(--red);padding:6px 12px;background:var(--card2)"><strong style="color:var(--red)">Red:</strong> no-match short-circuit from Step 12.</div>
+<div style="border-left:4px solid var(--green);padding:6px 12px;background:var(--card2)"><strong style="color:var(--green)">Green:</strong> match, shrink inward, from Step 12.</div>
+</div>
+</div>
 
-<p style="margin-bottom:12px">When checking all substrings, different outer substrings share inner subproblems:</p>
+<img src="dp/images/palindrome_code_walkthrough.png" alt="Color-highlighted palindrome code: blue base cases, red no-match, green match and shrink" class="scene-img">
 
-<pre style="font-size:.82em;line-height:1.8"><code>Checking all substrings of "aabaa":
+<!-- ==================== 18. EXECUTION TRACE ==================== -->
+<h2><span class="step-num">17</span> Concrete Execution Trace</h2>
 
-is_palindrome(0, 4) "aabaa"
-  calls is_palindrome(1, 3) "aba"  ─ ─ ─ ┐
-    calls is_palindrome(2, 2) "b"         │
-                                          │ SAME!
-Checking substring "aba" directly:        │
-is_palindrome(1, 3) "aba"  ─ ─ ─ ─ ─ ─ ─ ┘
-  calls is_palindrome(2, 2) "b"</code></pre>
+<div class="ws">
+<p style="margin-bottom:10px">Tracing <code>is_palindrome("aabaa", 0, 4)</code>:</p>
+<pre style="font-size:.88em;line-height:1.9"><code>is_palindrome(0,4)  'a'=='a'. Match. → is_palindrome(1,3)
+  is_palindrome(1,3)  'a'=='a'. Match. → is_palindrome(2,2)
+    is_palindrome(2,2)  left==right. Base case. Return True.
+  Return True AND True.
+Return True AND True.  "aabaa" is a palindrome.</code></pre>
+</div>
 
-<h3 style="margin-top:16px">Which states repeat?</h3>
-<p>Any <code>(left, right)</code> that is both a substring we check directly AND an inner subproblem of a longer substring. The overlap is structural, not accidental.</p>
+<img src="dp/images/palindrome_trace.png" alt="Execution trace of is_palindrome on aabaa: shrinks from (0,4) to (1,3) to (2,2), returns True" class="scene-img">
 
-<h3 style="margin-top:16px">How memoization removes repetition</h3>
-<p>Store the result for each <code>(left, right)</code>. Before computing, check the cache. Cache size: at most n&sup2; entries.</p>
+<!-- ==================== 19. WHY IS IT SLOW? ==================== -->
+<h2><span class="step-num">18</span> Why Is It Slow?</h2>
 
+<div class="ws">
+<p>Checking <code>(0,4)</code> on <code>"aabaa"</code> verifies <code>(1,3)</code>. But <code>(1,3)</code> is also checked directly by the outer double loop. Same range, computed twice.</p>
+</div>
+
+<img src="dp/images/palindrome_tree.png" alt="Palindrome recursion tree: the same (left, right) range gets checked both directly and as an inner call" class="scene-img">
+
+<!-- ==================== 20. MEMOIZATION ==================== -->
+<h2><span class="step-num">19</span> Memoization</h2>
+
+<div class="ws">
+<p>Cache key: <code>(left, right)</code>. Cache value: True/False. At most n² entries.</p>
 <pre><code>def is_palindrome(text, left, right, cache):
-    if left >= right:
-        return True
     if (left, right) in cache:
         return cache[(left, right)]
-
-    if text[left] != text[right]:
+    if left >= right:
+        result = True
+    elif text[left] != text[right]:
         result = False
     else:
         result = is_palindrome(text, left + 1, right - 1, cache)
-
     cache[(left, right)] = result
-    return result
-
-def count_palindromes(text):
-    cache = {}
-    count = 0
-    for left in range(len(text)):
-        for right in range(left, len(text)):
-            if is_palindrome(text, left, right, cache):
-                count += 1
-    return count</code></pre>
-
-<div class="code-ann" style="margin-top:14px">
-<code style="color:var(--gold2)">(left, right) in cache</code><div>Already checked this substring?</div>
-<code style="color:var(--green)">cache[(left, right)] = result</code><div>Store True/False for this range</div>
-<code style="color:var(--violet)">Cache key: (left, right)</code><div>Two state variables. At most n&sup2; entries.</div>
-</div>
+    return result</code></pre>
 </div>
 
-<img src="dp/images/palindrome_tree.png" alt="Palindrome recursion tree: overlapping (left,right) pairs from different callers" class="scene-img">
+<img src="dp/images/palindrome_memo.png" alt="Palindrome memoization: cache keyed by (left, right), same range never recomputed" class="scene-img">
 
-<img src="dp/images/palindrome_memo.png" alt="Palindrome memoization: overlapping subproblems in recursion tree, cache key is (left, right)" class="scene-img">
-
-<!-- ==================== STEP 10: TABULATION ==================== -->
-
-<h2 style="color:var(--amber);border-bottom-color:var(--amber)"><span class="step-num" style="background:var(--amber)">10</span> Tabulation</h2>
+<!-- ==================== 21. TABULATION ==================== -->
+<h2 style="color:var(--amber);border-bottom-color:var(--amber)"><span class="step-num" style="background:var(--amber)">20</span> Tabulation</h2>
 
 <div class="ws" style="border-left-color:var(--amber)">
-<h3 style="color:var(--amber)">Why the table dimensions come from the state</h3>
+<p><code>table[left][right]</code> depends on <code>table[left+1][right-1]</code>, a <strong>shorter</strong> range. So fill <strong>by increasing substring length</strong>, not row by row.</p>
+<pre><code>n = len(text)
+table = [[False] * n for _ in range(n)]
 
-<p>State = <code>(left, right)</code>. Two variables, each ranging from 0 to n-1. That gives a 2D table.</p>
-
-<p style="margin-top:8px"><code>is_pal[left][right]</code> = <strong>True if text[left..right] is a palindrome.</strong></p>
-
-<h3 style="color:var(--amber);margin-top:16px">Why the iteration order works</h3>
-
-<p style="margin-bottom:12px"><code>is_pal[left][right]</code> depends on <code>is_pal[left+1][right-1]</code>, which is a <strong>shorter</strong> substring. If I fill by increasing substring length, every dependency is already computed when I need it.</p>
-
-<p style="margin-bottom:12px">For <code>"aab"</code>:</p>
-
-<table class="grid-table">
-<tr><th></th><th>0 'a'</th><th>1 'a'</th><th>2 'b'</th></tr>
-<tr><th>0 'a'</th><td class="pal">T</td><td class="pal">T</td><td class="no">F</td></tr>
-<tr><th>1 'a'</th><td class="no"></td><td class="pal">T</td><td class="no">F</td></tr>
-<tr><th>2 'b'</th><td class="no"></td><td class="no"></td><td class="pal">T</td></tr>
-</table>
-
-<p style="font-size:.9em;color:var(--muted)">Only the upper triangle matters (left &lt;= right). Count the T's: 4 palindromic substrings.</p>
-
-<h3 style="color:var(--amber);margin-top:16px">Why every dependency has already been computed</h3>
-
-<div class="cell-walk" style="background:rgba(251,191,36,.06);border:2px solid var(--gold2)">
-<div style="color:var(--gold2);font-weight:700;margin-bottom:8px">Length 1: every character</div>
-<code>is_pal[0][0] = T, is_pal[1][1] = T, is_pal[2][2] = T</code><br>
-<span style="color:var(--muted);font-size:.88em">Single characters are always palindromes. No dependencies. Count = 3.</span>
+for length in range(1, n + 1):
+    for left in range(n - length + 1):
+        right = left + length - 1
+        if length == 1:
+            table[left][right] = True
+        elif length == 2:
+            table[left][right] = text[left] == text[right]
+        else:
+            table[left][right] = text[left] == text[right] and table[left+1][right-1]</code></pre>
+<div class="hi"><strong style="color:var(--amber)">Why by length?</strong> Row-by-row order would try to read <code>table[left+1][right-1]</code> before it's filled, since that cell can sit in a later row.</div>
 </div>
 
-<div class="cell-walk cell-fill">
-<div style="color:var(--green);font-weight:700;margin-bottom:8px">Length 2: check if both chars match</div>
-<code>text[0]='a' == text[1]='a'? YES. is_pal[0][1] = T</code><br>
-<code>text[1]='a' == text[2]='b'? NO. is_pal[1][2] = F</code><br>
-<span style="color:var(--muted);font-size:.88em">For length 2, the "inner" substring is empty (base case True). So only the end-match matters. Count = 4.</span>
-</div>
+<img src="dp/images/palindrome_tab.png" alt="Palindrome tabulation grid filled diagonally by increasing substring length, not row by row" class="scene-img">
 
-<div class="cell-walk cell-fill">
-<div style="color:var(--green);font-weight:700;margin-bottom:8px">Length 3: check ends + inner palindrome</div>
-<code>text[0]='a' == text[2]='b'? NO. is_pal[0][2] = F</code><br>
-<span style="color:var(--muted);font-size:.88em">Ends don't match, no need to check inside. Count stays 4.</span>
-</div>
-</div>
-
-<img src="dp/images/palindrome_tab.png" alt="Palindrome tabulation: 2D table filled by substring length, step-by-step walkthrough" class="scene-img">
+<!-- ==================== 22. SPACE OPTIMIZATION ==================== -->
+<h2 style="color:var(--amber);border-bottom-color:var(--amber)"><span class="step-num" style="background:var(--amber)">21</span> Space Optimization</h2>
 
 <div class="ws" style="border-left-color:var(--amber)">
-<h3 style="color:var(--amber)">The Tabulation Code</h3>
-
-<pre><code>def count_palindromes(text):
-    n = len(text)
-    is_pal = [[False] * n for _ in range(n)]
-    count = 0
-
-    for i in range(n):
-        is_pal[i][i] = True
-        count += 1
-
-    for i in range(n - 1):
-        if text[i] == text[i + 1]:
-            is_pal[i][i + 1] = True
+<p>Drop the O(n²) table entirely. <strong>Expand from every center</strong> outward instead: n odd centers plus n-1 even centers (between-character gaps).</p>
+<pre><code>def count_palindromic_substrings(text):
+    n, count = len(text), 0
+    def expand(left, right):
+        nonlocal count
+        while left >= 0 and right < n and text[left] == text[right]:
             count += 1
-
-    for length in range(3, n + 1):
-        for left in range(n - length + 1):
-            right = left + length - 1
-            if text[left] == text[right] and is_pal[left + 1][right - 1]:
-                is_pal[left][right] = True
-                count += 1
-
+            left -= 1
+            right += 1
+    for center in range(n):
+        expand(center, center)       # odd length
+        expand(center, center + 1)   # even length
     return count</code></pre>
-
-<div class="code-ann" style="margin-top:14px">
-<code style="color:var(--gold2)">is_pal[i][i] = True</code><div>Length 1: every char is a palindrome</div>
-<code style="color:var(--gold2)">text[i] == text[i+1]</code><div>Length 2: matching pair?</div>
-<code style="color:var(--green)">for length in range(3, n+1)</code><div>Build up: length 3, 4, 5, ...</div>
-<code style="color:var(--violet)">text[left] == text[right]</code><div>Ends match?</div>
-<code style="color:var(--violet)">is_pal[left+1][right-1]</code><div>Inner part already confirmed? (Dependency: always ready because it's shorter.)</div>
-</div>
+<div style="font-size:.88em;color:var(--muted);margin-top:6px">O(n²) time, O(1) space. No table, no cache.</div>
 </div>
 
-<!-- ==================== STEP 11: SPACE OPTIMIZATION ==================== -->
-
-<h2 style="color:var(--amber);border-bottom-color:var(--amber)"><span class="step-num" style="background:var(--amber)">11</span> Space Optimization</h2>
-
-<div class="ws" style="border-left-color:var(--amber)">
-<h3 style="color:var(--amber)">Which previous states are actually needed?</h3>
-
-<p><code>is_pal[left][right]</code> depends on <code>is_pal[left+1][right-1]</code> (one row down, one column left in the table). This diagonal dependency means we can't easily reduce to a single row like in knapsack.</p>
-
-<h3 style="color:var(--amber);margin-top:14px">Why older states can be discarded</h3>
-
-<p>The 2D table approach uses O(n&sup2;) space. An alternative, the expand-around-center approach, achieves O(1) space:</p>
-
-<pre><code>def count_palindromes(text):
-    count = 0
-    for center in range(len(text)):
-        count += expand(text, center, center)
-        count += expand(text, center, center + 1)
-    return count
-
-def expand(text, left, right):
-    count = 0
-    while left >= 0 and right < len(text) and text[left] == text[right]:
-        count += 1
-        left -= 1
-        right += 1
-    return count</code></pre>
-
-<p style="font-size:.9em;color:var(--muted);margin-top:8px">This is a different algorithm (expand outward instead of check inward), not a direct optimization of the table. But it gives O(n&sup2;) time and O(1) space.</p>
-</div>
-
-<!-- ==================== STEP 12: PATTERN RECOGNITION ==================== -->
-
-<h2><span class="step-num">12</span> Pattern Recognition</h2>
+<!-- ==================== 23. COMMON MISTAKES ==================== -->
+<h2><span class="step-num">22</span> Common Mistakes</h2>
 
 <div class="ws">
-<h3>What clues suggested this DP pattern?</h3>
-<div style="display:grid;gap:8px;font-size:.93em;margin:12px 0">
-<div><strong>"Is substring X a palindrome?"</strong> → Checking a property of a range of characters → state = (left, right).</div>
-<div><strong>Result for longer range depends on shorter range</strong> → Overlapping subproblems → memoize or tabulate.</div>
-<div><strong>Fill by increasing length</strong> → Longer ranges depend on shorter ones → process short to long.</div>
+<div style="display:grid;gap:10px;font-size:.9em">
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:12px">
+<strong style="color:var(--red)">Returning False for the empty base case.</strong> <code>left &gt; right</code> means everything outer already matched; it must be True.
 </div>
-
-<h3 style="margin-top:16px">What should I immediately think when I see a similar problem?</h3>
-<p>"Two pointers inward, check ends, cache the range." Any problem asking about a property of a substring range likely follows this shape.</p>
-
-<h3 style="margin-top:16px">What generalizes to future problems?</h3>
-<div style="display:grid;gap:6px;font-size:.93em;margin:8px 0">
-<div>State = (left, right) for any range-checking problem</div>
-<div>Fill order = by increasing length when longer depends on shorter</div>
-<div>The problem definition tells you the check. The check tells you the outcomes. The outcomes tell you the recursion.</div>
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:12px">
+<strong style="color:var(--red)">Using OR instead of AND.</strong> Both the end match and the inner result are required, not either one.
+</div>
+<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:12px">
+<strong style="color:var(--red)">Tabulating row by row.</strong> <code>table[left+1][right-1]</code> may live in a later row; fill by length instead.
+</div>
 </div>
 </div>
 
-<!-- ==================== STEP 13: COMMON MISTAKES ==================== -->
+<img src="dp/images/palindrome_mistakes.png" alt="Palindrome common mistakes: wrong empty base case, OR instead of AND, wrong table fill order" class="scene-img">
 
-<h2><span class="step-num">13</span> Common Mistakes</h2>
+<!-- ==================== 24. PATTERN RECOGNITION ==================== -->
+<h2><span class="step-num">23</span> Pattern Recognition</h2>
 
 <div class="ws">
-
-<div style="display:grid;gap:14px">
-
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:16px">
-<div style="color:var(--red);font-weight:700;margin-bottom:6px">Wrong base case: forgetting left > right</div>
-<div style="font-size:.9em">Only handling <code>left == right</code> (single char) but not <code>left > right</code> (empty). This breaks on even-length palindromes like "aa", where peeling both ends gives left=1, right=0.</div>
-<div style="font-size:.85em;color:var(--muted);margin-top:6px"><strong>How to detect:</strong> test with "aa". If it returns False, the empty base case is missing.</div>
+<div class="hi"><strong style="color:var(--violet)">When I see</strong> "one string" + "is this range valid?" <strong style="color:var(--violet)">I should consider</strong> a (left, right) verification with AND, not max/min.</div>
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:16px">
-<div style="color:var(--red);font-weight:700;margin-bottom:6px">Wrong return for empty: returning False instead of True</div>
-<div style="font-size:.9em">If <code>left > right</code> returns False, then "aa" would fail because the inner check (empty) returns False, even though the ends matched.</div>
-<div style="font-size:.85em;color:var(--muted);margin-top:6px"><strong>How to detect:</strong> trace "aa" by hand. left=0, right=1. Ends match. Check is_palindrome(1, 0). What does it return?</div>
-</div>
-
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:16px">
-<div style="color:var(--red);font-weight:700;margin-bottom:6px">Wrong fill order: filling row by row instead of by length</div>
-<div style="font-size:.9em"><code>is_pal[0][4]</code> depends on <code>is_pal[1][3]</code>. If filling row 0 first, row 1 hasn't been computed yet. Fill by length instead: length 1, then 2, then 3, etc.</div>
-<div style="font-size:.85em;color:var(--muted);margin-top:6px"><strong>How to detect:</strong> check if <code>is_pal[left+1][right-1]</code> is still at its initial value (False) when you need it.</div>
-</div>
-
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:16px">
-<div style="color:var(--red);font-weight:700;margin-bottom:6px">Checking middle before ends</div>
-<div style="font-size:.9em">If you recursively check the inside first, then compare ends, you waste work. When the ends don't match, all inner work was pointless. Always check ends first.</div>
-<div style="font-size:.85em;color:var(--muted);margin-top:6px"><strong>How to detect:</strong> performance issue. Code is correct but slow on strings where most substrings are NOT palindromes.</div>
-</div>
-
-</div>
-</div>
-
-<img src="dp/images/palindrome_mistakes.png" alt="Palindrome common mistakes: wrong base case, wrong return value, wrong fill order, check order" class="scene-img">
-
-<!-- ==================== STEP 14: FINAL MENTAL MODEL ==================== -->
-
-<h2><span class="step-num">14</span> If I Forget Everything</h2>
+<!-- ==================== 25. REDISCOVER ==================== -->
+<h2><span class="step-num">24</span> Rediscover It Six Months Later</h2>
 
 <div class="ws">
-<p style="margin-bottom:14px">If I forget this algorithm in six months, here's how I'd rediscover it from scratch:</p>
-
-<div style="background:rgba(167,139,250,.08);border:2px solid var(--violet);border-radius:10px;padding:18px;margin:12px 0">
-<div style="display:grid;gap:10px;font-size:.95em">
-<div><span class="step-num" style="width:24px;height:24px;font-size:.75em">1</span> "A palindrome reads the same forwards and backwards."</div>
-<div><span class="step-num" style="width:24px;height:24px;font-size:.75em">2</span> "So the first and last characters must match."</div>
-<div><span class="step-num" style="width:24px;height:24px;font-size:.75em">3</span> "If they match, the answer depends on whether the inside is also a palindrome."</div>
-<div><span class="step-num" style="width:24px;height:24px;font-size:.75em">4</span> "Same question, smaller input = recursion."</div>
-<div><span class="step-num" style="width:24px;height:24px;font-size:.75em">5</span> "Different substrings share inner subproblems = memoize with (left, right)."</div>
-<div><span class="step-num" style="width:24px;height:24px;font-size:.75em">6</span> "Dependencies go from longer to shorter = fill table by length."</div>
+<div style="display:grid;gap:8px;font-size:.9em">
+<div class="sbox"><span class="step-num" style="width:22px;height:22px;font-size:.7em">1</span>"One string, checking a range. Naive: reverse and compare, O(n³)."</div>
+<div class="sbox"><span class="step-num" style="width:22px;height:22px;font-size:.7em">2</span>"Frozen at (left, right): do the ends match?"</div>
+<div class="sbox"><span class="step-num" style="width:22px;height:22px;font-size:.7em">3</span>"Match: check inside. No match: False immediately. State = (left, right)."</div>
+<div class="sbox"><span class="step-num" style="width:22px;height:22px;font-size:.7em">4</span>"Base cases: single char and empty are both True. AND combines the layers."</div>
+<div class="sbox"><span class="step-num" style="width:22px;height:22px;font-size:.7em">5</span>"Overlapping ranges → cache. Fill table by length, not row. Or expand from centers for O(1) space."</div>
 </div>
 </div>
 
-<p style="font-size:.93em">The definition of palindrome led to the check. The check led to the recursion. The recursion led to the cache. The cache led to the table. Every step followed from the one before.</p>
-</div>
 
-<!-- ==================== CHILD: LONGEST PALINDROMIC SUBSTRING ==================== -->
+<!-- ==================== CHILDREN ==================== -->
 <h2>The Palindrome Family</h2>
 
 <div style="background:rgba(167,139,250,.15);border:2px solid var(--violet);border-radius:8px;padding:14px;text-align:center;margin-bottom:16px">
@@ -737,53 +431,57 @@ def expand(text, left, right):
 
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">1</span> Longest Palindromic Substring</h3><span class="deriv-a">&#9654;</span></div>
-<div class="deriv-b">
+<div class="deriv-b" onclick="event.stopPropagation()">
 
+<h3>The Problem</h3>
 <div class="sbox"><div class="sl" style="color:var(--violet)">LEETCODE #5</div>
-Given a string, return the <strong>longest</strong> palindromic substring. Same table, but instead of counting, track the longest one found.</div>
+Given a string, return the longest palindromic substring itself, not a count.</div>
 
-<div style="background:var(--card2);border-radius:10px;padding:16px;margin:12px 0;font-size:.93em">
-<div style="font-weight:700;margin-bottom:8px">Example:</div>
-<code>"babad"</code><br><br>
-All palindromic substrings:
-<div style="display:grid;gap:4px;font-size:.9em;padding:8px 0 0 8px">
-<div>"b", "a", "b", "a", "d" (each single char, length 1)</div>
-<div>"bab" (length 3, palindrome)</div>
-<div>"aba" (length 3, palindrome)</div>
-</div>
-<br>Answer: <strong style="color:var(--gold2)">"bab"</strong> (or "aba", both are valid since both have length 3).
+<div class="grid-table" style="overflow-x:auto">
+<table class="grid-table">
+<tr><th>text</th><th>output</th></tr>
+<tr><td><code>"babad"</code></td><td><code>"bab"</code></td></tr>
+<tr><td><code>"cbbd"</code></td><td><code>"bb"</code></td></tr>
+<tr><td><code>"a"</code></td><td><code>"a"</code></td></tr>
+</table>
 </div>
 
-<div class="sbox"><div class="sl" style="color:var(--violet)">WHAT CHANGES FROM THE PARENT</div>
-<div style="font-size:.95em">
-<strong>Classification:</strong> Same. Still string DP, same overlapping subproblems.<br>
-<strong>Recursive question:</strong> Same. Still "is text[left..right] a palindrome?"<br>
-<strong>Base cases, choices, state, transitions:</strong> All identical.<br>
-<strong>Only the outer loop changes:</strong> Instead of <code>count += 1</code>, track if this palindrome is longer than the current best.
-</div></div>
+<h3>What Changes From The Parent</h3>
+<div class="sbox"><div class="sl" style="color:var(--violet)">SAME TABLE, DIFFERENT BOOKKEEPING</div>
+Same <code>is_pal[left][right]</code> table, same recursion, same base cases, same transitions. The only change: track the longest True cell instead of counting True cells.</div>
 
-<h3 style="color:var(--violet)">Recursion</h3>
+<div class="two-col" style="margin:12px 0">
+<div style="background:rgba(167,139,250,.08);border:2px solid var(--violet);border-radius:10px;padding:16px">
+<div style="color:var(--violet);font-weight:700;margin-bottom:8px">Parent (#647)</div>
+<code>count += 1</code>
+</div>
+<div style="background:rgba(34,197,94,.08);border:2px solid var(--green);border-radius:10px;padding:16px">
+<div style="color:var(--green);font-weight:700;margin-bottom:8px">This child (#5)</div>
+<code>if length &gt; max_length:<br>&nbsp;&nbsp;start, max_length = left, length</code>
+</div>
+</div>
+
+<img src="dp/images/longest_pal_trace.png" alt="Trace of longest palindrome on babad finding bab" class="scene-img">
+
+<h3>Brute-force (with memoization)</h3>
 <pre><code>def longest_palindrome(text):
     cache = {}
-    best_start = 0
-    best_length = 1
+    start, max_length = 0, 1
 
     for left in range(len(text)):
         for right in range(left, len(text)):
             if is_palindrome(text, left, right, cache):
-                if right - left + 1 > best_length:
-                    best_start = left
-                    best_length = right - left + 1
+                length = right - left + 1
+                if length > max_length:
+                    start, max_length = left, length
 
-    return text[best_start:best_start + best_length]</code></pre>
-<p style="font-size:.88em;color:var(--muted)">Uses the same <code>is_palindrome</code> with memoization from the parent.</p>
+    return text[start:start + max_length]</code></pre>
 
 <h3 style="color:var(--amber)">Tabulation</h3>
 <pre><code>def longest_palindrome(text):
     n = len(text)
     is_pal = [[False] * n for _ in range(n)]
-    start = 0
-    max_length = 1
+    start, max_length = 0, 1
 
     for i in range(n):
         is_pal[i][i] = True
@@ -791,8 +489,7 @@ All palindromic substrings:
     for i in range(n - 1):
         if text[i] == text[i + 1]:
             is_pal[i][i + 1] = True
-            start = i
-            max_length = 2
+            start, max_length = i, 2
 
     for length in range(3, n + 1):
         for left in range(n - length + 1):
@@ -800,20 +497,22 @@ All palindromic substrings:
             if text[left] == text[right] and is_pal[left + 1][right - 1]:
                 is_pal[left][right] = True
                 if length > max_length:
-                    start = left
-                    max_length = length
+                    start, max_length = left, length
 
     return text[start:start + max_length]</code></pre>
 
+<img src="dp/images/longest_pal_code_walkthrough.png" alt="Color-highlighted code showing longest palindrome tracking instead of counting" class="scene-img">
+
 <div class="hi">
-<strong style="color:var(--amber)">One line changed:</strong> instead of <code>count += 1</code>, track <code>start</code> and <code>max_length</code>. Same table, different bookkeeping.
+<strong style="color:var(--violet)">Key insight:</strong> build the exact same table. Just remember the biggest True cell instead of counting all of them.
 </div>
+
 </div>
 </div>
 
 </div>
 
-<!-- ==================== SUMMARY ==================== -->
+<!-- ==================== COMPARISON ==================== -->
 <h2>The Pattern</h2>
 
 <div class="ws" style="border-left-color:var(--blue)">
@@ -825,7 +524,7 @@ All palindromic substrings:
 <div style="font-size:.9em;line-height:1.8">
 <code>is_pal[l][r] = match AND is_pal[l+1][r-1]</code><br>
 <strong>Operation:</strong> count True cells<br>
-<strong>Fill order:</strong> by substring length (1, 2, 3, ...)
+<strong>Fill order:</strong> by substring length
 </div>
 </div>
 <div style="background:rgba(34,197,94,.08);border:2px solid var(--green);border-radius:10px;padding:16px">
@@ -839,7 +538,7 @@ All palindromic substrings:
 </div>
 
 <div class="hi">
-<strong style="color:var(--violet)">Palindrome DP in one sentence:</strong> a substring is a palindrome if its ends match AND its inner part is already confirmed as a palindrome. Build from the inside out.
+<strong style="color:var(--violet)">Palindrome DP in one sentence:</strong> a substring is a palindrome if its ends match AND its inner part is already confirmed. Build from the inside out.
 </div>
 </div>
 

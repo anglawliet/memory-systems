@@ -1007,6 +1007,179 @@ Outside the function, and not optional. The chain ends somewhere and nobody said
 
 <div class="ok"><b>If you can retell those seven steps, you can rebuild the code from scratch.</b> That was always the point. The rule was never the thing worth remembering.</div>
 
+
+
+<!-- ==================== CHILD: MAX PRODUCT SUBARRAY ==================== -->
+<div class="layer" style="background:linear-gradient(135deg,#0e5a4a,#0b3228);color:#dffff3;border:2px solid #2dd4bf">
+<div class="lnum">SAME FAMILY</div>
+<h2>Maximum Product Subarray</h2>
+<p>LeetCode #152. The same "best ending here" idea, with one twist that breaks it.</p>
+<span class="promise">read this once you have Layer 1 above</span>
+</div>
+
+<h2 id="s17"><span class="num">17</span>The Twist</h2>
+
+<div class="prev">We already know from LIS: keep one best answer at every spot, then take the biggest.</div>
+
+<div class="ws">
+<h3 style="margin-bottom:6px">Maximum Product Subarray (LeetCode #152)</h3>
+<p style="color:var(--muted);margin-top:0">Given a list of numbers, find the run of neighbours whose product is biggest.</p>
+</div>
+
+<p>One difference from LIS worth pinning down first. This is a <strong>subarray</strong>, not a subsequence. The numbers must sit <strong>side by side</strong>. No skipping this time.</p>
+
+<p>Everything else looks familiar. Ask at each spot: <em class="q">"what is the biggest product of a run that <b>ends</b> right here?"</em> That is the same anchoring move that made LIS work.</p>
+
+<div class="strip n3">
+<div class="rl">INDEX</div>
+<div class="ix">0</div><div class="ix">1</div><div class="ix">2</div>
+<div class="rl">VALUE</div>
+<div class="vb">-2</div><div class="vb">3</div><div class="vb">-4</div>
+<div class="snote">our list. the answer is <b style="color:var(--gold2)">24</b></div>
+</div>
+
+<p>Now watch the LIS approach fail. Carry one number, the best product ending here, exactly as before:</p>
+
+<div class="tbl-wrap">
+<table>
+<tr><th class="c">Spot</th><th class="c">VALUE</th><th>Best product ending here</th></tr>
+<tr><td class="c"><span class="nI">0</span></td><td class="c"><span class="nV">-2</span></td><td>nothing before it, so <span class="nL">-2</span></td></tr>
+<tr><td class="c"><span class="nI">1</span></td><td class="c"><span class="nV">3</span></td><td>either <code>3</code> alone or <code>-2 &times; 3 = -6</code>. Best is <span class="nL">3</span></td></tr>
+<tr><td class="c"><span class="nI">2</span></td><td class="c"><span class="nV">-4</span></td><td>either <code>-4</code> alone or <code>3 &times; -4 = -12</code>. Best is <span class="nL">-4</span></td></tr>
+</table>
+</div>
+
+<p>That gives <strong>3</strong>. But the real answer is <code>-2 &times; 3 &times; -4</code> = <strong>24</strong>, using the whole list.</p>
+
+<img src="dp/images/mps_01_breaks.png" alt="Tracking only the best product gives 3, while the true answer is 24" class="scene-img">
+<p class="cap">The answer was thrown away at spot 1, when we discarded the -6.</p>
+
+<div class="warn">
+<b>Here is what broke.</b> At spot 1 we threw away <code>-6</code> for being the worst thing we had. Then a negative number arrived, and <code>-6 &times; -4 = 24</code>, the best answer in the whole problem. <strong>A negative number turns the worst into the best.</strong> So the worst is not junk. It is a candidate in waiting.
+</div>
+
+<div class="next"><b>So next:</b> if the worst can win, we have to carry it too.</div>
+
+
+<h2 id="s18"><span class="num">18</span>The Move: Carry Both Ends</h2>
+
+<div class="prev">We already know: a negative flips biggest into smallest, so one number is not enough.</div>
+
+<p>Same shape as LIS, but each spot now keeps <strong>two</strong> numbers instead of one.</p>
+
+<div class="strip n3">
+<div class="rl">INDEX</div>
+<div class="ix">0</div><div class="ix">1</div><div class="ix">2</div>
+<div class="rl">VALUE</div>
+<div class="vb">-2</div><div class="vb">3</div><div class="vb gold">-4</div>
+<div class="rl">BEST</div>
+<div class="vb len">-2</div><div class="vb len">3</div><div class="vb gold">?</div>
+<div class="rl">WORST</div>
+<div class="vb">-2</div><div class="vb">-6</div><div class="vb gold">?</div>
+<div class="snote">filling INDEX 2, where the VALUE is -4</div>
+</div>
+
+<p>At any spot there are exactly <strong>three</strong> runs that could end there, and they are the only three:</p>
+
+<div class="tbl-wrap">
+<table>
+<tr><th>The run</th><th>Working</th><th class="c">Result</th></tr>
+<tr><td>start fresh, just this number</td><td><code>-4</code></td><td class="c">-4</td></tr>
+<tr><td>extend the <b>best</b> run before it</td><td><code>3 &times; -4</code></td><td class="c">-12</td></tr>
+<tr><td>extend the <b>worst</b> run before it</td><td><code>-6 &times; -4</code></td><td class="c" style="color:var(--gold2);font-weight:800">24</td></tr>
+</table>
+</div>
+
+<p>Then take <strong>both ends</strong> of those three. The biggest becomes the new BEST (<span class="nL">24</span>), and the smallest becomes the new WORST (<span class="nV">-12</span>), which we keep for exactly the same reason we kept -6.</p>
+
+<img src="dp/images/mps_02_move.png" alt="Three candidates at one spot, with the biggest and smallest both kept" class="scene-img">
+<p class="cap">Same three candidates for both rows. We take the biggest and the smallest of them.</p>
+
+<div class="hi">
+<b>Why exactly three, and why nothing is missing.</b> Any run ending here either starts here, or extends a run that ended at the previous spot. If it extends one, the product is that run's product times our number. Multiplying by our number is order preserving when it is positive and order reversing when it is negative, so the extreme result can only come from an extreme input. Keeping the best and the worst of the previous spot is enough to cover every case.
+</div>
+
+<div class="next"><b>So next:</b> run it across the list.</div>
+
+
+<h2 id="s19"><span class="num">19</span>Both Rows Filled</h2>
+
+<div class="strip n3">
+<div class="rl">INDEX</div>
+<div class="ix">0</div><div class="ix">1</div><div class="ix">2</div>
+<div class="rl">VALUE</div>
+<div class="vb">-2</div><div class="vb">3</div><div class="vb">-4</div>
+<div class="rl">BEST</div>
+<div class="vb len">-2</div><div class="vb len">3</div><div class="vb gold">24</div>
+<div class="rl">WORST</div>
+<div class="vb">-2</div><div class="vb">-6</div><div class="vb">-12</div>
+<div class="snote">the answer is the biggest BEST ever seen: <b style="color:var(--gold2)">24</b></div>
+</div>
+
+<img src="dp/images/mps_03_table.png" alt="Both rows filled left to right, with the winner coming from the worst row" class="scene-img">
+<p class="cap">The winning 24 came out of the WORST row, not the BEST row.</p>
+
+<pre><code>def max_product(numbers):
+    if not numbers:
+        return 0
+
+    <span style="color:var(--muted)"># best_ending_here  = biggest product of a run ending at this spot
+    # worst_ending_here = smallest product of a run ending at this spot</span>
+    best_ending_here = worst_ending_here = biggest = numbers[0]
+
+    for value in numbers[1:]:
+        candidates = (value,
+                      best_ending_here * value,
+                      worst_ending_here * value)
+
+        best_ending_here = max(candidates)
+        worst_ending_here = min(candidates)
+        biggest = max(biggest, best_ending_here)
+
+    return biggest</code></pre>
+
+<div class="aloud"><b>Say the candidates line out loud</b>
+"A run ending here either starts here, or extends the best run before me, or extends the worst run before me. Work out all three, then keep the biggest and the smallest."</div>
+
+<p>One line worth noticing: <code>best_ending_here</code> and <code>worst_ending_here</code> are computed from the <em>same</em> <code>candidates</code> tuple. Build that tuple before assigning either, or the second assignment reads a value that has already changed.</p>
+
+<p><strong>O(n)</strong> time, <strong>O(1)</strong> space. Unlike LIS, this one does compress all the way down, because a spot only ever reads the spot immediately before it.</p>
+
+<details class="chk">
+<summary>Why does a zero not need special handling?</summary>
+<div class="ans">Because "start fresh" already covers it. At a zero, all three candidates become 0, 0 and 0, so both rows go to zero and the run is effectively cut. At the next spot, "start fresh" lets a new run begin without dragging that zero along. On <code>[0, 2]</code> the answer is 2, and it only works because starting fresh is one of the three candidates. Drop that candidate and you would get 0.</div>
+</details>
+
+
+<h2 id="s20"><span class="num">20</span>Traps, and What Carries Over</h2>
+
+<div class="tbl-wrap">
+<table>
+<tr><th>The slip</th><th class="c">Try it on</th><th class="c">Wrong</th><th class="c">Right</th><th>Why</th></tr>
+<tr><td>kept only the best</td><td class="c"><code>[-2, 3, -4]</code></td><td class="c" style="color:#fca5a5;font-weight:800">3</td><td class="c" style="color:#86efac;font-weight:800">24</td><td>the winner came from the worst row</td></tr>
+<tr><td>forgot to start fresh</td><td class="c"><code>[0, 2]</code></td><td class="c" style="color:#fca5a5;font-weight:800">0</td><td class="c" style="color:#86efac;font-weight:800">2</td><td>a zero must be escapable</td></tr>
+<tr><td>read the last box</td><td class="c"><code>[2, 3, -2, 4]</code></td><td class="c" style="color:#fca5a5;font-weight:800">4</td><td class="c" style="color:#86efac;font-weight:800">6</td><td>same trap as LIS. take the biggest ever seen.</td></tr>
+<tr><td>swapped best and worst</td><td class="c"><code>[-1, -2]</code></td><td class="c" style="color:#fca5a5;font-weight:800">-1</td><td class="c" style="color:#86efac;font-weight:800">2</td><td>two negatives make a positive</td></tr>
+</table>
+</div>
+
+<img src="dp/images/mps_04_traps.png" alt="Four ways to get max product subarray wrong, each with a tiny counterexample" class="scene-img">
+<p class="cap">Every one dies to a list of two or three numbers.</p>
+
+<div class="tbl-wrap">
+<table>
+<tr><th>&nbsp;</th><th class="c">LIS (#300)</th><th class="c">Max Product (#152)</th></tr>
+<tr><td>the question at each spot</td><td class="c">best chain <b>ending here</b></td><td class="c">best product <b>ending here</b></td></tr>
+<tr><td>skipping allowed?</td><td class="c">yes, subsequence</td><td class="c">no, side by side</td></tr>
+<tr><td>numbers carried per spot</td><td class="c">one</td><td class="c" style="color:var(--gold2)">two</td></tr>
+<tr><td>looks back at</td><td class="c">every earlier spot</td><td class="c">only the previous spot</td></tr>
+<tr><td>cost</td><td class="c">n &times; n time, n space</td><td class="c">n time, constant space</td></tr>
+<tr><td>the answer is</td><td class="c" colspan="2" style="text-align:center">the biggest box, never the last box</td></tr>
+</table>
+</div>
+
+<div class="ok"><b>What carries over:</b> anchoring the question at "ending here". <b>What is new:</b> when an operation can reverse order, one extreme is not enough, so carry both. That is the whole lesson of this problem, and it shows up again anywhere you multiply, negate, or subtract.</div>
+
 <div style="text-align:center;margin-top:40px">
 <a href="dp_workshop.html" class="nav-link">&larr; DP Workshop</a>
 <a href="state_machine_dp.html" class="nav-link">State Machine DP</a>

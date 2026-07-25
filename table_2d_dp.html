@@ -3805,6 +3805,216 @@ count_ways(i,j)=&#9474; 0                                             if i == le
 
 </div></div>
 
+<!-- ==================== CHILD 5: REGULAR EXPRESSION MATCHING ==================== -->
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">5</span> Regular Expression Matching</h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b" onclick="event.stopPropagation()">
+
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">0</span> Read This And Stop</h3>
+
+<div class="ws" style="border-left-color:var(--amber)">
+<div class="sbox"><div class="sl" style="color:var(--amber)">LAYER 0, THE RECALL CARD</div>
+Coming back to this? Everything you need is the panel below. It stands on its own.</div>
+</div>
+
+<img src="dp/images/re_r1_recall.png" alt="The whole regex matching algorithm on one card: what dot and star mean, the move, and how the answer is read" class="scene-img">
+
+<div class="hi">
+<b>The one sentence:</b> ask <code>matches_from(text_index, pattern_index)</code>, meaning "does the rest of the text match the rest of the pattern". When a star follows the pattern letter, the answer is TRUE if <b>either</b> skipping the pair works <b>or</b> consuming one text letter works. Otherwise the letters must match and both spots step forward.
+</div>
+
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">1</span> The Problem</h3>
+
+<div class="ws">
+<div class="sbox"><div class="sl" style="color:var(--purple)">LEETCODE #10</div>
+Given a <code>text</code> and a <code>pattern</code>, decide whether the pattern matches the <b>entire</b> text. The pattern may contain <code>.</code> and <code>*</code>.</div>
+</div>
+
+<table class="grid-table" style="font-size:.86em">
+<tr><th>Character</th><th>Means</th><th>Example</th></tr>
+<tr><td class="c"><code>.</code></td><td>any <b>one</b> character. Always exactly one, never zero.</td><td><code>a.c</code> matches <code>abc</code></td></tr>
+<tr><td class="c"><code>*</code></td><td><b>zero or more</b> of the character immediately before it</td><td><code>a*</code> matches <code>""</code>, <code>a</code>, <code>aaaa</code></td></tr>
+</table>
+
+<div class="hi" style="border-color:var(--red)">
+<b>The star is never alone.</b> It always belongs to the letter before it. Read <code>a*</code> as a single piece, not as an <code>a</code> followed by a <code>*</code>. Almost every bug in this problem comes from forgetting that.
+</div>
+
+<p>Our running example throughout: <code>text = "ab"</code> and <code>pattern = "a*b"</code>. The answer is <b>TRUE</b>.</p>
+
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">2</span> Why We Cannot Just Walk Forward</h3>
+
+<p>Walking left to right and matching one character at a time works fine until a star appears. Then it stops being obvious, because the same pattern piece can swallow different amounts of text.</p>
+
+<table class="grid-table" style="font-size:.86em">
+<tr><th>Pattern</th><th>Text</th><th>How many times <code>a*</code> was used</th><th class="c">Match?</th></tr>
+<tr><td class="c"><code>a*b</code></td><td class="c"><code>b</code></td><td>zero</td><td class="c" style="color:var(--green);font-weight:800">yes</td></tr>
+<tr><td class="c"><code>a*b</code></td><td class="c"><code>ab</code></td><td>once</td><td class="c" style="color:var(--green);font-weight:800">yes</td></tr>
+<tr><td class="c"><code>a*b</code></td><td class="c"><code>aaab</code></td><td>three times</td><td class="c" style="color:var(--green);font-weight:800">yes</td></tr>
+</table>
+
+<img src="dp/images/re_01_pieces.png" alt="The dot is easy, the star is not: the same pattern matches texts of different lengths" class="scene-img">
+
+<div class="hi">
+<b>The star does not know how many characters to take.</b> A greedy rule ("take as many as possible") breaks on <code>text = "aaa"</code> with <code>pattern = "a*a"</code>: if <code>a*</code> eats all three, nothing is left for the final <code>a</code>. So at every star we must be willing to try <b>both</b>: take none, or take one more.
+</div>
+
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">3</span> The Question, And The Bookmark</h3>
+
+<p>Freeze partway through. We have matched some of the text against some of the pattern. What has to be written down so someone else could finish?</p>
+
+<p>Only two things: <b>how far into the text</b> we are, and <b>how far into the pattern</b> we are. Nothing about how we got there matters, because whether the rest matches depends only on what is left.</p>
+
+<div class="ws" style="border-left-color:var(--indigo)">
+<code style="color:var(--amber);font-weight:800;font-size:1.05em">matches_from(text_index, pattern_index)</code>
+<p style="margin:8px 0 0">answers <b>TRUE or FALSE</b>: does <code>text</code> from that spot onward match <code>pattern</code> from that spot onward?</p>
+</div>
+
+<p>Two spots, so the table is two dimensional. That is the same shape as Edit Distance and Interleaving String above, and for the same reason: two sequences being walked at once.</p>
+
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">4</span> The Move</h3>
+
+<p>Everything depends on one question asked first: <b>does a star come after the current pattern letter?</b></p>
+
+<div class="two-col">
+<div class="ws" style="border-left-color:var(--purple);margin:8px 0">
+<b style="color:var(--purple)">A STAR COMES NEXT</b>
+<p style="margin:6px 0 0;font-size:.92em">Two ways to succeed, and we only need one of them.</p>
+<p style="margin:8px 0 0;font-size:.92em"><b>Use it zero times.</b> Throw the pair away and jump the pattern forward by 2. The text does not move.</p>
+<p style="margin:6px 0 0;font-size:.92em"><b>Use it once more.</b> Only allowed if the current letters match. The text moves forward by 1 and the pattern <b>stays put</b>, so the star can be used again.</p>
+<p style="margin:8px 0 0;font-size:.92em;color:var(--amber)"><b>Either being TRUE makes the answer TRUE.</b></p>
+</div>
+<div class="ws" style="border-left-color:var(--indigo);margin:8px 0">
+<b style="color:var(--indigo)">NO STAR</b>
+<p style="margin:6px 0 0;font-size:.92em">Only one way to succeed.</p>
+<p style="margin:8px 0 0;font-size:.92em">The current letters must match right now, either because they are equal or because the pattern has a <code>.</code> there.</p>
+<p style="margin:6px 0 0;font-size:.92em">If they match, step <b>both</b> spots forward by 1.</p>
+<p style="margin:8px 0 0;font-size:.92em;color:var(--red)"><b>If they do not match, FALSE immediately.</b></p>
+</div>
+</div>
+
+<img src="dp/images/re_02_move.png" alt="The one move: a star splits into use zero times or use one more, everything else steps both forward" class="scene-img">
+
+<p>Run that on our example. At <code>text_index 0</code>, <code>pattern_index 0</code>, the pattern is <code>a</code> and a star follows, so we try both branches:</p>
+
+<table class="grid-table" style="font-size:.86em">
+<tr><th>Branch</th><th>What is left</th><th class="c">Result</th></tr>
+<tr><td>use <code>a*</code> zero times</td><td>text <code>ab</code> against pattern <code>b</code></td><td class="c" style="color:var(--red);font-weight:800">FALSE</td></tr>
+<tr><td>use <code>a*</code> once more</td><td>text <code>b</code> against pattern <code>a*b</code></td><td class="c" style="color:var(--green);font-weight:800">TRUE</td></tr>
+</table>
+
+<p>One branch was enough, so the answer is <b>TRUE</b>.</p>
+
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">5</span> The Base Case</h3>
+
+<p>The recursion stops when the <b>pattern</b> runs out. At that point the answer is TRUE only if the text ran out at the same moment.</p>
+
+<table class="grid-table" style="font-size:.86em">
+<tr><th>Text left</th><th>Pattern left</th><th class="c">Answer</th><th>Why</th></tr>
+<tr><td class="c"><code>""</code></td><td class="c"><code>""</code></td><td class="c" style="color:var(--green);font-weight:800">TRUE</td><td>both finished together</td></tr>
+<tr><td class="c"><code>b</code></td><td class="c"><code>""</code></td><td class="c" style="color:var(--red);font-weight:800">FALSE</td><td>pattern exhausted, text left over</td></tr>
+<tr><td class="c"><code>""</code></td><td class="c"><code>a*</code></td><td class="c" style="color:var(--green);font-weight:800">TRUE</td><td>the star can take zero, so the pattern can vanish</td></tr>
+</table>
+
+<div class="hi">
+<b>Empty text does not mean FALSE.</b> The pattern can still disappear, as long as everything left in it is a star pair. This is why we test whether the <em>pattern</em> is finished rather than whether the text is.
+</div>
+
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">6</span> The Grid</h3>
+
+<p>One box per pair of spots. Rows are how far into the text, columns are how far into the pattern. Each box holds TRUE or FALSE.</p>
+
+<table class="grid-table" style="font-size:.84em">
+<tr><th>text left &darr; &nbsp; pattern left &rarr;</th><th class="c"><code>a*b</code></th><th class="c"><code>*b</code></th><th class="c"><code>b</code></th><th class="c"><code>""</code></th></tr>
+<tr><th class="c"><code>ab</code></th><td class="c" style="background:rgba(34,197,94,.2);color:var(--green);font-weight:800">TRUE</td><td class="c" style="color:var(--red)">false</td><td class="c" style="color:var(--red)">false</td><td class="c" style="color:var(--red)">false</td></tr>
+<tr><th class="c"><code>b</code></th><td class="c" style="color:var(--green);font-weight:800">TRUE</td><td class="c" style="color:var(--red)">false</td><td class="c" style="color:var(--green);font-weight:800">TRUE</td><td class="c" style="color:var(--red)">false</td></tr>
+<tr><th class="c"><code>""</code></th><td class="c" style="color:var(--red)">false</td><td class="c" style="color:var(--red)">false</td><td class="c" style="color:var(--red)">false</td><td class="c" style="background:rgba(34,197,94,.2);color:var(--green);font-weight:800">TRUE</td></tr>
+</table>
+
+<p>The answer sits in the <b>top left</b> box, because that is the state where nothing has been consumed yet. The <b>bottom right</b> box is the easy one: both ran out together, so TRUE.</p>
+
+<img src="dp/images/re_03_table.png" alt="The three by four grid filled in, with the answer in the top left and arrows pointing down and right" class="scene-img">
+
+<div class="hi">
+<b>Fill order.</b> Every box reads boxes <b>below</b> it or <b>to its right</b>, never above or left, because both spots only ever move forward. So fill from the bottom right corner backwards. That is the opposite direction to Edit Distance above, purely because this promise is written as "the rest of" instead of "the first part of".
+</div>
+
+<p>The middle column is entirely false, and that is expected rather than a bug. Those states start <em>on</em> a star, which never happens in a real run because a star is always consumed together with the letter before it.</p>
+
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">7</span> The Code</h3>
+
+<pre><code>def is_match(text, pattern):
+    solved = {}
+
+    <span style="color:var(--muted)"># Does text[text_index:] match pattern[pattern_index:] ?</span>
+    def matches_from(text_index, pattern_index):
+        if (text_index, pattern_index) in solved:
+            return solved[(text_index, pattern_index)]
+
+        if pattern_index == len(pattern):
+            <span style="color:var(--muted)"># pattern finished: only TRUE if the text finished too</span>
+            result = text_index == len(text)
+        else:
+            first_matches = (text_index &lt; len(text)
+                             and pattern[pattern_index] in (text[text_index], '.'))
+
+            star_follows = (pattern_index + 1 &lt; len(pattern)
+                            and pattern[pattern_index + 1] == '*')
+
+            if star_follows:
+                result = (matches_from(text_index, pattern_index + 2)          <span style="color:var(--muted)"># use it zero times</span>
+                          or (first_matches
+                              and matches_from(text_index + 1, pattern_index)))  <span style="color:var(--muted)"># use it once more</span>
+            else:
+                result = (first_matches
+                          and matches_from(text_index + 1, pattern_index + 1))
+
+        solved[(text_index, pattern_index)] = result
+        return result
+
+    return matches_from(0, 0)</code></pre>
+
+<div class="ws" style="border-left-color:var(--green)">
+<b style="color:var(--green)">Reading the star line out loud</b>
+<p style="margin:6px 0 0">"Either the pair contributes nothing and I skip past it, or the current letter matches and I let the star eat it and try again with the same pattern spot."</p>
+</div>
+
+<p>Note that <code>pattern_index</code> does <b>not</b> advance in the second branch. That is what lets one star consume many characters. Advancing it there is the single most common way to break this.</p>
+
+<p><b>Cost:</b> there is one box per pair of spots, so <code>len(text) &times; len(pattern)</code> states, each doing constant work. That is <b>O(n &times; m)</b> time and space.</p>
+
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">8</span> Traps</h3>
+
+<table class="grid-table" style="font-size:.84em">
+<tr><th>The slip</th><th class="c">text</th><th class="c">pattern</th><th class="c">Wrong</th><th class="c">Right</th></tr>
+<tr><td>read the star on its own instead of as a pair</td><td class="c"><code>b</code></td><td class="c"><code>a*b</code></td><td class="c" style="color:var(--red);font-weight:800">false</td><td class="c" style="color:var(--green);font-weight:800">TRUE</td></tr>
+<tr><td>assumed empty text cannot match</td><td class="c"><code>""</code></td><td class="c"><code>a*</code></td><td class="c" style="color:var(--red);font-weight:800">false</td><td class="c" style="color:var(--green);font-weight:800">TRUE</td></tr>
+<tr><td>let the dot match nothing</td><td class="c"><code>""</code></td><td class="c"><code>.</code></td><td class="c" style="color:var(--red);font-weight:800">TRUE</td><td class="c" style="color:var(--green);font-weight:800">false</td></tr>
+<tr><td>advanced the pattern in the "use once more" branch</td><td class="c"><code>aaa</code></td><td class="c"><code>a*a</code></td><td class="c" style="color:var(--red);font-weight:800">false</td><td class="c" style="color:var(--green);font-weight:800">TRUE</td></tr>
+</table>
+
+<img src="dp/images/re_04_traps.png" alt="Four ways to get regex matching wrong with tiny counterexamples" class="scene-img">
+
+<h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">9</span> Rediscovering It</h3>
+
+<table class="grid-table" style="font-size:.86em">
+<tr><th>Question</th><th>Answer</th></tr>
+<tr><td>Why can we not walk forward?</td><td>a star can swallow any number of characters, and greedy guessing loses</td></tr>
+<tr><td>What does one call promise?</td><td>does the rest of the text match the rest of the pattern</td></tr>
+<tr><td>What is the bookmark?</td><td>two spots, one in each string</td></tr>
+<tr><td>What is the move?</td><td>star: skip the pair <b>or</b> eat one letter. no star: letters must match, step both</td></tr>
+<tr><td>Which operator, and why?</td><td><code>or</code>, because the question asks whether a match is <em>possible</em> at all</td></tr>
+<tr><td>Where is the answer?</td><td>the box where nothing has been consumed yet</td></tr>
+</table>
+
+<div class="ws" style="border-left-color:var(--amber)">
+<b style="color:var(--amber)">When I see this again</b>
+<p style="margin:6px 0 0">Two sequences walked together means a 2D table. A wildcard that can match a variable amount means the cell splits into "use it" or "skip it", combined with <code>or</code> rather than <code>max</code>, because the question is possible-or-not rather than how-good.</p>
+</div>
+
+</div></div>
+
+
 </div>
 
 <!-- ==================== COMPARISON ==================== -->

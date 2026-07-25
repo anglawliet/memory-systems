@@ -1,0 +1,269 @@
+MAX PRODUCT SUBARRAY (#152) - child of LIS. 5 panels, V4 framework.
+Running example: numbers = [-2, 3, -4]  answer 24
+==============================================================
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic, mobile first.
+
+TEXT RULES:
+- ALL text HUGE. Titles 60pt+, body 32pt+, code 26pt+.
+- Readable on a phone held vertically WITHOUT zooming.
+- About 60 words of body text per panel, not counting banners.
+  Fragments over sentences. Diagram over paragraph.
+- NO multi row tables inside a panel unless the panel IS a grid.
+- Clean sans serif (Nunito or Poppins). NO chalk, NO handwriting, NO serif.
+- Plain words. Write for a bright ten year old. Never use the words
+  "delegate", "predecessor", "exhaustive", "transition", "optimal", "iterate".
+
+=== NAMING (exact, never abbreviate) ===
+the list is always:      numbers
+the running max:         best_ending_here
+the running min:         worst_ending_here
+the final answer:        biggest
+the current number:      value
+NEVER write i, j, n, dp, f, go, solve, rec, arr.
+
+=== EVERY NUMBER LABELLED ===
+   INDEX    a spot in the list
+   VALUE    the number sitting there
+   BEST     biggest product of a run ending here
+   WORST    smallest product of a run ending here
+Panels with more than two numbers include a small NUMBER LEGEND box:
+   INDEX = BLUE (#38BDF8), VALUE = WHITE, BEST = GREEN (#22C55E),
+   WORST = ORANGE (#FB923C). Wrong things RED (#EF4444).
+Colour is never the only signal. Word labels always present.
+
+=== INDEX AND VALUE ON SEPARATE ROWS ===
+   INDEX:   0    1    2
+   VALUE:  -2    3   -4
+Never merged.
+
+=== BANNERS ===
+Top thin banner "WE ALREADY KNOW: ...", bottom "SO NEXT: ...".
+EXCEPT the recall panel, which has NO banners and stands alone.
+
+CHARACTER (Kit, ONCE per panel, small, at an edge, never covering the diagram):
+- Mid 20s, SHORT MESSY DARK BROWN hair, sharp dark eyes, confident smirk, stubble.
+- SLEEK BLACK TACTICAL SUIT one piece matte black, DARK BLUE UTILITY BELT,
+  FINGERLESS BLACK GLOVES, NIGHT VISION GOGGLES pushed up on forehead.
+- Lean athletic. Pixar/Disney 3D render, head slightly oversized, big eyes.
+
+ART STYLE: soft 3D cartoon, Pixar energy. NOT flat, NOT photoreal, NOT anime.
+
+COLOR PALETTE:
+- Background deep navy teal (#0B1F2A), faint grid.
+- Cards cream / warm white (#FFF8F0), rounded, soft shadow.
+- Headers bright sky cyan (#38BDF8). Code blocks light grey (#F3F4F6).
+- Gold (#F59E0B) for callouts.
+
+RUNNING EXAMPLE (every data panel):
+   INDEX:   0    1    2
+   VALUE:  -2    3   -4
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: RECALL -> mps_r1_recall.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait. Badge top left: "LAYER 0  RECALL" in GOLD.
+NO top or bottom banner. This panel stands completely alone.
+
+Big header: "MAX PRODUCT SUBARRAY, THE WHOLE THING"
+Small line under it: "a run of numbers side by side. multiply them. find the biggest."
+
+ZONE 1 (cream card): "THE TWIST"
+One large line: "a negative number turns the BIGGEST into the SMALLEST."
+Under it, a small before and after: a green "3" and an orange "-6" with a red
+"x (-4)" arrow between them, ending on a green "24" and an orange "-12".
+Caption: "so we must carry BOTH."
+
+ZONE 2 (cream card, biggest zone): "THE MOVE AT EVERY SPOT"
+Three labelled rows in columns:
+   INDEX:   0     1     2
+   VALUE:  -2     3    -4
+   BEST:   -2     3    24     <- green boxes
+   WORST:  -2    -6   -12     <- orange boxes
+The INDEX 2 column inside a tall gold frame labelled "filling this one".
+
+Under it, three candidate boxes side by side, all for VALUE -4:
+   "start fresh"        -4
+   "BEST so far x -4"   3 x -4 = -12
+   "WORST so far x -4"  -6 x -4 = 24     <- highlight this one, gold glow
+Two brackets under the three:
+   a GREEN bracket labelled "biggest of the three -> BEST = 24"
+   an ORANGE bracket labelled "smallest of the three -> WORST = -12"
+One gold line: "the winner came from the WORST. that is why we keep it."
+
+ZONE 3 (gold card): "READING THE ANSWER"
+The BEST row -2, 3, 24 with a bracket labelled "BIGGEST" and a huge gold "24".
+Red line: "the answer is the biggest BEST ever seen, not the last one."
+
+ZONE 4 (small dark strip): "THE TRAP"
+White text: "a zero resets everything. start fresh at a zero."
+
+Kit small in a corner, arms folded.
+
+
+================================================================================
+PROMPT 2: Why Tracking Only The Best Fails -> mps_01_breaks.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait. Badge: LAYER 1 THE STORY (sky cyan pill).
+Top banner: "WE ALREADY KNOW: in LIS we kept one best answer at every spot."
+
+Big header: "ONE NUMBER IS NOT ENOUGH"
+
+ZONE 1 (cream card, RED border, top): "KEEPING ONLY THE BEST"
+Three step rows, each showing the list as two labelled rows with the current
+box spotlit, and the running BEST on the right:
+
+   spot 0  VALUE -2   "start"                    BEST = -2
+   spot 1  VALUE  3   "3 beats -2 x 3 = -6"      BEST = 3
+   spot 2  VALUE -4   "-4 beats 3 x -4 = -12"    BEST = -4
+
+Red badge: "answer 3"
+
+ZONE 2 (cream card, GREEN border): "THE TRUTH"
+The whole list -2, 3, -4 lit green with multiplication signs between them:
+   -2  x  3  x  -4  =  24
+Gold badge: "answer 24"
+
+A big red arrow pointing back at spot 1, with a short label:
+"we threw away -6. two negatives were about to make it huge."
+
+Kit at bottom right, alarmed, hand on forehead.
+
+Bottom banner: "SO NEXT: keep the worst as well, because the worst can win."
+
+
+================================================================================
+PROMPT 3: THE MOVE -> mps_02_move.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait. Badge: LAYER 2 THE ALGORITHM (gold pill).
+Top banner: "WE ALREADY KNOW: a negative flips biggest and smallest."
+
+Big header: "THE ONE MOVE THAT IS THE ALGORITHM"
+
+This panel must be complete on its own. A reader fills one column using only this.
+
+ZONE 1 (cream card): four labelled rows in columns.
+   INDEX:   0     1     2
+   VALUE:  -2     3    -4
+   BEST:   -2     3     ?      <- green boxes, last a gold "?"
+   WORST:  -2    -6     ?      <- orange boxes, last a gold "?"
+INDEX 2 column inside a tall gold frame labelled "filling this one".
+Two small labels on the two rows:
+   BEST row:  "biggest product of a run ending here"
+   WORST row: "smallest product of a run ending here"
+
+ZONE 2 (the three candidates): three wide boxes stacked, all using VALUE -4.
+Each shows where it came from with a coloured arrow reaching back to the
+previous column:
+   1. "START FRESH"            just  -4              (no arrow)
+   2. "EXTEND THE BEST"        BEST 3   x -4  = -12   (green arrow from BEST box)
+   3. "EXTEND THE WORST"       WORST -6 x -4  =  24   (orange arrow from WORST box)
+Box 3 gets a bright gold glow and a small crown.
+
+ZONE 3 (gold card): "NOW TAKE BOTH ENDS"
+The three results -4, -12, 24 shown once in a row.
+A GREEN bracket over them labelled "biggest"  -> green badge "BEST = 24"
+An ORANGE bracket over them labelled "smallest" -> orange badge "WORST = -12"
+Arrows carry both into the two gold "?" boxes above, which now read 24 and -12.
+
+One red line at the bottom, large:
+"the same three candidates. we take the biggest AND the smallest."
+
+Include the NUMBER LEGEND box, small.
+Kit small at an edge, one finger raised.
+
+Bottom banner: "SO NEXT: run it across the whole list."
+
+
+================================================================================
+PROMPT 4: The Two Rows Filled -> mps_03_table.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait. Badge: LAYER 2 THE ALGORITHM (gold pill).
+Top banner: "WE ALREADY KNOW: at each spot we take the biggest and smallest of three."
+
+Big header: "FILLING BOTH ROWS, LEFT TO RIGHT"
+
+TOP: four labelled rows in columns, fully filled:
+   INDEX:   0     1     2
+   VALUE:  -2     3    -4
+   BEST:   -2     3    24     <- green boxes
+   WORST:  -2    -6   -12     <- orange boxes
+
+Below, three compact step rows showing how each column was made. Fragments only.
+
+  spot 0:  "nothing before it"         BEST -2    WORST -2
+  spot 1:  "3,  -2x3 = -6"             BEST  3    WORST -6
+  spot 2:  "-4,  3x-4 = -12,  -6x-4 = 24"   BEST 24   WORST -12
+
+On the last step row, draw a gold star beside the "-6 x -4 = 24" part with a
+short label: "the winner came from the WORST row"
+
+BOTTOM (gold card): the BEST row -2, 3, 24 with a bracket over all three
+labelled "BIGGEST EVER SEEN", and a huge gold "24".
+Red line: "not the last box. the biggest box."
+
+Include the NUMBER LEGEND box, small.
+
+Bottom banner: "SO NEXT: the traps."
+
+
+================================================================================
+PROMPT 5: Traps -> mps_04_traps.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait. Badge: LAYER 3 THE CODE (violet pill).
+Top banner: "WE ALREADY KNOW: keep both ends, take the biggest ever seen."
+
+Big header: "FOUR WAYS TO GET IT WRONG"
+
+A clean four row grid. Column headers once at the top:
+
+     THE SLIP              |  TRY IT ON      |  WRONG  |  RIGHT
+
+  row 1: "kept only the BEST"      [-2, 3, -4]      3        24
+  row 2: "forgot start fresh"      [0, 2]           0         2
+  row 3: "read the last box"       [2, 3, -2, 4]    4         6
+  row 4: "swapped best and worst"  [-1, -2]        -1         2
+
+WRONG numbers large RED with a small X. RIGHT large GREEN with a tick.
+Lists drawn as small VALUE boxes, not plain text.
+
+Under the grid, one gold line:
+"a zero wipes the slate. a negative swaps the ends. test with both."
+
+Kit small at the bottom corner holding a red pen.
+
+Bottom banner: "SO NEXT: nothing. This one is a twist on LIS, not a new idea."

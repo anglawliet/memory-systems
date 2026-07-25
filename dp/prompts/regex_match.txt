@@ -1,0 +1,289 @@
+REGULAR EXPRESSION MATCHING (#10) - child of the 2D table family. 5 panels, V4.
+Running example: text = "ab"   pattern = "a*b"   answer TRUE
+==============================================================
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic, mobile first.
+
+TEXT RULES:
+- ALL text HUGE. Titles 60pt+, body 32pt+, code 26pt+.
+- Readable on a phone held vertically WITHOUT zooming.
+- About 60 words of body text per panel, not counting banners.
+  Fragments over sentences. Diagram over paragraph.
+- Clean sans serif (Nunito or Poppins). NO chalk, NO handwriting, NO serif.
+- Plain words. Write for a bright ten year old. Never use the words
+  "delegate", "predecessor", "exhaustive", "transition", "optimal", "iterate".
+
+=== NAMING (exact, never abbreviate) ===
+the string being matched:  text
+the pattern:               pattern
+the two spots:             text_index  and  pattern_index
+the question:              matches_from(text_index, pattern_index)
+NEVER write i, j, n, m, dp, f, go, solve, rec, s, p.
+
+=== EVERY VALUE LABELLED ===
+   TEXT INDEX     a spot in the text
+   PATTERN INDEX  a spot in the pattern
+   TRUE / FALSE   the answer handed back
+Panels with a grid include a small LEGEND box:
+   TEXT INDEX = BLUE (#3B82F6), PATTERN INDEX = PURPLE (#8B5CF6),
+   TRUE = GREEN (#22C55E), FALSE = RED (#EF4444).
+Colour is never the only signal. Word labels always present.
+
+=== THE TEXT AND THE PATTERN GO ON SEPARATE LABELLED ROWS ===
+   TEXT:      a   b
+   PATTERN:   a   *   b
+Never merged. Always label which is which.
+
+=== BANNERS ===
+Top thin banner "WE ALREADY KNOW: ...", bottom "SO NEXT: ...".
+EXCEPT the recall panel, which has NO banners and stands alone.
+
+CHARACTER (Kit, ONCE per panel, small, at an edge, never covering the diagram):
+- Mid 20s, SHORT MESSY DARK BROWN hair, sharp dark eyes, confident smirk, stubble.
+- SLEEK BLACK TACTICAL SUIT one piece matte black, DARK BLUE UTILITY BELT,
+  FINGERLESS BLACK GLOVES, NIGHT VISION GOGGLES pushed up on forehead.
+- Lean athletic. Pixar/Disney 3D render, head slightly oversized, big eyes.
+
+ART STYLE: soft 3D cartoon, Pixar energy. NOT flat, NOT photoreal, NOT anime.
+
+COLOR PALETTE:
+- Background warm dark brown black (#1A1916), faint grid.
+- Cards cream / warm white (#FFF8F0), rounded, soft shadow.
+- Headers warm gold (#D4A843). Accents amber (#F59E0B), purple (#8B5CF6),
+  indigo (#6366F1). Code blocks light grey (#F3F4F6).
+
+RUNNING EXAMPLE (every data panel):
+   TEXT:      a   b          (text_index 0, 1)
+   PATTERN:   a   *   b      (pattern_index 0, 1, 2)
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT 1: RECALL -> re_r1_recall.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait. Badge top left: "LAYER 0  RECALL" in GOLD.
+NO top or bottom banner. Stands completely alone.
+
+Big header: "REGEX MATCHING, THE WHOLE THING"
+Small line: "does the whole text match the whole pattern?"
+
+ZONE 1 (cream card): "THE TWO SPECIAL CHARACTERS"
+Two wide rows, big:
+   "."   ->  "any ONE character"       example:  a.c  matches  abc
+   "*"   ->  "zero or more of the ONE character before it"
+             example:  a*  matches  ""  and  "a"  and  "aaaa"
+Red warning strip: "the star belongs to the letter BEFORE it. read them as a pair."
+
+ZONE 2 (cream card, biggest zone): "THE MOVE"
+Title line: "matches_from(text_index, pattern_index)  =  does the rest of the
+text match the rest of the pattern?"
+
+Two branch boxes side by side, clearly separated:
+
+LEFT box, PURPLE border, header "PATTERN HAS A STAR NEXT":
+   pair shown as  a *
+   two arrows out of it:
+     arrow 1 GREEN: "USE IT ZERO TIMES"  ->  "skip the pair. pattern_index + 2"
+     arrow 2 BLUE:  "USE IT ONCE MORE"   ->  "only if the letter matches.
+                                              text_index + 1, pattern stays"
+   under both: a big "OR" in gold, and the line "either one being TRUE is enough"
+
+RIGHT box, INDIGO border, header "NO STAR":
+   "the letter must match, then step BOTH forward"
+   "text_index + 1  and  pattern_index + 1"
+
+ZONE 3 (gold card): "READING THE ANSWER"
+One line: "the answer is matches_from(0, 0)"
+Under it: "TRUE when we run out of text and pattern at the same time"
+Small green box: 'text "" and pattern "" -> TRUE'
+Small red box:   'text "" and pattern "b" -> FALSE'
+
+ZONE 4 (small dark strip): "THE TRAP"
+White text: 'an empty text can still match. "" against "a*" is TRUE.'
+
+Kit small in a corner, arms folded.
+
+
+================================================================================
+PROMPT 2: What The Two Characters Mean -> re_01_pieces.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait. Badge: LAYER 1 THE STORY (gold pill).
+Top banner: "WE ALREADY KNOW: we must match the WHOLE text against the WHOLE pattern."
+
+Big header: "THE STAR IS THE WHOLE PROBLEM"
+
+ZONE 1 (cream card): "THE DOT IS EASY"
+   PATTERN:  a  .  c      TEXT:  a  b  c
+The dot box glows, an arrow to the b, label "any ONE character. always exactly one."
+Green tick.
+
+ZONE 2 (cream card, RED border, the main zone): "THE STAR IS NOT"
+Show the pattern  a * b  as three boxes, with the a and the * joined by a bracket
+underneath labelled "these two are ONE piece".
+
+Then three different texts tested against that same pattern, stacked:
+   text "b"      -> the pair used ZERO times   GREEN TICK
+   text "ab"     -> the pair used ONCE         GREEN TICK
+   text "aaab"   -> the pair used THREE times  GREEN TICK
+Each row shows the a* pair with a small counter badge (0, 1, 3).
+
+Big gold callout under them:
+"the same pattern matches all three. the star does not know how many to take."
+
+ZONE 3 (small card): "SO WE CANNOT JUST WALK FORWARD"
+Kit looking uncertain at a fork in a road, two paths.
+One line: "at every star we must try BOTH: take none, or take one more."
+
+Bottom banner: "SO NEXT: that fork is the whole move."
+
+
+================================================================================
+PROMPT 3: THE MOVE -> re_02_move.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait. Badge: LAYER 2 THE ALGORITHM (amber pill).
+Top banner: "WE ALREADY KNOW: a star can be used zero times or many times."
+
+Big header: "THE ONE MOVE THAT IS THE ALGORITHM"
+
+This panel must be complete on its own.
+
+ZONE 1 (cream card): the setup, two labelled rows with pointers.
+   TEXT:      a   b        with a BLUE pointer under the a, labelled "text_index 0"
+   PATTERN:   a   *   b    with a PURPLE pointer under the first a,
+                           labelled "pattern_index 0"
+One line: "we ask: does the rest of the text match the rest of the pattern?"
+
+ZONE 2: "FIRST, LOOK AT WHAT COMES AFTER THE PATTERN LETTER"
+A decision splitting into two big branch cards.
+
+LEFT CARD, PURPLE border, header "A STAR COMES NEXT   (a *)":
+   Two sub branches drawn as two arrows going down:
+
+   BRANCH 1, GREEN, "USE IT ZERO TIMES":
+       "throw the pair away"
+       shows PATTERN with a and * greyed out and crossed
+       "pattern_index jumps by 2. text_index does not move."
+
+   BRANCH 2, BLUE, "USE IT ONE MORE TIME":
+       "only if the text letter matches the pattern letter"
+       shows the a in the text ticked off
+       "text_index moves by 1. pattern_index stays put."
+
+   Under both, a huge gold "OR" and the line:
+       "if EITHER is TRUE, the answer is TRUE"
+
+RIGHT CARD, INDIGO border, header "NO STAR":
+   "the letters must match right now"
+   shows a green tick between a text letter and a pattern letter
+   "then both move forward by 1"
+   Small red note: "if they do not match, FALSE straight away"
+
+ZONE 3 (gold card): "OUR EXAMPLE"
+   text "ab" against pattern "a*b"
+   Branch 1 (zero times): "b" left to match against "b"... but text is still "ab" -> FALSE
+   Branch 2 (one more):   the a matches, so now "b" against "a*b" -> TRUE
+   Big gold result: "TRUE, because branch 2 worked"
+One line: "we only needed ONE branch to work."
+
+Include the LEGEND box, small.
+Kit small at an edge, one finger raised.
+
+Bottom banner: "SO NEXT: store the answers in a grid so we never redo one."
+
+
+================================================================================
+PROMPT 4: The Grid -> re_03_table.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait. Badge: LAYER 2 THE ALGORITHM (amber pill).
+Top banner: "WE ALREADY KNOW: at every spot we either split on a star, or match one letter."
+
+Big header: "ONE BOX PER PAIR OF SPOTS"
+
+Draw a grid, 3 rows by 4 columns, large and clean.
+Rows are TEXT INDEX 0, 1, 2, labelled down the left side in BLUE, with the
+remaining text written beside each: 'ab', 'b', '' (empty).
+Columns are PATTERN INDEX 0, 1, 2, 3, labelled across the top in PURPLE, with the
+remaining pattern written under each: 'a*b', '*b', 'b', '' (empty).
+
+Fill the boxes exactly like this, TRUE boxes green with a tick, FALSE boxes
+red with a cross:
+
+   text_index 0:   TRUE    FALSE   FALSE   FALSE
+   text_index 1:   TRUE    FALSE   TRUE    FALSE
+   text_index 2:   FALSE   FALSE   FALSE   TRUE
+
+Put a thick GOLD ring around the top left box (text_index 0, pattern_index 0)
+labelled "THE ANSWER LIVES HERE".
+Put a thin green ring around the bottom right box labelled
+"the easy one: both ran out together, TRUE".
+
+Draw two example arrows showing where a box reads from:
+   from box (0,0) a GREEN arrow to box (0,2)  labelled "use the star zero times"
+   from box (0,0) a BLUE arrow to box (1,0)   labelled "use the star once more"
+
+One gold strip under the grid:
+"every arrow points DOWN or RIGHT, so fill from the bottom right corner backwards."
+
+Include the LEGEND box, small.
+
+Bottom banner: "SO NEXT: the traps."
+
+
+================================================================================
+PROMPT 5: Traps -> re_04_traps.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait. Badge: LAYER 3 THE CODE (indigo pill).
+Top banner: "WE ALREADY KNOW: the star splits, everything else steps forward."
+
+Big header: "FOUR WAYS TO GET IT WRONG"
+
+A clean four row grid. Column headers once at the top:
+
+     THE SLIP                    |  TEXT   |  PATTERN  |  WRONG  |  RIGHT
+
+  row 1: "read the star on its own"     "b"      "a*b"     FALSE    TRUE
+  row 2: "forgot empty text can match"   ""      "a*"      FALSE    TRUE
+  row 3: "let the dot match nothing"     ""      "."       TRUE     FALSE
+  row 4: "checked only one branch"     "aaa"     "a*a"     FALSE    TRUE
+
+WRONG values large RED with a small X. RIGHT large GREEN with a tick.
+Text and pattern drawn as small letter boxes, not plain text.
+
+Under the grid, one gold line:
+"the star belongs to the letter before it. always read them as a pair."
+
+Kit small at the bottom corner holding a red pen.
+
+Bottom banner: "SO NEXT: nothing. Same 2D grid as Edit Distance, different move."

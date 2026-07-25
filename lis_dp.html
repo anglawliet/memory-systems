@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Longest Increasing Subsequence: One Connected Story</title>
+<style>
+:root{
+  --bg:#0b1f2a;--card:#132b38;--card2:#1a3644;--border:#26485a;
+  --cyan:#38bdf8;--cyan2:#0ea5e9;--gold:#f59e0b;--gold2:#fbbf24;
+  --idx:#38bdf8;      /* INDEX  */
+  --len:#22c55e;      /* LENGTH / returned answer */
+  --best:#a78bfa;     /* BEST so far */
+  --bad:#ef4444;      /* invalid */
+  --orange:#fb923c;--teal:#2dd4bf;
+  --text:#e6f1f7;--muted:#8fa9b8;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.75;padding:0 0 80px;overflow-x:hidden}
+.hdr{background:linear-gradient(135deg,#0e2f3f,#0b1f2a);border-bottom:3px solid var(--cyan);padding:44px 20px;text-align:center}
+.hdr h1{font-size:2em;color:var(--cyan);line-height:1.25}
+.hdr p{color:var(--muted);margin-top:8px}
+.wrap{max-width:940px;margin:0 auto;padding:20px}
+
+h2{color:var(--cyan);font-size:1.35em;margin:46px 0 14px;border-bottom:2px solid var(--border);padding-bottom:8px}
+h2 .num{display:inline-flex;align-items:center;justify-content:center;background:var(--cyan);color:#04202c;width:30px;height:30px;border-radius:50%;font-size:.72em;font-weight:800;margin-right:10px;vertical-align:middle}
+h3{color:var(--cyan);margin:24px 0 8px;font-size:1.06em}
+p{margin:10px 0}
+strong{color:var(--gold2)}
+em.q{color:var(--text);font-style:italic}
+
+.prev{border-left:3px solid var(--muted);background:rgba(143,169,184,.07);color:var(--muted);
+  padding:8px 14px;margin:18px 0 10px;border-radius:0 6px 6px 0;font-size:.92em;font-style:italic}
+.next{border-left:3px solid var(--cyan);background:rgba(56,189,248,.09);
+  padding:10px 14px;margin:14px 0 26px;border-radius:0 6px 6px 0;font-size:.95em}
+.next b{color:var(--cyan)}
+
+.scene-img{width:100%;border-radius:10px;margin:14px 0;border:1px solid var(--border);display:block}
+.cap{color:var(--muted);font-size:.86em;text-align:center;margin:-6px 0 16px}
+
+pre{background:#061319;border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;font-size:.85em;line-height:1.75;margin:12px 0}
+code{font-family:'Fira Code','Consolas','Courier New',monospace}
+p code,li code,td code{background:#061319;border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:.88em;color:var(--cyan);word-break:break-word}
+
+.hi{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.4);border-radius:6px;padding:12px 16px;margin:14px 0}
+.hi b{color:var(--gold2)}
+.warn{background:rgba(239,68,68,.09);border:1px solid rgba(239,68,68,.4);border-radius:6px;padding:12px 16px;margin:14px 0}
+.warn b{color:#fca5a5}
+.ok{background:rgba(34,197,94,.09);border:1px solid rgba(34,197,94,.4);border-radius:6px;padding:12px 16px;margin:14px 0}
+.ok b{color:#86efac}
+.ws{background:var(--card);border-radius:12px;padding:20px;margin:20px 0;border-left:4px solid var(--cyan)}
+.ws h3{margin-top:0}
+
+/* ---- array strip: INDEX and VALUE always on separate rows ---- */
+.strip{display:grid;gap:5px 6px;align-items:center;margin:16px 0;
+  grid-template-columns:auto repeat(5,minmax(42px,1fr))}
+.strip.n4{grid-template-columns:auto repeat(4,minmax(42px,1fr))}
+.strip.n3{grid-template-columns:auto repeat(3,minmax(42px,1fr))}
+.strip.n2{grid-template-columns:auto repeat(2,minmax(42px,1fr))}
+.rl{font-size:.6em;color:var(--muted);letter-spacing:.09em;font-weight:800;text-align:right;padding-right:8px;white-space:nowrap}
+.ix{text-align:center;font-size:.82em;color:var(--idx);font-weight:800;font-family:'Fira Code',monospace}
+.vb{text-align:center;padding:7px 2px;border-radius:8px;background:var(--card2);border:2px solid var(--border);font-family:'Fira Code',monospace;font-size:1.25em;font-weight:800}
+.vb.gold{border-color:var(--gold);background:rgba(245,158,11,.16);color:var(--gold2);box-shadow:0 0 12px rgba(245,158,11,.28)}
+.vb.len{border-color:var(--len);background:rgba(34,197,94,.13);color:#86efac}
+.vb.blue{border-color:var(--idx);background:rgba(56,189,248,.13);color:var(--idx)}
+.vb.bad{border-color:var(--bad);background:rgba(239,68,68,.12);color:#fca5a5}
+.vb.dim{opacity:.3}
+.snote{grid-column:1/-1;font-size:.8em;color:var(--muted);text-align:center;margin-top:2px}
+
+/* ---- number legend ---- */
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;background:var(--card2);border:1px dashed var(--border);
+  border-radius:8px;padding:10px 14px;margin:14px 0;font-size:.8em}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:3px;display:inline-block;flex-shrink:0}
+.legend b{font-family:'Fira Code',monospace;font-size:.95em}
+.legend em{color:var(--muted);font-style:normal}
+.lg-idx{background:var(--idx)}.lg-val{background:#dbe7ee}.lg-len{background:var(--len)}
+.lg-best{background:var(--best)}.lg-bad{background:var(--bad)}
+
+/* number role inline */
+.nI{color:var(--idx);font-weight:800;font-family:'Fira Code',monospace}
+.nL{color:var(--len);font-weight:800;font-family:'Fira Code',monospace}
+.nB{color:var(--best);font-weight:800;font-family:'Fira Code',monospace}
+.nV{color:var(--text);font-weight:800;font-family:'Fira Code',monospace}
+.role{font-size:.62em;letter-spacing:.08em;font-weight:800;color:var(--muted);display:block;text-transform:uppercase}
+
+/* ---- unit-annotated arithmetic ---- */
+.units{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px;background:var(--card2);
+  border-radius:10px;padding:14px 12px;margin:14px 0;text-align:center}
+.units .term{min-width:96px;max-width:190px}
+.units .big{font-size:1.5em;font-weight:800;font-family:'Fira Code',monospace;line-height:1.2}
+.units .cap2{font-size:.74em;color:var(--muted);line-height:1.35;margin-top:4px}
+.units .op{font-size:1.5em;font-weight:800;color:var(--gold2);align-self:flex-start;padding-top:2px}
+
+/* ---- call contract block ---- */
+.contract{background:var(--card2);border:1px solid var(--border);border-left:4px solid var(--gold);
+  border-radius:8px;padding:14px 16px;margin:14px 0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:.92em}
+.contract dt{font-size:.68em;letter-spacing:.1em;font-weight:800;color:var(--muted);padding-top:5px;white-space:nowrap}
+.contract dd{font-family:'Fira Code',monospace}
+
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.89em}
+th,td{border:1px solid var(--border);padding:9px 11px;text-align:left;vertical-align:top}
+th{background:var(--card2);color:var(--cyan);font-size:.86em;text-transform:uppercase;letter-spacing:.05em}
+td.c,th.c{text-align:center}
+.tbl-wrap{overflow-x:auto}
+
+.ln{display:block;padding:2px 8px;border-radius:4px;margin:1px -8px}
+.ln-pink{background:rgba(236,72,153,.18);border-left:3px solid #ec4899}
+.ln-green{background:rgba(34,197,94,.16);border-left:3px solid var(--len)}
+.ln-orange{background:rgba(251,146,60,.16);border-left:3px solid var(--orange)}
+.ln-yellow{background:rgba(250,204,21,.16);border-left:3px solid #facc15}
+.ln-red{background:rgba(239,68,68,.18);border-left:3px solid var(--bad)}
+.ln-purple{background:rgba(167,139,250,.18);border-left:3px solid var(--best)}
+.ln-teal{background:rgba(45,212,191,.16);border-left:3px solid var(--teal)}
+.recflag{color:#fca5a5;font-weight:800}
+
+.cards{display:grid;gap:10px;margin:14px 0}
+.cd{border-radius:8px;padding:12px 15px;font-size:.92em;border-left:4px solid var(--border);background:var(--card2)}
+.cd b{display:block;font-family:'Fira Code',monospace;font-size:.9em;margin-bottom:4px;word-break:break-word}
+.cd-pink{border-left-color:#ec4899}.cd-pink b{color:#f9a8d4}
+.cd-green{border-left-color:var(--len)}.cd-green b{color:#86efac}
+.cd-orange{border-left-color:var(--orange)}.cd-orange b{color:#fdba74}
+.cd-yellow{border-left-color:#facc15}.cd-yellow b{color:#fde047}
+.cd-red{border-left-color:var(--bad)}.cd-red b{color:#fca5a5}
+.cd-purple{border-left-color:var(--best)}.cd-purple b{color:#c4b5fd}
+.cd-teal{border-left-color:var(--teal)}.cd-teal b{color:#5eead4}
+
+.aloud{background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.28);border-radius:8px;
+  padding:11px 15px;margin:10px 0;font-size:.93em}
+.aloud b{color:var(--cyan);font-size:.72em;letter-spacing:.1em;display:block;margin-bottom:3px;text-transform:uppercase}
+
+.chk{background:var(--card);border:1px solid var(--cyan2);border-radius:10px;padding:0;margin:22px 0}
+.chk summary{padding:13px 18px;cursor:pointer;list-style:none;font-weight:700;color:var(--cyan);font-size:.95em}
+.chk summary::-webkit-details-marker{display:none}
+.chk summary::before{content:"CHECKPOINT  ";font-size:.7em;letter-spacing:.14em;color:var(--gold);font-weight:800}
+.chk summary::after{content:"  (tap for the answer)";color:var(--muted);font-weight:400;font-size:.85em}
+.chk[open] summary::after{content:""}
+.chk .ans{padding:0 18px 15px;border-top:1px solid var(--border);margin-top:4px;padding-top:12px;font-size:.93em}
+
+.flow{display:grid;gap:0;margin:16px 0}
+.flow .node{background:var(--card2);border:2px solid var(--border);border-radius:8px;padding:11px 15px;font-size:.92em}
+.flow .node.base{border-color:var(--len);background:rgba(34,197,94,.1)}
+.flow .node.top{border-color:var(--gold);background:rgba(245,158,11,.1)}
+.flow .ar{text-align:center;color:var(--gold);font-size:.84em;padding:7px 0;font-weight:700}
+.flow .ar.up{color:var(--len)}
+.flow .node code{background:none;border:none;padding:0;color:var(--cyan);font-size:1em;font-weight:700}
+.eng{color:var(--muted);font-size:.89em;font-style:italic}
+
+.nav-link{display:inline-block;background:var(--card);border:1px solid var(--border);padding:10px 20px;border-radius:8px;color:var(--cyan);text-decoration:none;font-weight:700;margin:8px 4px;transition:.2s}
+.nav-link:hover{background:var(--cyan);color:#04202c;border-color:var(--cyan)}
+.toc{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin:20px 0;font-size:.89em}
+.toc a{color:var(--cyan);text-decoration:none}
+.toc a:hover{text-decoration:underline}
+.toc ol{margin:8px 0 0 20px}
+.toc li{margin:3px 0}
+
+@media(max-width:600px){
+  .wrap{padding:12px}
+  .hdr h1{font-size:1.4em}
+  h2{font-size:1.12em}
+  body{line-height:1.68}
+  pre{font-size:.66em;padding:10px}
+  .strip{gap:4px 3px;grid-template-columns:auto repeat(5,minmax(34px,1fr))}
+  .rl{font-size:.52em;padding-right:4px}
+  .vb{font-size:1em;padding:5px 1px}
+  .units .term{min-width:74px}
+  .units .big{font-size:1.2em}
+  .units .cap2{font-size:.68em}
+  table{font-size:.8em}
+  th,td{padding:7px 7px}
+  .contract{grid-template-columns:1fr;gap:2px}
+  .contract dd{margin-bottom:8px}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+<h1>Longest Increasing Subsequence</h1>
+<p>LeetCode #300. One connected story, from a failed guess to a filled strip.</p>
+</div>
+
+<div class="wrap">
+
+<div style="margin-bottom:10px">
+<a href="dp_workshop.html" class="nav-link">&larr; DP Workshop</a>
+<a href="state_machine_dp.html" class="nav-link">State Machine DP</a>
+<a href="staircase_dp.html" class="nav-link">Staircase</a>
+</div>
+
+<div class="toc">
+<b style="color:var(--gold2)">The route we walk</b>
+<ol>
+<li><a href="#s1">The problem, and what the answer means</a></li>
+<li><a href="#s2">What a normal person tries first</a></li>
+<li><a href="#s3">The exact moment it breaks</a></li>
+<li><a href="#s4">What we are stuck deciding</a></li>
+<li><a href="#s5">The recursion promise</a></li>
+<li><a href="#s6">What one single call means</a></li>
+<li><a href="#s7">Down to the floor, and back up</a></li>
+<li><a href="#s8">Every legal choice</a></li>
+<li><a href="#s9">The bookmark</a></li>
+<li><a href="#s10">Where max and +1 come from</a></li>
+<li><a href="#s11">The recurrence, written last</a></li>
+<li><a href="#s12">From the story to the code</a></li>
+<li><a href="#s13">The marked code walkthrough</a></li>
+<li><a href="#s14">Every call, every return</a></li>
+<li><a href="#s15">What gets solved twice</a></li>
+<li><a href="#s16">Memoization</a></li>
+<li><a href="#s17">A call and a cell are the same thing</a></li>
+<li><a href="#s18">Filling the strip</a></li>
+<li><a href="#s19">Why this strip cannot be shrunk</a></li>
+<li><a href="#s20">Four ways to break it</a></li>
+<li><a href="#s21">How to rediscover this in six months</a></li>
+</ol>
+</div>
+
+<div class="legend">
+<span><i class="lg-idx"></i><b>INDEX</b><em>a position in the array</em></span>
+<span><i class="lg-val"></i><b>VALUE</b><em>the number stored there</em></span>
+<span><i class="lg-len"></i><b>LENGTH</b><em>a returned answer</em></span>
+<span><i class="lg-best"></i><b>BEST</b><em>best found so far in one call</em></span>
+<span><i class="lg-bad"></i><b>INVALID</b><em>rejected</em></span>
+</div>
+<p style="font-size:.86em;color:var(--muted);margin-top:-6px">These five roles are used consistently on every diagram and in every colour on this page. A number is never shown without saying which of them it is.</p>
+
+
+<!-- ================= 1. THE PROBLEM ================= -->
+<h2 id="s1"><span class="num">1</span>The Problem</h2>
+
+<div class="ws">
+<h3 style="margin-bottom:6px">Longest Increasing Subsequence (LeetCode #300)</h3>
+<p style="color:var(--muted);margin-top:0">Given an array of integers, return the length of the longest strictly increasing subsequence.</p>
+</div>
+
+<p>Before solving anything, we need to read that sentence the same way. Four questions, each with a tiny example.</p>
+
+<h3>What is the input?</h3>
+<p>One list of numbers, which we will always call <code>numbers</code>. The order they arrive in is fixed and we may never change it.</p>
+
+<h3>What is a subsequence?</h3>
+<p>Any set of elements read left to right, where we may <strong>skip</strong> but never <strong>reorder</strong>.</p>
+
+<div class="tbl-wrap">
+<table>
+<tr><th>Pulled from <code>numbers = [5, 6, 1, 2, 3]</code></th><th class="c">Legal?</th><th>Why</th></tr>
+<tr><td><code>1 &rarr; 2 &rarr; 3</code></td><td class="c" style="color:#86efac;font-weight:800">yes</td><td>we skipped two elements and kept the survivors in their original order</td></tr>
+<tr><td><code>5 &rarr; 6</code></td><td class="c" style="color:#86efac;font-weight:800">yes</td><td>we skipped everything after them</td></tr>
+<tr><td><code>1 &rarr; 3 &rarr; 2</code></td><td class="c" style="color:#fca5a5;font-weight:800">no</td><td>the VALUE 2 sits before the VALUE 3 in the array, so this is a reorder, not a skip</td></tr>
+<tr><td><code>5 &rarr; 5</code></td><td class="c" style="color:#fca5a5;font-weight:800">no</td><td>there is only one 5 and we cannot reuse an element</td></tr>
+</table>
+</div>
+
+<h3>What does "strictly increasing" forbid?</h3>
+<p>Every next element must be <strong>bigger</strong> than the one before it. Equal is not enough. In <code>[2, 2, 2]</code> the longest strictly increasing subsequence has LENGTH <span class="nL">1</span>, not 3.</p>
+
+<h3>What do we return?</h3>
+<p>A <strong>LENGTH</strong>. One number, counting elements. We are not asked for the chain itself.</p>
+
+<div class="hi">
+<b>Say the answer out loud before solving:</b> "the function returns how many elements are in the longest rising chain we can pull out of <code>numbers</code>." Every number we produce from here on gets checked against that sentence.
+</div>
+
+<h3>Our running example</h3>
+<p>One array for the whole lesson. Every diagram, trace and cell below comes from it. Notice that position and value are drawn on separate rows, and they stay separate everywhere on this page.</p>
+
+<div class="strip">
+<div class="rl">INDEX</div>
+<div class="ix">0</div><div class="ix">1</div><div class="ix">2</div><div class="ix">3</div><div class="ix">4</div>
+<div class="rl">VALUE</div>
+<div class="vb">5</div><div class="vb">6</div><div class="vb">1</div><div class="vb">2</div><div class="vb">3</div>
+</div>
+
+<p>Saying it precisely: <em class="q">"at <code>current_index = 3</code>, the value is <code>numbers[3] = 2</code>."</em> Never just "we are at 3", because that sentence cannot tell you whether 3 is a position or a value.</p>
+
+<p>The answer for this array is LENGTH <span class="nL">3</span>, from the chain <code>1 &rarr; 2 &rarr; 3</code>. Hold on to that. The rest of the page earns it.</p>
+
+<img src="dp/images/lis_01_problem.png" alt="Skipping is legal, reordering is not, and the answer we return is a length rather than the list of numbers" class="scene-img">
+<p class="cap">Three things people mix up: the input array, the chain we pull out, and the LENGTH we return.</p>
+
+<div class="next"><b>So next:</b> we know what is being asked. What would someone with no DP training actually try?</div>
+
+
+<!-- ================= 2. FIRST TRY ================= -->
+<h2 id="s2"><span class="num">2</span>What Would I Try First?</h2>
+
+<div class="prev">We already know: we must return the LENGTH of the longest rising chain in <code>[5, 6, 1, 2, 3]</code>.</div>
+
+<div class="ws" style="border-left-color:var(--gold)">
+<b style="color:var(--gold2)">The natural try:</b> walk left to right. Keep a running chain. Take the current number if it is bigger than the last number taken. Otherwise skip it.
+</div>
+
+<p>It feels safe because it never breaks a rule. Everything it takes really is bigger than the previous pick, so whatever it builds <em>is</em> a valid increasing chain. Let us run it.</p>
+
+<div class="tbl-wrap">
+<table>
+<tr><th class="c">Step</th><th class="c">At INDEX</th><th class="c">VALUE</th><th>Decision</th><th>Chain so far</th></tr>
+<tr><td class="c">1</td><td class="c"><span class="nI">0</span></td><td class="c"><span class="nV">5</span></td><td>chain is empty, so take it</td><td><code>5</code></td></tr>
+<tr><td class="c">2</td><td class="c"><span class="nI">1</span></td><td class="c"><span class="nV">6</span></td><td>6 &gt; 5, take it</td><td><code>5 &rarr; 6</code></td></tr>
+<tr><td class="c">3</td><td class="c"><span class="nI">2</span></td><td class="c"><span class="nV">1</span></td><td>1 is not &gt; 6, skip</td><td><code>5 &rarr; 6</code></td></tr>
+<tr><td class="c">4</td><td class="c"><span class="nI">3</span></td><td class="c"><span class="nV">2</span></td><td>2 is not &gt; 6, skip</td><td><code>5 &rarr; 6</code></td></tr>
+<tr><td class="c">5</td><td class="c"><span class="nI">4</span></td><td class="c"><span class="nV">3</span></td><td>3 is not &gt; 6, skip</td><td><code>5 &rarr; 6</code></td></tr>
+</table>
+</div>
+
+<p>The greedy walk returns LENGTH <span class="nL">2</span>.</p>
+
+
+<!-- ================= 3. WHERE IT FAILS ================= -->
+<h2 id="s3"><span class="num">3</span>Exactly Where It Fails</h2>
+
+<p>The true answer is LENGTH <span class="nL">3</span>, so this is not a small inaccuracy, the method is wrong. But wrong <em>where</em>? Pointing at the exact step is the whole reason this section exists.</p>
+
+<p>Here is the chain that actually wins:</p>
+
+<div class="strip">
+<div class="rl">INDEX</div>
+<div class="ix">0</div><div class="ix">1</div><div class="ix">2</div><div class="ix">3</div><div class="ix">4</div>
+<div class="rl">VALUE</div>
+<div class="vb dim">5</div><div class="vb dim">6</div><div class="vb len">1</div><div class="vb len">2</div><div class="vb len">3</div>
+<div class="snote">the chain greedy never found: <code>1 &rarr; 2 &rarr; 3</code>, LENGTH 3</div>
+</div>
+
+<p>The failure happened at <strong>step 2</strong>, when we took the VALUE <span class="nV">6</span> at <code>current_index = 1</code>.</p>
+
+<p>Taking it looked free. It cost nothing and made the chain longer immediately, from LENGTH 1 to LENGTH 2. But it raised the bar every future element had to clear, from "bigger than 5" to "bigger than 6". The entire rest of the array sits below that bar. One cheap gain at step 2 destroyed a chain of LENGTH 3 that had not started yet.</p>
+
+<img src="dp/images/lis_02_greedy_fails.png" alt="Greedy takes 5 then 6, is blocked by 1, 2 and 3, and returns length 2 instead of the true length 3" class="scene-img">
+<p class="cap">The mistake is not where greedy gets stuck. It is at step 2, where greedy got greedy.</p>
+
+<div class="warn">
+<b>The blocking realisation:</b> a decision at <code>current_index = 1</code> changes what is legal at <code>current_index = 4</code>. We cannot judge a decision by what it earns now, because its real cost appears later. So we cannot commit to one future without checking the others.
+</div>
+
+<details class="chk">
+<summary>Would greedy work if we just started the chain from a later element instead?</summary>
+<div class="ans">No, so patching the starting point does not save the method. Forced to start at the VALUE <code>1</code>, greedy would find <code>1 &rarr; 2 &rarr; 3</code> and get lucky here. But on <code>numbers = [1, 100, 2, 3, 4]</code> a greedy walk still grabs the <code>100</code> and stalls at LENGTH 2, while the truth is <code>1 &rarr; 2 &rarr; 3 &rarr; 4</code>, LENGTH 4. The flaw is committing to a take without seeing its later cost, and that survives any choice of starting point.</div>
+</details>
+
+<div class="next"><b>So next:</b> if we cannot safely commit, we must slow down and name the decision we are stuck on.</div>
+
+
+<!-- ================= 4. STUCK ================= -->
+<h2 id="s4"><span class="num">4</span>What Am I Stuck Deciding?</h2>
+
+<div class="prev">We already know: an early take can silently kill a longer chain, so no forward-looking rule is safe.</div>
+
+<p>Freeze time at one exact spot and describe the situation with no algorithm in mind.</p>
+
+<div class="strip">
+<div class="rl">INDEX</div>
+<div class="ix">0</div><div class="ix">1</div><div class="ix">2</div><div class="ix">3</div><div class="ix">4</div>
+<div class="rl">VALUE</div>
+<div class="vb dim">5</div><div class="vb dim">6</div><div class="vb dim">1</div><div class="vb dim">2</div><div class="vb gold">3</div>
+<div class="snote">frozen at <code>current_index = 4</code>, where <code>numbers[4] = 3</code></div>
+</div>
+
+<p>Instead of the huge question ("what is the longest chain in the whole array?"), we ask a narrower one we might actually be able to answer:</p>
+
+<div class="ws">
+<b style="color:var(--gold2);font-size:1.05em">"What is the longest chain that <em>ends</em> on this element?"</b>
+</div>
+
+<p>Why is that a good question to get stuck on? Because a chain ending here is almost fully determined. The last element is pinned. The only unknown is what sits immediately before it.</p>
+
+<p>Whatever sits immediately before must be smaller in VALUE and earlier in INDEX. Exactly two candidates qualify, plus one possibility that is easy to forget: maybe <em>nothing</em> comes before, and the chain is the single element by itself.</p>
+
+<div class="hi">
+<b>The uncertainty, stated precisely:</b> three different chains could end here. Which is longest? We cannot tell by looking. We would need to know the LENGTH of the chain ending at <code>current_index = 2</code>, and the LENGTH of the chain ending at <code>current_index = 3</code>. Those are questions of exactly the same shape as the one we are stuck on.
+</div>
+
+<img src="dp/images/lis_03_frozen.png" alt="Frozen at index 4 with three ghost chains that could end there and a question mark over which is longest" class="scene-img">
+<p class="cap">The decision is not "take it or skip it". It is "which earlier chain do I attach to?"</p>
+
+<p>Notice what happened. While describing why we were stuck, we produced <strong>smaller copies of the same question</strong>. That is the signal recursion is about to be useful.</p>
+
+<div class="next"><b>So next:</b> we need something that answers "how long is the chain ending at that index?" without us solving it by hand.</div>
+
+
+<!-- ================= 5. PROMISE ================= -->
+<h2 id="s5"><span class="num">5</span>The Recursion Promise</h2>
+
+<div class="prev">We already know: to answer about <code>current_index = 4</code> we need answers about <code>current_index = 2</code> and <code>3</code>.</div>
+
+<p>Recursion is usually taught as "a function that calls itself", which is true and useless. Here is the usable version:</p>
+
+<div class="ws" style="border-left-color:var(--gold)">
+<b style="color:var(--gold2);font-size:1.05em">The promise:</b> if I hand the function a <em>smaller version of the same question</em>, it hands back the <em>correct answer</em> to that smaller question. I do not need to know how it got there. I only need to know what the answer <em>means</em>, so I can use it.
+</div>
+
+<div class="flow">
+<div class="node top"><code>longest_chain_ending_at(current_index = 4)</code><br><span class="eng">longest chain ending on <code>numbers[4] = 3</code></span></div>
+<div class="ar">&darr;&nbsp; asks: "how long is the chain ending at INDEX 3?"</div>
+<div class="node"><code>longest_chain_ending_at(current_index = 3)</code><br><span class="eng">longest chain ending on <code>numbers[3] = 2</code></span></div>
+<div class="ar up">&uarr;&nbsp; returns LENGTH 2, meaning the chain <code>1 &rarr; 2</code></div>
+<div class="node top"><code>longest_chain_ending_at(current_index = 4)</code><br><span class="eng">now it can finish: <code>1 &rarr; 2</code> plus its own element</span></div>
+</div>
+
+<p>One question this always raises, so let us answer it now: <em class="q">if every call needs a smaller call, when does it stop?</em></p>
+
+<p>Every call points at a <strong>strictly smaller INDEX</strong>. INDEX 4 asks INDEX 3, INDEX 3 asks INDEX 2, and INDEX 2 has nothing smaller to its left, so it answers directly. The ladder has a floor.</p>
+
+<details class="chk">
+<summary>Does <code>longest_chain_ending_at(3)</code> need to know who called it?</summary>
+<div class="ans">No, and that is the point of the promise. It answers one fixed question, "how long is the longest chain ending on <code>numbers[3]</code>?", and the answer is LENGTH 2 no matter who asked. The caller decides what to do with the number. If a call ever needed to know its caller, the question would not be self contained and recursion would not work here.</div>
+</details>
+
+<div class="next"><b>So next:</b> before drawing anything, pin down exactly what one call returns.</div>
+
+
+<!-- ================= 6. ONE CALL ================= -->
+<h2 id="s6"><span class="num">6</span>What Does One Call Mean?</h2>
+
+<div class="prev">We already know: a smaller call promises a correct answer, and every call points at a smaller INDEX.</div>
+
+<p>This is the most important definition on the page. If it stays fuzzy, the base case, the <code>+1</code>, the strip and the final answer all become guesswork.</p>
+
+<div class="ws" style="border-left-color:var(--gold)">
+<code style="color:var(--cyan);font-size:1.05em;font-weight:800">longest_chain_ending_at(current_index)</code>
+<p style="margin:10px 0 0;font-size:1.04em">returns <b>the LENGTH of the longest strictly increasing chain whose <span style="color:var(--gold2)">last element is <code>numbers[current_index]</code></span></b>.</p>
+</div>
+
+<p>Written out so the roles of every number are visible:</p>
+
+<div class="contract">
+<dt>call</dt><dd>longest_chain_ending_at(current_index = <span class="nI">3</span>)</dd>
+<dt>question</dt><dd style="font-family:inherit">longest chain that <b>ends</b> on that element</dd>
+<dt>value there</dt><dd>numbers[<span class="nI">3</span>] = <span class="nV">2</span></dd>
+<dt>returns</dt><dd>LENGTH <span class="nL">2</span></dd>
+<dt>meaning</dt><dd style="font-family:inherit">the chain <code>1 &rarr; 2</code> has two elements</dd>
+</div>
+
+<div class="hi">
+<b>The argument and the answer are different kinds of number.</b> The <span class="nI">3</span> going in is an INDEX, a position. The <span class="nL">2</span> coming out is a LENGTH, a count of elements. They are never interchangeable, and most LIS bugs come from treating one as the other.
+</div>
+
+<p>Four consequences, each preventing a specific bug:</p>
+
+<div class="tbl-wrap">
+<table>
+<tr><th class="c">&nbsp;</th><th>The promise says</th><th>Which prevents</th></tr>
+<tr><td class="c" style="color:#86efac;font-weight:800">yes</td><td><code>numbers[current_index]</code> is <b>always</b> included</td><td>confusing this with "best chain in the first few elements", a different question</td></tr>
+<tr><td class="c" style="color:#86efac;font-weight:800">yes</td><td>every earlier pick is <b>strictly smaller</b> in VALUE</td><td>accidentally allowing equal values</td></tr>
+<tr><td class="c" style="color:#fca5a5;font-weight:800">no</td><td>it never looks to the <b>right</b> of <code>current_index</code></td><td>the greedy trap, where the future rewrites an earlier decision</td></tr>
+<tr><td class="c" style="color:#fca5a5;font-weight:800">no</td><td>it is <b>not</b> the answer to the whole array</td><td>returning the last cell at the end, the single most common LIS bug</td></tr>
+</table>
+</div>
+
+<p>Read the definition across our example:</p>
+
+<div class="tbl-wrap">
+<table>
+<tr><th class="c">current_index</th><th class="c">VALUE there</th><th>The chain</th><th class="c">Returns</th></tr>
+<tr><td class="c"><span class="nI">0</span></td><td class="c"><span class="nV">5</span></td><td><code>5</code></td><td class="c">LENGTH <span class="nL">1</span></td></tr>
+<tr><td class="c"><span class="nI">1</span></td><td class="c"><span class="nV">6</span></td><td><code>5 &rarr; 6</code></td><td class="c">LENGTH <span class="nL">2</span></td></tr>
+<tr><td class="c"><span class="nI">3</span></td><td class="c"><span class="nV">2</span></td><td><code>1 &rarr; 2</code></td><td class="c">LENGTH <span class="nL">2</span></td></tr>
+<tr><td class="c"><span class="nI">4</span></td><td class="c"><span class="nV">3</span></td><td>?</td><td class="c" style="color:var(--gold2);font-weight:800">?</td></tr>
+</table>
+</div>
+
+<img src="dp/images/lis_04_promise.png" alt="A call delegating to a smaller call, and a contract block showing the call, the question, the value there, and the returned length" class="scene-img">
+<p class="cap">Delegate and trust on top, and exactly what comes back underneath.</p>
+
+<p>Notice <code>current_index = 1</code> returns LENGTH 2, which is bigger than what <code>current_index = 2</code> returns, even though INDEX 2 is further right. The returned LENGTH has nothing to do with how far along we are. It describes only the chain ending at that one spot.</p>
+
+<details class="chk">
+<summary>What does <code>longest_chain_ending_at(2)</code> return, and why is it not 3?</summary>
+<div class="ans">It returns LENGTH <span class="nL">1</span>. INDEX 2 holds VALUE <code>1</code>. For a chain to end there, the element before it must be earlier <em>and</em> smaller than 1. The only earlier values are <code>5</code> and <code>6</code>, both bigger. So the longest chain ending there is the single element, LENGTH 1. It is not 3 because three elements have been <em>passed</em>, and passing is not using. The promise counts chain links, not array positions. This is exactly the INDEX versus LENGTH confusion the contract block above is built to prevent.</div>
+</details>
+
+<div class="next"><b>So next:</b> with one call clear, follow a single call down and watch the answer come back.</div>
+
+
+<!-- ================= 7. ROUND TRIP ================= -->
+<h2 id="s7"><span class="num">7</span>Down to the Floor, and Back Up</h2>
+
+<div class="prev">We already know: one call returns the LENGTH of the chain ending at one INDEX.</div>
+
+<p>We are deliberately <strong>not</strong> drawing a recursion tree. A tree shows many things at once and is unreadable until you can read one path. So: one narrow path, all the way down, then all the way back.</p>
+
+<h3>Going down: asking smaller questions</h3>
+
+<div class="flow">
+<div class="node top"><code>longest_chain_ending_at(current_index = 4)</code><br>
+<span class="eng">VALUE there is 3. Longest chain ending on it?</span></div>
+<div class="ar">&darr;&nbsp; "I need a chain ending in something smaller than 3. Try INDEX 3, VALUE 2."</div>
+
+<div class="node"><code>longest_chain_ending_at(current_index = 3)</code><br>
+<span class="eng">VALUE there is 2. Longest chain ending on it?</span></div>
+<div class="ar">&darr;&nbsp; "I need something smaller than 2. Try INDEX 2, VALUE 1."</div>
+
+<div class="node base"><code>longest_chain_ending_at(current_index = 2)</code><br>
+<span class="eng">VALUE there is 1.</span><br>
+<b style="color:#86efac">BASE CASE</b> <span class="eng">nothing to the left is smaller, so nothing to delegate</span></div>
+</div>
+
+<p>Each step is smaller in two ways at once. The INDEX shrinks, and the number of candidates shrinks with it. That is what guarantees we land.</p>
+
+<h3>Reaching the base case, and why the answer is 1</h3>
+
+<p>At INDEX 2 the VALUE is <code>1</code>. To extend a chain onto it we would need an earlier element smaller than 1. Looking left we find <code>5</code> and <code>6</code>, both bigger. There is no smaller question to ask, so we answer directly.</p>
+
+<div class="ok">
+<b>The answer is LENGTH 1, not 0.</b> The chain consisting of just that element is a perfectly valid strictly increasing chain with one element in it. Returning 0 would claim no chain ends there at all, which is false. Every single element is always a chain of LENGTH 1, and that fact is the floor the whole recursion rests on.
+</div>
+
+<h3>Coming back up: using returned answers</h3>
+
+<p>Going down was asking. Coming up is <strong>using</strong>. This is the half people skip, and it is where every number on this page actually comes from.</p>
+
+<p><b>At <code>current_index = 3</code>,</b> having received LENGTH 1 from below:</p>
+
+<div class="units">
+<div class="term"><div class="big" style="color:var(--gold2)">1</div><div class="cap2">the element <code>numbers[3]</code> itself, one element</div></div>
+<div class="op">+</div>
+<div class="term"><div class="big nL">1</div><div class="cap2">LENGTH returned by the smaller call</div></div>
+<div class="op">=</div>
+<div class="term"><div class="big nL">2</div><div class="cap2">LENGTH of the chain <code>1 &rarr; 2</code></div></div>
+</div>
+
+<p><b>At <code>current_index = 4</code>,</b> having received LENGTH 2 from below:</p>
+
+<div class="units">
+<div class="term"><div class="big" style="color:var(--gold2)">1</div><div class="cap2">the element <code>numbers[4]</code> itself, one element</div></div>
+<div class="op">+</div>
+<div class="term"><div class="big nL">2</div><div class="cap2">LENGTH returned by the smaller call</div></div>
+<div class="op">=</div>
+<div class="term"><div class="big nL">3</div><div class="cap2">LENGTH of the chain <code>1 &rarr; 2 &rarr; 3</code></div></div>
+</div>
+
+<img src="dp/images/lis_05_roundtrip.png" alt="One narrow path descending to the base case and returning, with every arithmetic term labelled by what it counts" class="scene-img">
+<p class="cap">No number here is magic. Each one is what a smaller call handed back.</p>
+
+<p>Trace one number through. The <span class="nL">3</span> at the top is <code>1 + 2</code>. That <span class="nL">2</span> is not from the array, it is what the call below returned. And that 2 is <code>1 + 1</code>, where the inner 1 is what the base case handed up. So the final 3 is literally the base case's answer, transformed twice on the way up.</p>
+
+<details class="chk">
+<summary>At <code>current_index = 3</code> the sum is <code>1 + 1</code>. There is a VALUE 2 sitting right there. Why is it not <code>1 + 2</code>?</summary>
+<div class="ans">The visible <code>2</code> is a VALUE and VALUEs never enter this arithmetic. The two ones mean different things: the first is <b>one element</b>, our own <code>numbers[3]</code> being appended, and the second is a <b>returned LENGTH</b>, how many elements were in the chain ending at INDEX 2. We are counting links in a chain, not adding up the numbers inside it. This is why every term in the boxes above carries a caption saying what it counts.</div>
+</details>
+
+<div class="next"><b>So next:</b> INDEX 3 was only one option. What were the others?</div>
+
+
+<!-- ================= 8. CHOICES ================= -->
+<h2 id="s8"><span class="num">8</span>Discover All Legal Choices</h2>
+
+<div class="prev">We already know: attaching to INDEX 3 produced a chain of LENGTH 3.</div>
+
+<p>Standing at <code>current_index = 4</code>, the question "which earlier chain do I attach to?" has one candidate per earlier index, plus the option of attaching to nothing. Test all of them rather than assume.</p>
+
+<div class="tbl-wrap">
+<table>
+<tr><th class="c">previous_index</th><th class="c">VALUE there</th><th class="c">smaller than 3?</th><th>Result</th></tr>
+<tr><td class="c"><span class="nI">0</span></td><td class="c"><span class="nV">5</span></td><td class="c" style="color:#fca5a5;font-weight:800">no</td><td style="color:#fca5a5">illegal, 5 cannot sit before 3 in a rising chain</td></tr>
+<tr><td class="c"><span class="nI">1</span></td><td class="c"><span class="nV">6</span></td><td class="c" style="color:#fca5a5;font-weight:800">no</td><td style="color:#fca5a5">illegal, same reason</td></tr>
+<tr><td class="c"><span class="nI">2</span></td><td class="c"><span class="nV">1</span></td><td class="c" style="color:#86efac;font-weight:800">yes</td><td>legal. <code>1 +</code> LENGTH <span class="nL">1</span> = LENGTH <span class="nL">2</span></td></tr>
+<tr><td class="c"><span class="nI">3</span></td><td class="c"><span class="nV">2</span></td><td class="c" style="color:#86efac;font-weight:800">yes</td><td>legal. <code>1 +</code> LENGTH <span class="nL">2</span> = LENGTH <span class="nL">3</span></td></tr>
+<tr><td class="c">start fresh</td><td class="c">none</td><td class="c" style="color:#86efac;font-weight:800">always</td><td>legal. the chain is the single element = LENGTH <span class="nL">1</span></td></tr>
+</table>
+</div>
+
+<img src="dp/images/lis_06_choices.png" alt="Five candidates tested against index 4, two rejected as too big, two legal, plus the always legal start fresh branch" class="scene-img">
+<p class="cap">Five candidates, three legal futures, returning LENGTH 2, 3 and 1.</p>
+
+<h3>Why these are the only choices</h3>
+
+<p>Listing branches is not enough. We must argue nothing valid escapes them, or we could be quietly losing the answer the way greedy did.</p>
+
+<p>The argument is short. Take <em>any</em> valid chain ending on <code>numbers[4]</code>. There are only two possibilities:</p>
+
+<ul style="margin:10px 0 10px 22px">
+<li>It has some element immediately before. That element sits at some <code>previous_index &lt; 4</code> and must be smaller in VALUE. We tested <b>every</b> index below 4, so it was covered.</li>
+<li>It has nothing before. Then it is the single element, which is exactly the start fresh branch.</li>
+</ul>
+
+<div class="ok"><b>No chain ending at INDEX 4 escapes these branches.</b> Every chain either has a predecessor (covered by the loop over all earlier indices) or does not (covered by starting at LENGTH 1).</div>
+
+<div class="tbl-wrap">
+<table>
+<tr><th>Tempting extra branch</th><th>Why it is not needed</th></tr>
+<tr><td>"skip the current element"</td><td>Handled, but not here. Skipping means the answer chain ends somewhere else, and that case is covered by calling the function on that other index. Our promise says the element is always included, so "skip" is not this function's job.</td></tr>
+<tr><td>"attach to the closest smaller element"</td><td>That is greedy again. Here the closest smaller element happens to be right, but nothing guarantees it. That is a guess, not a branch.</td></tr>
+<tr><td>"attach to two earlier elements at once"</td><td>A chain has exactly one element immediately before the last. The rest is already counted inside the returned LENGTH.</td></tr>
+</table>
+</div>
+
+<details class="chk">
+<summary>Without the start fresh branch, what would the code return for <code>numbers = [9, 8, 7]</code>?</summary>
+<div class="ans">Zero, which is wrong. In <code>[9, 8, 7]</code> no element has a smaller element to its left, so no legal <code>previous_index</code> is ever found and there is nothing to take a max over. The correct answer is LENGTH <b>1</b>, since any single element is a chain. This is why start fresh is not an optional extra: it is the base case in disguise, and it is why we initialise <code>longest_so_far</code> to 1 rather than 0.</div>
+</details>
+
+<div class="next"><b>So next:</b> before combining those three numbers, work out what information a call actually needs.</div>
+
+
+<!-- ================= 9. BOOKMARK ================= -->
+<h2 id="s9"><span class="num">9</span>Discover the Bookmark</h2>
+
+<div class="prev">We already know: a call tries every legal earlier index, plus starting fresh.</div>
+
+<p>Suppose we stop halfway and hand the work to someone else, leaving them a single note. <strong>What has to be on that note</strong> for them to finish without asking us anything?</p>
+
+<p>The test for each candidate is the same: <em class="q">if two situations differ only in this, can the remaining answer differ?</em> If no, it does not belong on the note.</p>
+
+<div class="tbl-wrap">
+<table>
+<tr><th>Candidate for the note</th><th class="c">Keep?</th><th>Reasoning</th></tr>
+<tr><td><code>current_index</code></td><td class="c" style="color:#86efac;font-weight:800">keep</td><td>It names which element the chain must end on, and fixes which indices count as earlier. Change it and the answer changes.</td></tr>
+<tr><td><code>numbers[current_index]</code></td><td class="c" style="color:#fca5a5;font-weight:800">drop</td><td>Recoverable. Given the index and the array we already have the value, so writing it down adds nothing.</td></tr>
+<tr><td>the chain picked so far</td><td class="c" style="color:#fca5a5;font-weight:800">drop</td><td>We never need the elements, only how many, and that comes back as the returned LENGTH. Keeping the chain would make two identical questions look different.</td></tr>
+<tr><td>how many elements remain</td><td class="c" style="color:#fca5a5;font-weight:800">drop</td><td>That is <code>current_index</code> counted from the other end. Same information twice.</td></tr>
+</table>
+</div>
+
+<div class="ws" style="border-left-color:var(--gold)">
+<b style="color:var(--gold2)">The bookmark is one number: <code>current_index</code>.</b>
+<p style="margin:6px 0 0">A state is exactly that: the smallest bookmark that uniquely identifies the remaining question. Here, "the longest chain ending at this index" is fully determined by the index alone.</p>
+</div>
+
+<h3>Reading the bookmark, region by region</h3>
+
+<p>A bookmark is only useful if we can say what it means about every part of the array. Set <code>current_index = 3</code>:</p>
+
+<div class="strip">
+<div class="rl">INDEX</div>
+<div class="ix">0</div><div class="ix">1</div><div class="ix">2</div><div class="ix">3</div><div class="ix">4</div>
+<div class="rl">VALUE</div>
+<div class="vb blue">5</div><div class="vb blue">6</div><div class="vb blue">1</div><div class="vb gold">2</div><div class="vb dim">3</div>
+</div>
+
+<div class="tbl-wrap">
+<table>
+<tr><th class="c">Region</th><th>What it means to this call</th></tr>
+<tr><td class="c" style="color:var(--idx);font-weight:800">before</td><td>the candidate predecessors. This call tests each for legality.</td></tr>
+<tr><td class="c" style="color:var(--gold2);font-weight:800">at</td><td>the element this chain <b>must</b> end on. Not optional, not skippable.</td></tr>
+<tr><td class="c" style="color:var(--muted);font-weight:800">after</td><td>completely invisible. This call has no opinion about it, which is exactly what makes the call reusable by anyone.</td></tr>
+</table>
+</div>
+
+<img src="dp/images/lis_07_bookmark.png" alt="The bookmark reduced to a single index, with before, at and after regions labelled on the array" class="scene-img">
+<p class="cap">One number is enough. The region to the right does not exist as far as this call is concerned.</p>
+
+<h3>Deriving the transitions</h3>
+
+<div class="tbl-wrap">
+<table>
+<tr><th>Branch</th><th>Bookmark moves</th><th>Gained now</th><th>Meaning</th></tr>
+<tr><td>attach to a legal earlier index</td><td><code>current_index</code> &rarr; <code>previous_index</code></td><td><code>+1</code> element</td><td>hand over "chain ending there" and add our own element to whatever comes back</td></tr>
+<tr><td>start fresh</td><td>nowhere, no call</td><td>LENGTH <span class="nL">1</span></td><td>the chain is our element alone, nothing to delegate</td></tr>
+</table>
+</div>
+
+<p>Note the direction: the bookmark always moves <strong>left</strong>. That single fact will later tell us the strip must be filled left to right.</p>
+
+<div class="next"><b>So next:</b> three branches returned LENGTH 2, 3 and 1. Time to derive how they combine.</div>
+
+
+<!-- ================= 10. OPERATOR ================= -->
+<h2 id="s10"><span class="num">10</span>Derive the Operator</h2>
+
+<div class="prev">We already know: at INDEX 4 the legal branches returned LENGTH 2, 3 and 1.</div>
+
+<p>We have three numbers and must produce one. Nothing in the code tells us which operation. The <strong>wording of the question</strong> does.</p>
+
+<h3>Why max</h3>
+
+<p>Each branch produced a real, legal chain ending on our element:</p>
+
+<div class="tbl-wrap">
+<table>
+<tr><th>Branch</th><th>The actual chain</th><th class="c">LENGTH</th></tr>
+<tr><td>attach to INDEX 2</td><td><code>1 &rarr; 3</code></td><td class="c"><span class="nL">2</span></td></tr>
+<tr><td>attach to INDEX 3</td><td><code>1 &rarr; 2 &rarr; 3</code></td><td class="c" style="font-weight:800"><span class="nL">3</span> &nbsp;winner</td></tr>
+<tr><td>start fresh</td><td><code>3</code></td><td class="c"><span class="nL">1</span></td></tr>
+</table>
+</div>
+
+<p>All three are valid. The problem asked for the <strong>longest</strong>, so keep the biggest, and that operation is <code>max</code>. Change the wording and the operator changes with it:</p>
+
+<div class="tbl-wrap">
+<table>
+<tr><th>If the question says</th><th class="c">Combine futures with</th></tr>
+<tr><td>longest, largest, maximum</td><td class="c"><code>max</code></td></tr>
+<tr><td>shortest, cheapest, minimum</td><td class="c"><code>min</code></td></tr>
+<tr><td>how many ways</td><td class="c"><code>+</code> across every branch</td></tr>
+<tr><td>is it possible at all</td><td class="c"><code>or</code></td></tr>
+<tr><td>must all of them hold</td><td class="c"><code>and</code></td></tr>
+</table>
+</div>
+
+<h3>Why +1</h3>
+
+<p>Ask a narrower question: <em class="q">what did this branch accomplish immediately, before any delegation?</em></p>
+
+<p>It placed exactly one element on the end of a chain the smaller call already built. One element joined, so the count rises by exactly one.</p>
+
+<img src="dp/images/lis_08_operator.png" alt="Three legal chains compared to derive max, and one element snapping onto a chain to derive plus one" class="scene-img">
+<p class="cap">max comes from the word "longest". The +1 comes from placing exactly one element.</p>
+
+<div class="warn">
+<b>The +1 counts an ELEMENT, never a VALUE.</b> At INDEX 4 the VALUE is <code>3</code> and it is tempting to write <code>+3</code>. But we count how many elements are in the chain, not their sum. On <code>numbers = [1, 9]</code> the answer is LENGTH 2, not 10. Had the problem asked for the largest <em>sum</em> of an increasing subsequence, then and only then would the VALUE be added instead of 1.
+</div>
+
+<details class="chk">
+<summary>If the problem asked "how many different longest increasing subsequences are there?", which of max and +1 would change?</summary>
+<div class="ans">Both, differently. Counting chains means branches no longer compete, they accumulate, so <code>max</code> becomes a sum over the branches that tie for the best LENGTH. And <code>+1</code> leaves the counting arithmetic entirely, because appending an element extends a chain rather than creating an extra one. You would track two numbers per index, a best LENGTH and a COUNT of chains reaching it. Same story shape, different operators, which is the whole reason we derive operators instead of memorising them.</div>
+</details>
+
+
+<!-- ================= 11. RECURRENCE ================= -->
+<h2 id="s11"><span class="num">11</span>Write the Recurrence</h2>
+
+<div class="prev">We already know: every branch, every transition, and both operators.</div>
+
+<p>Only now is it safe to write the formula, because it introduces nothing new. It is shorthand for the last four sections.</p>
+
+<pre><code>longest_chain_ending_at(current_index) = max(
+    1,
+    max over every previous_index &lt; current_index
+        where numbers[previous_index] &lt; numbers[current_index]
+        of  1 + longest_chain_ending_at(previous_index)
+)
+
+answer = max over every current_index of longest_chain_ending_at(current_index)</code></pre>
+
+<div class="tbl-wrap">
+<table>
+<tr><th>Piece</th><th>Which section it came from</th></tr>
+<tr><td>the leading <code>1</code></td><td>the start fresh branch, section 8. Our element alone is already a chain.</td></tr>
+<tr><td><code>previous_index &lt; current_index</code></td><td>predecessors come earlier in the array, section 1.</td></tr>
+<tr><td><code>numbers[previous_index] &lt; numbers[current_index]</code></td><td>strictly increasing, section 1. Note <code>&lt;</code>, not <code>&lt;=</code>.</td></tr>
+<tr><td>the inner call</td><td>the recursion promise, section 5.</td></tr>
+<tr><td><code>1 +</code></td><td>placing our own element, section 10.</td></tr>
+<tr><td>the outer <code>max</code></td><td>the word "longest", section 10.</td></tr>
+<tr><td>the final <code>max</code> over every index</td><td>the chain has to end <em>somewhere</em>, and nobody told us where, section 6.</td></tr>
+</table>
+</div>
+
+<div class="hi">
+<b>That last line is not decoration.</b> The function only ever answers about one ending point. The problem never said where the chain ends, so we ask at every possible ending and keep the best. Forgetting this line is the most common way to get LIS almost right.
+</div>
+
+
+<!-- ================= 12. STORY TO CODE ================= -->
+<h2 id="s12"><span class="num">12</span>From the Story to the Code</h2>
+
+<p>Code is not a new idea, it is the story written so a machine will follow it. Here is the exact mapping, so nothing in the next section arrives unexplained.</p>
+
+<div class="tbl-wrap">
+<table>
+<tr><th>The human idea</th><th>Becomes, in code</th></tr>
+<tr><td>"longest chain ending at this index"</td><td>the function name itself, <code>longest_chain_ending_at</code></td></tr>
+<tr><td>the bookmark</td><td>the parameter <code>current_index</code></td></tr>
+<tr><td>"my element alone is already a chain"</td><td><code>longest_so_far = 1</code></td></tr>
+<tr><td>"try every earlier element as predecessor"</td><td><code>for previous_index in range(current_index)</code></td></tr>
+<tr><td>"only smaller values may sit before mine"</td><td><code>if numbers[previous_index] &lt; numbers[current_index]</code></td></tr>
+<tr><td>"delegate the smaller question"</td><td><code>longest_chain_ending_at(previous_index)</code></td></tr>
+<tr><td>"add my own element"</td><td><code>1 +</code></td></tr>
+<tr><td>"keep the longest of the futures"</td><td><code>max(longest_so_far, ...)</code></td></tr>
+<tr><td>"hand my answer to whoever asked"</td><td><code>return longest_so_far</code></td></tr>
+<tr><td>"the chain can end anywhere"</td><td>the final <code>max</code> over every index</td></tr>
+</table>
+</div>
+
+
+<!-- ================= 13. CODE ================= -->
+<h2 id="s13"><span class="num">13</span>Marked Code Walkthrough</h2>
+
+<div class="prev">We already know: every line below corresponds to something we derived by hand.</div>
+
+<pre><code><span style="color:var(--muted)"># Returns the LENGTH of the longest strictly increasing chain
+# whose last element is numbers[current_index].</span>
+<span class="ln ln-pink">def longest_chain_ending_at(current_index):</span>
+<span class="ln ln-green">    longest_so_far = 1</span>
+<span class="ln ln-orange">    for previous_index in range(current_index):</span>
+<span class="ln ln-yellow">        if numbers[previous_index] &lt; numbers[current_index]:</span>
+<span class="ln ln-red">            longest_so_far = max(longest_so_far,
+                                 1 + longest_chain_ending_at(previous_index))   <span class="recflag"># RECURSION HAPPENS HERE</span></span>
+<span class="ln ln-purple">    return longest_so_far</span>
+
+
+<span class="ln ln-teal">answer = max(longest_chain_ending_at(current_index)
+             for current_index in range(len(numbers)))</span></code></pre>
+
+<div class="cards">
+<div class="cd cd-pink"><b>def longest_chain_ending_at(current_index):</b>
+The bookmark becomes the parameter. One INDEX in, one LENGTH out. Nothing else is remembered between calls, which is exactly what section 9 argued for. The name says what it returns, so you never have to remember what it does.</div>
+
+<div class="cd cd-green"><b>longest_so_far = 1</b>
+This one line is the start fresh branch <em>and</em> the base case at once. It asserts that a chain of just our own element always exists. If no legal predecessor is ever found, the loop body never runs and this 1 is what gets returned. Delete it and <code>[9, 8, 7]</code> returns 0.</div>
+
+<div class="cd cd-orange"><b>for previous_index in range(current_index):</b>
+Try every earlier index as the element immediately before ours. Not the nearest, not the first that works, <em>all</em> of them. This exhaustive sweep is precisely what greedy refused to do, and it is why we no longer lose the answer.</div>
+
+<div class="cd cd-yellow"><b>if numbers[previous_index] &lt; numbers[current_index]:</b>
+The legality test, enforcing "strictly increasing". Change it to <code>&lt;=</code> and <code>[2, 2, 2]</code> starts reporting 3. Note the loop ranges over <b>INDEXes</b> while this line compares <b>VALUEs</b>. Both conditions are needed: earlier in position, and smaller in value.</div>
+
+<div class="cd cd-red"><b>longest_so_far = max(longest_so_far, 1 + longest_chain_ending_at(previous_index))</b>
+Three derived ideas on one line. The inner call is the delegation, returning a LENGTH. The <code>1 +</code> pays for appending our own element. The <code>max</code> keeps this branch only if it beats everything tried so far. Note that <code>numbers[current_index]</code> never enters the arithmetic, only the count does.</div>
+
+<div class="cd cd-purple"><b>return longest_so_far</b>
+The promise, kept. What we hand back must be "the LENGTH of the longest chain ending exactly here", and it is: we started at 1 and only ever replaced it with a longer legal chain that also ends here.</div>
+
+<div class="cd cd-teal"><b>answer = max(longest_chain_ending_at(current_index) for current_index in range(len(numbers)))</b>
+Outside the function. The chain must end somewhere and nobody told us where, so ask at every index and keep the best. This line is <b>not</b> optional and it is <b>not</b> the value at the last index.</div>
+</div>
+
+<div class="aloud"><b>Read the recursive line aloud</b>
+"Take the LENGTH of the best chain ending at the earlier index, add one for my own element, and keep that only if it beats the best I have found so far."</div>
+
+<img src="dp/images/lis_09_code.png" alt="Colour highlighted code with one explanation card per line and a flag marking the recursive line" class="scene-img">
+<p class="cap">Six lines, six ideas, all derived before they were written.</p>
+
+<div class="ok"><b>The real test:</b> if this code were deleted, sections 4 through 12 would let you write it back. That is the difference between understanding a solution and having seen one.</div>
+
+<details class="chk">
+<summary>Which single line stops this from looping forever?</summary>
+<div class="ans">The orange line, <code>for previous_index in range(current_index)</code>. Because <code>previous_index</code> is always strictly less than <code>current_index</code>, every recursive call moves to a smaller INDEX, and indices cannot go below 0, so the chain of calls must terminate. If it were <code>range(len(numbers))</code> a call could delegate to itself or to a larger index and recurse forever. The legality test does not save us there, since it constrains VALUEs, not direction.</div>
+</details>
+
+<div class="next"><b>So next:</b> run it on the whole array and account for every number it produces.</div>
+
+
+<!-- ================= 14. TRACE ================= -->
+<h2 id="s14"><span class="num">14</span>Every Call, Every Return</h2>
+
+<div class="prev">We already know: each call scans every earlier index and keeps the best legal extension.</div>
+
+<div class="tbl-wrap">
+<table>
+<tr><th class="c">current_index</th><th class="c">VALUE</th><th>Legal candidates tested</th><th class="c">Returns</th><th>Which means</th></tr>
+<tr><td class="c"><span class="nI">0</span></td><td class="c"><span class="nV">5</span></td><td>none exist</td><td class="c">LENGTH <span class="nL">1</span></td><td>chain <code>5</code></td></tr>
+<tr><td class="c"><span class="nI">1</span></td><td class="c"><span class="nV">6</span></td><td>INDEX 0: 5 &lt; 6 &rarr; <code>1 + 1</code></td><td class="c">LENGTH <span class="nL">2</span></td><td>chain <code>5 &rarr; 6</code></td></tr>
+<tr><td class="c"><span class="nI">2</span></td><td class="c"><span class="nV">1</span></td><td>INDEX 0: 5 &lt; 1 no.<br>INDEX 1: 6 &lt; 1 no.</td><td class="c">LENGTH <span class="nL">1</span></td><td>chain <code>1</code></td></tr>
+<tr><td class="c"><span class="nI">3</span></td><td class="c"><span class="nV">2</span></td><td>INDEX 2: 1 &lt; 2 &rarr; <code>1 + 1</code></td><td class="c">LENGTH <span class="nL">2</span></td><td>chain <code>1 &rarr; 2</code></td></tr>
+<tr><td class="c"><span class="nI">4</span></td><td class="c"><span class="nV">3</span></td><td>INDEX 2 &rarr; <code>1 + 1 = 2</code><br>INDEX 3 &rarr; <code>1 + 2 = 3</code><br>then <code>max(1, 2, 3)</code></td><td class="c">LENGTH <span class="nL">3</span></td><td>chain <code>1 &rarr; 2 &rarr; 3</code></td></tr>
+</table>
+</div>
+
+<h3>Turning five numbers into one answer</h3>
+
+<p>Here is the question the framework insists we answer: <em class="q">how does a function that only knows one index produce the answer for the whole array?</em></p>
+
+<p>It does not, on its own. Each call answers a narrow question. The final step is ours:</p>
+
+<div class="strip">
+<div class="rl">INDEX</div>
+<div class="ix">0</div><div class="ix">1</div><div class="ix">2</div><div class="ix">3</div><div class="ix">4</div>
+<div class="rl">RETURNED LENGTH</div>
+<div class="vb len">1</div><div class="vb len">2</div><div class="vb len">1</div><div class="vb len">2</div><div class="vb gold">3</div>
+<div class="snote"><code>max(1, 2, 1, 2, 3)</code> = LENGTH <b style="color:var(--gold2)">3</b>, the chain <code>1 &rarr; 2 &rarr; 3</code></div>
+</div>
+
+<img src="dp/images/lis_10_trace.png" alt="All five calls with what they found and returned, and the final max taken across every ending" class="scene-img">
+<p class="cap">The last cell holds 3 here by coincidence. It is the max, not the position, that gives the answer.</p>
+
+<div class="warn">
+<b>Do not read the wrong cell.</b> On this array the last cell happens to hold the answer, which makes <code>return longest_chain_ending_at[-1]</code> very easy to write and pass. On <code>numbers = [1, 2, 3, 1]</code> the returned lengths are <code>1, 2, 3, 1</code>, the last is LENGTH 1, and the answer is LENGTH 3. Always take the max.
+</div>
+
+<details class="chk">
+<summary>Why does <code>current_index = 2</code> return LENGTH 1 when two elements sit to its left?</summary>
+<div class="ans">Because both of them, VALUEs <code>5</code> and <code>6</code>, are larger than the VALUE <code>1</code> at INDEX 2. Neither can legally sit before it in a strictly increasing chain, so the legality test rejects both and the loop never makes a recursive call. The <code>longest_so_far = 1</code> line survives untouched and gets returned. Having elements to your left is irrelevant. Having <em>smaller</em> elements to your left is what matters.</div>
+</details>
+
+<div class="next"><b>So next:</b> look carefully at that trace. One question was answered more than once.</div>
+
+
+<!-- ================= 15. REPEATED ================= -->
+<h2 id="s15"><span class="num">15</span>What Is Calculated Again?</h2>
+
+<div class="prev">We already know: every call returns a LENGTH, and the answer is the max over all of them.</div>
+
+<p>Saying "there are overlapping subproblems" explains nothing. Let us find the exact repeat and name it.</p>
+
+<p>Follow the calls made while computing <code>longest_chain_ending_at(4)</code>. Two different routes reach the same place:</p>
+
+<div class="tbl-wrap">
+<table>
+<tr><th class="c">Route</th><th>The path taken</th><th>Why it goes there</th></tr>
+<tr><td class="c"><b style="color:var(--orange)">A</b></td><td>INDEX 4 &rarr; INDEX 2</td><td>VALUE 1 is smaller than VALUE 3, so it is a legal predecessor</td></tr>
+<tr><td class="c"><b style="color:var(--idx)">B</b></td><td>INDEX 4 &rarr; INDEX 3 &rarr; INDEX 2</td><td>VALUE 2 precedes VALUE 3, and VALUE 1 precedes VALUE 2</td></tr>
+</table>
+</div>
+
+<div class="tbl-wrap">
+<table>
+<tr><th class="c">Occurrence</th><th>State</th><th>The question, in English</th><th class="c">Already solved?</th></tr>
+<tr><td class="c">1st</td><td><code>current_index = 2</code></td><td>longest chain ending on the VALUE 1</td><td class="c" style="color:#fca5a5;font-weight:800">no, compute it</td></tr>
+<tr><td class="c">2nd</td><td><code>current_index = 2</code></td><td>longest chain ending on the VALUE 1</td><td class="c" style="color:#86efac;font-weight:800">yes, identical question</td></tr>
+</table>
+</div>
+
+<img src="dp/images/lis_11_repeated.png" alt="Two different recursion paths converging on the identical call for index 2, stamped solved twice" class="scene-img">
+<p class="cap">Two different histories, one identical remaining question.</p>
+
+<div class="hi">
+<b>Be precise about the waste.</b> It is not that the number 1 appears twice, numbers repeat harmlessly all the time. It is that the program <em>re-derives the answer to the same question</em>. The second time, it rescans the earlier indices, retests both comparisons, and rebuilds a conclusion it already reached.
+</div>
+
+<p>And that is only inside one subtree. Across the whole top level loop, <code>current_index = 2</code> is reached <b>four</b> separate times: once when the top level asks about index 2 itself, once inside the call for index 3, and twice more inside the call for index 4 (directly, and again by way of index 3). On a strictly increasing array this compounds and the call count grows exponentially.</p>
+
+<div class="ok"><b>On <code>[1, 2, 3, ..., 20]</code>: twenty distinct questions, 1,048,575 calls.</b> That gap is the entire justification for what comes next.</div>
+
+<div class="next"><b>So next:</b> the fix is embarrassingly direct. Write the answer down the first time.</div>
+
+
+<!-- ================= 16. MEMOIZATION ================= -->
+<h2 id="s16"><span class="num">16</span>Memoization</h2>
+
+<div class="prev">We already know: the same index was asked and answered more than once, identically.</div>
+
+<p>Memoization is one sentence: <strong>before solving a bookmark, check whether we already answered it.</strong></p>
+
+<p>Both pieces follow from what we built. The <strong>key</strong> is the state, which section 9 established is just <code>current_index</code>. The <strong>value</strong> is whatever the function would have returned, which section 6 established is a LENGTH.</p>
+
+<pre><code><span class="ln ln-teal">solved_lengths = {}</span>
+
+def longest_chain_ending_at(current_index):
+<span class="ln ln-teal">    if current_index in solved_lengths:</span>
+<span class="ln ln-teal">        return solved_lengths[current_index]</span>
+
+    longest_so_far = 1
+    for previous_index in range(current_index):
+        if numbers[previous_index] &lt; numbers[current_index]:
+            longest_so_far = max(longest_so_far,
+                                 1 + longest_chain_ending_at(previous_index))
+
+<span class="ln ln-teal">    solved_lengths[current_index] = longest_so_far</span>
+    return longest_so_far
+
+
+answer = max(longest_chain_ending_at(current_index)
+             for current_index in range(len(numbers)))</code></pre>
+
+<div class="cards">
+<div class="cd cd-teal"><b>solved_lengths = {}</b>
+The cabinet, empty at the start. One drawer per index.</div>
+<div class="cd cd-teal"><b>if current_index in solved_lengths: return solved_lengths[current_index]</b>
+Someone asked this exact question before. Hand back the same answer without redoing work. This is the only line that removes anything.</div>
+<div class="cd cd-teal"><b>solved_lengths[current_index] = longest_so_far</b>
+File the answer before returning it, so the next caller finds it. It goes <em>after</em> the loop, when the value is final.</div>
+</div>
+
+<div class="aloud"><b>Read one drawer aloud</b>
+<code>solved_lengths[2] = 1</code> means "the longest chain ending on the VALUE 1 at INDEX 2 has one element". The key is an INDEX, the stored value is a LENGTH, and that sentence is the function promise word for word.</div>
+
+<img src="dp/images/lis_12_memo.png" alt="A cache drawer keyed by index storing chain lengths, with the three added lines highlighted" class="scene-img">
+<p class="cap">The key is the bookmark. The value is what the function would have returned.</p>
+
+<div class="tbl-wrap">
+<table>
+<tr><th class="c">Gone</th><th class="c">Completely unchanged</th></tr>
+<tr><td>solving the same index twice</td><td>the promise, the choices, the legality test, the <code>+1</code>, the <code>max</code>, and every value ever returned</td></tr>
+</table>
+</div>
+
+<p>The complexity collapses. There are <code>n</code> distinct states, each doing a scan of at most <code>n</code> earlier indices, so we go from exponential to <strong>O(n<sup>2</sup>)</strong> time and <strong>O(n)</strong> space.</p>
+
+<details class="chk">
+<summary>Why is the cache keyed only by <code>current_index</code>, with nothing about the chain built so far?</summary>
+<div class="ans">Because the chain built so far cannot change the answer. The call for INDEX 2 means "longest chain ending on the VALUE 1", and that is LENGTH 1 regardless of who asked or what they had collected. Section 9 tested this candidate and dropped it. If the answer <em>did</em> depend on the caller's history, the index alone would not identify the question, the cache would return wrong answers, and we would have chosen the state incorrectly. A cache key that is too small is not a caching bug, it is a state bug.</div>
+</details>
+
+<div class="next"><b>So next:</b> if every index is solved exactly once anyway, why make calls at all?</div>
+
+
+<!-- ================= 17. CALL TO CELL ================= -->
+<h2 id="s17"><span class="num">17</span>Recursion Becomes a Table</h2>
+
+<div class="prev">We already know: each index is solved exactly once and stored under that index.</div>
+
+<p>Look at what the cache became: a set of slots, one per index, each holding a LENGTH. That is an array. And an array indexed by position is a table.</p>
+
+<p>So we keep the name. The only thing that changes is the brackets:</p>
+
+<div class="ws" style="border-left-color:var(--gold);text-align:center">
+<code style="font-size:1.15em;color:var(--cyan);font-weight:800">longest_chain_ending_at<span style="color:var(--gold2)">(</span>2<span style="color:var(--gold2)">)</span></code>
+<span style="color:var(--muted);margin:0 12px">becomes</span>
+<code style="font-size:1.15em;color:var(--cyan);font-weight:800">longest_chain_ending_at<span style="color:var(--gold2)">[</span>2<span style="color:var(--gold2)">]</span></code>
+<p style="margin:8px 0 0;font-size:.95em">Same name, same question, same answer. Round brackets ask for it, square brackets look it up.</p>
+</div>
+
+<div class="tbl-wrap">
+<table>
+<tr><th>Recursion</th><th>Memoization</th><th>Table</th></tr>
+<tr><td><code>longest_chain_ending_at(3)</code></td><td><code>solved_lengths[3]</code></td><td><code>longest_chain_ending_at[3]</code></td></tr>
+<tr><td>the function's promise</td><td>what the stored value means</td><td>what the cell means</td></tr>
+<tr><td>base case returns LENGTH 1</td><td>first value stored</td><td>cell initialised to 1</td></tr>
+<tr><td>recursive call on an earlier index</td><td>cache lookup</td><td>reading a cell to the <b>left</b></td></tr>
+<tr><td>value returned upward</td><td>value filed in the drawer</td><td>value written into the cell</td></tr>
+</table>
+</div>
+
+<img src="dp/images/lis_13_call_to_cell.png" alt="A function call morphing into a cache entry and then into a table cell, all holding the same length" class="scene-img">
+<p class="cap">A call, a cache entry and a cell are three containers for one identical fact.</p>
+
+<p>So what actually differs? Only the <strong>order answers get produced</strong>. Recursion asks for an answer the moment it needs it, and if the answer does not exist yet it goes and computes it. A table flips this: fill cells in an order where every cell a formula needs is <em>already</em> filled. Then no asking is required, only reading.</p>
+
+<p>What order works? Section 9 already told us. The bookmark always moves <strong>left</strong>. So filling left to right means everything we need is behind us and done.</p>
+
+<div class="next"><b>So next:</b> fill the strip and read every cell out loud.</div>
+
+
+<!-- ================= 18. TABULATION ================= -->
+<h2 id="s18"><span class="num">18</span>Filling the Strip</h2>
+
+<div class="prev">We already know: the cell holds exactly what the call returned, and left to right is a safe order.</div>
+
+<p>One dimension, one cell per index. Every cell starts at LENGTH <span class="nL">1</span>, which is the start fresh branch written as an initialisation instead of a branch.</p>
+
+<div class="strip">
+<div class="rl">INDEX</div>
+<div class="ix">0</div><div class="ix">1</div><div class="ix">2</div><div class="ix">3</div><div class="ix">4</div>
+<div class="rl">VALUE</div>
+<div class="vb">5</div><div class="vb">6</div><div class="vb">1</div><div class="vb">2</div><div class="vb">3</div>
+<div class="rl">LENGTH</div>
+<div class="vb len">1</div><div class="vb len">1</div><div class="vb len">1</div><div class="vb len">1</div><div class="vb len">1</div>
+<div class="snote">every cell starts at LENGTH 1: one element is already a chain</div>
+</div>
+
+<div class="tbl-wrap">
+<table>
+<tr><th class="c">Cell</th><th>Cells it reads, and the test</th><th class="c">Final</th><th>Said out loud</th></tr>
+<tr><td class="c"><code>[0]</code><br>VALUE 5</td><td>nothing to the left</td><td class="c">LENGTH <span class="nL">1</span></td><td>longest chain ending on the 5 is <code>5</code></td></tr>
+<tr><td class="c"><code>[1]</code><br>VALUE 6</td><td>reads <code>[0]</code>. 5 &lt; 6 yes, so <code>1 + 1</code></td><td class="c">LENGTH <span class="nL">2</span></td><td>longest chain ending on the 6 is <code>5 &rarr; 6</code></td></tr>
+<tr><td class="c"><code>[2]</code><br>VALUE 1</td><td>reads <code>[0]</code>: 5 &lt; 1 no.<br>reads <code>[1]</code>: 6 &lt; 1 no.<br>nothing legal, stays initialised</td><td class="c">LENGTH <span class="nL">1</span></td><td>longest chain ending on the 1 is <code>1</code></td></tr>
+<tr><td class="c"><code>[3]</code><br>VALUE 2</td><td>0 and 1 fail the test.<br>reads <code>[2]</code>: 1 &lt; 2 yes, so <code>1 + 1</code></td><td class="c">LENGTH <span class="nL">2</span></td><td>longest chain ending on the 2 is <code>1 &rarr; 2</code></td></tr>
+<tr><td class="c"><code>[4]</code><br>VALUE 3</td><td>0 and 1 fail the test.<br>reads <code>[2]</code>: <code>1 + 1 = 2</code><br>reads <code>[3]</code>: <code>1 + 2 = 3</code><br>keeps the max</td><td class="c">LENGTH <span class="nL">3</span></td><td>longest chain ending on the 3 is <code>1 &rarr; 2 &rarr; 3</code></td></tr>
+</table>
+</div>
+
+<div class="strip">
+<div class="rl">INDEX</div>
+<div class="ix">0</div><div class="ix">1</div><div class="ix">2</div><div class="ix">3</div><div class="ix">4</div>
+<div class="rl">LENGTH</div>
+<div class="vb len">1</div><div class="vb len">2</div><div class="vb len">1</div><div class="vb len">2</div><div class="vb gold">3</div>
+<div class="snote">filled. <code>max(1, 2, 1, 2, 3)</code> = LENGTH <b style="color:var(--gold2)">3</b></div>
+</div>
+
+<p>Compare that strip against the trace table in section 14. Identical, cell for cell, because they answer the same five questions.</p>
+
+<img src="dp/images/lis_14_tabulation.png" alt="The strip filled cell by cell with every read arrow pointing left, and the final max over the strip" class="scene-img">
+<p class="cap">Every arrow points left, which is exactly why filling left to right is safe.</p>
+
+<h3>Why the fill order works</h3>
+
+<p>Cell <code>current_index</code> only reads cells at smaller indices. When we arrive, every one of those is already finalised. No cell needs a value from its right, so a single left to right pass is enough. If a dependency ever pointed the other way, this order would read an unfinished cell and produce nonsense.</p>
+
+<pre><code>def length_of_lis(numbers):
+    if not numbers:
+        return 0
+
+    <span style="color:var(--muted)"># longest_chain_ending_at[k] = LENGTH of the longest chain ending at index k</span>
+    longest_chain_ending_at = [1] * len(numbers)
+
+    for current_index in range(len(numbers)):
+        for previous_index in range(current_index):
+            if numbers[previous_index] &lt; numbers[current_index]:
+                longest_chain_ending_at[current_index] = max(
+                    longest_chain_ending_at[current_index],
+                    1 + longest_chain_ending_at[previous_index])
+
+    return max(longest_chain_ending_at)</code></pre>
+
+<p>No recursion, no cache, no stack depth. Same five answers, produced in an order that guarantees they are ready. <strong>O(n<sup>2</sup>)</strong> time, <strong>O(n)</strong> space.</p>
+
+<details class="chk">
+<summary>Could we fill the strip right to left instead?</summary>
+<div class="ans">Not with this state definition. Each cell reads cells to its <em>left</em>, so going right to left would read cells not yet computed, all still holding their initial 1. On our example cell <code>[4]</code> would compute <code>1 + 1 = 2</code> from an untouched <code>[3]</code> and we would report LENGTH 2 instead of 3. You <em>can</em> build a right to left version, but only by redefining the state as "longest chain <b>starting</b> at this index", which flips every dependency. Fill order is not a style choice, it is dictated by which way the state moves.</div>
+</details>
+
+<div class="next"><b>So next:</b> the usual final step is to shrink the table. Let us check whether we can.</div>
+
+
+<!-- ================= 19. SPACE ================= -->
+<h2 id="s19"><span class="num">19</span>Space Optimization</h2>
+
+<div class="prev">We already know: each cell reads cells to its left, and we fill left to right.</div>
+
+<p>The usual move is to notice only a couple of recent cells are ever read and collapse the array into a few variables. Let us check whether that applies rather than assume.</p>
+
+<p>The question is: <strong>which earlier cells does a cell actually read?</strong></p>
+
+<div class="tbl-wrap">
+<table>
+<tr><th>Problem</th><th>A cell reads</th><th class="c">Can we compress?</th></tr>
+<tr><td>Climbing Stairs / House Robber</td><td>only the previous two cells</td><td class="c" style="color:#86efac;font-weight:800">yes, keep 2 variables, O(1)</td></tr>
+<tr><td><b>Longest Increasing Subsequence</b></td><td>potentially <b>every</b> earlier cell</td><td class="c" style="color:#fca5a5;font-weight:800">no, keep all n</td></tr>
+</table>
+</div>
+
+<p>The inner loop is <code>for previous_index in range(current_index)</code>, with no bound on how far back a legal predecessor sits. On <code>numbers = [1, 100, 101, 102, 2]</code> the last cell's only legal predecessor is INDEX 0, the very first cell. Throw it away and the answer is lost.</p>
+
+<div class="hi">
+<b>The honest conclusion: O(n) space is already the answer.</b> Not every DP compresses, and being able to say <em>why</em> is worth more than forcing an optimisation that does not exist. The dependency window here is the entire prefix, so every cell stays.
+</div>
+
+<p>What is worth improving is the <strong>time</strong>, not the memory. There is an O(n log n) solution that abandons the "ending at" state entirely and tracks something different, the smallest possible tail value for a chain of each length, maintained with binary search. It is a genuinely separate derivation with its own story, and bolting it on here would break the one we have been telling. Worth knowing it exists. Worth deriving separately, not memorising.</p>
+
+<div class="next"><b>So next:</b> the specific ways this solution gets broken.</div>
+
+
+<!-- ================= 20. MISTAKES ================= -->
+<h2 id="s20"><span class="num">20</span>Common Mistakes</h2>
+
+<div class="prev">We already know: the whole solution, from the frozen moment to the filled strip.</div>
+
+<p>Each of these is tempting for a reason, and each dies to a tiny array.</p>
+
+<div class="tbl-wrap">
+<table>
+<tr><th>The slip</th><th class="c">numbers</th><th class="c">Wrong</th><th class="c">Right</th><th>Why it tempts, and how to catch it</th></tr>
+<tr><td><code>&lt;=</code> instead of <code>&lt;</code></td><td class="c"><code>[2, 2, 2]</code></td><td class="c" style="color:#fca5a5;font-weight:800">3</td><td class="c" style="color:#86efac;font-weight:800">1</td><td>Equal values feel "not decreasing". Run any array of identical values, it must return 1.</td></tr>
+<tr><td>returned the last cell</td><td class="c"><code>[1, 2, 3, 1]</code></td><td class="c" style="color:#fca5a5;font-weight:800">1</td><td class="c" style="color:#86efac;font-weight:800">3</td><td>In most DP the final cell <em>is</em> the answer. Re-read the promise: it was never the whole answer, and the problem never said where the chain ends.</td></tr>
+<tr><td>added the VALUE, not 1</td><td class="c"><code>[1, 9]</code></td><td class="c" style="color:#fca5a5;font-weight:800">10</td><td class="c" style="color:#86efac;font-weight:800">2</td><td>"We placed the element, so add the element." Ask what the returned number counts. It counts elements, so only counts may be added.</td></tr>
+<tr><td>initialised to 0</td><td class="c"><code>[9, 8, 7]</code></td><td class="c" style="color:#fca5a5;font-weight:800">0</td><td class="c" style="color:#86efac;font-weight:800">1</td><td>"Before finding anything we have nothing." Any single element is already a valid chain.</td></tr>
+<tr><td>looped over the whole array</td><td class="c">any</td><td class="c" style="color:#fca5a5;font-weight:800">hangs</td><td class="c" style="color:#86efac;font-weight:800">n/a</td><td>"Check everything, the test will sort it out." The test compares VALUEs, never positions, so a later element can become a predecessor and the recursion never ends.</td></tr>
+<tr><td>solved subarray instead</td><td class="c"><code>[1, 9, 2, 3]</code></td><td class="c" style="color:#fca5a5;font-weight:800">2</td><td class="c" style="color:#86efac;font-weight:800">3</td><td>The names differ by one word. Subarray means no skipping, so it needs no inner loop at all. If your solution has no inner loop, you solved the other problem.</td></tr>
+</table>
+</div>
+
+<img src="dp/images/lis_15_mistakes.png" alt="Four common mistakes shown as a grid of tiny arrays with the wrong and right answers" class="scene-img">
+<p class="cap">Every one of these dies to a three element array. Test with tiny inputs.</p>
+
+
+<!-- ================= 21. PATTERN ================= -->
+<h2 id="s21"><span class="num">21</span>Pattern Recognition</h2>
+
+<div class="prev">We already know: the full derivation, and the ways it breaks.</div>
+
+<div class="tbl-wrap">
+<table>
+<tr><th>Question</th><th>Answer for LIS</th></tr>
+<tr><td>Why did the natural approach fail?</td><td>a decision at one index changed what was legal much later, so no forward-looking rule was safe</td></tr>
+<tr><td>What forced branching?</td><td>several different earlier chains could end where we stood, and nothing local said which was longest</td></tr>
+<tr><td>What did one call promise?</td><td>the LENGTH of the longest chain <b>ending exactly at</b> a given index</td></tr>
+<tr><td>What was the bookmark?</td><td>a single index</td></tr>
+<tr><td>What repeated?</td><td>the same index reached through different predecessors</td></tr>
+<tr><td>Why did memoization work?</td><td>the answer at an index does not depend on who asked</td></tr>
+<tr><td>What did one cell store?</td><td>exactly what one call would have returned</td></tr>
+<tr><td>Where did the operators come from?</td><td><code>max</code> from the word "longest", <code>+1</code> from placing one element</td></tr>
+</table>
+</div>
+
+<div class="ws" style="border-left-color:var(--gold)">
+<b style="color:var(--gold2);font-size:1.04em">The trigger to remember</b>
+<p style="margin:8px 0 0;font-size:1.04em">When I see <b>"keep the order, skipping is allowed, find the longest"</b>, I define the state as <b>"the best answer ending at this index"</b>, scan every earlier index as a candidate predecessor, and take the max over all endings at the end.</p>
+</div>
+
+<p>Anchoring the state by where something <em>ends</em> is the transferable idea. It reappears in maximum sum increasing subsequence, longest chain of pairs, Russian doll envelopes (sort first, then it is literally this), and longest arithmetic subsequence. Anchoring at the end is what turns "what came before?" into a question with a finite, checkable list of answers.</p>
+
+<h3>Rediscover it later</h3>
+
+<p>Six months from now the recurrence will be gone. The story is what has to survive, so here it is with no code in it:</p>
+
+<div class="tbl-wrap">
+<table>
+<tr><th class="c">Beat</th><th>What happened</th></tr>
+<tr><td class="c">1</td><td>I walked left to right taking anything bigger. Taking the 6 killed <code>1 &rarr; 2 &rarr; 3</code>, so committing early was unsafe.</td></tr>
+<tr><td class="c">2</td><td>I froze on one element and asked a narrower question: what is the longest chain that <b>ends here</b>?</td></tr>
+<tr><td class="c">3</td><td>To answer it I needed the chain length ending at each smaller earlier element, which is the same question again. So I let recursion promise me those.</td></tr>
+<tr><td class="c">4</td><td>I tried every earlier index as the predecessor, plus the option of standing alone.</td></tr>
+<tr><td class="c">5</td><td>The word "longest" gave me <code>max</code>. Placing one element gave me <code>+1</code>.</td></tr>
+<tr><td class="c">6</td><td>The same index kept getting asked, so I wrote each answer down the first time.</td></tr>
+<tr><td class="c">7</td><td>Once every index is written down once, the notes are just a strip. Fill it left to right, then take the max of the whole strip, because the chain can end anywhere.</td></tr>
+</table>
+</div>
+
+<div class="ok"><b>If you can retell those seven beats, the code is recoverable.</b> That was the goal, not memorising a recurrence.</div>
+
+<div style="text-align:center;margin-top:40px">
+<a href="dp_workshop.html" class="nav-link">&larr; DP Workshop</a>
+<a href="state_machine_dp.html" class="nav-link">State Machine DP</a>
+<a href="staircase_dp.html" class="nav-link">Staircase</a>
+<a href="table_2d_dp.html" class="nav-link">2D Tables</a>
+</div>
+
+</div>
+
+</body>
+</html>

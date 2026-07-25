@@ -171,13 +171,35 @@ td.c,th.c{text-align:center}
   .contract{grid-template-columns:1fr;gap:2px}
   .contract dd{margin-bottom:8px}
 }
+/* ---- layer structure ---- */
+.layer{margin:52px 0 8px;border-radius:14px;padding:22px 24px;position:relative;overflow:hidden}
+.layer .lnum{font-size:.68em;letter-spacing:.22em;font-weight:800;opacity:.85}
+.layer h2{border:none;margin:4px 0 6px;padding:0;font-size:1.6em;color:inherit}
+.layer p{margin:0;font-size:.96em;opacity:.92}
+.layer .promise{display:inline-block;margin-top:10px;font-size:.85em;font-weight:800;
+  background:rgba(0,0,0,.28);border-radius:20px;padding:5px 14px}
+
+.layer-1{background:linear-gradient(135deg,#0e5a7a,#0b3245);color:#dff3ff;border:2px solid var(--cyan)}
+.layer-2{background:linear-gradient(135deg,#6b4708,#3a2a0a);color:#ffeed2;border:2px solid var(--gold)}
+.layer-3{background:linear-gradient(135deg,#4a3a75,#2a2140);color:#eee6ff;border:2px solid var(--best)}
+
+.stop{border:2px dashed var(--border);border-radius:12px;padding:16px 20px;margin:30px 0;
+  background:var(--card);text-align:center}
+.stop b{display:block;color:var(--gold2);font-size:1.02em;margin-bottom:4px}
+.stop span{font-size:.9em;color:var(--muted)}
+
+.badge{display:inline-block;font-size:.6em;letter-spacing:.14em;font-weight:800;
+  border-radius:20px;padding:3px 10px;vertical-align:middle;margin-left:8px}
+.b1{background:rgba(56,189,248,.2);color:var(--cyan);border:1px solid var(--cyan)}
+.b2{background:rgba(245,158,11,.2);color:var(--gold2);border:1px solid var(--gold)}
+.b3{background:rgba(167,139,250,.2);color:var(--best);border:1px solid var(--best)}
 </style>
 </head>
 <body>
 
 <div class="hdr">
 <h1>Longest Increasing Subsequence</h1>
-<p>LeetCode #300. One story, from a guess that fails to a table that works.</p>
+<p>LeetCode #300. Built so you can rebuild it, not memorise it.</p>
 </div>
 
 <div class="wrap">
@@ -188,66 +210,96 @@ td.c,th.c{text-align:center}
 <a href="staircase_dp.html" class="nav-link">Staircase</a>
 </div>
 
+<h2 style="margin-top:20px">Three Places You Can Stop</h2>
+
+<p>This page is built in three layers. Each one is a real stopping point. You do not have to reach the end to walk away with something whole.</p>
+
+<div class="tbl-wrap">
+<table>
+<tr><th class="c">Layer</th><th>What it gives you</th><th class="c">Code?</th></tr>
+<tr><td class="c" style="color:var(--cyan);font-weight:800">1. The Story</td><td>you understand <em>why</em> the algorithm exists and roughly what it must do</td><td class="c" style="color:var(--muted)">none</td></tr>
+<tr><td class="c" style="color:var(--gold2);font-weight:800">2. The Algorithm</td><td>you could write it yourself</td><td class="c" style="color:var(--muted)">a little</td></tr>
+<tr><td class="c" style="color:var(--best);font-weight:800">3. The Code</td><td>you could ship it and defend it</td><td class="c" style="color:var(--muted)">all of it</td></tr>
+</table>
+</div>
+
+<img src="dp/images/lis_00_layers.png" alt="Three layers drawn as a staircase: the story, the algorithm, and the code" class="scene-img">
+<p class="cap">Stop after any step. Each one leaves you with something complete.</p>
+
 <div class="legend">
 <span><i class="lg-idx"></i><b>INDEX</b><em>a spot in the list</em></span>
 <span><i class="lg-val"></i><b>VALUE</b><em>the number sitting there</em></span>
-<span><i class="lg-len"></i><b>LENGTH</b><em>an answer we get back</em></span>
+<span><i class="lg-len"></i><b>LENGTH</b><em>an answer handed back</em></span>
 <span><i class="lg-best"></i><b>BEST</b><em>best found so far</em></span>
 <span><i class="lg-bad"></i><b>INVALID</b><em>not allowed</em></span>
 </div>
-<p style="font-size:.86em;color:var(--muted);margin-top:-6px">Every number here is one of these five. We always say which.</p>
+<p style="font-size:.86em;color:var(--muted);margin-top:-6px">Every number on this page is one of these five, and we always say which. Mixing up a spot with a count is the single biggest source of bugs here.</p>
 
 
-<h2 id="s1"><span class="num">1</span>The Problem</h2>
+<!-- ==================== LAYER 1 ==================== -->
+<div class="layer layer-1">
+<div class="lnum">LAYER 1</div>
+<h2>The Story</h2>
+<p>No code at all. By the end of this layer you will know why the obvious idea fails, what question we end up asking, and why the same work keeps happening.</p>
+<span class="promise">stop here and you still understand it</span>
+</div>
+
+
+<h2 id="s1"><span class="num">1</span>The Question<span class="badge b1">LAYER 1</span></h2>
 
 <div class="ws">
 <h3 style="margin-bottom:6px">Longest Increasing Subsequence (LeetCode #300)</h3>
 <p style="color:var(--muted);margin-top:0">Given a list of numbers, return the length of the longest strictly increasing subsequence.</p>
 </div>
 
-<p>In plain words: pull a <strong>rising chain</strong> out of the list, where each number beats the one before it. You <strong>may skip</strong> numbers. You <strong>may not move</strong> them.</p>
+<p>In plain words: pull a <strong>rising chain</strong> out of the list, where each number beats the one before it.</p>
+
+<p>Two rules. You <strong>may skip</strong> numbers. You <strong>may not move</strong> them.</p>
 
 <div class="tbl-wrap">
 <table>
 <tr><th>From <code>[5, 6, 1, 2, 3]</code></th><th class="c">Allowed?</th><th>Why</th></tr>
-<tr><td><code>1 &rarr; 2 &rarr; 3</code></td><td class="c" style="color:#86efac;font-weight:800">yes</td><td>skipped the 5 and 6, left the rest in place</td></tr>
-<tr><td><code>1 &rarr; 3 &rarr; 2</code></td><td class="c" style="color:#fca5a5;font-weight:800">no</td><td>the 2 comes first in the list, so this moves them</td></tr>
-<tr><td><code>2 &rarr; 2</code></td><td class="c" style="color:#fca5a5;font-weight:800">no</td><td>each must be <b>bigger</b>. Equal is not bigger.</td></tr>
+<tr><td><code>1 &rarr; 2 &rarr; 3</code></td><td class="c" style="color:#86efac;font-weight:800">yes</td><td>skipped the 5 and the 6, left the rest where they were</td></tr>
+<tr><td><code>1 &rarr; 3 &rarr; 2</code></td><td class="c" style="color:#fca5a5;font-weight:800">no</td><td>the 2 comes first in the list, so this shuffles them</td></tr>
+<tr><td><code>2 &rarr; 2</code></td><td class="c" style="color:#fca5a5;font-weight:800">no</td><td>each one must be <b>bigger</b>. Equal is not bigger.</td></tr>
 </table>
 </div>
 
-<p>The answer is a <strong>count</strong>: how many numbers are in the longest chain. Not the chain itself.</p>
+<p>And what do we hand back? A <strong>count</strong>. How many numbers are in the longest chain. Not the chain itself. That distinction matters more than it sounds, and we will come back to it.</p>
+
+<h3>The list we use the whole way through</h3>
 
 <div class="strip">
 <div class="rl">INDEX</div>
 <div class="ix">0</div><div class="ix">1</div><div class="ix">2</div><div class="ix">3</div><div class="ix">4</div>
 <div class="rl">VALUE</div>
 <div class="vb">5</div><div class="vb">6</div><div class="vb">1</div><div class="vb">2</div><div class="vb">3</div>
-<div class="snote">this is the list we use all the way through</div>
 </div>
 
-<p>INDEX is the spot, VALUE is the number there. Keeping them on separate rows stops them getting mixed up. "We are at 3" is unclear. "At INDEX 3 the VALUE is 2" is not.</p>
+<p>INDEX is the spot. VALUE is the number sitting at that spot. They live on separate rows so they never get confused with each other.</p>
 
-<img src="dp/images/lis_01_problem.png" alt="Skipping is allowed, moving numbers around is not, and the answer is a count" class="scene-img">
-<p class="cap">Skip yes, reorder no, answer is a count. Here it is <span class="nL">3</span>, from <code>1 &rarr; 2 &rarr; 3</code>.</p>
+<p>Saying "we are at 3" is ambiguous, because it could mean the fourth spot or the number three. Saying "at INDEX 3 the VALUE is 2" cannot be misread. We will be this careful all the way down.</p>
 
-<div class="next"><b>So next:</b> what would you try first?</div>
+<img src="dp/images/lis_01_problem.png" alt="Skipping is allowed, reordering is not, and we hand back a count" class="scene-img">
+<p class="cap">Skip yes, reorder no, and the answer is a count. Here it is <span class="nL">3</span>, from <code>1 &rarr; 2 &rarr; 3</code>.</p>
+
+<div class="next"><b>So next:</b> before anything clever, what would you honestly try first?</div>
 
 
-<h2 id="s2"><span class="num">2</span>What Would I Try First?</h2>
+<h2 id="s2"><span class="num">2</span>The Easy Idea, and Where It Breaks<span class="badge b1">LAYER 1</span></h2>
 
-<div class="prev">We already know: longest rising chain, skipping fine, reordering not.</div>
+<div class="prev">We already know: longest rising chain, skipping is fine, reordering is not.</div>
 
 <div class="ws" style="border-left-color:var(--gold)">
-<b style="color:var(--gold2)">The obvious idea:</b> walk left to right. Grab each number if it beats the last one you grabbed.
+<b style="color:var(--gold2)">The easy idea:</b> walk left to right. Grab each number if it beats the last one you grabbed.
 </div>
 
-<p>It sounds safe, because everything it grabs really does beat the last one.</p>
+<p>This deserves to be taken seriously, because it is not a silly idea. It never breaks a rule. Every number it grabs really does beat the previous one, so whatever it builds genuinely is a rising chain. Let us watch it run.</p>
 
 <div class="tbl-wrap">
 <table>
-<tr><th class="c">See</th><th>Do</th><th>Chain</th></tr>
-<tr><td class="c"><span class="nV">5</span></td><td>nothing yet, grab it</td><td><code>5</code></td></tr>
+<tr><th class="c">See</th><th>What we do</th><th>Chain so far</th></tr>
+<tr><td class="c"><span class="nV">5</span></td><td>nothing grabbed yet, so grab it</td><td><code>5</code></td></tr>
 <tr><td class="c"><span class="nV">6</span></td><td>beats 5, grab it</td><td><code>5 &rarr; 6</code></td></tr>
 <tr><td class="c"><span class="nV">1</span></td><td>does not beat 6, skip</td><td><code>5 &rarr; 6</code></td></tr>
 <tr><td class="c"><span class="nV">2</span></td><td>does not beat 6, skip</td><td><code>5 &rarr; 6</code></td></tr>
@@ -255,12 +307,11 @@ td.c,th.c{text-align:center}
 </table>
 </div>
 
-<p>It says <span class="nL">2</span>. The real answer is <span class="nL">3</span>.</p>
+<p>It hands back <span class="nL">2</span>. The real answer is <span class="nL">3</span>.</p>
 
+<h3>Where exactly did it go wrong?</h3>
 
-<h2 id="s3"><span class="num">3</span>Exactly Where It Breaks</h2>
-
-<p>Being wrong is not the interesting part. <em>Where</em> it went wrong is.</p>
+<p>This is the important question, and it is easy to answer badly. It is tempting to say "it went wrong at the end, when it got stuck". That is where the damage <em>showed up</em>, not where it happened.</p>
 
 <div class="strip">
 <div class="rl">INDEX</div>
@@ -270,26 +321,32 @@ td.c,th.c{text-align:center}
 <div class="snote">the chain it never found</div>
 </div>
 
-<p>It broke at step 2, grabbing the <span class="nV">6</span>. That felt free, and the chain did get longer. But it also raised the bar: now everything later had to beat 6, and the whole rest of the list is smaller. One easy win threw away a bigger one.</p>
+<p>It went wrong at <strong>step 2</strong>, grabbing the <span class="nV">6</span>.</p>
 
-<img src="dp/images/lis_02_greedy_fails.png" alt="Greedy grabs 5 then 6, gets stuck, and answers 2 instead of 3" class="scene-img">
+<p>Look at what that grab actually did. It made the chain longer immediately, from 1 number to 2, which felt like pure profit. But it also raised the bar. Before the grab, anything above 5 would do. After it, everything had to beat 6. And the whole rest of the list, the 1 and the 2 and the 3, sits under that bar.</p>
+
+<p>So a move that looked free cost us three numbers we had not even reached yet.</p>
+
+<img src="dp/images/lis_02_greedy_fails.png" alt="The easy idea grabs 5 then 6, gets stuck, and answers 2 instead of 3" class="scene-img">
 <p class="cap">The mistake is not where it got stuck. It is back at step 2.</p>
 
 <div class="warn">
-<b>Here is the problem.</b> A choice made early changes what is allowed much later. So we cannot judge a choice by what it gives us right now.
+<b>This is the whole reason the problem is hard.</b> A choice made early changes what is allowed much later. So we cannot judge a choice by what it hands us right now. We would have to see the future, and we cannot.
 </div>
 
 <details class="chk">
-<summary>Would it work if we just started somewhere else?</summary>
-<div class="ans">No. Try <code>[1, 100, 2, 3, 4]</code>. It grabs the 1, grabs the 100, then gets stuck and says 2. The real answer is 4. The problem is not where it starts. It is grabbing without checking what that grab costs later.</div>
+<summary>Could we fix it by starting somewhere else?</summary>
+<div class="ans">No, and it is worth seeing why, because it rules out a whole family of patches. If we forced it to start at the <code>1</code>, it would find <code>1 &rarr; 2 &rarr; 3</code> and look clever. But try <code>[1, 100, 2, 3, 4]</code>. Starting at the very beginning it grabs the 1, then grabs the 100, then gets stuck, and answers 2. The real answer is 4. The flaw is not the starting point. It is grabbing at all without knowing what the grab costs later.</div>
 </details>
 
-<div class="next"><b>So next:</b> if grabbing is unsafe, what are we stuck on?</div>
+<div class="next"><b>So next:</b> if we cannot grab safely, we should slow down and name exactly what we are unsure about.</div>
 
 
-<h2 id="s4"><span class="num">4</span>What Are We Stuck On?</h2>
+<h2 id="s3"><span class="num">3</span>What Are We Stuck On?<span class="badge b1">LAYER 1</span></h2>
 
-<div class="prev">We already know: an early grab can quietly kill a longer chain.</div>
+<div class="prev">We already know: an early grab can quietly kill a longer chain, so we cannot decide by looking forward one step.</div>
+
+<p>Let us freeze at one spot and describe the situation with no plan in mind at all.</p>
 
 <div class="strip">
 <div class="rl">INDEX</div>
@@ -299,356 +356,344 @@ td.c,th.c{text-align:center}
 <div class="snote">stopped at INDEX 4, where the VALUE is 3</div>
 </div>
 
-<p>Instead of the huge question ("best chain in the whole list?"), ask a smaller one:</p>
+<p>The full question ("what is the best chain in this whole list?") is too big to hold in your head. So swap it for a smaller one:</p>
 
 <div class="ws">
 <b style="color:var(--gold2);font-size:1.05em">"What is the longest chain that <em>ends</em> right here?"</b>
 </div>
 
-<p>This is a good thing to be stuck on. The last number is already fixed. The only unknown is what comes just before it, and that must be smaller and earlier. Here that means the 1 or the 2, or nothing at all.</p>
+<p>This is a much better thing to be stuck on, and here is why. A chain ending here is already half decided. We know the last number. The only thing still open is what sits immediately before it.</p>
+
+<p>And whatever sits immediately before has to satisfy two things: it must be <strong>smaller</strong>, and it must be <strong>earlier</strong>. In our list that leaves the 1 and the 2. Plus one more option people forget: maybe nothing comes before at all, and the chain is just the 3 standing alone.</p>
 
 <div class="hi">
-<b>What we do not know:</b> which of those three is longest. To find out we would need to know how long the chain ending at the 1 is, and at the 2. Those are the <em>same question</em>, just smaller.
+<b>Here is exactly what we do not know.</b> Three chains could end here, and we cannot tell which is longest just by looking. To know, we would need to know how long the chain ending at the 1 is, and how long the chain ending at the 2 is. Read those two questions again. They are the <em>same question we just asked</em>, only smaller.
 </div>
 
 <img src="dp/images/lis_03_frozen.png" alt="Stopped at index 4 with three possible chains ending there and a question mark over which is longest" class="scene-img">
 <p class="cap">The question is not "take it or skip it". It is "what do I hook onto?"</p>
 
-<p>Explaining our problem made smaller copies of the same problem. That is the sign recursion will help.</p>
+<p>Notice what just happened, because it is the turning point of the whole page. We tried to explain our problem, and in doing so we produced smaller copies of that same problem. That is always the signal that recursion is about to earn its keep.</p>
 
-<div class="next"><b>So next:</b> we need someone to answer those smaller questions.</div>
+<div class="next"><b>So next:</b> we need something that answers those smaller questions without us solving them by hand.</div>
 
 
-<h2 id="s5"><span class="num">5</span>The Recursion Promise</h2>
+<h2 id="s4"><span class="num">4</span>Ask, and Trust the Answer<span class="badge b1">LAYER 1</span></h2>
 
-<div class="prev">We already know: to answer about INDEX 4 we need answers about INDEX 2 and 3.</div>
+<div class="prev">We already know: to answer about INDEX 4 we need answers about INDEX 2 and INDEX 3.</div>
 
-<p>People say recursion is "a function that calls itself". True, but useless. Here is the version you can use:</p>
+<p>People usually learn recursion as "a function that calls itself". That is true, and it is almost useless for solving anything. Here is the version you can actually think with:</p>
 
 <div class="ws" style="border-left-color:var(--gold)">
-<b style="color:var(--gold2);font-size:1.05em">The promise:</b> hand the function a smaller version of the same question, and it hands back the right answer. You never need to know how it worked it out. You just use the number.
+<b style="color:var(--gold2);font-size:1.05em">The promise:</b> hand it a smaller version of the same question, and it hands back the right answer. You never have to know how it worked that out. You only have to know what the number <em>means</em>, so you can use it.
 </div>
+
+<p>That turns an impossible question into a simple exchange:</p>
 
 <div class="flow">
-<div class="node top"><code>longest_chain_ending_at(current_index = 4)</code><br><span class="eng">how long is the chain ending on the 3?</span></div>
+<div class="node top">the question about <b>INDEX 4</b><br><span class="eng">how long is the chain ending on the 3?</span></div>
 <div class="ar">&darr;&nbsp; asks: "how long is the chain ending on the 2?"</div>
-<div class="node"><code>longest_chain_ending_at(current_index = 3)</code></div>
-<div class="ar up">&uarr;&nbsp; hands back LENGTH 2, meaning <code>1 &rarr; 2</code></div>
-<div class="node top"><code>longest_chain_ending_at(current_index = 4)</code><br><span class="eng">now it can finish</span></div>
+<div class="node">the question about <b>INDEX 3</b></div>
+<div class="ar up">&uarr;&nbsp; hands back LENGTH 2, meaning the chain <code>1 &rarr; 2</code></div>
+<div class="node top">the question about <b>INDEX 4</b><br><span class="eng">now it can finish the job</span></div>
 </div>
 
-<p>Does this ever stop? Yes. Every call points at a <strong>smaller INDEX</strong>. 4 asks 3, 3 asks 2, and 2 has nothing smaller to its left so it just answers. The ladder has a bottom.</p>
+<h3>Giving the question a name</h3>
 
-<details class="chk">
-<summary>Does the smaller call need to know who asked it?</summary>
-<div class="ans">No, and that is the point. The call for INDEX 3 answers one fixed question, and the answer is 2 no matter who asked. If a call needed to know its caller, the question would not stand on its own and none of this would work.</div>
-</details>
+<p>We will be talking about this question constantly, so it needs a name. We will write it:</p>
 
-<div class="next"><b>So next:</b> pin down exactly what one call gives back.</div>
+<p style="text-align:center;font-size:1.1em;margin:14px 0"><code>longest_chain_ending_at(current_index)</code></p>
 
-
-<h2 id="s6"><span class="num">6</span>What Does One Call Mean?</h2>
-
-<div class="prev">We already know: a smaller call promises a correct answer, and the calls always shrink.</div>
-
-<p>This is the most important idea here. If it stays fuzzy, everything after it is guessing.</p>
-
-<div class="ws" style="border-left-color:var(--gold)">
-<code style="color:var(--cyan);font-size:1.05em;font-weight:800">longest_chain_ending_at(current_index)</code>
-<p style="margin:10px 0 0;font-size:1.04em">gives back <b>how many numbers are in the longest rising chain that <span style="color:var(--gold2)">ends on the number at that spot</span></b>.</p>
-</div>
+<p>That is not code yet. It is just a label, and it is deliberately a long one, because the name should tell you exactly what comes back without you having to remember anything.</p>
 
 <div class="contract">
-<dt>call</dt><dd>longest_chain_ending_at(current_index = <span class="nI">3</span>)</dd>
-<dt>question</dt><dd style="font-family:inherit">how long is the chain ending here?</dd>
+<dt>the question</dt><dd style="font-family:inherit">how long is the longest chain ending at this spot?</dd>
+<dt>you give it</dt><dd>a spot. <span class="nI">INDEX 3</span></dd>
 <dt>value there</dt><dd>numbers[<span class="nI">3</span>] = <span class="nV">2</span></dd>
-<dt>gives back</dt><dd>LENGTH <span class="nL">2</span></dd>
-<dt>meaning</dt><dd style="font-family:inherit">the chain <code>1 &rarr; 2</code> has two numbers</dd>
+<dt>it hands back</dt><dd>LENGTH <span class="nL">2</span></dd>
+<dt>meaning</dt><dd style="font-family:inherit">the chain <code>1 &rarr; 2</code> has two numbers in it</dd>
 </div>
 
 <div class="hi">
-<b>What goes in and what comes out are different things.</b> The <span class="nI">3</span> going in is a spot. The <span class="nL">2</span> coming out is a count. Mixing these up causes most bugs in this problem.
+<b>What goes in and what comes out are different kinds of thing.</b> The <span class="nI">3</span> going in is a <em>spot</em>. The <span class="nL">2</span> coming back is a <em>count</em>. They are not interchangeable, and confusing them causes more bugs in this problem than anything else.
 </div>
+
+<p>Two things this promise does say, and two it does not:</p>
 
 <div class="tbl-wrap">
 <table>
-<tr><td class="c" style="color:#86efac;font-weight:800">yes</td><td>the number at this spot is <b>always</b> in the chain</td></tr>
-<tr><td class="c" style="color:#86efac;font-weight:800">yes</td><td>everything picked earlier is <b>smaller</b></td></tr>
+<tr><td class="c" style="color:#86efac;font-weight:800">yes</td><td>the number at this spot is <b>always</b> part of the chain</td></tr>
+<tr><td class="c" style="color:#86efac;font-weight:800">yes</td><td>everything picked earlier is <b>smaller</b> than it</td></tr>
 <tr><td class="c" style="color:#fca5a5;font-weight:800">no</td><td>it never looks to the <b>right</b></td></tr>
-<tr><td class="c" style="color:#fca5a5;font-weight:800">no</td><td>it is <b>not</b> the answer to the whole list</td></tr>
+<tr><td class="c" style="color:#fca5a5;font-weight:800">no</td><td>it is <b>not</b> the answer for the whole list</td></tr>
 </table>
 </div>
 
-<img src="dp/images/lis_04_promise.png" alt="A call handing a smaller question to another call, and a card showing what comes back" class="scene-img">
-<p class="cap">Hand it over and trust it, up top. Exactly what comes back, underneath.</p>
+<p>That last one catches people out. This question only ever talks about chains ending at <em>one</em> spot. It has no opinion about the list as a whole. We will have to do something extra at the end to get there.</p>
+
+<img src="dp/images/lis_04_promise.png" alt="One question handing a smaller question to another, and a card showing exactly what comes back" class="scene-img">
+<p class="cap">Ask and trust, up top. Exactly what comes back, underneath.</p>
+
+<p>One worry always comes up here: if every question needs a smaller question, does this ever stop? Yes. Every question points at a <strong>smaller spot</strong>. INDEX 4 asks INDEX 3, which asks INDEX 2, and INDEX 2 has nothing smaller to its left, so it just answers. The ladder has a bottom rung.</p>
 
 <details class="chk">
-<summary>What does the call for INDEX 2 give back, and why is it not 3?</summary>
-<div class="ans">LENGTH <span class="nL">1</span>. INDEX 2 holds the VALUE 1, and the only earlier numbers are 5 and 6, both too big. So the best chain ending there is just the 1 alone. It is not 3 because we have <em>walked past</em> three numbers, and walking past is not using. We count links in the chain, not steps along the list.</div>
+<summary>Does the smaller question need to know who asked it?</summary>
+<div class="ans">No, and this is exactly why the whole approach works. The question about INDEX 3 is "how long is the chain ending on the 2?", and the answer is 2 no matter who is asking or what they have collected so far. If the answer changed depending on who asked, the question would not stand on its own, and everything from here on would collapse.</div>
 </details>
 
-<div class="next"><b>So next:</b> follow one call down, and watch the answer come back.</div>
+<div class="next"><b>So next:</b> follow one question all the way down, and watch the answer climb back.</div>
 
 
-<h2 id="s7"><span class="num">7</span>Down to the Bottom, and Back Up</h2>
+<h2 id="s5"><span class="num">5</span>Down to the Bottom, and Back Up<span class="badge b1">LAYER 1</span></h2>
 
-<div class="prev">We already know: one call gives back how long the chain ending at one spot is.</div>
+<div class="prev">We already know: a smaller question promises a correct count, and the questions always shrink.</div>
 
-<p>No big tree. One path, all the way down, then all the way back.</p>
+<p>We are deliberately not drawing a big branching tree. A tree shows a dozen things happening at once, and it is unreadable until you can already read one path. So: one path, all the way down, then all the way back.</p>
+
+<h3>Going down means asking</h3>
 
 <div class="flow">
-<div class="node top"><code>longest_chain_ending_at(4)</code> &nbsp;<span class="eng">VALUE 3</span></div>
+<div class="node top"><b>INDEX 4</b> &nbsp;<span class="eng">VALUE 3</span></div>
 <div class="ar">&darr;&nbsp; "I need something smaller than 3. Try INDEX 3, which holds 2."</div>
-<div class="node"><code>longest_chain_ending_at(3)</code> &nbsp;<span class="eng">VALUE 2</span></div>
+<div class="node"><b>INDEX 3</b> &nbsp;<span class="eng">VALUE 2</span></div>
 <div class="ar">&darr;&nbsp; "I need something smaller than 2. Try INDEX 2, which holds 1."</div>
-<div class="node base"><code>longest_chain_ending_at(2)</code> &nbsp;<span class="eng">VALUE 1</span><br>
-<b style="color:#86efac">BOTTOM</b> <span class="eng">nothing smaller to the left, so nothing to ask</span></div>
+<div class="node base"><b>INDEX 2</b> &nbsp;<span class="eng">VALUE 1</span><br>
+<b style="color:#86efac">THE BOTTOM</b> <span class="eng">nothing smaller to the left, so nothing left to ask</span></div>
 </div>
+
+<p>Each step down shrinks in two ways at once. The spot moves left, and the number of things we could hook onto shrinks with it. That is what guarantees we land.</p>
 
 <div class="ok">
-<b>The bottom answers 1, not 0.</b> A chain of one number is still a chain. Saying 0 would mean no chain ends here at all, which is false. Every number is a chain of 1, and that holds up everything else.
+<b>The bottom answers 1, not 0.</b> A chain made of one number is still a chain, and it has one number in it. Answering 0 would claim that no chain ends there at all, which is plainly false. Every single number is a chain of 1, and that small fact holds up everything above it.
 </div>
 
-<p>Going down we asked. Coming up we <strong>use</strong>. At INDEX 3, after getting LENGTH 1 back, then at INDEX 4 after getting LENGTH 2 back:</p>
+<h3>Coming back up means using</h3>
+
+<p>This is the half people skip, and it is where every number on this page actually comes from. Going down we asked. Coming up we <strong>use</strong>.</p>
+
+<p>At INDEX 3, having just been handed LENGTH 1 from below:</p>
 
 <div class="units">
 <div class="term"><div class="big" style="color:var(--gold2)">1</div><div class="cap2">my own number, that is one number</div></div>
 <div class="op">+</div>
-<div class="term"><div class="big nL">2</div><div class="cap2">LENGTH handed back by the smaller call</div></div>
+<div class="term"><div class="big nL">1</div><div class="cap2">LENGTH handed back from below</div></div>
+<div class="op">=</div>
+<div class="term"><div class="big nL">2</div><div class="cap2">LENGTH of the chain <code>1 &rarr; 2</code></div></div>
+</div>
+
+<p>At INDEX 4, having just been handed LENGTH 2:</p>
+
+<div class="units">
+<div class="term"><div class="big" style="color:var(--gold2)">1</div><div class="cap2">my own number, that is one number</div></div>
+<div class="op">+</div>
+<div class="term"><div class="big nL">2</div><div class="cap2">LENGTH handed back from below</div></div>
 <div class="op">=</div>
 <div class="term"><div class="big nL">3</div><div class="cap2">LENGTH of the chain <code>1 &rarr; 2 &rarr; 3</code></div></div>
 </div>
 
 <img src="dp/images/lis_05_roundtrip.png" alt="One path going down to the bottom and coming back up, with every number labelled" class="scene-img">
-<p class="cap">No number here is magic. Each was handed up by a smaller call.</p>
+<p class="cap">No number here is magic. Each one was handed up from below.</p>
 
-<p>Follow the 3 at the top. It is <code>1 + 2</code>. That 2 came from below, and it was <code>1 + 1</code>, where the inner 1 came from the bottom. So the final 3 is really the bottom's answer, changed twice on the way up.</p>
-
-<details class="chk">
-<summary>At INDEX 3 we wrote <code>1 + 1</code>. There is a 2 sitting right there. Why not <code>1 + 2</code>?</summary>
-<div class="ans">That 2 is a VALUE, and VALUEs never go into this sum. The first 1 is <b>one number</b>, mine, joining the chain. The second is a <b>count</b> that came back from below. We count links, we do not add up the numbers.</div>
-</details>
-
-<div class="next"><b>So next:</b> INDEX 3 was only one option. What were the rest?</div>
-
-
-<h2 id="s8"><span class="num">8</span>Every Choice We Have</h2>
-
-<div class="prev">We already know: hooking onto INDEX 3 gave a chain of LENGTH 3.</div>
-
-<p>At INDEX 4 we check every earlier spot, plus hooking onto nothing. Not the nearest one. All of them. That is exactly what greedy refused to do.</p>
-
-<img src="dp/images/lis_06_choices.png" alt="Five options checked at index 4, two rejected as too big, two allowed, plus starting on its own" class="scene-img">
-<p class="cap">Two are too big. Two work, giving LENGTH 2 and 3. Starting alone always works and gives LENGTH 1.</p>
-
-<p><b>Why nothing is missing.</b> Take any chain ending on our number. Either something sits right before it, and that thing is at some earlier smaller spot which we checked, or nothing does, and the chain is our number alone. There is no third kind.</p>
+<p>Follow the 3 at the top all the way home. It is <code>1 + 2</code>. That 2 was not sitting in the list, it was handed up from the question below. And that 2 was itself <code>1 + 1</code>, where the inner 1 came from the bottom rung. So the final 3 is really the bottom's answer, passed up and added to twice.</p>
 
 <details class="chk">
-<summary>What if we forgot the "start alone" option and ran it on <code>[9, 8, 7]</code>?</summary>
-<div class="ans">We would get 0, which is wrong. Nothing has a smaller number to its left, so no option is ever allowed and there is nothing to compare. The right answer is 1, because any single number is a chain. This is why starting at 1 instead of 0 is not a detail. It is the bottom case in disguise.</div>
+<summary>At INDEX 3 we wrote <code>1 + 1</code>. But the VALUE there is 2. Why not <code>1 + 2</code>?</summary>
+<div class="ans">Because that 2 is a VALUE, and VALUEs never go into this sum. The two ones mean genuinely different things. The first is <b>one number</b>, mine, joining the chain. The second is a <b>count</b> that came back from below. We are counting how many links are in a chain, not adding up the numbers printed on them. If we added the numbers we would be solving a different problem entirely.</div>
 </details>
 
-<div class="next"><b>So next:</b> what does one call actually need to remember?</div>
+<div class="next"><b>So next:</b> one more thing to notice before Layer 1 is done, and it is the reason this problem needs a table at all.</div>
 
 
-<h2 id="s9"><span class="num">9</span>The Bookmark</h2>
+<h2 id="s6"><span class="num">6</span>The Same Question, Twice<span class="badge b1">LAYER 1</span></h2>
 
-<div class="prev">We already know: a call checks every earlier spot, plus starting alone.</div>
+<div class="prev">We already know: every answer is built from smaller answers handed up from below.</div>
 
-<p>Say we stop halfway and hand the job to a friend, leaving one note. What has to be on it so they can carry on without asking us anything?</p>
+<p>We only followed one path. Let us look at what happens when we follow all of them, because something wasteful is going on.</p>
+
+<p>Working out the question about INDEX 4, two different routes end up in the same place:</p>
+
+<ul style="margin:10px 0 12px 22px">
+<li><b style="color:var(--orange)">Route A:</b> INDEX 4 hooks straight onto INDEX 2.</li>
+<li><b style="color:var(--idx)">Route B:</b> INDEX 4 hooks onto INDEX 3, and INDEX 3 hooks onto INDEX 2.</li>
+</ul>
+
+<p>Both finish by asking the exact same thing: <em>how long is the chain ending at INDEX 2?</em></p>
+
+<img src="dp/images/lis_06_repeated.png" alt="Two different routes landing on the same question, stamped worked out twice" class="scene-img">
+<p class="cap">Two different paths, one identical question, worked out from scratch both times.</p>
+
+<div class="hi">
+<b>Be careful about what is actually wasted here.</b> It is not that the number 1 turns up twice. Numbers repeat all the time and that is harmless. The waste is that we <em>work out the same answer again from scratch</em>, checking the same spots and redoing the same comparisons, to arrive at a number we already had.
+</div>
+
+<p>And that is only inside one branch. Across the whole run on our tiny five number list, the question about INDEX 2 gets asked <strong>four separate times</strong>. On a longer list this does not grow gently. It explodes.</p>
+
+<div class="ok"><b>On the list 1 to 20: only 20 different questions exist, but asking them this way takes 1,048,575 calls.</b> Twenty real questions. A million answers computed. That gap is the reason everything in Layer 2 exists.</div>
+
+<p>You now have the entire idea. If you stopped reading here, you could explain to someone why grabbing fails, what question we ask instead, what one answer means, and why the naive version is slow. Everything below is turning that into something a machine can run.</p>
+
+<div class="stop">
+<b>End of Layer 1</b>
+<span>You understand the algorithm. Layer 2 makes it exact enough to write.</span>
+</div>
+
+
+<!-- ==================== LAYER 2 ==================== -->
+<div class="layer layer-2">
+<div class="lnum">LAYER 2</div>
+<h2>The Algorithm</h2>
+<p>We take the story and make it exact. What to remember, what the choices are, what the rule is, and how the whole thing becomes a table.</p>
+<span class="promise">stop here and you could write it yourself</span>
+</div>
+
+
+<h2 id="s7"><span class="num">7</span>Every Choice We Have<span class="badge b2">LAYER 2</span></h2>
+
+<div class="prev">We already know: at any spot we ask "how long is the chain ending here?", and the answer comes from smaller answers.</div>
+
+<p>In Layer 1 we said the thing before our number must be smaller and earlier. Now let us actually list every option and check them one at a time, because being sloppy here is how you lose the answer.</p>
+
+<img src="dp/images/lis_07_choices.png" alt="Five options checked at index 4, two rejected as too big, two allowed, plus starting alone" class="scene-img">
+<p class="cap">Two are too big. Two work, handing back LENGTH 2 and LENGTH 3. Standing alone always works and gives LENGTH 1.</p>
+
+<h3>Why nothing is missing</h3>
+
+<p>Listing options is not enough. We have to be able to argue that no valid chain slipped past us, otherwise we are making exactly the mistake the easy idea made.</p>
+
+<p>The argument is short. Take <em>any</em> chain that ends on our number. There are only two possibilities:</p>
+
+<ul style="margin:10px 0 10px 22px">
+<li>Something sits immediately before it. That something is at an earlier spot, and it is smaller. We checked <b>every</b> earlier spot, so it was covered.</li>
+<li>Nothing sits before it. Then the chain is just our number, which is the "stand alone" option.</li>
+</ul>
+
+<div class="ok"><b>There is no third possibility.</b> So our list of options covers every chain that could possibly end here. Nothing can escape.</div>
+
+<p>It is worth naming why this matters. The easy idea in Layer 1 also had options, it just refused to look at more than one of them. Checking all of them is the entire difference.</p>
+
+<details class="chk">
+<summary>What if we dropped the "stand alone" option and ran it on <code>[9, 8, 7]</code>?</summary>
+<div class="ans">We would get 0, which is wrong. In <code>[9, 8, 7]</code> nothing has a smaller number to its left, so no option is ever allowed and there is nothing to compare. The correct answer is 1, because any single number is a chain. That is why standing alone is not a tidy extra. It is the bottom rung from Layer 1, wearing a different hat.</div>
+</details>
+
+<div class="next"><b>So next:</b> what does one question actually need to remember?</div>
+
+
+<h2 id="s8"><span class="num">8</span>The Note<span class="badge b2">LAYER 2</span></h2>
+
+<div class="prev">We already know: a question checks every earlier spot, plus standing alone.</div>
+
+<p>Imagine stopping halfway and handing the job to a friend. You are allowed to leave them <strong>one note</strong>. What has to be written on it so they can carry on without asking you anything?</p>
+
+<p>Test each idea the same way. If two situations differ only in this one thing, can the remaining answer differ? If not, leave it off the note.</p>
 
 <div class="tbl-wrap">
 <table>
 <tr><th>Could go on the note</th><th class="c">Keep?</th><th>Why</th></tr>
-<tr><td>the spot</td><td class="c" style="color:#86efac;font-weight:800">keep</td><td>says which number the chain ends on, and which spots count as earlier</td></tr>
-<tr><td>the value there</td><td class="c" style="color:#fca5a5;font-weight:800">drop</td><td>the spot already tells us the value</td></tr>
-<tr><td>the chain so far</td><td class="c" style="color:#fca5a5;font-weight:800">drop</td><td>we only need how long it was, and that comes back as a number</td></tr>
+<tr><td>the spot we are at</td><td class="c" style="color:#86efac;font-weight:800">keep</td><td>it says which number our chain ends on, and which spots count as earlier. Change it and the answer changes.</td></tr>
+<tr><td>the value sitting there</td><td class="c" style="color:#fca5a5;font-weight:800">drop</td><td>the spot already tells us the value, so writing it down adds nothing</td></tr>
+<tr><td>the chain built so far</td><td class="c" style="color:#fca5a5;font-weight:800">drop</td><td>we only ever need how long it was, and that comes back as a number</td></tr>
+<tr><td>how many numbers are left</td><td class="c" style="color:#fca5a5;font-weight:800">drop</td><td>that is the spot, counted from the other end. Same fact twice.</td></tr>
 </table>
 </div>
 
 <div class="ws" style="border-left-color:var(--gold)">
 <b style="color:var(--gold2)">The note is one number: the spot.</b>
-<p style="margin:6px 0 0">That is what people call a "state". The smallest note that fully describes the question left to answer.</p>
+<p style="margin:6px 0 0">Now we can name it. The smallest note that fully describes the question you have left to answer is called the <strong>state</strong>. Here, the state is a single spot.</p>
 </div>
 
-<img src="dp/images/lis_07_bookmark.png" alt="The note reduced to a single spot, with before, at and after marked on the list" class="scene-img">
-<p class="cap">Before the spot: things to hook onto. At it: where our chain ends. After it: invisible.</p>
+<p>Notice the order we did that in. We worked out what had to be remembered, and only then attached the word "state" to it. The word is a label for something you already understand, not a thing to learn on its own.</p>
 
-<p>One thing to notice, because it matters later: the note always moves <strong>left</strong>, never right. That will tell us which way to fill the table.</p>
+<img src="dp/images/lis_08_bookmark.png" alt="The note reduced to a single spot, with before, at and after marked on the list" class="scene-img">
+<p class="cap">Before the spot: things we may hook onto. At it: where our chain must end. After it: invisible to us.</p>
 
-<div class="next"><b>So next:</b> three options gave 2, 3 and 1. How do we squash them into one?</div>
+<p>One detail here matters a lot later, so hold on to it: <strong>the note only ever moves left</strong>. Never right. That single fact is what will tell us which direction to fill the table.</p>
+
+<div class="next"><b>So next:</b> our options handed back three different counts. How do we squash them into one?</div>
 
 
-<h2 id="s10"><span class="num">10</span>Where max and +1 Come From</h2>
+<h2 id="s9"><span class="num">9</span>Where max and +1 Come From<span class="badge b2">LAYER 2</span></h2>
 
-<div class="prev">We already know: the allowed options gave LENGTH 2, 3 and 1.</div>
+<div class="prev">We already know: the allowed options handed back LENGTH 2, LENGTH 3 and LENGTH 1.</div>
 
-<p>Three numbers, one needed. Nothing in the code decides this. The <strong>wording of the question</strong> does.</p>
+<p>We have three numbers and we need one. Nothing in the algorithm tells us how to combine them. The <strong>wording of the question</strong> does, and that is a habit worth building.</p>
 
-<p><b>Why max.</b> All three built real chains, and all are legal. The question asked for the <strong>longest</strong>, so keep the biggest. Change the wording and the operation changes with it:</p>
+<h3>Why max</h3>
+
+<p>All three options built genuinely legal chains: <code>1 &rarr; 3</code> with two links, <code>1 &rarr; 2 &rarr; 3</code> with three, and <code>3</code> alone with one. None of them cheated. The question asked for the <strong>longest</strong>, so we keep the biggest. That is <code>max</code>.</p>
+
+<p>Change the wording and the operation changes with it, which is why this is worth deriving rather than memorising:</p>
 
 <div class="tbl-wrap">
 <table>
-<tr><th>If the question says</th><th class="c">Use</th></tr>
-<tr><td>longest, biggest, most</td><td class="c"><code>max</code></td></tr>
-<tr><td>shortest, cheapest, least</td><td class="c"><code>min</code></td></tr>
-<tr><td>how many ways</td><td class="c"><code>+</code></td></tr>
-<tr><td>is it possible at all</td><td class="c"><code>or</code></td></tr>
+<tr><th>If the question asks for</th><th class="c">Then combine with</th></tr>
+<tr><td>the longest, biggest, most</td><td class="c"><code>max</code></td></tr>
+<tr><td>the shortest, cheapest, least</td><td class="c"><code>min</code></td></tr>
+<tr><td>how many ways there are</td><td class="c"><code>+</code></td></tr>
+<tr><td>whether it is possible at all</td><td class="c"><code>or</code></td></tr>
 </table>
 </div>
 
-<p><b>Why +1.</b> What did this option do right now, before asking anyone anything? It put exactly one number on the end of a chain that already existed. One number joined, so the count goes up by one.</p>
+<h3>Why +1</h3>
 
-<img src="dp/images/lis_08_operator.png" alt="Three chains compared to explain max, and one number clicking onto a chain to explain plus one" class="scene-img">
-<p class="cap">max comes from "longest". The +1 comes from adding exactly one number.</p>
+<p>Ask a narrower question: what did this option accomplish <em>right now</em>, before asking anybody anything?</p>
+
+<p>It put exactly one number onto the end of a chain that already existed. One number joined, so the count goes up by exactly one.</p>
+
+<img src="dp/images/lis_09_operator.png" alt="Three chains compared to explain max, and one number clicking onto a chain to explain plus one" class="scene-img">
+<p class="cap">max comes from the word "longest". The +1 comes from adding exactly one number.</p>
 
 <div class="warn">
-<b>The +1 counts a number. It is never the number itself.</b> At INDEX 4 the VALUE is 3, so <code>+3</code> feels natural. But we count how many numbers are in the chain, not their total. On <code>[1, 9]</code> the answer is 2, not 10.
+<b>The +1 counts a number. It is never the number itself.</b> At INDEX 4 the VALUE is 3, so writing <code>+3</code> feels natural and is completely wrong. We count how many numbers are in the chain, not what they add up to. On <code>[1, 9]</code> the answer is 2, not 10. If the question had asked for the biggest <em>total</em>, then and only then would we add the value.
 </div>
 
-<div class="next"><b>So next:</b> write it down as a rule.</div>
+<div class="next"><b>So next:</b> everything is derived. Now we can safely write the rule.</div>
 
 
-<h2 id="s11"><span class="num">11</span>The Rule</h2>
+<h2 id="s10"><span class="num">10</span>The Rule<span class="badge b2">LAYER 2</span></h2>
 
-<p>Now we can write the rule, because it says nothing new.</p>
+<div class="prev">We already know: the options, the note, and both operations.</div>
+
+<p>Only now is it safe to write the rule down, because it introduces nothing new. It is shorthand for the last three sections, and every piece of it should already feel familiar.</p>
 
 <pre><code>longest_chain_ending_at(current_index) = the biggest of:
 
-    1                                      <span style="color:var(--muted)"># start alone</span>
+    1                                        <span style="color:var(--muted)"># stand alone</span>
 
     1 + longest_chain_ending_at(previous_index)
         for every earlier spot whose value is smaller
 
-answer = the biggest of those, across every spot</code></pre>
+answer = the biggest of those, taken across every spot</code></pre>
 
-<div class="hi">
-<b>That last line is not decoration.</b> Each call only knows about chains ending at <em>one</em> spot. Nobody said where the best chain ends, so we ask everywhere and keep the biggest. Forgetting it is the most common way to get this almost right.
-</div>
-
-
-<h2 id="s12"><span class="num">12</span>From the Story to the Code</h2>
+<p>Read it back piece by piece and check each one against where it came from:</p>
 
 <div class="tbl-wrap">
 <table>
-<tr><th>The idea</th><th>The code</th></tr>
-<tr><td>"how long is the chain ending here"</td><td>the function name itself</td></tr>
-<tr><td>the note</td><td><code>current_index</code></td></tr>
-<tr><td>"my number alone is a chain"</td><td><code>longest_so_far = 1</code></td></tr>
-<tr><td>"check every earlier spot"</td><td><code>for previous_index in range(current_index)</code></td></tr>
-<tr><td>"only smaller ones may go before mine"</td><td>the <code>if</code> test</td></tr>
-<tr><td>"hand over the smaller question"</td><td>the call inside</td></tr>
-<tr><td>"add my own number"</td><td><code>1 +</code></td></tr>
-<tr><td>"keep the longest"</td><td><code>max(...)</code></td></tr>
-<tr><td>"the chain can end anywhere"</td><td>the final <code>max</code> over every spot</td></tr>
+<tr><th>Piece</th><th>Where it came from</th></tr>
+<tr><td>the plain <code>1</code></td><td>standing alone, section 7. Our number by itself is already a chain.</td></tr>
+<tr><td>"every earlier spot"</td><td>the thing before us must come earlier, section 1.</td></tr>
+<tr><td>"whose value is smaller"</td><td>each link must be bigger than the last, section 1.</td></tr>
+<tr><td>the inner question</td><td>the promise, section 4.</td></tr>
+<tr><td><code>1 +</code></td><td>adding our own number, section 9.</td></tr>
+<tr><td>"the biggest of"</td><td>the word "longest", section 9.</td></tr>
+<tr><td>the last line</td><td>the chain has to end <em>somewhere</em>, section 4.</td></tr>
 </table>
 </div>
 
-
-<h2 id="s13"><span class="num">13</span>The Code, Line by Line</h2>
-
-<div class="prev">We already know: every line below matches something we worked out by hand.</div>
-
-<pre><code><span style="color:var(--muted)"># Gives back how many numbers are in the longest rising
-# chain that ends on numbers[current_index].</span>
-<span class="ln ln-pink">def longest_chain_ending_at(current_index):</span>
-<span class="ln ln-green">    longest_so_far = 1</span>
-<span class="ln ln-orange">    for previous_index in range(current_index):</span>
-<span class="ln ln-yellow">        if numbers[previous_index] &lt; numbers[current_index]:</span>
-<span class="ln ln-red">            longest_so_far = max(longest_so_far,
-                                 1 + longest_chain_ending_at(previous_index))   <span class="recflag"># RECURSION HAPPENS HERE</span></span>
-<span class="ln ln-purple">    return longest_so_far</span>
-
-
-<span class="ln ln-teal">answer = max(longest_chain_ending_at(current_index)
-             for current_index in range(len(numbers)))</span></code></pre>
-
-<div class="cards">
-<div class="cd cd-pink"><b>def longest_chain_ending_at(current_index):</b>
-The note becomes the input. One spot in, one count out.</div>
-
-<div class="cd cd-green"><b>longest_so_far = 1</b>
-"Start alone" and the bottom case at once. If no earlier spot works, the loop does nothing and this 1 comes back. Delete it and <code>[9, 8, 7]</code> gives 0.</div>
-
-<div class="cd cd-orange"><b>for previous_index in range(current_index):</b>
-Check every earlier spot, not just the nearest. This is the part greedy skipped.</div>
-
-<div class="cd cd-yellow"><b>if numbers[previous_index] &lt; numbers[current_index]:</b>
-Only a smaller number may sit before ours. Use <code>&lt;=</code> and <code>[2, 2, 2]</code> starts saying 3. The loop walks over <b>spots</b>, this line compares <b>values</b>, and we need both.</div>
-
-<div class="cd cd-red"><b>longest_so_far = max(longest_so_far, 1 + longest_chain_ending_at(previous_index))</b>
-The inner call hands back a count. The <code>1 +</code> pays for our own number. The <code>max</code> keeps this option only if it beats what we had. The VALUE never enters the sum.</div>
-
-<div class="cd cd-purple"><b>return longest_so_far</b>
-The promise, kept. We started at 1 and only swapped in something longer that still ends here.</div>
-
-<div class="cd cd-teal"><b>answer = max(... for every spot)</b>
-Outside the function. The chain ends somewhere and nobody said where, so ask everywhere. Not optional, and not the last spot.</div>
-</div>
-
-<div class="aloud"><b>Say the recursive line out loud</b>
-"Take how long the chain ending back there was, add one for my own number, and keep it only if it beats my best so far."</div>
-
-<img src="dp/images/lis_09_code.png" alt="Colour coded lines with one explanation card each, and a flag on the recursive line" class="scene-img">
-<p class="cap">Six lines, six ideas, all worked out before they were written.</p>
-
-<details class="chk">
-<summary>Which one line stops this running forever?</summary>
-<div class="ans">The orange one. The earlier spot is always smaller than the current one, so every call moves left, and spots cannot go below 0. If it looped over the whole list instead, a call could ask itself and never finish. The <code>if</code> does not save us, because it compares values, not direction.</div>
-</details>
-
-<div class="next"><b>So next:</b> run it on the whole list.</div>
-
-
-<h2 id="s14"><span class="num">14</span>Every Call, Every Answer</h2>
-
-<div class="prev">We already know: each call checks every earlier spot and keeps the best.</div>
-
-<img src="dp/images/lis_10_trace.png" alt="All five calls with what they found and gave back, and the biggest one taken at the end" class="scene-img">
-<p class="cap">Five calls, five answers, then the biggest of them.</p>
-
-<p>How does a function that only knows one spot answer for the whole list? It does not. Each call answers a small question. The last step is ours:</p>
-
-<div class="strip">
-<div class="rl">INDEX</div>
-<div class="ix">0</div><div class="ix">1</div><div class="ix">2</div><div class="ix">3</div><div class="ix">4</div>
-<div class="rl">GIVEN BACK</div>
-<div class="vb len">1</div><div class="vb len">2</div><div class="vb len">1</div><div class="vb len">2</div><div class="vb gold">3</div>
-<div class="snote">the biggest is <b style="color:var(--gold2)">3</b>, from <code>1 &rarr; 2 &rarr; 3</code></div>
-</div>
-
-<div class="warn">
-<b>Do not just read the last one.</b> Here the last spot happens to hold 3, which makes that look right. On <code>[1, 2, 3, 1]</code> the answers are 1, 2, 3, 1. The last is 1, the real answer is 3.
-</div>
-
-<div class="next"><b>So next:</b> one question got asked more than once.</div>
-
-
-<h2 id="s15"><span class="num">15</span>What Gets Done Twice?</h2>
-
-<div class="prev">We already know: the answer is the biggest across every spot.</div>
-
-<p>While working out INDEX 4, two routes end in the same place. <b style="color:var(--orange)">Route A</b> hooks straight onto INDEX 2. <b style="color:var(--idx)">Route B</b> hooks onto INDEX 3, which hooks onto INDEX 2. Both finish by asking the exact same thing.</p>
-
-<img src="dp/images/lis_11_repeated.png" alt="Two different routes landing on the same call, stamped solved twice" class="scene-img">
-<p class="cap">Two different paths, one identical question.</p>
-
 <div class="hi">
-<b>Be clear about what is wasted.</b> It is not that the number 1 shows up twice. It is that the program <em>works out the same answer again from scratch</em>, checking the same spots and redoing the same comparisons.
+<b>That last line is not decoration.</b> Every question we ask is about chains ending at one particular spot. Nobody told us where the best chain ends, so we ask at every spot and keep the biggest. Forgetting this line is the most common way to get this problem almost right.
 </div>
 
-<p>That is just inside one branch. Across the whole run, INDEX 2 gets asked four times, and on a longer list this gets much worse fast.</p>
-
-<div class="ok"><b>On the list 1 to 20: only 20 different questions, but 1,048,575 calls.</b> That gap is why the next step exists.</div>
-
-<div class="next"><b>So next:</b> the fix is obvious once you see the waste.</div>
+<div class="next"><b>So next:</b> the rule is correct but slow. Fixing that is the waste we spotted in Layer 1.</div>
 
 
-<h2 id="s16"><span class="num">16</span>Write It Down</h2>
+<h2 id="s11"><span class="num">11</span>Answer Once, Look It Up Forever<span class="badge b2">LAYER 2</span></h2>
 
-<div class="prev">We already know: the same spot was worked out more than once.</div>
+<div class="prev">We already know from Layer 1: the same spot gets worked out over and over.</div>
 
-<p>The fix is one sentence: <strong>before working something out, check if we already did.</strong> We look things up by the note, which is the spot. We store what the call gave back, which is a count.</p>
+<p>The fix is one sentence: <strong>before working something out, check whether we already did.</strong></p>
+
+<p>Both halves of that come straight from what we already built. What do we look things up by? The note, which is the spot. What do we store? Whatever the question handed back, which is a count. Nothing new has to be invented.</p>
 
 <pre><code><span class="ln ln-teal">solved_lengths = {}</span>
 
@@ -669,52 +714,56 @@ def longest_chain_ending_at(current_index):
 answer = max(longest_chain_ending_at(current_index)
              for current_index in range(len(numbers)))</code></pre>
 
-<p>Three new lines. Make an empty box, check it first, and fill it before handing the answer back.</p>
+<p>Only three lines are new, and they are all bookkeeping. Make an empty box. Check it before doing any work. Fill it before handing the answer back.</p>
 
-<div class="aloud"><b>Say one entry out loud</b>
-<code>solved_lengths[2] = 1</code> means "the longest chain ending on the 1 at spot 2 has one number in it". That is the promise, word for word.</div>
+<div class="aloud"><b>Say one stored entry out loud</b>
+<code>solved_lengths[2] = 1</code> means "the longest chain ending on the 1 at spot 2 has one number in it". That is the promise from section 4, word for word. If a stored entry ever meant something different from the promise, we would have a bug.</div>
 
-<img src="dp/images/lis_12_memo.png" alt="A drawer keyed by spot holding chain lengths, with the three new lines highlighted" class="scene-img">
-<p class="cap">Look it up by the spot. Store what the call would have given back.</p>
+<img src="dp/images/lis_10_memo.png" alt="A drawer looked up by spot, holding counts, with the three new lines highlighted" class="scene-img">
+<p class="cap">Look it up by the note. Store exactly what the question handed back.</p>
 
-<p>Nothing else changed. Same promise, same options, same <code>+1</code>, same <code>max</code>, same answers. Only the repeated work is gone.</p>
+<p>Nothing else changed. Same promise, same options, same <code>+1</code>, same <code>max</code>, same answers. The only thing that disappeared is repeated work.</p>
 
 <details class="chk">
-<summary>Why look things up by the spot alone, with nothing about the chain so far?</summary>
-<div class="ans">Because the chain so far cannot change the answer. "How long is the chain ending at spot 2" is 1 no matter who asked. We tested that idea in section 9 and dropped it. If the answer <em>did</em> depend on who asked, the spot alone would not describe the question and this would give wrong answers.</div>
+<summary>Why do we look things up by the spot alone, with nothing about the chain so far?</summary>
+<div class="ans">Because the chain so far cannot change the answer. "How long is the chain ending at spot 2" is 1 no matter who asked or what they had collected. We tested that exact idea in section 8 and dropped it from the note. If the answer <em>did</em> depend on who asked, then the spot alone would not describe the question, and looking things up this way would quietly hand back wrong answers. A store that is missing part of the note is not a caching bug. It means we chose the note wrong.</div>
 </details>
 
-<div class="next"><b>So next:</b> if every spot gets worked out once, why call at all?</div>
+<div class="next"><b>So next:</b> if every spot gets worked out exactly once anyway, why are we still asking questions?</div>
 
 
-<h2 id="s17"><span class="num">17</span>A Call and a Box Are the Same Thing</h2>
+<h2 id="s12"><span class="num">12</span>A Question and a Box Are the Same Thing<span class="badge b2">LAYER 2</span></h2>
 
-<div class="prev">We already know: each spot gets worked out once and stored.</div>
+<div class="prev">We already know: every spot is worked out once and stored.</div>
 
-<p>Look at what we built: one slot per spot, each holding a count. That is a list. And a list you look things up in is a table. So we keep the name, and only the brackets change:</p>
+<p>Look at what we ended up building. One slot per spot, each holding a count. That is just a list. And a list you look things up in is a table.</p>
+
+<p>So we keep the name. The only thing that changes is the brackets:</p>
 
 <div class="ws" style="border-left-color:var(--gold);text-align:center">
 <code style="font-size:1.1em;color:var(--cyan);font-weight:800">longest_chain_ending_at<span style="color:var(--gold2)">(</span>2<span style="color:var(--gold2)">)</span></code>
 <span style="color:var(--muted);margin:0 12px">becomes</span>
 <code style="font-size:1.1em;color:var(--cyan);font-weight:800">longest_chain_ending_at<span style="color:var(--gold2)">[</span>2<span style="color:var(--gold2)">]</span></code>
-<p style="margin:8px 0 0;font-size:.95em">Round brackets ask for it. Square brackets look it up.</p>
+<p style="margin:8px 0 0;font-size:.95em">Round brackets ask for it. Square brackets look it up. Same name, same question, same answer.</p>
 </div>
 
-<img src="dp/images/lis_13_call_to_cell.png" alt="A call turning into a stored entry and then into a table cell, all holding the same count" class="scene-img">
-<p class="cap">A call, a stored entry and a table box are three places to keep one fact.</p>
+<img src="dp/images/lis_11_call_to_cell.png" alt="A question turning into a stored entry and then into a table box, all holding the same count" class="scene-img">
+<p class="cap">A question, a stored entry and a table box are three places to keep one identical fact.</p>
 
-<p>The only difference is <strong>when</strong> the answers get made. A call asks the moment it needs one. A table fills boxes in an order where whatever you need is <em>already there</em>, so you never ask, you only read.</p>
+<p>So what is genuinely different? Only <strong>when</strong> the answers get made.</p>
 
-<p>Which order? Section 9 told us: the note always moves <strong>left</strong>. So fill left to right, and everything we need is behind us.</p>
+<p>Asking a question gets you an answer at the moment you need it, and if the answer does not exist yet, it goes off and makes it. A table flips that around: fill the boxes in an order where whatever you need is <em>already sitting there</em>. Then you never ask anything. You only read.</p>
+
+<p>Which order works? Section 8 already told us, we just did not use it yet. The note only ever moves <strong>left</strong>. So if we fill left to right, everything we could possibly need is behind us and already done.</p>
 
 <div class="next"><b>So next:</b> fill it in and read every box out loud.</div>
 
 
-<h2 id="s18"><span class="num">18</span>Filling the Table</h2>
+<h2 id="s13"><span class="num">13</span>Filling the Table<span class="badge b2">LAYER 2</span></h2>
 
-<div class="prev">We already know: a box holds what a call would have given back, and left to right is safe.</div>
+<div class="prev">We already know: a box holds exactly what a question would have handed back, and left to right is safe.</div>
 
-<p>One box per spot. Every box starts at <span class="nL">1</span>, because every number is already a chain on its own.</p>
+<p>One box per spot. Every box starts at <span class="nL">1</span>, which is the "stand alone" option written as a starting value instead of an option.</p>
 
 <div class="strip">
 <div class="rl">INDEX</div>
@@ -726,16 +775,95 @@ answer = max(longest_chain_ending_at(current_index)
 <div class="snote">filled. the biggest is <b style="color:var(--gold2)">3</b></div>
 </div>
 
-<p>Read the boxes out loud and they are just sentences. Box 1 says "the longest chain ending on the 6 has 2 numbers". Box 4 says "the longest chain ending on the 3 has 3 numbers".</p>
+<p>Every box is a sentence. Box 1 says "the longest chain ending on the 6 has 2 numbers in it". Box 2 says "the longest chain ending on the 1 has 1 number in it". If you cannot say a box out loud like that, something has gone wrong.</p>
 
-<img src="dp/images/lis_14_tabulation.png" alt="The table filled box by box with every arrow pointing left, and the biggest taken at the end" class="scene-img">
-<p class="cap">Every arrow points left, which is why left to right is safe.</p>
+<img src="dp/images/lis_12_tabulation.png" alt="The table filled box by box with every arrow pointing left, and the biggest taken at the end" class="scene-img">
+<p class="cap">Every arrow points left, which is exactly why left to right is safe.</p>
+
+<div class="warn">
+<b>The answer is the biggest box, not the last box.</b> Here the last box happens to hold 3, which makes reading the last one look correct. On <code>[1, 2, 3, 1]</code> the boxes hold 1, 2, 3, 1. The last is 1. The real answer is 3.
+</div>
+
+<details class="chk">
+<summary>Could we fill it right to left instead?</summary>
+<div class="ans">Not this version. Every box reads boxes to its <em>left</em>, so going right to left would read boxes nobody has filled yet, all still holding 1. Box 4 would work out <code>1 + 1 = 2</code> and we would answer 2 instead of 3. You <em>can</em> build a right to left version, but only by changing the question to "longest chain <b>starting</b> here", which flips every arrow. Fill order is not a style choice. It follows from which way the note moves.</div>
+</details>
+
+<p>You could now write this yourself. Layer 3 is about turning it into code you would actually ship, and knowing what it costs.</p>
+
+<div class="stop">
+<b>End of Layer 2</b>
+<span>You could write it. Layer 3 is the code, the cost, and the traps.</span>
+</div>
+
+
+<!-- ==================== LAYER 3 ==================== -->
+<div class="layer layer-3">
+<div class="lnum">LAYER 3</div>
+<h2>The Code</h2>
+<p>Every line, why it exists, what it costs, and the four ways people get it wrong.</p>
+<span class="promise">stop here and you could ship it</span>
+</div>
+
+
+<h2 id="s14"><span class="num">14</span>The Code, Line by Line<span class="badge b3">LAYER 3</span></h2>
+
+<div class="prev">We already know: the whole algorithm. This is it written so a machine will follow it.</div>
+
+<pre><code><span style="color:var(--muted)"># Hands back how many numbers are in the longest rising
+# chain that ends on numbers[current_index].</span>
+<span class="ln ln-pink">def longest_chain_ending_at(current_index):</span>
+<span class="ln ln-green">    longest_so_far = 1</span>
+<span class="ln ln-orange">    for previous_index in range(current_index):</span>
+<span class="ln ln-yellow">        if numbers[previous_index] &lt; numbers[current_index]:</span>
+<span class="ln ln-red">            longest_so_far = max(longest_so_far,
+                                 1 + longest_chain_ending_at(previous_index))   <span class="recflag"># RECURSION HAPPENS HERE</span></span>
+<span class="ln ln-purple">    return longest_so_far</span>
+
+
+<span class="ln ln-teal">answer = max(longest_chain_ending_at(current_index)
+             for current_index in range(len(numbers)))</span></code></pre>
+
+<div class="cards">
+<div class="cd cd-pink"><b>def longest_chain_ending_at(current_index):</b>
+The note from section 8 becomes the input. One spot in, one count out, and nothing remembered between calls. The name is long on purpose: it tells you what comes back without you having to look anything up.</div>
+
+<div class="cd cd-green"><b>longest_so_far = 1</b>
+This single line is "stand alone" and the bottom rung at the same time. If no earlier spot ever passes the check, the loop body never runs and this 1 is what gets handed back. Delete it and <code>[9, 8, 7]</code> answers 0.</div>
+
+<div class="cd cd-orange"><b>for previous_index in range(current_index):</b>
+Check every earlier spot, not the nearest one and not the first that works. This is precisely the part the easy idea skipped, and it is why we stop losing the answer.</div>
+
+<div class="cd cd-yellow"><b>if numbers[previous_index] &lt; numbers[current_index]:</b>
+Only a smaller number may sit before ours. Change <code>&lt;</code> to <code>&lt;=</code> and <code>[2, 2, 2]</code> starts claiming 3. Notice the loop walks over <b>spots</b> while this line compares <b>values</b>, and we need both conditions: earlier in position, smaller in value.</div>
+
+<div class="cd cd-red"><b>longest_so_far = max(longest_so_far, 1 + longest_chain_ending_at(previous_index))</b>
+Three ideas squeezed onto one line. The inner call hands back a count. The <code>1 +</code> pays for our own number. The <code>max</code> keeps this option only if it beats what we already had. The value at our spot never enters the sum.</div>
+
+<div class="cd cd-purple"><b>return longest_so_far</b>
+The promise, kept. What we hand back has to be "how long is the chain ending exactly here", and it is: we started at 1 and only ever swapped in something longer that still ends here.</div>
+
+<div class="cd cd-teal"><b>answer = max(... across every spot)</b>
+Outside the function, and not optional. The chain ends somewhere and nobody said where, so ask at every spot and keep the biggest. This is the line from section 10 that people forget.</div>
+</div>
+
+<div class="aloud"><b>Say the recursive line out loud</b>
+"Take how long the chain ending back there was, add one for my own number, and keep that only if it beats my best so far."</div>
+
+<img src="dp/images/lis_13_code.png" alt="Colour coded lines with one explanation card each, and a flag marking the recursive line" class="scene-img">
+<p class="cap">Six lines, six ideas, every one of them worked out before it was written.</p>
+
+<div class="ok"><b>The real test:</b> if this code vanished, Layers 1 and 2 would let you write it back. That is the difference between understanding a solution and having seen one.</div>
+
+<h3>The table version</h3>
+
+<p>The same algorithm with no recursion at all. Boxes filled left to right, exactly as in section 13.</p>
 
 <pre><code>def length_of_lis(numbers):
     if not numbers:
         return 0
 
-    <span style="color:var(--muted)"># one box per spot, all starting at 1</span>
+    <span style="color:var(--muted)"># one box per spot, every box starting at 1</span>
     longest_chain_ending_at = [1] * len(numbers)
 
     for current_index in range(len(numbers)):
@@ -747,77 +875,102 @@ answer = max(longest_chain_ending_at(current_index)
 
     return max(longest_chain_ending_at)</code></pre>
 
-<p>No recursion, no lookups. Same five answers, made in an order that guarantees they are ready when needed.</p>
+<p>Notice the table is named the same as the function, so the connection from section 12 stays visible even in the shipped code. No stack depth to worry about, and usually the version to reach for.</p>
 
 <details class="chk">
-<summary>Could we fill it right to left instead?</summary>
-<div class="ans">Not this version. Each box reads boxes to its <em>left</em>, so going right to left would read boxes still holding 1. Box 4 would work out <code>1 + 1 = 2</code> and we would answer 2 instead of 3. You <em>can</em> build a right to left version, but only by changing the question to "longest chain <b>starting</b> here", which flips everything. Fill order follows from which way the note moves.</div>
+<summary>Which single line stops the recursive version running forever?</summary>
+<div class="ans">The orange one, <code>for previous_index in range(current_index)</code>. Because the earlier spot is always strictly smaller than the current one, every call moves left, and spots cannot go below 0, so it has to stop. If it looped over the whole list instead, a call could ask itself and never finish. The <code>if</code> check would not save us, because it compares values, not direction.</div>
 </details>
 
-<div class="next"><b>So next:</b> can we throw any boxes away?</div>
+<div class="next"><b>So next:</b> what does all of this actually cost?</div>
 
 
-<h2 id="s19"><span class="num">19</span>Can We Use Less Memory?</h2>
+<h2 id="s15"><span class="num">15</span>How Fast, and How Much Room<span class="badge b3">LAYER 3</span></h2>
 
-<div class="prev">We already know: each box reads boxes to its left.</div>
+<div class="prev">We already know: the code, in both forms.</div>
 
-<p>Usually the next trick is to notice only the last couple of boxes get read, and throw the rest away. Does that work here?</p>
+<h3>Speed</h3>
+
+<p>Without storing answers, the work explodes, exactly as we watched in section 6. With storing, there are only as many real questions as there are spots, and each one scans the spots to its left.</p>
 
 <div class="tbl-wrap">
 <table>
-<tr><th>Problem</th><th>A box reads</th><th class="c">Throw boxes away?</th></tr>
-<tr><td>Climbing Stairs, House Robber</td><td>only the last two</td><td class="c" style="color:#86efac;font-weight:800">yes, keep 2</td></tr>
+<tr><th>Version</th><th class="c">Cost</th><th>On the list 1 to 20</th></tr>
+<tr><td>asking again and again</td><td class="c" style="color:#fca5a5;font-weight:800">explodes</td><td>1,048,575 calls</td></tr>
+<tr><td>storing answers, or the table</td><td class="c" style="color:#86efac;font-weight:800">n &times; n</td><td>about 400 steps</td></tr>
+</table>
+</div>
+
+<h3>Can we throw boxes away?</h3>
+
+<p>The usual next trick is to notice that only the last couple of boxes ever get read, and drop the rest. Let us actually check rather than assume, because here the answer is no.</p>
+
+<div class="tbl-wrap">
+<table>
+<tr><th>Problem</th><th>A box reads</th><th class="c">Can we drop boxes?</th></tr>
+<tr><td>Climbing Stairs, House Robber</td><td>only the last two boxes</td><td class="c" style="color:#86efac;font-weight:800">yes, keep 2</td></tr>
 <tr><td><b>This problem</b></td><td>possibly <b>every</b> earlier box</td><td class="c" style="color:#fca5a5;font-weight:800">no, keep all</td></tr>
 </table>
 </div>
 
-<p>Our inner loop checks every earlier spot, with no limit on how far back a match sits. In <code>[1, 100, 101, 102, 2]</code> the last box's only match is the very first box. Throw it away and the answer is gone.</p>
+<p>Our inner loop checks every earlier spot, and nothing limits how far back a match might sit. In <code>[1, 100, 101, 102, 2]</code> the last box's only legal match is the very first box. Drop it and the answer is gone.</p>
+
+<img src="dp/images/lis_14_cost.png" alt="Speed compared before and after storing answers, and two dependency pictures showing why boxes cannot be dropped" class="scene-img">
+<p class="cap">Some problems only look back two boxes. This one may look back at all of them.</p>
 
 <div class="hi">
-<b>So the honest answer is: we cannot.</b> Not every problem shrinks, and knowing <em>why</em> beats forcing a trick that does not exist here. There is a faster version using a different idea entirely, but that is a separate story.
+<b>So the honest answer is that we cannot shrink it, and that is fine.</b> Not every problem compresses. Being able to say <em>why</em> is worth more than forcing a trick that does not apply. There is a faster version of this problem that reaches n log n, but it throws away the "ending here" idea entirely and needs its own story, so it does not belong on this page.
 </div>
 
 <div class="next"><b>So next:</b> the traps.</div>
 
 
-<h2 id="s20"><span class="num">20</span>Four Ways to Get It Wrong</h2>
+<h2 id="s16"><span class="num">16</span>Four Ways to Get It Wrong<span class="badge b3">LAYER 3</span></h2>
 
 <div class="tbl-wrap">
 <table>
 <tr><th>The slip</th><th class="c">Try it on</th><th class="c">Wrong</th><th class="c">Right</th><th>Why it is tempting</th></tr>
 <tr><td>using <code>&lt;=</code></td><td class="c"><code>[2, 2, 2]</code></td><td class="c" style="color:#fca5a5;font-weight:800">3</td><td class="c" style="color:#86efac;font-weight:800">1</td><td>equal feels close enough to bigger. It is not.</td></tr>
-<tr><td>reading the last box</td><td class="c"><code>[1, 2, 3, 1]</code></td><td class="c" style="color:#fca5a5;font-weight:800">1</td><td class="c" style="color:#86efac;font-weight:800">3</td><td>in most problems the last box <em>is</em> the answer. Not here.</td></tr>
+<tr><td>reading the last box</td><td class="c"><code>[1, 2, 3, 1]</code></td><td class="c" style="color:#fca5a5;font-weight:800">1</td><td class="c" style="color:#86efac;font-weight:800">3</td><td>in most problems the last box <em>is</em> the answer. Not this one.</td></tr>
 <tr><td>adding the number, not 1</td><td class="c"><code>[1, 9]</code></td><td class="c" style="color:#fca5a5;font-weight:800">10</td><td class="c" style="color:#86efac;font-weight:800">2</td><td>"I added the 9, so add 9." We count numbers, we do not total them.</td></tr>
 <tr><td>starting boxes at 0</td><td class="c"><code>[9, 8, 7]</code></td><td class="c" style="color:#fca5a5;font-weight:800">0</td><td class="c" style="color:#86efac;font-weight:800">1</td><td>"nothing found yet, so zero." One number is already a chain.</td></tr>
 </table>
 </div>
 
 <img src="dp/images/lis_15_mistakes.png" alt="Four common slips shown as tiny lists with the wrong and right answers" class="scene-img">
-<p class="cap">Every one dies to a three number list. Test small.</p>
+<p class="cap">Every one of these dies to a three number list. Test small.</p>
+
+<p>Three of these four are the same underlying mistake: losing track of what kind of number you are holding. A spot is not a count, and a value is not a count. That is why every number on this page carries a label.</p>
 
 
-<h2 id="s21"><span class="num">21</span>Remembering This Later</h2>
+<h2 id="s17"><span class="num">17</span>Rediscovering This in Six Months<span class="badge b3">LAYER 3</span></h2>
+
+<div class="prev">We already know: the whole thing, story to shipped code.</div>
+
+<p>You will forget the rule. That is fine and expected. What has to survive is the story, because the story rebuilds the rule.</p>
 
 <div class="ws" style="border-left-color:var(--gold)">
 <b style="color:var(--gold2);font-size:1.04em">The clue to watch for</b>
 <p style="margin:8px 0 0;font-size:1.04em">When a problem says <b>"keep the order, skipping is fine, find the longest"</b>, ask <b>"how good is the answer that <em>ends</em> right here?"</b> at every spot, then take the biggest.</p>
 </div>
 
-<p>Anchoring on where something <em>ends</em> is the reusable trick. It turns a vague question into one with a short, checkable list of options. The same trick works on longest chain of pairs, Russian doll envelopes, and longest arithmetic subsequence.</p>
+<p>Anchoring on where something <em>ends</em> is the reusable move, and it is worth understanding why it works. It converts a vague question with endless possibilities into one with a short, checkable list of options, because once you fix the last element, the only thing left to decide is what came directly before it. The same trick unlocks longest chain of pairs, Russian doll envelopes, and longest arithmetic subsequence.</p>
+
+<h3>The story in seven steps</h3>
 
 <div class="tbl-wrap">
 <table>
 <tr><td class="c" style="width:34px"><b>1</b></td><td>I grabbed anything bigger as I walked. Grabbing the 6 killed <code>1 &rarr; 2 &rarr; 3</code>, so grabbing was unsafe.</td></tr>
-<tr><td class="c"><b>2</b></td><td>I stopped at one number and asked: how long is the chain that <b>ends here</b>?</td></tr>
-<tr><td class="c"><b>3</b></td><td>Answering it needed the same thing about earlier smaller numbers. Same question, smaller. So recursion.</td></tr>
-<tr><td class="c"><b>4</b></td><td>I checked every earlier spot, plus standing alone.</td></tr>
+<tr><td class="c"><b>2</b></td><td>I stopped at one number and asked a smaller question: how long is the chain that <b>ends here</b>?</td></tr>
+<tr><td class="c"><b>3</b></td><td>Answering it needed the same thing about earlier smaller numbers. Same question, smaller. So: ask and trust.</td></tr>
+<tr><td class="c"><b>4</b></td><td>I checked every earlier spot, plus standing alone, and argued nothing else was possible.</td></tr>
 <tr><td class="c"><b>5</b></td><td>"Longest" gave me <code>max</code>. Adding one number gave me <code>+1</code>.</td></tr>
-<tr><td class="c"><b>6</b></td><td>The same spot kept getting asked, so I wrote each answer down.</td></tr>
-<tr><td class="c"><b>7</b></td><td>Once each spot is written once, it is a row of boxes. Fill left to right, take the biggest.</td></tr>
+<tr><td class="c"><b>6</b></td><td>The same spot kept getting asked, so I wrote each answer down the first time.</td></tr>
+<tr><td class="c"><b>7</b></td><td>Once each spot is written once, it is just a row of boxes. Fill left to right, take the biggest.</td></tr>
 </table>
 </div>
 
-<div class="ok"><b>If you can retell those seven steps, you can rebuild the code.</b> That was the point, not memorising a formula.</div>
+<div class="ok"><b>If you can retell those seven steps, you can rebuild the code from scratch.</b> That was always the point. The rule was never the thing worth remembering.</div>
 
 <div style="text-align:center;margin-top:40px">
 <a href="dp_workshop.html" class="nav-link">&larr; DP Workshop</a>

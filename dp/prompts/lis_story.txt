@@ -1,9 +1,10 @@
-LIS STORY-FIRST IMAGES v2 (Longest Increasing Subsequence, LeetCode #300)
+LIS STORY-FIRST IMAGES v3 (Longest Increasing Subsequence, LeetCode #300)
 ==============================================================
-15 panels. One connected story. Running example: numbers = [5, 6, 1, 2, 3]
-Built to the STORY-FIRST tutor prompt including RULE 10.5
-(descriptive names, every number typed, index separated from value,
-arithmetic annotated with units, number legend on every data panel).
+16 panels, grouped into three layers.
+  LAYER 1 THE STORY        panels 1 to 6   (understand it, no code)
+  LAYER 2 THE ALGORITHM    panels 7 to 12  (write it)
+  LAYER 3 THE CODE         panels 13 to 16 (ship it)
+Running example: numbers = [5, 6, 1, 2, 3]
 ==============================================================
 
 ================================================================================
@@ -15,92 +16,91 @@ STYLE BIBLE
 IMAGE FORMAT: Tall portrait infographic, mobile first.
 
 TEXT RULES:
-- ALL text must be HUGE. Section titles 60pt+, body text 32pt+, code 26pt+.
+- ALL text HUGE. Titles 60pt+, body 32pt+, code 26pt+.
 - Readable on a phone held vertically WITHOUT zooming.
-- WORD BUDGET: about 60 words of body text per panel, not counting the top
-  and bottom banners. Prefer fragments over sentences. Prefer a diagram
-  over a paragraph. White space is good. Do not cram.
-- NO multi-row tables inside a panel. Tables belong in the article, not the image.
-- Clean sans-serif font (Nunito or Poppins). NO chalk, NO handwriting, NO serif.
+- About 60 words of body text per panel, not counting the banners.
+  Prefer fragments over sentences. Prefer a diagram over a paragraph.
+- NO multi row tables inside a panel. Tables belong in the article.
+- Clean sans serif font (Nunito or Poppins). NO chalk, NO handwriting, NO serif.
+- Plain words only. Write for a bright ten year old. Never use the words
+  "delegate", "predecessor", "exhaustive", "transition", "dependency",
+  "optimal" or "iterate" anywhere in a panel.
 
-=== NAMING (use these EXACT names, never abbreviate them) ===
-The array is always called:            numbers
-The function is always called:         longest_chain_ending_at(current_index)
-The loop variable is always called:    previous_index
-The running best is always called:     longest_so_far
-The table is always called:            longest_chain_ending_at[current_index]
-   (same name as the function: round brackets become square brackets)
-The cache is always called:            solved_lengths
+=== LAYER BADGE (every panel) ===
+Top left corner, a small rounded pill badge, one of exactly these:
+     "LAYER 1  THE STORY"        pill colour SKY CYAN (#38BDF8)
+     "LAYER 2  THE ALGORITHM"    pill colour GOLD (#F59E0B)
+     "LAYER 3  THE CODE"         pill colour VIOLET (#A78BFA)
+Small. It must not compete with the title.
 
-NEVER write i, j, n, m, dp, f, go, solve, rec, or arr anywhere in any panel.
+=== NAMING (use these EXACT names, never abbreviate) ===
+the list is always:        numbers
+the function is always:    longest_chain_ending_at(current_index)
+the loop variable:         previous_index
+the running best:          longest_so_far
+the table:                 longest_chain_ending_at[current_index]
+   (same name as the function, round brackets become square brackets)
+the store:                 solved_lengths
+NEVER write i, j, n, m, dp, f, go, solve, rec or arr in any panel.
 
-=== EVERY NUMBER MUST BE TYPED ===
-A bare number is forbidden. Every number carries a small text label saying
-what KIND of number it is. Use these role words:
-   INDEX      a position in the array
-   VALUE      the number stored at that position
-   LENGTH     a returned answer, how many elements are in a chain
-   BEST       the best answer found so far inside one call
-
-NUMBER LEGEND: any panel showing more than two numbers must include a small
-legend box with these four rows, using these exact colours:
+=== EVERY NUMBER MUST BE LABELLED ===
+A bare number is forbidden. Every number carries a small word saying what it is:
+   INDEX    a spot in the list
+   VALUE    the number sitting at that spot
+   LENGTH   an answer handed back, how many numbers are in a chain
+   BEST     the best found so far inside one call
+Any panel showing more than two numbers includes a small NUMBER LEGEND box:
    INDEX  = BLUE   (#38BDF8)
-   VALUE  = WHITE/DARK GREY, plain
+   VALUE  = WHITE / DARK GREY
    LENGTH = GREEN  (#22C55E)
    BEST   = PURPLE (#A78BFA)
-Invalid or rejected things are RED (#EF4444).
-Colour is never the only signal. The text label is always present too.
+Wrong or not allowed things are RED (#EF4444).
+Colour is never the only signal. The word label is always there too.
 
-=== INDEX AND VALUE ARE DRAWN ON SEPARATE ROWS ===
-Whenever the array appears, draw it as TWO labelled rows, aligned in columns:
-
+=== INDEX AND VALUE GO ON SEPARATE ROWS ===
+Whenever the list appears, draw two labelled rows lined up in columns:
    INDEX:    0    1    2    3    4        <- small blue text
    VALUE:    5    6    1    2    3        <- large boxes
+Never merge them.
 
-Never merge them. Never write a position and a value as one number.
-
-=== ARITHMETIC CARRIES UNITS ===
-Never draw bare arithmetic. Every term gets a caption under it. Like this:
-
+=== SUMS CARRY THEIR MEANING ===
+Never draw a bare sum. Every term gets a caption underneath:
         1                +          2               =        3
-   "the current                "LENGTH returned          "LENGTH of the
-    element itself"             by the smaller call"      whole chain"
+   "my own number,             "LENGTH handed           "LENGTH of the
+    that is one"                back from below"         whole chain"
 
-=== CONNECTED STORY BANNERS ===
-Every panel begins with a thin banner at the very top:
-   "WE ALREADY KNOW: ..."
-and ends with a thin banner at the very bottom:
-   "SO NEXT: ..."
-These are short, one line each.
+=== STORY BANNERS ===
+Every panel starts with a thin top banner "WE ALREADY KNOW: ..."
+and ends with a thin bottom banner "SO NEXT: ...". One short line each.
 
-CHARACTER (Kit, appears in EVERY panel with this EXACT look):
-- Young person, mid-20s, master vault raider.
-- Hair: SHORT MESSY DARK BROWN hair. Never long, never neat, never styled.
+CHARACTER (Kit, in EVERY panel, this EXACT look):
+- Young person, mid 20s, master vault raider.
+- Hair: SHORT MESSY DARK BROWN. Never long, never neat.
 - Face: sharp dark eyes, confident smirk, light stubble. Round head.
-- Outfit (EVERY image, NO exceptions):
-  * SLEEK BLACK TACTICAL SUIT (one-piece, fitted, matte black).
-  * DARK BLUE UTILITY BELT around the waist.
+- Outfit, every time, no exceptions:
+  * SLEEK BLACK TACTICAL SUIT, one piece, fitted, matte black.
+  * DARK BLUE UTILITY BELT.
   * FINGERLESS BLACK GLOVES on both hands.
-  * Compact NIGHT-VISION GOGGLES pushed up on forehead (always visible).
-- Build: lean and athletic. Calm, calculated confidence.
-- Proportions: Pixar/Disney-style 3D render. Head slightly oversized
-  (about 1/4 of body height). Big eyes. Smooth plastic-like skin.
+  * Compact NIGHT VISION GOGGLES pushed up on the forehead, always visible.
+- Lean and athletic. Calm, calculated confidence.
+- Pixar/Disney style 3D render. Head slightly oversized, about 1/4 of body
+  height. Big eyes. Smooth plastic like skin.
 - Kit appears ONCE per panel, small, at an edge. Kit never covers the diagram.
 
 ART STYLE:
-- Soft 3D cartoon render (Pixar energy). NOT flat, NOT photorealistic, NOT anime.
-- Smooth rounded shapes, soft shadows, slight subsurface scattering on skin.
-- Clean vector-like line quality on diagrams and text boxes.
+- Soft 3D cartoon render, Pixar energy. NOT flat, NOT photoreal, NOT anime.
+- Smooth rounded shapes, soft shadows.
+- Clean vector like lines on diagrams and text boxes.
 
 COLOR PALETTE:
-- Background: deep navy teal (#0B1F2A). Grid/matrix atmosphere.
-- Section cards: cream/warm-white (#FFF8F0), rounded corners, soft shadow.
+- Background: deep navy teal (#0B1F2A), faint grid.
+- Cards: cream / warm white (#FFF8F0), rounded, soft shadow.
 - Headers: bright sky cyan (#38BDF8).
-- Code blocks: light gray (#F3F4F6) rounded boxes, large monospace font.
-- Gold accents (#F59E0B) for callouts.
-- Number-role colours exactly as listed in the NUMBER LEGEND section above.
+- Code blocks: light grey (#F3F4F6) rounded boxes, large monospace.
+- Gold (#F59E0B) for callouts.
+- Number colours exactly as in the NUMBER LEGEND above.
 
-RUNNING EXAMPLE (identical in every panel that shows data):
+RUNNING EXAMPLE (identical in every panel showing data):
    INDEX:  0   1   2   3   4
    VALUE:  5   6   1   2   3
 
@@ -108,590 +108,630 @@ RUNNING EXAMPLE (identical in every panel that shows data):
 
 
 ================================================================================
-PROMPT 1: The Problem -> lis_01_problem.png
+PROMPT 1: The Three Layers -> lis_00_layers.png
 ================================================================================
 
 ---BEGIN STYLE BIBLE---
 [Paste the full style bible from above here]
 ---END STYLE BIBLE---
 
-Tall portrait infographic. Top banner: "WE ALREADY KNOW: nothing yet. This is the start."
+Tall portrait infographic. No layer badge on this one, it explains the badges.
+Top banner: "WE ALREADY KNOW: nothing yet. Here is the plan."
+
+Big header: "THREE PLACES YOU CAN STOP"
+
+Draw three stacked steps of a staircase going up left to right, Kit climbing.
+Each step is a wide card in its own colour, with a title, a one line promise,
+and three short fragments.
+
+STEP 1, SKY CYAN card, label "LAYER 1  THE STORY":
+   promise: "stop here and you still understand it"
+   fragments: "why the easy idea breaks"
+              "what one question asks"
+              "why the same work happens twice"
+   small note: "no code at all"
+
+STEP 2, GOLD card, label "LAYER 2  THE ALGORITHM":
+   promise: "stop here and you can write it"
+   fragments: "what to remember"
+              "the rule"
+              "the table"
+
+STEP 3, VIOLET card, label "LAYER 3  THE CODE":
+   promise: "stop here and you can ship it"
+   fragments: "line by line"
+              "how fast"
+              "what breaks it"
+
+Bottom banner: "SO NEXT: Layer 1 starts with the question itself."
+
+
+================================================================================
+PROMPT 2: The Question -> lis_01_problem.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait infographic. Badge: LAYER 1 THE STORY.
+Top banner: "WE ALREADY KNOW: we are about to start."
 
 Big header: "WHAT IS THE QUESTION?"
 
-ZONE 1 (cream card, top half): "SKIPPING IS LEGAL. REORDERING IS NOT."
-Draw the running example twice, each time as two labelled rows
-(INDEX row in small blue, VALUE row in large boxes).
+ZONE 1 (cream card, top): "SKIP YES. REORDER NO."
+Draw the list twice, each as two labelled rows.
 
-Copy A, GREEN border, tick mark:
-   VALUE boxes 1, 2, 3 lit bright green. Boxes 5 and 6 dimmed grey.
-   Caption: "kept the order, skipped two"
+Copy A, GREEN border, tick:
+   VALUE boxes 1, 2, 3 lit green, boxes 5 and 6 dimmed.
+   caption: "kept the order, skipped two"
 
 Copy B, RED border, big X:
-   A red curved arrow jumping BACKWARD from the box holding 3 to the box holding 1.
-   Caption: "went backwards. not allowed."
+   a red curved arrow jumping BACKWARD from the box holding 3 to the box holding 1.
+   caption: "went backwards. not allowed."
 
-ZONE 2 (gold card, bottom): "WE RETURN A LENGTH"
-A green chain graphic: VALUE 1 -> VALUE 2 -> VALUE 3, three links.
-Beside it a huge GREEN number 3 with the label under it in caps: "LENGTH".
-Under that, small red strike-through text: "not the list [1, 2, 3]".
+ZONE 2 (gold card, bottom): "WE HAND BACK A COUNT"
+A green chain: VALUE 1 -> VALUE 2 -> VALUE 3.
+Beside it a huge GREEN 3 with the word "LENGTH" under it.
+Below, small red struck through text: "not the list [1, 2, 3]".
 
-Kit small at bottom left, presenting the chain with one hand.
+Kit small at bottom left, presenting the chain.
 
-Bottom banner: "SO NEXT: what would a normal person try first?"
+Bottom banner: "SO NEXT: what would anyone try first?"
 
 
 ================================================================================
-PROMPT 2: Where The Natural Try Breaks -> lis_02_greedy_fails.png
+PROMPT 3: The Easy Idea, And Where It Breaks -> lis_02_greedy_fails.png
 ================================================================================
 
 ---BEGIN STYLE BIBLE---
 [Paste the full style bible from above here]
 ---END STYLE BIBLE---
 
-Tall portrait infographic.
-Top banner: "WE ALREADY KNOW: we must return the LENGTH of the longest rising chain."
+Tall portrait infographic. Badge: LAYER 1 THE STORY.
+Top banner: "WE ALREADY KNOW: we want the longest rising chain, and we hand back a count."
 
-Big header: "THE NATURAL TRY, AND WHERE IT BREAKS"
+Big header: "THE EASY IDEA, AND WHERE IT BREAKS"
 
-ZONE 1 (cream card, top 55%): "TAKE IT IF IT IS BIGGER THAN THE LAST ONE TAKEN"
-Five compact steps stacked. Each step shows the array as two labelled rows
-(INDEX small blue, VALUE boxes) with the current box spotlighted, plus a short
-fragment on the right. Keep the fragments to three or four words:
+ZONE 1 (cream card, top 55%): "GRAB IT IF IT BEATS THE LAST ONE"
+Five compact steps stacked. Each shows the list as two labelled rows with the
+current box spotlit, plus three or four words on the right:
 
-  step 1  VALUE 5 spotlit green   "chain empty. take."
-  step 2  VALUE 6 spotlit green   "6 > 5. take."
-  step 3  VALUE 1 spotlit red     "1 < 6. skip."
-  step 4  VALUE 2 spotlit red     "2 < 6. skip."
-  step 5  VALUE 3 spotlit red     "3 < 6. skip."
+  step 1  VALUE 5 spotlit green   "nothing yet. grab."
+  step 2  VALUE 6 spotlit green   "beats 5. grab."
+  step 3  VALUE 1 spotlit red     "does not beat 6. skip."
+  step 4  VALUE 2 spotlit red     "does not beat 6. skip."
+  step 5  VALUE 3 spotlit red     "does not beat 6. skip."
 
-Red result badge: "greedy LENGTH = 2"
+Red badge: "it says LENGTH 2"
 
-ZONE 2 (cream card with thick RED border, bottom 35%): "THE MOMENT IT BREAKS"
-Array as two labelled rows. VALUE boxes 1, 2, 3 lit bright green.
-Gold badge: "true LENGTH = 3"
-One huge red arrow pointing back at the box holding VALUE 6 at INDEX 1,
-with a short label: "this take killed 1 -> 2 -> 3"
+ZONE 2 (cream card, thick RED border, bottom 35%): "WHERE IT BROKE"
+The list as two labelled rows, VALUE boxes 1, 2, 3 lit green.
+Gold badge: "the truth is LENGTH 3"
+One huge red arrow pointing BACK at the box holding VALUE 6 at INDEX 1,
+short label: "this grab killed 1 -> 2 -> 3"
 
 Kit at bottom right, alarmed, hand on forehead.
 
-Bottom banner: "SO NEXT: if we cannot safely pick, what are we stuck deciding?"
+Bottom banner: "SO NEXT: if grabbing is unsafe, what are we stuck on?"
 
 
 ================================================================================
-PROMPT 3: The Frozen Moment -> lis_03_frozen.png
+PROMPT 4: Stopped At One Number -> lis_03_frozen.png
 ================================================================================
 
 ---BEGIN STYLE BIBLE---
 [Paste the full style bible from above here]
 ---END STYLE BIBLE---
 
-Tall portrait infographic.
-Top banner: "WE ALREADY KNOW: an early take can silently kill a longer chain."
+Tall portrait infographic. Badge: LAYER 1 THE STORY.
+Top banner: "WE ALREADY KNOW: an early grab can quietly kill a longer chain."
 
-Big header: "WHAT AM I STUCK DECIDING?"
+Big header: "WHAT ARE WE STUCK ON?"
 
-Centre: the array drawn large as two labelled rows.
-   INDEX:  0   1   2   3   4
-   VALUE:  5   6   1   2   3
-The box at INDEX 4 (VALUE 3) is in a bright gold spotlight with a small flag
-above it reading "YOU ARE HERE". Every other box has a pale blue frost overlay
-to show time is paused.
+Centre: the list drawn large as two labelled rows.
+The box at INDEX 4 (VALUE 3) sits in a bright gold spotlight with a small flag
+above reading "STOPPED HERE". Every other box has a pale blue frost overlay.
 
 Kit stands under the spotlit box, arms crossed, thinking.
-One speech bubble: "I want the longest chain that ENDS on this one."
+Speech bubble: "I want the longest chain that ENDS on this one."
 
-Below, a cream card. Three faint translucent ghost chains, each ending in the
-gold box, each with a large gold question mark over it:
+Below, a cream card holding three faint see through ghost chains, each ending in
+the gold box, each with a big gold question mark over it:
    ghost A:  VALUE 1  ->  [3]
    ghost B:  VALUE 1 -> VALUE 2  ->  [3]
    ghost C:  (nothing)  ->  [3]
 
-One gold callout strip across the bottom of the card, large text:
-"WHICH EARLIER CHAIN DO I ATTACH TO?"
+One gold strip across the bottom of the card, large:
+"WHICH ONE DO I HOOK ONTO?"
 
-Bottom banner: "SO NEXT: we need someone to tell us how long each earlier chain is."
+Bottom banner: "SO NEXT: someone has to tell us how long each earlier chain is."
 
 
 ================================================================================
-PROMPT 4: The Promise And The Contract -> lis_04_promise.png
+PROMPT 5: The Promise -> lis_04_promise.png
 ================================================================================
 
 ---BEGIN STYLE BIBLE---
 [Paste the full style bible from above here]
 ---END STYLE BIBLE---
 
-Tall portrait infographic.
-Top banner: "WE ALREADY KNOW: we are stuck choosing which earlier chain to attach to."
+Tall portrait infographic. Badge: LAYER 1 THE STORY.
+Top banner: "WE ALREADY KNOW: we are stuck choosing which earlier chain to hook onto."
 
-Big header: "DELEGATE, AND TRUST WHAT COMES BACK"
+Big header: "ASK, AND TRUST THE ANSWER"
 
-ZONE 1 (top half): the handshake. Two floating panels side by side.
-LEFT panel, cyan border, small label "CURRENT CALL":
-   code text: longest_chain_ending_at(current_index = 4)
-A thick gold arrow labelled "ASKS" curving to the right panel.
-RIGHT panel, green border, small label "SMALLER CALL":
-   code text: longest_chain_ending_at(current_index = 3)
-A thick green arrow curving back labelled: "RETURNS  LENGTH 2"
-Under the pair, one line: "I do not trace it. I only use what it returns."
+ZONE 1 (top half): two floating panels side by side.
+LEFT, cyan border, small label "THIS CALL":
+   longest_chain_ending_at(current_index = 4)
+A thick gold arrow curving right, labelled "ASKS".
+RIGHT, green border, small label "SMALLER CALL":
+   longest_chain_ending_at(current_index = 3)
+A thick green arrow curving back, labelled "HANDS BACK  LENGTH 2".
+One line under the pair: "I never look inside it. I just use the number."
 
 ZONE 2 (bottom half, cream card): "WHAT ONE CALL PROMISES"
-Draw it as a four-row contract block, monospace, generous spacing:
+Four rows, monospace, generous spacing:
 
-   CALL:      longest_chain_ending_at(current_index = 3)
-   QUESTION:  longest chain that ENDS on this element
-   VALUE:     numbers[3] = 2          <- plain white
-   RETURNS:   LENGTH 2                <- large GREEN
+   CALL:        longest_chain_ending_at(current_index = 3)
+   QUESTION:    how long is the chain ending here?
+   VALUE THERE: numbers[3] = 2         <- plain white
+   HANDS BACK:  LENGTH 2               <- large GREEN
 
-Under the contract two short fragments with icons:
-   green tick: "numbers[current_index] is ALWAYS in the chain"
-   red cross:  "this is NOT the answer to the whole array"
+Under it, two short fragments with icons:
+   green tick: "my number is ALWAYS in the chain"
+   red cross:  "this is NOT the answer for the whole list"
 
 Include the NUMBER LEGEND box, small, in a corner.
-Kit small at an edge, holding the contract.
+Kit small at an edge holding the card.
 
 Bottom banner: "SO NEXT: follow one call down, and watch the answer come back."
 
 
 ================================================================================
-PROMPT 5: Down To The Floor And Back Up -> lis_05_roundtrip.png
+PROMPT 6: Down And Back Up -> lis_05_roundtrip.png
 ================================================================================
 
 ---BEGIN STYLE BIBLE---
 [Paste the full style bible from above here]
 ---END STYLE BIBLE---
 
-Tall portrait infographic. This is the most important panel. Keep it clean.
-Top banner: "WE ALREADY KNOW: a call returns the LENGTH of the chain ending at one index."
+Tall portrait infographic. Badge: LAYER 1 THE STORY.
+This is the most important panel. Keep it clean.
+Top banner: "WE ALREADY KNOW: one call hands back how long the chain ending at one spot is."
 
-Big header: "GOING DOWN, THEN COMING BACK UP"
+Big header: "DOWN TO THE BOTTOM, THEN BACK UP"
 
-Draw ONE narrow vertical path. Three call boxes stacked. NO tree, NO side branches.
-GOLD arrows on the LEFT side pointing DOWN. GREEN arrows on the RIGHT side pointing UP.
+ONE narrow vertical path. Three call boxes stacked. NO tree, NO side branches.
+GOLD arrows down the LEFT side. GREEN arrows up the RIGHT side.
 Kit climbs a rope along the far left edge, small.
 
-BOX 1 (top, cyan border):
+BOX 1 (top, cyan):
    longest_chain_ending_at(current_index = 4)
-   small grey line: "VALUE 3"
-   down-arrow label: "need something smaller. try INDEX 3."
+   grey line: "VALUE 3"
+   down arrow label: "need something smaller. try INDEX 3."
 
-BOX 2 (middle, cyan border):
+BOX 2 (middle, cyan):
    longest_chain_ending_at(current_index = 3)
-   small grey line: "VALUE 2"
-   down-arrow label: "need something smaller. try INDEX 2."
+   grey line: "VALUE 2"
+   down arrow label: "need something smaller. try INDEX 2."
 
-BOX 3 (bottom, GREEN thick border, drawn as solid bedrock):
+BOX 3 (bottom, GREEN thick border, drawn as solid rock):
    longest_chain_ending_at(current_index = 2)
-   small grey line: "VALUE 1"
-   green stamp: "BASE CASE"
-   short fragment: "nothing smaller to the left"
-   returns: large GREEN "LENGTH 1"
+   grey line: "VALUE 1"
+   green stamp: "THE BOTTOM"
+   fragment: "nothing smaller to the left"
+   hands back: large GREEN "LENGTH 1"
 
-Now the upward half. Inside BOX 2 and BOX 1, show unit-annotated arithmetic
-with a caption under EVERY term, exactly in this style:
+Inside BOX 2 and BOX 1 show the sum with a caption under EVERY term:
 
-   BOX 2:      1               +          1              =      2
-          "the VALUE 2           "LENGTH returned          "LENGTH of
-           itself, one            by the smaller            chain 1 -> 2"
-           element"               call"
-          up-arrow label: "returns LENGTH 2"
+   BOX 2:      1              +          1             =      2
+          "my own number,        "LENGTH handed          "LENGTH of
+           that is one"           back from below"        chain 1 -> 2"
+          up arrow label: "hands back LENGTH 2"
 
-   BOX 1:      1               +          2              =      3
-          "the VALUE 3           "LENGTH returned          "LENGTH of
-           itself, one            by the smaller            chain 1 -> 2 -> 3"
-           element"               call"
-          gold badge above: "returns LENGTH 3"
+   BOX 1:      1              +          2             =      3
+          "my own number,        "LENGTH handed          "LENGTH of
+           that is one"           back from below"        chain 1 -> 2 -> 3"
+          gold badge above: "hands back LENGTH 3"
 
 Include the NUMBER LEGEND box, small, bottom corner.
 
-Bottom banner: "SO NEXT: index 3 was only ONE option. What were the others?"
+Bottom banner: "SO NEXT: watch the same question get asked twice."
 
 
 ================================================================================
-PROMPT 6: Every Legal Choice -> lis_06_choices.png
+PROMPT 7: The Same Question Twice -> lis_06_repeated.png
 ================================================================================
 
 ---BEGIN STYLE BIBLE---
 [Paste the full style bible from above here]
 ---END STYLE BIBLE---
 
-Tall portrait infographic.
-Top banner: "WE ALREADY KNOW: attaching to INDEX 3 produced a chain of LENGTH 3."
+Tall portrait infographic. Badge: LAYER 1 THE STORY.
+This panel ends Layer 1.
+Top banner: "WE ALREADY KNOW: every call hands back a count, built from smaller counts."
 
-Big header: "EVERY LEGAL CHOICE AT INDEX 4"
+Big header: "THE SAME QUESTION, ASKED TWICE"
 
-At top, the array as two labelled rows, with INDEX 4 (VALUE 3) lit gold.
+Centre: two paths in two different colours, both starting at the same top box
+and both landing on the SAME bottom box.
 
-Below, five compact rows. Each row: the candidate index, the test, the verdict.
-Keep the text to fragments, no sentences.
+  TOP BOX (cyan): longest_chain_ending_at(current_index = 4)
 
-  previous_index = 0   VALUE 5   "5 < 3 ?"   big RED X    "too big"
-  previous_index = 1   VALUE 6   "6 < 3 ?"   big RED X    "too big"
-  previous_index = 2   VALUE 1   "1 < 3 ?"   GREEN TICK   "1 + LENGTH 1 = LENGTH 2"
-  previous_index = 3   VALUE 2   "2 < 3 ?"   GREEN TICK   "1 + LENGTH 2 = LENGTH 3"
-  start fresh          VALUE 3   "always ok" GOLD STAR    "LENGTH 1"
+  ORANGE path straight down the left: one arrow, label "hook onto INDEX 2"
 
-All index numbers in BLUE, all values plain, all LENGTH results in GREEN.
+  BLUE path curving down the right through a middle box:
+     middle box: longest_chain_ending_at(current_index = 3)
+     arrow labels: "hook onto INDEX 3", then "hook onto INDEX 2"
 
-One gold strip at the very bottom of the card, one line only:
-"a chain either HAS an element before, or it does not. Both are covered."
+  BOTTOM BOX, thick pulsing RED outline, both arrows land here:
+     longest_chain_ending_at(current_index = 2)
+     small line: "how long is the chain ending on VALUE 1?"
+     TWO overlapping red rubber stamps reading "WORKED OUT"
 
-Include the NUMBER LEGEND box, small, in a corner.
+Gold callout card below, two large lines:
+   "the waste is not a repeated NUMBER."
+   "it is the same QUESTION worked out twice."
+
+A small dark card at the bottom, white text:
+   "list 1 to 20:  only 20 different questions,  1,048,575 calls"
+
+Kit small at bottom right, one eyebrow raised.
+
+Bottom banner: "SO NEXT: that is the whole story. Layer 2 turns it into an algorithm."
+
+
+================================================================================
+PROMPT 8: Every Choice -> lis_07_choices.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait infographic. Badge: LAYER 2 THE ALGORITHM.
+Top banner: "WE ALREADY KNOW: the story. Now we make it exact."
+
+Big header: "EVERY CHOICE AT INDEX 4"
+
+Top: the list as two labelled rows, INDEX 4 (VALUE 3) lit gold.
+
+Below, five compact rows. Fragments only, no sentences.
+
+  previous_index = 0   VALUE 5   "5 < 3 ?"    big RED X    "too big"
+  previous_index = 1   VALUE 6   "6 < 3 ?"    big RED X    "too big"
+  previous_index = 2   VALUE 1   "1 < 3 ?"    GREEN TICK   "1 + LENGTH 1 = LENGTH 2"
+  previous_index = 3   VALUE 2   "2 < 3 ?"    GREEN TICK   "1 + LENGTH 2 = LENGTH 3"
+  start alone          VALUE 3   "always ok"  GOLD STAR    "LENGTH 1"
+
+All index numbers BLUE, values plain, all LENGTH results GREEN.
+
+One gold strip at the bottom of the card, one line:
+"a chain either HAS something before it, or it does not. Both are covered."
+
+Include the NUMBER LEGEND box, small.
 Kit small at top left, arms folded.
 
-Bottom banner: "SO NEXT: three legal futures returned LENGTH 2, 3 and 1. Combine them how?"
+Bottom banner: "SO NEXT: what does one call need to remember?"
 
 
 ================================================================================
-PROMPT 7: The Bookmark -> lis_07_bookmark.png
+PROMPT 9: The Bookmark -> lis_08_bookmark.png
 ================================================================================
 
 ---BEGIN STYLE BIBLE---
 [Paste the full style bible from above here]
 ---END STYLE BIBLE---
 
-Tall portrait infographic.
-Top banner: "WE ALREADY KNOW: a call tries every legal earlier index, plus starting fresh."
+Tall portrait infographic. Badge: LAYER 2 THE ALGORITHM.
+Top banner: "WE ALREADY KNOW: a call checks every earlier spot, plus starting alone."
 
-Big header: "WHAT DO WE WRITE ON THE BOOKMARK?"
+Big header: "WHAT GOES ON THE NOTE?"
 
-ZONE 1 (top): Kit hands a small gold ribbon bookmark tag to a silhouette figure.
-On the tag, in large monospace: "current_index = 3"
-Short line under the scene: "you continue. this is all you need."
+ZONE 1 (top): Kit hands a small gold ribbon note to a plain silhouette figure.
+On the note, large monospace: "current_index = 3"
+One line under the scene: "you carry on. this is all you need."
 
-ZONE 2 (cream card, middle): three candidate tags, judged. Fragments only.
-   tag "current_index"          GREEN TICK   "keep"
-   tag "numbers[current_index]" RED CROSS    "the index already tells us"
-   tag "the chain so far"       RED CROSS    "we only need its LENGTH"
+ZONE 2 (cream card, middle): three small tags, judged. Fragments only.
+   tag "current_index"           GREEN TICK  "keep"
+   tag "the value there"         RED CROSS   "the spot already tells us"
+   tag "the chain built so far"  RED CROSS   "we only need how long it was"
 
 ZONE 3 (cream card, bottom): "READING current_index = 3"
-The array as two labelled rows, with three coloured regions and a big gold
-pointer arrow at INDEX 3:
-   INDEX 0,1,2 shaded BLUE   caption under: "BEFORE: candidates I may attach to"
-   INDEX 3     shaded GOLD   caption under: "AT: my chain must end here"
-   INDEX 4     shaded GREY   caption under: "AFTER: invisible to this call"
+The list as two labelled rows, three shaded regions, a big gold pointer at INDEX 3:
+   INDEX 0,1,2 shaded BLUE   caption: "BEFORE: things I can hook onto"
+   INDEX 3     shaded GOLD   caption: "AT: where my chain ends"
+   INDEX 4     shaded GREY   caption: "AFTER: invisible to this call"
 
-Include the NUMBER LEGEND box, small, in a corner.
+One small gold strip: "the note only ever moves LEFT."
 
-Bottom banner: "SO NEXT: where do max and the plus one come from?"
+Include the NUMBER LEGEND box, small.
+
+Bottom banner: "SO NEXT: how do we squash three answers into one?"
 
 
 ================================================================================
-PROMPT 8: Where max And +1 Come From -> lis_08_operator.png
+PROMPT 10: Where max And +1 Come From -> lis_09_operator.png
 ================================================================================
 
 ---BEGIN STYLE BIBLE---
 [Paste the full style bible from above here]
 ---END STYLE BIBLE---
 
-Tall portrait infographic.
-Top banner: "WE ALREADY KNOW: the legal branches returned LENGTH 2, LENGTH 3 and LENGTH 1."
+Tall portrait infographic. Badge: LAYER 2 THE ALGORITHM.
+Top banner: "WE ALREADY KNOW: the allowed choices gave LENGTH 2, LENGTH 3 and LENGTH 1."
 
 Big header: "WHERE max AND +1 COME FROM"
 
 ZONE 1 (cream card, top half): "WHY max"
-Three finished chains drawn side by side, each with a GREEN length badge:
-   chain  1 -> 3          badge "LENGTH 2"
-   chain  1 -> 2 -> 3     badge "LENGTH 3"   with a GOLD CROWN on top
-   chain  3               badge "LENGTH 1"
-Under them, two lines of large text:
+Three finished chains side by side, each with a GREEN length badge:
+   chain  1 -> 3         badge "LENGTH 2"
+   chain  1 -> 2 -> 3    badge "LENGTH 3"   with a GOLD CROWN on top
+   chain  3              badge "LENGTH 1"
+Two large lines under them:
    "the question says LONGEST"
    "so keep the biggest.  that is max."
 
 ZONE 2 (cream card, bottom half): "WHY +1"
-Show the snap. On the left, chain 1 -> 2 with a GREEN badge "LENGTH 2"
-and the caption "handed back by the smaller call".
+On the left, chain 1 -> 2 with GREEN badge "LENGTH 2",
+caption "handed back from below".
 A big gold plus sign.
-On the right, a single box VALUE 3 being clicked onto the end of the chain,
+On the right, a single box VALUE 3 clicking onto the end of the chain,
 with a small snap spark.
-Result: chain 1 -> 2 -> 3 with a GREEN badge "LENGTH 3".
-One line under it, large: "one element joined, so add exactly 1."
+Result: chain 1 -> 2 -> 3 with GREEN badge "LENGTH 3".
+One large line: "one number joined, so add exactly 1."
 
-Red warning strip at the very bottom of this card, one line:
-"+1 counts an ELEMENT. It is never the VALUE. numbers = [1, 9] gives LENGTH 2, not 10."
+Red strip at the very bottom of this card, one line:
+"+1 counts a NUMBER. It is never the number itself. [1, 9] gives LENGTH 2, not 10."
 
-Kit small at an edge, pointing at the crowned chain.
+Kit small at an edge pointing at the crowned chain.
 
-Bottom banner: "SO NEXT: write it as code, with every line explained."
-
-
-================================================================================
-PROMPT 9: The Marked Code -> lis_09_code.png
-================================================================================
-
----BEGIN STYLE BIBLE---
-[Paste the full style bible from above here]
----END STYLE BIBLE---
-
-Tall portrait infographic.
-Top banner: "WE ALREADY KNOW: the bookmark is one index, and the operators are max and +1."
-
-Big header: "THE CODE IS THE STORY, WRITTEN DOWN"
-
-ONE large light-gray rounded code block, big monospace. Show these SIX lines,
-each with a full-width colour highlight behind it:
-
-  PINK    def longest_chain_ending_at(current_index):
-  GREEN       longest_so_far = 1
-  ORANGE      for previous_index in range(current_index):
-  YELLOW          if numbers[previous_index] < numbers[current_index]:
-  RED                 longest_so_far = max(longest_so_far,
-                                           1 + longest_chain_ending_at(previous_index))
-  PURPLE      return longest_so_far
-
-CRITICAL LAYOUT RULE: there are exactly SIX explanation cards, one per line,
-stacked on the right in the SAME top-to-bottom order as the lines. Each card is
-the same colour as its line and is joined to it by a short horizontal arrow of
-that colour. Card number N must sit vertically level with line number N.
-No arrow may skip a line or point at a neighbouring line.
-
-Card text, fragments only:
-  PINK card:   "the bookmark becomes the parameter"
-  GREEN card:  "start fresh. one element is already a chain."
-  ORANGE card: "try EVERY earlier index"
-  YELLOW card: "legality. only smaller values may sit before."
-  RED card:    "delegate, add 1 for my element, keep the best"
-  PURPLE card: "hand the LENGTH back up"
-
-Place a bold red flag beside the RED line reading exactly:
-"RECURSION HAPPENS HERE"
-
-Kit small at the bottom right, pointing up at the red flag.
-
-Bottom banner: "SO NEXT: run it on the whole array and account for every number."
+Bottom banner: "SO NEXT: write the answer down so we never redo it."
 
 
 ================================================================================
-PROMPT 10: Every Call, Every Return -> lis_10_trace.png
+PROMPT 11: Write It Down -> lis_10_memo.png
 ================================================================================
 
 ---BEGIN STYLE BIBLE---
 [Paste the full style bible from above here]
 ---END STYLE BIBLE---
 
-Tall portrait infographic.
-Top banner: "WE ALREADY KNOW: each call scans earlier indices and returns one LENGTH."
+Tall portrait infographic. Badge: LAYER 2 THE ALGORITHM.
+Top banner: "WE ALREADY KNOW: back in Layer 1 we saw the same spot worked out twice."
 
-Big header: "EVERY CALL, EVERY RETURN"
-
-At the top, the array as two labelled rows.
-
-Below, five compact result rows. Each row shows the call, what it found,
-and the returned LENGTH in large GREEN. Fragments only, no sentences.
-
-  current_index = 0    "no earlier index"                   returns LENGTH 1
-  current_index = 1    "INDEX 0 works.  1 + 1"              returns LENGTH 2
-  current_index = 2    "nothing smaller"                    returns LENGTH 1
-  current_index = 3    "INDEX 2 works.  1 + 1"              returns LENGTH 2
-  current_index = 4    "INDEX 2 gives 2, INDEX 3 gives 3"   returns LENGTH 3
-
-BOTTOM, a thick GOLD card, the most important part of this panel:
-Title: "THE ANSWER IS NOT THE LAST CALL"
-Show the five returned lengths in a row of GREEN badges: 1, 2, 1, 2, 3
-A large max bracket spanning all five, and a huge GOLD result: "LENGTH 3"
-One short line: "the chain must end somewhere. try every ending, keep the best."
-
-Include the NUMBER LEGEND box, small, in a corner.
-Kit small at an edge, one finger raised.
-
-Bottom banner: "SO NEXT: one of those calls was answered more than once."
-
-
-================================================================================
-PROMPT 11: The Exact Repeated Question -> lis_11_repeated.png
-================================================================================
-
----BEGIN STYLE BIBLE---
-[Paste the full style bible from above here]
----END STYLE BIBLE---
-
-Tall portrait infographic.
-Top banner: "WE ALREADY KNOW: the answer is the max over every ending."
-
-Big header: "THE SAME QUESTION, ASKED TWICE"
-
-Centre: two separate paths drawn in two different colours, both starting at the
-same top box and both ending on the SAME bottom box.
-
-  TOP BOX (cyan):  longest_chain_ending_at(current_index = 4)
-
-  ORANGE path, straight down the left:
-     one arrow, label "attach to INDEX 2"
-
-  BLUE path, curving down the right through a middle box:
-     middle box: longest_chain_ending_at(current_index = 3)
-     first arrow label "attach to INDEX 3"
-     second arrow label "attach to INDEX 2"
-
-  BOTTOM BOX, thick pulsing RED outline, both arrows land on it:
-     longest_chain_ending_at(current_index = 2)
-     small line under it: "longest chain ending on VALUE 1"
-     TWO overlapping red rubber stamps reading "SOLVED"
-
-Below, a gold callout card, two lines of large text:
-   "the waste is not a repeated NUMBER."
-   "it is the same QUESTION answered twice."
-
-Kit small at bottom right, one eyebrow raised at the doubled box.
-
-Bottom banner: "SO NEXT: write the answer down the first time."
-
-
-================================================================================
-PROMPT 12: Memoization -> lis_12_memo.png
-================================================================================
-
----BEGIN STYLE BIBLE---
-[Paste the full style bible from above here]
----END STYLE BIBLE---
-
-Tall portrait infographic.
-Top banner: "WE ALREADY KNOW: the same index was solved more than once."
-
-Big header: "ANSWER ONCE. LOOK UP FOREVER."
+Big header: "ANSWER ONCE. LOOK IT UP FOREVER."
 
 ZONE 1 (top): Kit beside a glowing teal filing cabinet labelled "solved_lengths".
 Each drawer has a large BLUE index number on its front. Drawer 2 is open,
 showing a card with two labelled rows:
-      KEY:    current_index 2      <- blue
-      VALUE:  LENGTH 1             <- green
-Under the cabinet, one line: "the KEY is the bookmark. the VALUE is what the call returned."
+      LOOK UP BY:  current_index 2      <- blue
+      HOLDS:       LENGTH 1             <- green
+One line under it: "look it up by the note. store what the call handed back."
 
-ZONE 2 (bottom, code block): light gray rounded box, big monospace,
-with TEAL highlight on exactly three lines:
+ZONE 2 (bottom): a light grey code block, big monospace, TEAL highlight
+on exactly three lines. Mark the three highlighted lines with a small teal dot.
 
-      solved_lengths = {}
+      solved_lengths = {}                              <- teal
 
       def longest_chain_ending_at(current_index):
-   T      if current_index in solved_lengths:
-   T          return solved_lengths[current_index]
+          if current_index in solved_lengths:          <- teal
+              return solved_lengths[current_index]     <- teal
           longest_so_far = 1
           for previous_index in range(current_index):
               if numbers[previous_index] < numbers[current_index]:
                   longest_so_far = max(longest_so_far,
                                        1 + longest_chain_ending_at(previous_index))
-   T      solved_lengths[current_index] = longest_so_far
+          solved_lengths[current_index] = longest_so_far
           return longest_so_far
 
-Three short teal cards on the right, one per teal line, aligned to that line:
-      "the cabinet, empty at first"
-      "already answered? hand it back."
-      "file it before returning"
+Three short teal cards on the right, each level with its own teal line:
+      "an empty box"
+      "already done? hand it back."
+      "fill it before returning"
 
-Bottom banner: "SO NEXT: if every index is solved once, why call at all?"
+Bottom banner: "SO NEXT: if every spot is done once, why call at all?"
 
 
 ================================================================================
-PROMPT 13: A Call And A Cell Are The Same Thing -> lis_13_call_to_cell.png
+PROMPT 12: A Call And A Box -> lis_11_call_to_cell.png
 ================================================================================
 
 ---BEGIN STYLE BIBLE---
 [Paste the full style bible from above here]
 ---END STYLE BIBLE---
 
-Tall portrait infographic.
-Top banner: "WE ALREADY KNOW: every index is now solved exactly once and stored."
+Tall portrait infographic. Badge: LAYER 2 THE ALGORITHM.
+Top banner: "WE ALREADY KNOW: every spot is now worked out once and stored."
 
-Big header: "A CALL AND A CELL ARE THE SAME THING"
+Big header: "A CALL AND A BOX ARE THE SAME THING"
 
-Centre: a three-stage morph drawn vertically, with big gold arrows between stages.
-Make the visual point that only the BRACKETS change.
+Centre: a three stage change drawn vertically, big gold arrows between stages.
+Make the point that only the BRACKETS change.
 
-  STAGE 1, cyan bubble shaped like a function call:
+  STAGE 1, cyan bubble shaped like a call:
         longest_chain_ending_at(2)
-        under it: "returns LENGTH 1"
+        under it: "hands back LENGTH 1"
 
   STAGE 2, teal drawer card:
         solved_lengths[2]
         under it: "holds LENGTH 1"
 
-  STAGE 3, a single square cell inside a strip of five cells, gold border:
+  STAGE 3, one square box inside a strip of five, gold border:
         longest_chain_ending_at[2]
         under it: "LENGTH 1"
 
-Between stage 1 and stage 3, add a large gold callout with just two words
-highlighted, showing round brackets turning into square brackets:
+A large gold callout showing the bracket swap, very big characters:
         "(  2  )      becomes      [  2  ]"
-Under it, one line: "same name. same question. same answer."
+one line under it: "same name. same question. same answer."
 
-BOTTOM, a small two-panel comparison:
-  LEFT, labelled "RECURSION": arrows pointing DOWN, caption "asks when it needs"
-  RIGHT, labelled "TABLE": a strip of five cells filling left to right with a
-  green sweep, caption "fills in an order where the answer is already there"
+BOTTOM, two small panels side by side:
+  LEFT "A CALL": arrows pointing DOWN, caption "asks when it needs to"
+  RIGHT "A TABLE": a strip of five boxes filling left to right with a green
+  sweep, caption "fills in an order where the answer is already there"
 
-Kit small between the two panels, a hand on each.
+Kit small between them, a hand on each.
 
-Bottom banner: "SO NEXT: fill the strip and read every cell out loud."
+Bottom banner: "SO NEXT: fill the strip and read every box out loud."
 
 
 ================================================================================
-PROMPT 14: Filling The Strip -> lis_14_tabulation.png
+PROMPT 13: Filling The Table -> lis_12_tabulation.png
 ================================================================================
 
 ---BEGIN STYLE BIBLE---
 [Paste the full style bible from above here]
 ---END STYLE BIBLE---
 
-Tall portrait infographic.
-Top banner: "WE ALREADY KNOW: the cell holds exactly what the call returned."
+Tall portrait infographic. Badge: LAYER 2 THE ALGORITHM.
+This panel ends Layer 2.
+Top banner: "WE ALREADY KNOW: a box holds exactly what a call would have handed back."
 
-Big header: "FILLING THE STRIP, LEFT TO RIGHT"
+Big header: "FILLING THE TABLE, LEFT TO RIGHT"
 
-At the top, THREE aligned rows in columns, all labelled on the left:
-      INDEX:                        0    1    2    3    4     <- small blue
-      VALUE (numbers):              5    6    1    2    3     <- plain boxes
-      LENGTH (longest_chain...):    1    1    1    1    1     <- green boxes, all 1
-Small caption: "every cell starts at LENGTH 1. one element is already a chain."
+TOP: three rows lined up in columns, each labelled on the left:
+      INDEX:     0    1    2    3    4      <- small blue
+      VALUE:     5    6    1    2    3      <- plain boxes
+      LENGTH:    1    1    1    1    1      <- green boxes, all showing 1
+Small caption: "every box starts at LENGTH 1. one number is already a chain."
 
-Below, five compact step rows. In each, the cell being written is GOLD and the
-cells being READ are BLUE, with short arrows pointing LEFT from the gold cell
-to the blue cells. Fragments only.
+Below, five compact step rows. In each, the box being written is GOLD and the
+boxes being READ are BLUE, with short arrows pointing LEFT from the gold box.
+Fragments only.
 
-  INDEX 0:  no reads.                        writes LENGTH 1
-  INDEX 1:  reads INDEX 0.  1 + 1            writes LENGTH 2
-  INDEX 2:  reads 0 and 1.  both too big     writes LENGTH 1
-  INDEX 3:  reads INDEX 2.  1 + 1            writes LENGTH 2
-  INDEX 4:  reads INDEX 2 and 3.  best 1 + 2 writes LENGTH 3
+  INDEX 0:  no reads                       writes LENGTH 1
+  INDEX 1:  reads INDEX 0.  1 + 1          writes LENGTH 2
+  INDEX 2:  reads 0 and 1.  both too big   writes LENGTH 1
+  INDEX 3:  reads INDEX 2.  1 + 1          writes LENGTH 2
+  INDEX 4:  reads 2 and 3.  best 1 + 2     writes LENGTH 3
 
-One gold strip across all the step rows: "every arrow points LEFT. so left to right is safe."
+One gold strip across the step rows: "every arrow points LEFT, so left to right is safe."
 
 BOTTOM: the finished LENGTH row  1  2  1  2  3  in green,
-a large max bracket over all five cells, and a huge GOLD "LENGTH 3".
-Small red line: "the answer is the MAX of the strip, not the last cell."
+a large max bracket over all five boxes, and a huge GOLD "LENGTH 3".
+Small red line: "the answer is the BIGGEST box, not the last box."
 
-Bottom banner: "SO NEXT: the traps that break this."
+Bottom banner: "SO NEXT: Layer 3. The code, line by line."
 
 
 ================================================================================
-PROMPT 15: Four Ways To Break It -> lis_15_mistakes.png
+PROMPT 14: The Code -> lis_13_code.png
 ================================================================================
 
 ---BEGIN STYLE BIBLE---
 [Paste the full style bible from above here]
 ---END STYLE BIBLE---
 
-Tall portrait infographic.
-Top banner: "WE ALREADY KNOW: the whole story, from the failed guess to the filled strip."
+Tall portrait infographic. Badge: LAYER 3 THE CODE.
+Top banner: "WE ALREADY KNOW: the whole algorithm. Now we write it."
 
-Big header: "FOUR WAYS TO BREAK IT"
+Big header: "THE CODE IS THE STORY, WRITTEN DOWN"
 
-A clean four-row comparison grid. NO paragraphs. Each row has exactly four
-columns, and the column headers appear once at the top:
+ONE large light grey rounded code block, big monospace. SIX lines, each with a
+full width colour highlight behind it, and each numbered 1 to 6 on the far left:
 
-     THE SLIP        |  numbers   |  WRONG  |  RIGHT
+  1  PINK    def longest_chain_ending_at(current_index):
+  2  GREEN       longest_so_far = 1
+  3  ORANGE      for previous_index in range(current_index):
+  4  YELLOW          if numbers[previous_index] < numbers[current_index]:
+  5  RED                 longest_so_far = max(longest_so_far,
+                                              1 + longest_chain_ending_at(previous_index))
+  6  PURPLE      return longest_so_far
 
-  row 1:  "<=  not  <"         [2, 2, 2]      3        1
-  row 2:  "returned last cell" [1, 2, 3, 1]   1        3
-  row 3:  "added VALUE not 1"  [1, 9]         10       2
-  row 4:  "started at 0"       [9, 8, 7]      0        1
+CRITICAL LAYOUT RULE: exactly SIX explanation cards on the right, numbered 1 to 6,
+in the SAME top to bottom order as the lines. Each card is the same colour as its
+line and joined to it by a short horizontal arrow of that colour. Card N must sit
+level with line N. No arrow may skip a line or point at a neighbour.
 
-WRONG numbers are large and RED with a small X.
-RIGHT numbers are large and GREEN with a small tick.
-The arrays are drawn as small VALUE boxes, not as plain text.
+Card text, fragments only:
+  1 PINK:   "the note becomes the input"
+  2 GREEN:  "start alone. one number is already a chain."
+  3 ORANGE: "check EVERY earlier spot"
+  4 YELLOW: "only a smaller number may go before mine"
+  5 RED:    "ask, add 1 for my number, keep the best"
+  6 PURPLE: "hand the LENGTH back up"
 
-Under the grid, one gold line only:
-"every one of these dies to a three element array. test with tiny inputs."
+A bold red flag reading exactly "RECURSION HAPPENS HERE".
+CRITICAL: this flag must sit DIRECTLY BESIDE LINE 5, vertically level with line 5,
+in the gap between line 5 and card 5, with its point touching line 5. It must NOT
+sit below line 6, must NOT sit in empty space at the bottom of the code block, and
+must NOT point at card 6. Line 5 is the only line containing a recursive call.
 
-Kit small at the bottom corner, holding a red pen.
+Kit small at bottom right, pointing up at the red flag.
+
+Bottom banner: "SO NEXT: how fast is it, and can it use less memory?"
+
+
+================================================================================
+PROMPT 15: Speed And Memory -> lis_14_cost.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait infographic. Badge: LAYER 3 THE CODE.
+Top banner: "WE ALREADY KNOW: the code, line by line."
+
+Big header: "HOW FAST, AND HOW MUCH ROOM?"
+
+ZONE 1 (cream card, top): "SPEED"
+Three stacked bars of very different lengths, each labelled:
+   huge RED bar     "asking again and again"   badge "over a million calls"
+   short GREEN bar  "writing answers down"     badge "n x n steps"
+Small line: "the list 1 to 20 goes from 1,048,575 calls down to 400 steps."
+
+ZONE 2 (cream card, bottom): "CAN WE THROW BOXES AWAY?"
+Two small strips side by side.
+
+LEFT, GREEN border, title "SOME PROBLEMS":
+   a strip of six boxes, the current box with exactly TWO short arrows reaching
+   back to the two boxes on its left. All older boxes faded with a small bin icon.
+   label: "only the last two are ever read"
+   green badge: "keep 2 boxes"
+
+RIGHT, RED border, title "THIS PROBLEM":
+   a strip of five boxes, the last box gold, with FOUR arrows fanning back to
+   every earlier box. None faded, all lit.
+   label: "any earlier box might be needed"
+   red badge: "keep them all"
+
+Kit between them shrugging, palms up.
+Gold strip at the very bottom: "not every problem shrinks. knowing why beats guessing."
+
+Bottom banner: "SO NEXT: the four ways people get this wrong."
+
+
+================================================================================
+PROMPT 16: Four Ways To Get It Wrong -> lis_15_mistakes.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait infographic. Badge: LAYER 3 THE CODE.
+Top banner: "WE ALREADY KNOW: the whole thing, story to code."
+
+Big header: "FOUR WAYS TO GET IT WRONG"
+
+A clean four row grid. NO paragraphs. Column headers appear once at the top:
+
+     THE SLIP        |  TRY IT ON   |  WRONG  |  RIGHT
+
+  row 1:  "used <=  not  <"      [2, 2, 2]      3        1
+  row 2:  "read the last box"    [1, 2, 3, 1]   1        3
+  row 3:  "added 9, not 1"       [1, 9]         10       2
+  row 4:  "started boxes at 0"   [9, 8, 7]      0        1
+
+WRONG numbers large and RED with a small X.
+RIGHT numbers large and GREEN with a small tick.
+The lists drawn as small VALUE boxes, not plain text.
+
+Under the grid, one gold line:
+"every one dies to a three number list. test small."
+
+Kit small at the bottom corner holding a red pen.
 
 Bottom banner: "SO NEXT: nothing. You can rebuild this from the story."

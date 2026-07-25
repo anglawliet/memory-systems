@@ -193,6 +193,18 @@ td.c,th.c{text-align:center}
 .b1{background:rgba(56,189,248,.2);color:var(--cyan);border:1px solid var(--cyan)}
 .b2{background:rgba(245,158,11,.2);color:var(--gold2);border:1px solid var(--gold)}
 .b3{background:rgba(167,139,250,.2);color:var(--best);border:1px solid var(--best)}
+
+/* ---- layer 0 recall ---- */
+.recall{border:3px solid var(--gold);border-radius:16px;padding:22px 24px;margin:24px 0 10px;
+  background:linear-gradient(135deg,rgba(245,158,11,.13),rgba(245,158,11,.04))}
+.recall .rl0{font-size:.66em;letter-spacing:.22em;font-weight:800;color:var(--gold2)}
+.recall h2{border:none;margin:4px 0 8px;padding:0;font-size:1.5em;color:var(--gold2)}
+.recall .who{display:grid;gap:8px;margin:12px 0 4px}
+.recall .who div{font-size:.93em;padding:8px 14px;border-radius:8px;background:rgba(0,0,0,.22)}
+.recall .who b{color:var(--gold2)}
+.skipto{display:inline-block;background:var(--gold);color:#2b1a00;font-weight:800;
+  padding:9px 18px;border-radius:8px;text-decoration:none;margin-top:12px;font-size:.9em}
+.skipto:hover{background:var(--gold2)}
 </style>
 </head>
 <body>
@@ -210,9 +222,32 @@ td.c,th.c{text-align:center}
 <a href="staircase_dp.html" class="nav-link">Staircase</a>
 </div>
 
-<h2 style="margin-top:20px">Three Places You Can Stop</h2>
 
-<p>This page is built in three layers. Each one is a real stopping point. You do not have to reach the end to walk away with something whole.</p>
+<!-- ==================== LAYER 0 ==================== -->
+<div class="recall">
+<div class="rl0">LAYER 0</div>
+<h2>The Recall Card</h2>
+<div class="who">
+<div><b>Coming back to this?</b> Read the two panels below and stop. They contain the whole algorithm and depend on nothing else on this page.</div>
+<div><b>First time here?</b> Skip them. They will make more sense on your way back.</div>
+</div>
+<a href="#s1" class="skipto">Skip to the start &darr;</a>
+</div>
+
+<img src="dp/images/lis_r1_recall.png" alt="The whole algorithm on one card: the question, the move, the max, and how the answer is read" class="scene-img">
+<p class="cap">The question, the move, and how the answer is read off. Everything else on this page explains this picture.</p>
+
+<img src="dp/images/lis_r2_traps.png" alt="When to reach for this pattern, its shape, and the four ways it breaks" class="scene-img">
+<p class="cap">The clue that triggers it, the shape it takes, and the four ways it breaks.</p>
+
+<div class="hi">
+<b>The one sentence, if you only want one:</b> at every spot, look back at every earlier spot, and wherever the <b>value</b> is smaller, take that spot's stored <b>length</b>, add 1, and keep the biggest. The answer is the biggest number in the finished row, not the last one.
+</div>
+
+
+<h2 style="margin-top:44px">Three Places You Can Stop</h2>
+
+<p>Below the recall card, the page is built in three layers. Each is a real stopping point, so you do not have to reach the end to walk away with something whole.</p>
 
 <div class="tbl-wrap">
 <table>
@@ -542,38 +577,80 @@ td.c,th.c{text-align:center}
 <div class="layer layer-2">
 <div class="lnum">LAYER 2</div>
 <h2>The Algorithm</h2>
-<p>We take the story and make it exact. What to remember, what the choices are, what the rule is, and how the whole thing becomes a table.</p>
+<p>We take the story and make it exact. The one move that does the work, what to remember, the rule, and how the whole thing becomes a table.</p>
 <span class="promise">stop here and you could write it yourself</span>
 </div>
 
 
-<h2 id="s7"><span class="num">7</span>Every Choice We Have<span class="badge b2">LAYER 2</span></h2>
+<h2 id="s7"><span class="num">7</span>The One Move That Is the Algorithm<span class="badge b2">LAYER 2</span></h2>
 
-<div class="prev">We already know: at any spot we ask "how long is the chain ending here?", and the answer comes from smaller answers.</div>
+<div class="prev">We already know: at every spot we ask how long the chain ending there is, and smaller answers get handed back to us.</div>
 
-<p>In Layer 1 we said the thing before our number must be smaller and earlier. Now let us actually list every option and check them one at a time, because being sloppy here is how you lose the answer.</p>
+<p>Everything up to here has been about <em>why</em>. This section is the <em>what</em>. If you learn one thing from this page, learn this move, because it is the algorithm. Everything else is scaffolding around it.</p>
 
-<img src="dp/images/lis_07_choices.png" alt="Five options checked at index 4, two rejected as too big, two allowed, plus starting alone" class="scene-img">
-<p class="cap">Two are too big. Two work, handing back LENGTH 2 and LENGTH 3. Standing alone always works and gives LENGTH 1.</p>
+<p>Here is the situation. We are filling in the answer for one spot, and every earlier spot already has its answer written down.</p>
+
+<div class="strip">
+<div class="rl">INDEX</div>
+<div class="ix">0</div><div class="ix">1</div><div class="ix">2</div><div class="ix">3</div><div class="ix">4</div>
+<div class="rl">VALUE</div>
+<div class="vb">5</div><div class="vb">6</div><div class="vb">1</div><div class="vb">2</div><div class="vb gold">3</div>
+<div class="rl">LENGTH</div>
+<div class="vb len">1</div><div class="vb len">2</div><div class="vb len">1</div><div class="vb len">2</div><div class="vb gold">?</div>
+<div class="snote">filling the answer for INDEX 4</div>
+</div>
+
+<div class="ws" style="border-left-color:var(--gold)">
+<b style="color:var(--gold2);font-size:1.05em">Two rows, two completely different jobs.</b>
+<p style="margin:8px 0 0">The <b>VALUE</b> row decides <b>who is allowed</b>. The <b>LENGTH</b> row decides <b>how good they are</b>. We never mix them up, and we never look at a spot's length until it has passed the value test.</p>
+</div>
+
+<p>Now sweep left across every earlier spot and check it:</p>
+
+<div class="tbl-wrap">
+<table>
+<tr><th class="c">Spot</th><th class="c">Is its VALUE smaller than 3?</th><th>If yes, what does it offer?</th></tr>
+<tr><td class="c"><span class="nI">0</span></td><td class="c"><span class="nV">5</span> &nbsp;<b style="color:#fca5a5">no</b></td><td style="color:var(--muted)">nothing. we never even read its LENGTH.</td></tr>
+<tr><td class="c"><span class="nI">1</span></td><td class="c"><span class="nV">6</span> &nbsp;<b style="color:#fca5a5">no</b></td><td style="color:var(--muted)">nothing. we never even read its LENGTH.</td></tr>
+<tr><td class="c"><span class="nI">2</span></td><td class="c"><span class="nV">1</span> &nbsp;<b style="color:#86efac">yes</b></td><td>its LENGTH is <span class="nL">1</span>, so it offers <code>1 + 1</code> = LENGTH <span class="nL">2</span></td></tr>
+<tr><td class="c"><span class="nI">3</span></td><td class="c"><span class="nV">2</span> &nbsp;<b style="color:#86efac">yes</b></td><td>its LENGTH is <span class="nL">2</span>, so it offers <code>1 + 2</code> = LENGTH <span class="nL">3</span></td></tr>
+<tr><td class="c">none</td><td class="c">stand alone, always fine</td><td>offers LENGTH <span class="nL">1</span>, just our own number</td></tr>
+</table>
+</div>
+
+<p>Then take the biggest offer: <code>max(2, 3, 1)</code> = <span class="nL">3</span>. Write it into the box.</p>
+
+<img src="dp/images/lis_07_move.png" alt="One spot being filled: the value row decides who is allowed, the length row decides how good, then the biggest is taken" class="scene-img">
+<p class="cap">Arrows rise into the LENGTH row only from spots that passed the value test. That contrast is the whole move.</p>
+
+<h3>Where the two operations come from</h3>
+
+<p>Neither the <code>max</code> nor the <code>+1</code> is arbitrary, and both are worth deriving rather than memorising, because both change if the question changes.</p>
+
+<p><b>The max comes from the word "longest".</b> Every offer above is a real, legal chain. None of them cheated. The question asked which is longest, so we keep the biggest. Had it asked for the shortest we would keep the smallest, and had it asked how many ways there are we would add the offers together instead of comparing them.</p>
+
+<p><b>The +1 comes from adding exactly one number.</b> Each offer takes a chain that already existed and clips our number onto the end. One number joined, so the count rises by one.</p>
+
+<div class="warn">
+<b>The +1 counts a number. It is never the number itself.</b> The VALUE at INDEX 4 is 3, so writing <code>+3</code> feels natural and is completely wrong. We are counting how many numbers are in a chain, not what they add up to. On <code>[1, 9]</code> the answer is 2, not 10.
+</div>
 
 <h3>Why nothing is missing</h3>
 
-<p>Listing options is not enough. We have to be able to argue that no valid chain slipped past us, otherwise we are making exactly the mistake the easy idea made.</p>
+<p>We have to be able to argue that no valid chain slipped past that sweep, otherwise we are making the same mistake the easy idea made back in section 2.</p>
 
-<p>The argument is short. Take <em>any</em> chain that ends on our number. There are only two possibilities:</p>
+<p>Take <em>any</em> chain ending on our number. There are only two possibilities. Either something sits immediately before it, in which case that something is at an earlier spot with a smaller value, and we checked every earlier spot. Or nothing sits before it, in which case the chain is our number alone, which is the "stand alone" row.</p>
 
-<ul style="margin:10px 0 10px 22px">
-<li>Something sits immediately before it. That something is at an earlier spot, and it is smaller. We checked <b>every</b> earlier spot, so it was covered.</li>
-<li>Nothing sits before it. Then the chain is just our number, which is the "stand alone" option.</li>
-</ul>
-
-<div class="ok"><b>There is no third possibility.</b> So our list of options covers every chain that could possibly end here. Nothing can escape.</div>
-
-<p>It is worth naming why this matters. The easy idea in Layer 1 also had options, it just refused to look at more than one of them. Checking all of them is the entire difference.</p>
+<div class="ok"><b>There is no third possibility.</b> The sweep covers every chain that could end here. That is exactly what the easy idea failed to do: it also had options, it just refused to look at more than one.</div>
 
 <details class="chk">
-<summary>What if we dropped the "stand alone" option and ran it on <code>[9, 8, 7]</code>?</summary>
-<div class="ans">We would get 0, which is wrong. In <code>[9, 8, 7]</code> nothing has a smaller number to its left, so no option is ever allowed and there is nothing to compare. The correct answer is 1, because any single number is a chain. That is why standing alone is not a tidy extra. It is the bottom rung from Layer 1, wearing a different hat.</div>
+<summary>Why do we not read the LENGTH of the spots that failed?</summary>
+<div class="ans">Because their length is irrelevant, and reading it would be actively misleading. INDEX 1 has LENGTH 2, which looks attractive. But its VALUE is 6, and 6 cannot sit before 3 in a rising chain, so that chain of 2 cannot be extended by our number. A big length attached to a too-big value is worth nothing to us. The value test runs first for exactly this reason.</div>
+</details>
+
+<details class="chk">
+<summary>What if we dropped the "stand alone" row and ran it on <code>[9, 8, 7]</code>?</summary>
+<div class="ans">We would get 0, which is wrong. Nothing in that list has a smaller number to its left, so no spot ever passes the value test and there is nothing to take a max over. The correct answer is 1, because any single number is a chain. Standing alone is not a tidy extra. It is the bottom rung from section 5, wearing a different hat.</div>
 </details>
 
 <div class="next"><b>So next:</b> what does one question actually need to remember?</div>
@@ -581,11 +658,11 @@ td.c,th.c{text-align:center}
 
 <h2 id="s8"><span class="num">8</span>The Note<span class="badge b2">LAYER 2</span></h2>
 
-<div class="prev">We already know: a question checks every earlier spot, plus standing alone.</div>
+<div class="prev">We already know: the move sweeps every earlier spot, tests values, and takes the biggest offer.</div>
 
-<p>Imagine stopping halfway and handing the job to a friend. You are allowed to leave them <strong>one note</strong>. What has to be written on it so they can carry on without asking you anything?</p>
+<p>Imagine stopping halfway and handing the job to a friend. You are allowed to leave them <strong>one note</strong>. What has to be on it so they can carry on without asking you anything?</p>
 
-<p>Test each idea the same way. If two situations differ only in this one thing, can the remaining answer differ? If not, leave it off the note.</p>
+<p>Test each idea the same way. If two situations differ only in this one thing, can the remaining answer differ? If not, leave it off.</p>
 
 <div class="tbl-wrap">
 <table>
@@ -607,54 +684,16 @@ td.c,th.c{text-align:center}
 <img src="dp/images/lis_08_bookmark.png" alt="The note reduced to a single spot, with before, at and after marked on the list" class="scene-img">
 <p class="cap">Before the spot: things we may hook onto. At it: where our chain must end. After it: invisible to us.</p>
 
-<p>One detail here matters a lot later, so hold on to it: <strong>the note only ever moves left</strong>. Never right. That single fact is what will tell us which direction to fill the table.</p>
+<p>One detail here matters a lot later: <strong>the note only ever moves left</strong>. Never right. That single fact is what will tell us which direction to fill the table.</p>
 
-<div class="next"><b>So next:</b> our options handed back three different counts. How do we squash them into one?</div>
-
-
-<h2 id="s9"><span class="num">9</span>Where max and +1 Come From<span class="badge b2">LAYER 2</span></h2>
-
-<div class="prev">We already know: the allowed options handed back LENGTH 2, LENGTH 3 and LENGTH 1.</div>
-
-<p>We have three numbers and we need one. Nothing in the algorithm tells us how to combine them. The <strong>wording of the question</strong> does, and that is a habit worth building.</p>
-
-<h3>Why max</h3>
-
-<p>All three options built genuinely legal chains: <code>1 &rarr; 3</code> with two links, <code>1 &rarr; 2 &rarr; 3</code> with three, and <code>3</code> alone with one. None of them cheated. The question asked for the <strong>longest</strong>, so we keep the biggest. That is <code>max</code>.</p>
-
-<p>Change the wording and the operation changes with it, which is why this is worth deriving rather than memorising:</p>
-
-<div class="tbl-wrap">
-<table>
-<tr><th>If the question asks for</th><th class="c">Then combine with</th></tr>
-<tr><td>the longest, biggest, most</td><td class="c"><code>max</code></td></tr>
-<tr><td>the shortest, cheapest, least</td><td class="c"><code>min</code></td></tr>
-<tr><td>how many ways there are</td><td class="c"><code>+</code></td></tr>
-<tr><td>whether it is possible at all</td><td class="c"><code>or</code></td></tr>
-</table>
-</div>
-
-<h3>Why +1</h3>
-
-<p>Ask a narrower question: what did this option accomplish <em>right now</em>, before asking anybody anything?</p>
-
-<p>It put exactly one number onto the end of a chain that already existed. One number joined, so the count goes up by exactly one.</p>
-
-<img src="dp/images/lis_09_operator.png" alt="Three chains compared to explain max, and one number clicking onto a chain to explain plus one" class="scene-img">
-<p class="cap">max comes from the word "longest". The +1 comes from adding exactly one number.</p>
-
-<div class="warn">
-<b>The +1 counts a number. It is never the number itself.</b> At INDEX 4 the VALUE is 3, so writing <code>+3</code> feels natural and is completely wrong. We count how many numbers are in the chain, not what they add up to. On <code>[1, 9]</code> the answer is 2, not 10. If the question had asked for the biggest <em>total</em>, then and only then would we add the value.
-</div>
-
-<div class="next"><b>So next:</b> everything is derived. Now we can safely write the rule.</div>
+<div class="next"><b>So next:</b> everything is derived, so we can safely write the rule.</div>
 
 
-<h2 id="s10"><span class="num">10</span>The Rule<span class="badge b2">LAYER 2</span></h2>
+<h2 id="s9"><span class="num">9</span>The Rule<span class="badge b2">LAYER 2</span></h2>
 
-<div class="prev">We already know: the options, the note, and both operations.</div>
+<div class="prev">We already know: the move, the note, and both operations.</div>
 
-<p>Only now is it safe to write the rule down, because it introduces nothing new. It is shorthand for the last three sections, and every piece of it should already feel familiar.</p>
+<p>Only now is it safe to write the rule down, because it introduces nothing new. Every piece of it should already feel familiar.</p>
 
 <pre><code>longest_chain_ending_at(current_index) = the biggest of:
 
@@ -665,18 +704,16 @@ td.c,th.c{text-align:center}
 
 answer = the biggest of those, taken across every spot</code></pre>
 
-<p>Read it back piece by piece and check each one against where it came from:</p>
-
 <div class="tbl-wrap">
 <table>
 <tr><th>Piece</th><th>Where it came from</th></tr>
-<tr><td>the plain <code>1</code></td><td>standing alone, section 7. Our number by itself is already a chain.</td></tr>
-<tr><td>"every earlier spot"</td><td>the thing before us must come earlier, section 1.</td></tr>
-<tr><td>"whose value is smaller"</td><td>each link must be bigger than the last, section 1.</td></tr>
-<tr><td>the inner question</td><td>the promise, section 4.</td></tr>
-<tr><td><code>1 +</code></td><td>adding our own number, section 9.</td></tr>
-<tr><td>"the biggest of"</td><td>the word "longest", section 9.</td></tr>
-<tr><td>the last line</td><td>the chain has to end <em>somewhere</em>, section 4.</td></tr>
+<tr><td>the plain <code>1</code></td><td>standing alone, section 7</td></tr>
+<tr><td>"every earlier spot"</td><td>the sweep, section 7</td></tr>
+<tr><td>"whose value is smaller"</td><td>the value test, section 7</td></tr>
+<tr><td>the inner question</td><td>the promise, section 4</td></tr>
+<tr><td><code>1 +</code></td><td>adding our own number, section 7</td></tr>
+<tr><td>"the biggest of"</td><td>the word "longest", section 7</td></tr>
+<tr><td>the last line</td><td>the chain has to end <em>somewhere</em>, section 4</td></tr>
 </table>
 </div>
 
@@ -684,16 +721,16 @@ answer = the biggest of those, taken across every spot</code></pre>
 <b>That last line is not decoration.</b> Every question we ask is about chains ending at one particular spot. Nobody told us where the best chain ends, so we ask at every spot and keep the biggest. Forgetting this line is the most common way to get this problem almost right.
 </div>
 
-<div class="next"><b>So next:</b> the rule is correct but slow. Fixing that is the waste we spotted in Layer 1.</div>
+<div class="next"><b>So next:</b> the rule is correct but slow, for the reason we saw in Layer 1.</div>
 
 
-<h2 id="s11"><span class="num">11</span>Answer Once, Look It Up Forever<span class="badge b2">LAYER 2</span></h2>
+<h2 id="s10"><span class="num">10</span>Answer Once, Look It Up Forever<span class="badge b2">LAYER 2</span></h2>
 
 <div class="prev">We already know from Layer 1: the same spot gets worked out over and over.</div>
 
 <p>The fix is one sentence: <strong>before working something out, check whether we already did.</strong></p>
 
-<p>Both halves of that come straight from what we already built. What do we look things up by? The note, which is the spot. What do we store? Whatever the question handed back, which is a count. Nothing new has to be invented.</p>
+<p>Both halves come straight from what we already built. What do we look things up by? The note, which is the spot. What do we store? Whatever the question handed back, which is a count. Nothing new has to be invented.</p>
 
 <pre><code><span class="ln ln-teal">solved_lengths = {}</span>
 
@@ -717,12 +754,12 @@ answer = max(longest_chain_ending_at(current_index)
 <p>Only three lines are new, and they are all bookkeeping. Make an empty box. Check it before doing any work. Fill it before handing the answer back.</p>
 
 <div class="aloud"><b>Say one stored entry out loud</b>
-<code>solved_lengths[2] = 1</code> means "the longest chain ending on the 1 at spot 2 has one number in it". That is the promise from section 4, word for word. If a stored entry ever meant something different from the promise, we would have a bug.</div>
+<code>solved_lengths[2] = 1</code> means "the longest chain ending on the 1 at spot 2 has one number in it". That is the promise from section 4, word for word.</div>
 
 <img src="dp/images/lis_10_memo.png" alt="A drawer looked up by spot, holding counts, with the three new lines highlighted" class="scene-img">
 <p class="cap">Look it up by the note. Store exactly what the question handed back.</p>
 
-<p>Nothing else changed. Same promise, same options, same <code>+1</code>, same <code>max</code>, same answers. The only thing that disappeared is repeated work.</p>
+<p>Nothing else changed. Same promise, same move, same <code>+1</code>, same <code>max</code>, same answers. The only thing that disappeared is repeated work.</p>
 
 <details class="chk">
 <summary>Why do we look things up by the spot alone, with nothing about the chain so far?</summary>
@@ -732,7 +769,7 @@ answer = max(longest_chain_ending_at(current_index)
 <div class="next"><b>So next:</b> if every spot gets worked out exactly once anyway, why are we still asking questions?</div>
 
 
-<h2 id="s12"><span class="num">12</span>A Question and a Box Are the Same Thing<span class="badge b2">LAYER 2</span></h2>
+<h2 id="s11"><span class="num">11</span>A Question and a Box Are the Same Thing<span class="badge b2">LAYER 2</span></h2>
 
 <div class="prev">We already know: every spot is worked out once and stored.</div>
 
@@ -750,20 +787,18 @@ answer = max(longest_chain_ending_at(current_index)
 <img src="dp/images/lis_11_call_to_cell.png" alt="A question turning into a stored entry and then into a table box, all holding the same count" class="scene-img">
 <p class="cap">A question, a stored entry and a table box are three places to keep one identical fact.</p>
 
-<p>So what is genuinely different? Only <strong>when</strong> the answers get made.</p>
+<p>So what is genuinely different? Only <strong>when</strong> the answers get made. Asking gets you an answer at the moment you need it, and if it does not exist yet, it goes off and makes it. A table flips that around: fill the boxes in an order where whatever you need is <em>already sitting there</em>. Then you never ask. You only read.</p>
 
-<p>Asking a question gets you an answer at the moment you need it, and if the answer does not exist yet, it goes off and makes it. A table flips that around: fill the boxes in an order where whatever you need is <em>already sitting there</em>. Then you never ask anything. You only read.</p>
-
-<p>Which order works? Section 8 already told us, we just did not use it yet. The note only ever moves <strong>left</strong>. So if we fill left to right, everything we could possibly need is behind us and already done.</p>
+<p>Which order works? Section 8 already told us. The note only ever moves <strong>left</strong>. So if we fill left to right, everything we could possibly need is behind us and already done.</p>
 
 <div class="next"><b>So next:</b> fill it in and read every box out loud.</div>
 
 
-<h2 id="s13"><span class="num">13</span>Filling the Table<span class="badge b2">LAYER 2</span></h2>
+<h2 id="s12"><span class="num">12</span>Filling the Table<span class="badge b2">LAYER 2</span></h2>
 
 <div class="prev">We already know: a box holds exactly what a question would have handed back, and left to right is safe.</div>
 
-<p>One box per spot. Every box starts at <span class="nL">1</span>, which is the "stand alone" option written as a starting value instead of an option.</p>
+<p>One box per spot. Every box starts at <span class="nL">1</span>, which is the "stand alone" option written as a starting value instead of an option. Then run the move from section 7 at every spot, left to right.</p>
 
 <div class="strip">
 <div class="rl">INDEX</div>
@@ -806,7 +841,7 @@ answer = max(longest_chain_ending_at(current_index)
 </div>
 
 
-<h2 id="s14"><span class="num">14</span>The Code, Line by Line<span class="badge b3">LAYER 3</span></h2>
+<h2 id="s13"><span class="num">13</span>The Code, Line by Line<span class="badge b3">LAYER 3</span></h2>
 
 <div class="prev">We already know: the whole algorithm. This is it written so a machine will follow it.</div>
 
@@ -885,7 +920,7 @@ Outside the function, and not optional. The chain ends somewhere and nobody said
 <div class="next"><b>So next:</b> what does all of this actually cost?</div>
 
 
-<h2 id="s15"><span class="num">15</span>How Fast, and How Much Room<span class="badge b3">LAYER 3</span></h2>
+<h2 id="s14"><span class="num">14</span>How Fast, and How Much Room<span class="badge b3">LAYER 3</span></h2>
 
 <div class="prev">We already know: the code, in both forms.</div>
 
@@ -925,7 +960,7 @@ Outside the function, and not optional. The chain ends somewhere and nobody said
 <div class="next"><b>So next:</b> the traps.</div>
 
 
-<h2 id="s16"><span class="num">16</span>Four Ways to Get It Wrong<span class="badge b3">LAYER 3</span></h2>
+<h2 id="s15"><span class="num">15</span>Four Ways to Get It Wrong<span class="badge b3">LAYER 3</span></h2>
 
 <div class="tbl-wrap">
 <table>
@@ -943,7 +978,7 @@ Outside the function, and not optional. The chain ends somewhere and nobody said
 <p>Three of these four are the same underlying mistake: losing track of what kind of number you are holding. A spot is not a count, and a value is not a count. That is why every number on this page carries a label.</p>
 
 
-<h2 id="s17"><span class="num">17</span>Rediscovering This in Six Months<span class="badge b3">LAYER 3</span></h2>
+<h2 id="s16"><span class="num">16</span>Rediscovering This in Six Months<span class="badge b3">LAYER 3</span></h2>
 
 <div class="prev">We already know: the whole thing, story to shipped code.</div>
 

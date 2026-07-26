@@ -52,12 +52,20 @@ td{padding:10px 12px;border:1px solid var(--border);text-align:center}
   [style*="grid-template-columns:auto 1fr;"],
   [style*="grid-template-columns: auto 1fr;"]{grid-template-columns:1fr !important}
 }
+
+a.wshome{color:inherit;text-decoration:none;display:block}
+a.wshome:hover h1{opacity:.82}
+.wsback{display:block;font-size:.62em;letter-spacing:.16em;text-transform:uppercase;font-weight:800;opacity:.75;margin-bottom:6px}
+
+.recallcard{border:2px solid var(--gold2);border-radius:12px;padding:16px 18px;margin:18px 0;background:rgba(245,158,11,.07)}
+.recallcard .rlbl{font-size:.62em;letter-spacing:.18em;font-weight:800;color:var(--gold2);text-transform:uppercase}
+.recallcard p{margin:6px 0 10px;font-size:.9em;color:var(--muted)}
 </style>
 </head>
 <body>
 
 <div class="hdr">
-<h1>Maya's Staircase</h1>
+<a href="dp_workshop.html" class="wshome"><span class="wsback">&larr; The DP Workshop</span><h1>Maya's Staircase</h1></a>
 <p>Your first DP table. One variable, one array. If you get this, you get tabulation.</p>
 </div>
 
@@ -69,6 +77,13 @@ td{padding:10px 12px;border:1px solid var(--border);text-align:center}
 
 <!-- ==================== THE PROBLEM ==================== -->
 <img src="dp/images/staircase_1.png" alt="Problem + Choices: Maya at a 6-step staircase, climb 1 or climb 2, the choice diagram gives the formula" class="scene-img">
+
+
+<div class="recallcard">
+<div class="rlbl">Layer 0 &bull; Recall Card</div>
+<p>Coming back to this? Everything you need is on this one card. It stands alone, so you can stop right here.</p>
+<img src="dp/images/recall_climbing_stairs.png" alt="Climbing Stairs recall card: the question, the move, a worked example and the trap" class="scene-img">
+</div>
 
 <h2>The Problem</h2>
 

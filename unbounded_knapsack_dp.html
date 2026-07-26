@@ -95,12 +95,20 @@ code{font-family:'Fira Code','Courier New',monospace}
   .choice-grid,.base-grid{grid-template-columns:1fr}
   .card,.ws,.hi{overflow-x:hidden}
 }
+
+a.wshome{color:inherit;text-decoration:none;display:block}
+a.wshome:hover h1{opacity:.82}
+.wsback{display:block;font-size:.62em;letter-spacing:.16em;text-transform:uppercase;font-weight:800;opacity:.75;margin-bottom:6px}
+
+.recallcard{border:2px solid var(--gold2);border-radius:12px;padding:16px 18px;margin:18px 0;background:rgba(245,158,11,.07)}
+.recallcard .rlbl{font-size:.62em;letter-spacing:.18em;font-weight:800;color:var(--gold2);text-transform:uppercase}
+.recallcard p{margin:6px 0 10px;font-size:.9em;color:var(--muted)}
 </style>
 </head>
 <body>
 
 <div class="hdr">
-<h1>Unbounded Knapsack</h1>
+<a href="dp_workshop.html" class="wshome"><span class="wsback">&larr; The DP Workshop</span><h1>Unbounded Knapsack</h1></a>
 <p>Deriving the solution from scratch. No memorization.</p>
 </div>
 
@@ -112,6 +120,13 @@ code{font-family:'Fira Code','Courier New',monospace}
 </div>
 
 <!-- ==================== THE PROBLEM ==================== -->
+
+
+<div class="recallcard">
+<div class="rlbl">Layer 0 &bull; Recall Card</div>
+<p>Coming back to this? Everything you need is on this one card. It stands alone, so you can stop right here.</p>
+<img src="dp/images/recall_unbounded.png" alt="Unbounded Knapsack recall card: the question, the move, a worked example and the trap" class="scene-img">
+</div>
 
 <h2>The Problem</h2>
 
@@ -411,6 +426,12 @@ Value: $2 + $2 + $2 + $2 = <strong>$8</strong>
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">1</span> Coin Change (Minimum Coins)</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
+<div class="recallcard">
+<div class="rlbl">Layer 0 &bull; Recall Card</div>
+<p>Coming back to this? Everything you need is on this one card. It stands alone, so you can stop right here.</p>
+<img src="dp/images/recall_coin_min.png" alt="Coin Change recall card: the question, the move, a worked example and the trap" class="scene-img">
+</div>
+
 
 <img src="dp/images/family2_child1_A.png" alt="Coin Change: fewest coins to make amount, unlimited supply" class="scene-img">
 
@@ -606,6 +627,12 @@ Infinity <strong>always loses</strong> in min(). Correct.
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">2</span> Coin Change 2 (Count Combinations)</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
+<div class="recallcard">
+<div class="rlbl">Layer 0 &bull; Recall Card</div>
+<p>Coming back to this? Everything you need is on this one card. It stands alone, so you can stop right here.</p>
+<img src="dp/images/recall_coin_ways.png" alt="Coin Change 2 recall card: the question, the move, a worked example and the trap" class="scene-img">
+</div>
+
 
 <img src="dp/images/family2_child2_A.png" alt="Coin Change 2: how many combinations make the amount" class="scene-img">
 
@@ -752,6 +779,12 @@ Can't make this amount. Zero ways.<br>
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">3</span> Word Break</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
+<div class="recallcard">
+<div class="rlbl">Layer 0 &bull; Recall Card</div>
+<p>Coming back to this? Everything you need is on this one card. It stands alone, so you can stop right here.</p>
+<img src="dp/images/recall_word_break.png" alt="Word Break recall card: the question, the move, a worked example and the trap" class="scene-img">
+</div>
+
 
 <img src="dp/images/family2_child3_A.png" alt="Word Break: can I split this string into dictionary words?" class="scene-img">
 

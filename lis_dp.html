@@ -205,12 +205,34 @@ td.c,th.c{text-align:center}
 .skipto{display:inline-block;background:var(--gold);color:#2b1a00;font-weight:800;
   padding:9px 18px;border-radius:8px;text-decoration:none;margin-top:12px;font-size:.9em}
 .skipto:hover{background:var(--gold2)}
+
+/* ---- child accordion ---- */
+.deriv{background:var(--card);border:2px solid var(--teal);border-radius:12px;margin:26px 0;overflow:hidden}
+.deriv-h{padding:18px 22px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.deriv-h:hover{background:var(--card2)}
+.deriv-h h3{margin:0;display:flex;align-items:center;gap:12px;font-size:1.12em;color:#5eead4}
+.deriv-n{background:var(--teal);color:#04202c;width:30px;height:30px;border-radius:50%;display:flex;
+  align-items:center;justify-content:center;font-size:.72em;font-weight:800;flex-shrink:0}
+.deriv-a{color:var(--muted);transition:.3s;font-size:1.1em}
+.deriv.open .deriv-a{transform:rotate(90deg)}
+.deriv-sub{padding:0 22px 16px;color:var(--muted);font-size:.92em;margin-top:-6px}
+.deriv-b{display:none;padding:4px 22px 20px;border-top:1px solid var(--border)}
+.deriv.open .deriv-b{display:block}
+.famnav{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:.92em}
+.famnav b{color:var(--gold2)}
+.famnav a{color:#5eead4;text-decoration:none;font-weight:700}
+.famnav a:hover{text-decoration:underline}
+@media(max-width:600px){.deriv-h{padding:14px 15px}.deriv-h h3{font-size:1em}.deriv-b{padding:4px 14px 16px}}
+
+a.wshome{color:inherit;text-decoration:none;display:block}
+a.wshome:hover h1{opacity:.82}
+.wsback{display:block;font-size:.62em;letter-spacing:.16em;text-transform:uppercase;font-weight:800;opacity:.75;margin-bottom:6px}
 </style>
 </head>
 <body>
 
 <div class="hdr">
-<h1>Longest Increasing Subsequence</h1>
+<a href="dp_workshop.html" class="wshome"><span class="wsback">&larr; The DP Workshop</span><h1>Longest Increasing Subsequence</h1></a>
 <p>LeetCode #300. Built so you can rebuild it, not memorise it.</p>
 </div>
 
@@ -244,6 +266,8 @@ td.c,th.c{text-align:center}
 <b>The one sentence, if you only want one:</b> at every spot, look back at every earlier spot, and wherever the <b>value</b> is smaller, take that spot's stored <b>length</b>, add 1, and keep the biggest. The answer is the biggest number in the finished row, not the last one.
 </div>
 
+
+<div class="famnav"><b>In this guide:</b> Longest Increasing Subsequence (#300), plus <a href="#family">Maximum Product Subarray (#152)</a> at the bottom, which is the same idea with one twist.</div>
 
 <h2 style="margin-top:44px">Three Places You Can Stop</h2>
 
@@ -1009,13 +1033,15 @@ Outside the function, and not optional. The chain ends somewhere and nobody said
 
 
 
-<!-- ==================== CHILD: MAX PRODUCT SUBARRAY ==================== -->
-<div class="layer" style="background:linear-gradient(135deg,#0e5a4a,#0b3228);color:#dffff3;border:2px solid #2dd4bf">
-<div class="lnum">SAME FAMILY</div>
-<h2>Maximum Product Subarray</h2>
-<p>LeetCode #152. The same "best ending here" idea, with one twist that breaks it.</p>
-<span class="promise">read this once you have Layer 1 above</span>
-</div>
+<h2 id="family" style="margin-top:52px">The Same Family</h2>
+<p>One more problem built on the same idea, folded away so it does not stretch the page. Open it once the layers above make sense.</p>
+
+<div class="deriv" onclick="this.classList.toggle('open')">
+<div class="deriv-h"><h3><span class="deriv-n">1</span> Maximum Product Subarray</h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-sub">LeetCode #152. The same "best answer ending here" idea, with one twist that breaks it: a negative number turns the biggest into the smallest.</div>
+<div class="deriv-b" onclick="event.stopPropagation()">
+
+
 
 <h2 id="s17"><span class="num">17</span>The Twist</h2>
 
@@ -1179,6 +1205,10 @@ Outside the function, and not optional. The chain ends somewhere and nobody said
 </div>
 
 <div class="ok"><b>What carries over:</b> anchoring the question at "ending here". <b>What is new:</b> when an operation can reverse order, one extreme is not enough, so carry both. That is the whole lesson of this problem, and it shows up again anywhere you multiply, negate, or subtract.</div>
+
+
+</div>
+</div>
 
 <div style="text-align:center;margin-top:40px">
 <a href="dp_workshop.html" class="nav-link">&larr; DP Workshop</a>

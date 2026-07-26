@@ -71,43 +71,161 @@ td{padding:10px 12px;border:1px solid var(--border)}
   [style*="grid-template-columns: auto 1fr;"]{grid-template-columns:1fr !important}
   .var-table{grid-template-columns:1fr !important}
 }
+.fam{margin:14px 0}
+.fam .deriv-h{padding:16px 20px 6px}
+.famq{padding:0 20px 14px;font-size:.95em;color:var(--gold2);font-style:italic}
+.famkids{display:grid;gap:8px}
+a.famkid{display:block;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);text-decoration:none;font-size:.93em;transition:.15s}
+a.famkid:hover{border-color:var(--amber);color:var(--amber)}
+.lcnum{color:var(--muted);font-size:.85em;margin-left:6px}
+a.homelink{color:inherit;text-decoration:none;display:block}
+a.homelink:hover h1{opacity:.82}
+
+.recallcard{border:2px solid var(--gold2);border-radius:12px;padding:16px 18px;margin:18px 0;background:rgba(245,158,11,.07)}
+.recallcard .rlbl{font-size:.62em;letter-spacing:.18em;font-weight:800;color:var(--gold2);text-transform:uppercase}
+.recallcard p{margin:6px 0 10px;font-size:.9em;color:var(--muted)}
 </style>
 </head>
 <body>
 
 <div class="hdr">
-<h1>The DP Workshop</h1>
+<a href="#" class="homelink" onclick="go('home');return false;"><h1>The DP Workshop</h1></a>
 <p>Aditya Verma's Intuition Pipeline, applied to 26 NeetCode problems</p>
 </div>
 
 <div class="wrap">
 <div class="nav">
-<button class="on" onclick="go('pipeline')">The Pipeline</button>
-<a href="staircase_dp.html" style="background:var(--card);color:var(--muted);border:1px solid var(--border);padding:8px 16px;border-radius:6px;font-size:.85em;text-decoration:none;transition:.2s;display:inline-block"
-   onmouseover="this.style.background='var(--amber)';this.style.color='#000';this.style.borderColor='var(--amber)'"
-   onmouseout="this.style.background='var(--card)';this.style.color='var(--muted)';this.style.borderColor='var(--border)'">Staircase (1D)</a>
+<button class="on" onclick="go('home')">Families</button>
+<button onclick="go('pipeline')">The Pipeline</button>
 <button onclick="go('knapsack')">0/1 Knapsack</button>
-<a href="unbounded_knapsack_dp.html" style="background:var(--card);color:var(--muted);border:1px solid var(--border);padding:8px 16px;border-radius:6px;font-size:.85em;text-decoration:none;transition:.2s;display:inline-block"
-   onmouseover="this.style.background='var(--amber)';this.style.color='#000';this.style.borderColor='var(--amber)'"
-   onmouseout="this.style.background='var(--card)';this.style.color='var(--muted)';this.style.borderColor='var(--border)'">Unbounded Knapsack</a>
-<a href="palindrome_dp.html" style="background:var(--card);color:var(--muted);border:1px solid var(--border);padding:8px 16px;border-radius:6px;font-size:.85em;text-decoration:none;transition:.2s;display:inline-block"
-   onmouseover="this.style.background='var(--amber)';this.style.color='#000';this.style.borderColor='var(--amber)'"
-   onmouseout="this.style.background='var(--card)';this.style.color='var(--muted)';this.style.borderColor='var(--border)'">Palindrome</a>
-<a href="table_2d_dp.html" style="background:var(--card);color:var(--muted);border:1px solid var(--border);padding:8px 16px;border-radius:6px;font-size:.85em;text-decoration:none;transition:.2s;display:inline-block"
-   onmouseover="this.style.background='var(--amber)';this.style.color='#000';this.style.borderColor='var(--amber)'"
-   onmouseout="this.style.background='var(--card)';this.style.color='var(--muted)';this.style.borderColor='var(--border)'">2D Table</a>
-<a href="state_machine_dp.html" style="background:var(--card);color:var(--muted);border:1px solid var(--border);padding:8px 16px;border-radius:6px;font-size:.85em;text-decoration:none;transition:.2s;display:inline-block"
-   onmouseover="this.style.background='var(--amber)';this.style.color='#000';this.style.borderColor='var(--amber)'"
-   onmouseout="this.style.background='var(--card)';this.style.color='var(--muted)';this.style.borderColor='var(--border)'">State Machine</a>
-<a href="lis_dp.html" style="background:var(--card);color:var(--muted);border:1px solid var(--border);padding:8px 16px;border-radius:6px;font-size:.85em;text-decoration:none;transition:.2s;display:inline-block"
-   onmouseover="this.style.background='#38bdf8';this.style.color='#000';this.style.borderColor='#38bdf8'"
-   onmouseout="this.style.background='var(--card)';this.style.color='var(--muted)';this.style.borderColor='var(--border)'">LIS</a>
-<button onclick="go('problems')">26 Problems</button>
+<button onclick="go('problems')">All 26 Problems</button>
 <button onclick="go('quiz')">Quiz</button>
 </div>
-
 <!-- ==================== TAB 1: THE PIPELINE ==================== -->
-<div class="sec vis" id="sec-pipeline">
+<div class="sec vis" id="sec-home">
+<h2>Pick a Family</h2>
+<p style="color:var(--muted)">Every DP problem here belongs to one of seven families. Open a family to see the question it asks and the problems inside it. Each problem opens with a one page recall card, so you can refresh without rereading.</p>
+
+<div class="deriv fam" style="border-color:#dc2626" onclick="this.classList.toggle('open')">
+<div class="deriv-h">
+<h3 style="color:#dc2626"><span class="deriv-n" style="background:#dc2626;color:#111">4</span> Linear / Fibonacci</h3>
+<span class="deriv-a">&#9654;</span>
+</div>
+<div class="famq">How many ways, or what is the best total, to reach step i?</div>
+<div class="deriv-b" onclick="event.stopPropagation()">
+<p style="color:var(--muted);font-size:.92em;margin:6px 0 12px">Each step is reached from one or two steps back. The table is one row and only ever looks a step or two behind.</p>
+<div class="famkids">
+<a href="staircase_dp.html" class="famkid">Climbing Stairs <span class="lcnum">#70</span></a>
+<a href="house_robber_dp.html" class="famkid">House Robber <span class="lcnum">#198</span></a>
+<a href="min_cost_dp.html" class="famkid">Min Cost Climbing Stairs <span class="lcnum">#746</span></a>
+<a href="decode_ways_dp.html" class="famkid">Decode Ways <span class="lcnum">#91</span></a>
+</div>
+</div>
+</div>
+
+<div class="deriv fam" style="border-color:#f59e0b" onclick="this.classList.toggle('open')">
+<div class="deriv-h">
+<h3 style="color:#f59e0b"><span class="deriv-n" style="background:#f59e0b;color:#111">7</span> 0/1 Knapsack</h3>
+<span class="deriv-a">&#9654;</span>
+</div>
+<div class="famq">What is the best I can do with the items from here on, given this much room left?</div>
+<div class="deriv-b" onclick="event.stopPropagation()">
+<p style="color:var(--muted);font-size:.92em;margin:6px 0 12px">Every item is offered once. Each one is either grabbed or skipped, and the room left is the second thing you must remember.</p>
+<div class="famkids">
+<a href="javascript:go('knapsack')" class="famkid">0/1 Knapsack (parent) </a>
+<a href="javascript:go('knapsack')" class="famkid">Subset Sum </a>
+<a href="javascript:go('knapsack')" class="famkid">Equal Sum Partition <span class="lcnum">#416</span></a>
+<a href="javascript:go('knapsack')" class="famkid">Count of Subsets with Sum </a>
+<a href="javascript:go('knapsack')" class="famkid">Minimum Subset Sum Difference </a>
+<a href="javascript:go('knapsack')" class="famkid">Target Sum <span class="lcnum">#494</span></a>
+<a href="javascript:go('knapsack')" class="famkid">Count Subsets with Given Difference </a>
+</div>
+</div>
+</div>
+
+<div class="deriv fam" style="border-color:#fb923c" onclick="this.classList.toggle('open')">
+<div class="deriv-h">
+<h3 style="color:#fb923c"><span class="deriv-n" style="background:#fb923c;color:#111">4</span> Unbounded Knapsack</h3>
+<span class="deriv-a">&#9654;</span>
+</div>
+<div class="famq">Same question, but every item can be used again and again.</div>
+<div class="deriv-b" onclick="event.stopPropagation()">
+<p style="color:var(--muted);font-size:.92em;margin:6px 0 12px">One change from 0/1: after taking an item you stay on it instead of moving past it.</p>
+<div class="famkids">
+<a href="unbounded_knapsack_dp.html" class="famkid">Unbounded Knapsack (parent) </a>
+<a href="unbounded_knapsack_dp.html" class="famkid">Coin Change, fewest coins <span class="lcnum">#322</span></a>
+<a href="unbounded_knapsack_dp.html" class="famkid">Coin Change 2, count combinations <span class="lcnum">#518</span></a>
+<a href="unbounded_knapsack_dp.html" class="famkid">Word Break <span class="lcnum">#139</span></a>
+</div>
+</div>
+</div>
+
+<div class="deriv fam" style="border-color:#8b5cf6" onclick="this.classList.toggle('open')">
+<div class="deriv-h">
+<h3 style="color:#8b5cf6"><span class="deriv-n" style="background:#8b5cf6;color:#111">6</span> 2D Table (LCS family)</h3>
+<span class="deriv-a">&#9654;</span>
+</div>
+<div class="famq">Two sequences walked at once. What is the best answer for the rest of both?</div>
+<div class="deriv-b" onclick="event.stopPropagation()">
+<p style="color:var(--muted);font-size:.92em;margin:6px 0 12px">The bookmark is two spots, one in each sequence, so the table is a grid rather than a row.</p>
+<div class="famkids">
+<a href="table_2d_dp.html" class="famkid">Longest Common Subsequence <span class="lcnum">#1143</span></a>
+<a href="table_2d_dp.html" class="famkid">Unique Paths <span class="lcnum">#62</span></a>
+<a href="table_2d_dp.html" class="famkid">Edit Distance <span class="lcnum">#72</span></a>
+<a href="table_2d_dp.html" class="famkid">Interleaving String <span class="lcnum">#97</span></a>
+<a href="table_2d_dp.html" class="famkid">Distinct Subsequences <span class="lcnum">#115</span></a>
+<a href="table_2d_dp.html" class="famkid">Regular Expression Matching <span class="lcnum">#10</span></a>
+</div>
+</div>
+</div>
+
+<div class="deriv fam" style="border-color:#ec4899" onclick="this.classList.toggle('open')">
+<div class="deriv-h">
+<h3 style="color:#ec4899"><span class="deriv-n" style="background:#ec4899;color:#111">2</span> Palindrome</h3>
+<span class="deriv-a">&#9654;</span>
+</div>
+<div class="famq">Is the piece between LEFT and RIGHT a palindrome?</div>
+<div class="deriv-b" onclick="event.stopPropagation()">
+<p style="color:var(--muted);font-size:.92em;margin:6px 0 12px">The two ends must match and the piece inside must already be one. Same table, different read out for counting versus finding the longest.</p>
+<div class="famkids">
+<a href="palindrome_dp.html" class="famkid">Palindromic Substrings <span class="lcnum">#647</span></a>
+<a href="palindrome_dp.html" class="famkid">Longest Palindromic Substring <span class="lcnum">#5</span></a>
+</div>
+</div>
+</div>
+
+<div class="deriv fam" style="border-color:#10b981" onclick="this.classList.toggle('open')">
+<div class="deriv-h">
+<h3 style="color:#10b981"><span class="deriv-n" style="background:#10b981;color:#111">2</span> State Machine</h3>
+<span class="deriv-a">&#9654;</span>
+</div>
+<div class="famq">What is the best from here on, given which state I am currently in?</div>
+<div class="deriv-b" onclick="event.stopPropagation()">
+<p style="color:var(--muted);font-size:.92em;margin:6px 0 12px">A rule in the problem, like a cooldown, creates a small set of states. Each state has its own legal moves.</p>
+<div class="famkids">
+<a href="state_machine_dp.html" class="famkid">Best Time to Buy and Sell with Cooldown <span class="lcnum">#309</span></a>
+<a href="state_machine_dp.html" class="famkid">Burst Balloons <span class="lcnum">#312</span></a>
+</div>
+</div>
+</div>
+
+<div class="deriv fam" style="border-color:#38bdf8" onclick="this.classList.toggle('open')">
+<div class="deriv-h">
+<h3 style="color:#38bdf8"><span class="deriv-n" style="background:#38bdf8;color:#111">2</span> Ending Here</h3>
+<span class="deriv-a">&#9654;</span>
+</div>
+<div class="famq">What is the best answer for a run or chain that ENDS exactly at this spot?</div>
+<div class="deriv-b" onclick="event.stopPropagation()">
+<p style="color:var(--muted);font-size:.92em;margin:6px 0 12px">Anchoring at the end turns a vague question into one with a short, checkable list of options. The final answer is the best box, never the last box.</p>
+<div class="famkids">
+<a href="lis_dp.html" class="famkid">Longest Increasing Subsequence <span class="lcnum">#300</span></a>
+<a href="lis_dp.html#family" class="famkid">Maximum Product Subarray <span class="lcnum">#152</span></a>
+</div>
+</div>
+</div>
+</div>
+
+<div class="sec" id="sec-pipeline">
 
 <h2>Aditya Verma's Pipeline</h2>
 <p>Every DP problem, same method. Don't memorize templates. Build the solution from the choices.</p>
@@ -208,6 +326,12 @@ td{padding:10px 12px;border:1px solid var(--border)}
 
 <!-- ==================== TAB 2: 0/1 KNAPSACK ==================== -->
 <div class="sec" id="sec-knapsack">
+<div class="recallcard">
+<div class="rlbl">Layer 0 &bull; Recall Card</div>
+<p>Coming back to this? Everything you need is on this one card. It stands alone, so you can stop right here.</p>
+<img src="dp/images/recall_knapsack01.png" alt="0/1 Knapsack recall card: the question, the move, a worked example and the trap" class="scene-img">
+</div>
+
 
 <h2>Family 1: 0/1 Knapsack</h2>
 <p>The parent of 6 problems. At each item: GRAB it or SKIP it. Same item, same capacity? Same answer. Don't solve it twice.</p>
@@ -786,6 +910,12 @@ That's it. Every cell, same logic.
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">1</span> Subset Sum</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
+<div class="recallcard">
+<div class="rlbl">Layer 0 &bull; Recall Card</div>
+<p>Coming back to this? Everything you need is on this one card. It stands alone, so you can stop right here.</p>
+<img src="dp/images/recall_subset_sum.png" alt="Subset Sum recall card: the question, the move, a worked example and the trap" class="scene-img">
+</div>
+
 <div style="background:var(--card2);border-radius:8px;padding:12px;margin:0 0 12px;font-size:.9em">
 <strong>Question:</strong> Can you pick some numbers from the array that add up exactly to the target?<br>
 <strong>Example:</strong> <code>nums = [3, 2, 7, 1]</code>, <code>target = 6</code> → Yes: pick 3+2+1=6. Answer: <strong>True</strong>.<br>
@@ -850,6 +980,12 @@ That's it. Every cell, same logic.
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">2</span> Equal Sum Partition</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
+<div class="recallcard">
+<div class="rlbl">Layer 0 &bull; Recall Card</div>
+<p>Coming back to this? Everything you need is on this one card. It stands alone, so you can stop right here.</p>
+<img src="dp/images/recall_equal_partition.png" alt="Equal Sum Partition recall card: the question, the move, a worked example and the trap" class="scene-img">
+</div>
+
 <div style="background:var(--card2);border-radius:8px;padding:12px;margin:0 0 12px;font-size:.9em">
 <strong>Question:</strong> Can you split the array into two groups with equal sums?<br>
 <strong>Example:</strong> <code>[1, 5, 11, 5]</code> → {1,5,5} and {11}. Both sum to 11. Answer: <strong>True</strong>.<br>
@@ -872,6 +1008,12 @@ If total is odd, immediately False. If even, can I pick items summing to total/2
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">3</span> Count of Subsets with Sum</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
+<div class="recallcard">
+<div class="rlbl">Layer 0 &bull; Recall Card</div>
+<p>Coming back to this? Everything you need is on this one card. It stands alone, so you can stop right here.</p>
+<img src="dp/images/recall_count_subsets.png" alt="Count of Subsets with Sum recall card: the question, the move, a worked example and the trap" class="scene-img">
+</div>
+
 <div style="background:var(--card2);border-radius:8px;padding:12px;margin:0 0 12px;font-size:.9em">
 <strong>Question:</strong> How many subsets of the array add up to exactly the target?<br>
 <strong>Example:</strong> <code>nums = [1, 2, 3, 3]</code>, <code>target = 6</code><br>
@@ -928,6 +1070,12 @@ Same choices: take or leave. But combine with <code>+</code> instead of <code>or
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">4</span> Minimum Subset Sum Difference</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
+<div class="recallcard">
+<div class="rlbl">Layer 0 &bull; Recall Card</div>
+<p>Coming back to this? Everything you need is on this one card. It stands alone, so you can stop right here.</p>
+<img src="dp/images/recall_min_subset_diff.png" alt="Minimum Subset Sum Difference recall card: the question, the move, a worked example and the trap" class="scene-img">
+</div>
+
 <div style="background:var(--card2);border-radius:8px;padding:12px;margin:0 0 12px;font-size:.9em">
 <strong>Question:</strong> Split the array into two groups. Minimize the difference between their sums.<br>
 <strong>Example:</strong> <code>[1, 6, 11, 5]</code> → {1,6,5}=12 and {11}=11. Difference = <strong>1</strong>.<br>
@@ -985,6 +1133,12 @@ The closer one group's sum is to total/2, the smaller the difference. Run Subset
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">5</span> Target Sum (LeetCode #494)</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
+<div class="recallcard">
+<div class="rlbl">Layer 0 &bull; Recall Card</div>
+<p>Coming back to this? Everything you need is on this one card. It stands alone, so you can stop right here.</p>
+<img src="dp/images/recall_target_sum.png" alt="Target Sum recall card: the question, the move, a worked example and the trap" class="scene-img">
+</div>
+
 <div style="background:var(--card2);border-radius:8px;padding:12px;margin:0 0 12px;font-size:.9em">
 <strong>Question:</strong> Put + or - in front of each number. How many ways to reach the target sum?<br>
 <strong>Example:</strong> <code>nums = [1, 1, 1]</code>, <code>target = 1</code><br>
@@ -1009,6 +1163,12 @@ Assign +/- to each number. Let P = sum of + numbers. Then P = (total + target) /
 <div class="deriv" onclick="this.classList.toggle('open')">
 <div class="deriv-h"><h3><span class="deriv-n">6</span> Count Subsets with Given Difference</h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
+<div class="recallcard">
+<div class="rlbl">Layer 0 &bull; Recall Card</div>
+<p>Coming back to this? Everything you need is on this one card. It stands alone, so you can stop right here.</p>
+<img src="dp/images/recall_count_diff.png" alt="Count Subsets with Given Difference recall card: the question, the move, a worked example and the trap" class="scene-img">
+</div>
+
 <div style="background:var(--card2);border-radius:8px;padding:12px;margin:0 0 12px;font-size:.9em">
 <strong>Question:</strong> Split into two groups where group1 - group2 = diff. How many ways?<br>
 <strong>Example:</strong> <code>nums = [1, 1, 2, 3]</code>, <code>diff = 1</code><br>
@@ -1686,9 +1846,12 @@ Overlapping subintervals. dp[0][3] and dp[2][5] both need dp[2][3]. Same range, 
 <script>
 function go(id){
 document.querySelectorAll('.sec').forEach(s=>s.classList.remove('vis'));
-document.getElementById('sec-'+id).classList.add('vis');
+var t=document.getElementById('sec-'+id);
+if(t) t.classList.add('vis');
 document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('on'));
-event.target.classList.add('on');
+var b=document.querySelector('.nav button[onclick*="'+id+'"]');
+if(b) b.classList.add('on');
+window.scrollTo(0,0);
 }
 </script>
 </body>

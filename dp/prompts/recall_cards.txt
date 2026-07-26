@@ -1,0 +1,990 @@
+DP RECALL CARDS - one Layer 0 card per problem.
+==============================================================
+24 cards. Generated from a verified table of algorithms.
+==============================================================
+
+================================================================================
+STYLE BIBLE
+================================================================================
+
+---BEGIN STYLE BIBLE---
+
+IMAGE FORMAT: Tall portrait infographic, mobile first.
+
+TEXT RULES:
+- ALL text HUGE. Titles 60pt+, body 32pt+, code 26pt+.
+- Readable on a phone held vertically WITHOUT zooming.
+- About 70 words of body text total. Fragments over sentences.
+- Clean sans serif (Nunito or Poppins). NO chalk, NO handwriting, NO serif.
+- Plain words, written for a bright ten year old. Never use the words
+  "delegate", "predecessor", "exhaustive", "transition", "optimal", "iterate".
+
+=== THIS IS A RECALL CARD ===
+It is for someone who learned this once and wants it back in sixty seconds.
+It has NO "we already know" banner and NO "so next" banner.
+It references no other picture. It stands completely alone.
+Badge in the top left corner: a small GOLD rounded pill reading "LAYER 0  RECALL".
+
+=== FIXED FOUR ZONE LAYOUT (every card) ===
+ZONE 1, cream card, numbered 1, titled "THE QUESTION AT EVERY STEP"
+ZONE 2, cream card, numbered 2, titled "THE MOVE"  <- the biggest zone
+ZONE 3, gold card, numbered 3, titled "WORKED EXAMPLE"
+ZONE 4, dark strip, numbered 4, titled "THE TRAP"
+
+=== EVERY NUMBER LABELLED ===
+A bare number is forbidden. Each number carries a small word saying what it is,
+for example INDEX, VALUE, COUNT, COST, ROOM LEFT, TARGET LEFT, ANSWER.
+Colour is never the only signal. Word labels always present.
+
+CHARACTER (Kit, exactly ONCE per card, SMALL, in a bottom corner, never
+covering any text or diagram):
+- Mid 20s, SHORT MESSY DARK BROWN hair, sharp dark eyes, confident smirk, stubble.
+- SLEEK BLACK TACTICAL SUIT one piece matte black, DARK BLUE UTILITY BELT,
+  FINGERLESS BLACK GLOVES, NIGHT VISION GOGGLES pushed up on the forehead.
+- Lean athletic. Pixar/Disney 3D render, head slightly oversized, big eyes.
+
+ART STYLE: soft 3D cartoon, Pixar energy. NOT flat, NOT photoreal, NOT anime.
+
+COLOR PALETTE:
+- Background deep charcoal (#141414) with a faint grid.
+- Cards cream / warm white (#FFF8F0), rounded, soft shadow.
+- Green (#22C55E) for allowed / kept / true. Red (#EF4444) for rejected / false.
+- Gold (#F59E0B) for the answer and callouts.
+- The ACCENT COLOUR for this card is given in the prompt below. Use it for the
+  title, the zone numbers and the family tag.
+
+---END STYLE BIBLE---
+
+
+================================================================================
+PROMPT: 0/1 KNAPSACK -> recall_knapsack01.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: AMBER (#F59E0B)
+Small family tag under the title, in the accent colour: "KNAPSACK FAMILY"
+
+Big header: "0/1 KNAPSACK"
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "best value I can carry using the items from here on, with this much room left"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "SKIP IT  ->  same room, next item"
+      "TAKE IT  ->  add its value, room shrinks by its weight, next item"
+      "taking is only allowed if it FITS"
+      "keep the BIGGER of the two"
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS THE BOX FOR: FIRST ITEM, FULL ROOM"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the numbers drawn as small boxes where they are a list:
+      "weights 1, 3, 4    values 15, 20, 30    ROOM 4"
+      "take the 1 and the 3  ->  room used 4,  VALUE 35"
+      "ANSWER 35"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "each item may be used ONCE. after taking, the item number must still move on."
+
+Kit small in a bottom corner, arms folded, not covering anything.
+
+================================================================================
+PROMPT: SUBSET SUM -> recall_subset_sum.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: AMBER (#F59E0B)
+Small family tag under the title, in the accent colour: "KNAPSACK FAMILY"
+
+Big header: "SUBSET SUM"
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "can I hit this target using the numbers from here on?"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "SKIP IT  ->  same target, next number"
+      "TAKE IT  ->  target shrinks by it, next number"
+      "TRUE if EITHER one is true.  this is OR, not max."
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS THE BOX FOR: FIRST NUMBER, FULL TARGET"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the numbers drawn as small boxes where they are a list:
+      "numbers 2, 3, 7    TARGET 5"
+      "2 + 3 = 5   ->  TRUE"
+      "TARGET 6  ->  FALSE"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "TARGET LEFT of 0 is TRUE, not false. the empty pick is a real answer."
+
+Kit small in a bottom corner, arms folded, not covering anything.
+
+================================================================================
+PROMPT: EQUAL SUM PARTITION -> recall_equal_partition.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: AMBER (#F59E0B)
+Small family tag under the title, in the accent colour: "KNAPSACK FAMILY"
+
+Big header: "EQUAL SUM PARTITION"
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "can these numbers be split into two piles with the same total?"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "add everything up first"
+      "if the TOTAL is ODD  ->  FALSE straight away, no work needed"
+      "otherwise: can a subset hit exactly TOTAL divided by 2 ?"
+      "that is plain Subset Sum"
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS TRUE IF SOME SUBSET REACHES HALF THE TOTAL"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the numbers drawn as small boxes where they are a list:
+      "numbers 1, 5, 11, 5    TOTAL 22    HALF 11"
+      "the 11 alone reaches 11  ->  TRUE"
+      "numbers 1, 2, 5  ->  TOTAL 8, HALF 4, nothing reaches 4  ->  FALSE"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "an ODD total can never be split. check that before doing any real work."
+
+Kit small in a bottom corner, arms folded, not covering anything.
+
+================================================================================
+PROMPT: COUNT SUBSETS WITH A SUM -> recall_count_subsets.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: AMBER (#F59E0B)
+Small family tag under the title, in the accent colour: "KNAPSACK FAMILY"
+
+Big header: "COUNT SUBSETS WITH A SUM"
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "how many subsets of the numbers from here on hit this target?"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "SKIP IT  ->  count the ways without it"
+      "TAKE IT  ->  count the ways with it, target shrinks"
+      "ADD the two counts together.  this is +, not max and not OR."
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS THE BOX FOR: FIRST NUMBER, FULL TARGET"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the numbers drawn as small boxes where they are a list:
+      "numbers 1, 1, 2, 3    TARGET 3"
+      "the two 1s each pair with the 2, and the 3 stands alone"
+      "COUNT 3"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "when the target reaches 0 the count is 1, not 0. the empty pick is one way."
+
+Kit small in a bottom corner, arms folded, not covering anything.
+
+================================================================================
+PROMPT: MINIMUM SUBSET SUM DIFFERENCE -> recall_min_subset_diff.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: AMBER (#F59E0B)
+Small family tag under the title, in the accent colour: "KNAPSACK FAMILY"
+
+Big header: "MINIMUM SUBSET SUM DIFFERENCE"
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "which totals can a subset actually reach?"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "run Subset Sum for EVERY target up to half the total"
+      "that gives a list of reachable totals"
+      "pick the reachable total closest to half"
+      "the gap is  TOTAL minus twice that total"
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS THE SMALLEST GAP OVER EVERY REACHABLE TOTAL"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the numbers drawn as small boxes where they are a list:
+      "numbers 1, 6, 11, 5    TOTAL 23"
+      "one pile reaches 11,  the other gets 12"
+      "GAP 1"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "you want the reachable total closest to HALF, not the largest reachable total."
+
+Kit small in a bottom corner, arms folded, not covering anything.
+
+================================================================================
+PROMPT: TARGET SUM -> recall_target_sum.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: AMBER (#F59E0B)
+Small family tag under the title, in the accent colour: "KNAPSACK FAMILY"
+
+Big header: "TARGET SUM"
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "how many ways can I put a plus or a minus in front of each number to reach the target?"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "PLUS   ->  add this number, next one"
+      "MINUS  ->  subtract this number, next one"
+      "ADD the two counts"
+      "or turn it into Count Subsets with target (TOTAL + goal) divided by 2"
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS THE BOX FOR: FIRST NUMBER, RUNNING TOTAL 0"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the numbers drawn as small boxes where they are a list:
+      "numbers 1, 1, 1, 1, 1    GOAL 3"
+      "four plus signs and one minus, in five different places"
+      "COUNT 5"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "if (TOTAL + goal) is odd or negative, the answer is 0. no arrangement exists."
+
+Kit small in a bottom corner, arms folded, not covering anything.
+
+================================================================================
+PROMPT: COUNT SUBSETS WITH A GIVEN DIFFERENCE -> recall_count_diff.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: AMBER (#F59E0B)
+Small family tag under the title, in the accent colour: "KNAPSACK FAMILY"
+
+Big header: "COUNT SUBSETS WITH A GIVEN DIFFERENCE"
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "how many ways can I split into two piles whose difference is exactly this?"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "call the piles BIG and SMALL"
+      "BIG + SMALL = TOTAL,  and  BIG - SMALL = DIFFERENCE"
+      "so BIG = (TOTAL + DIFFERENCE) divided by 2"
+      "now just Count Subsets that reach BIG"
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS THE COUNT OF SUBSETS REACHING BIG"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the numbers drawn as small boxes where they are a list:
+      "numbers 1, 1, 2, 3    DIFFERENCE 1"
+      "TOTAL 7,  so BIG = 4"
+      "COUNT 3"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "if (TOTAL + DIFFERENCE) is odd, the answer is 0. two whole piles cannot exist."
+
+Kit small in a bottom corner, arms folded, not covering anything.
+
+================================================================================
+PROMPT: UNBOUNDED KNAPSACK -> recall_unbounded.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: ORANGE (#FB923C)
+Small family tag under the title, in the accent colour: "UNBOUNDED FAMILY"
+
+Big header: "UNBOUNDED KNAPSACK"
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "best value with this much room left, when every item can be reused"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "USE IT AGAIN  ->  add its value, room shrinks, STAY on the same item"
+      "MOVE ON       ->  same room, next item"
+      "keep the BIGGER of the two"
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS THE BOX FOR: FIRST ITEM, FULL ROOM"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the numbers drawn as small boxes where they are a list:
+      "weights 2, 3    values 5, 8    ROOM 6"
+      "use the weight 3 item twice  ->  VALUE 16"
+      "ANSWER 16"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "after using an item you do NOT move on. that single difference from 0/1 is the whole family."
+
+Kit small in a bottom corner, arms folded, not covering anything.
+
+================================================================================
+PROMPT: COIN CHANGE, FEWEST COINS -> recall_coin_min.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: ORANGE (#FB923C)
+Small family tag under the title, in the accent colour: "UNBOUNDED FAMILY"
+
+Big header: "COIN CHANGE, FEWEST COINS"
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "fewest coins that add up to this amount"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "for EVERY coin that fits:  1 + the answer for (amount minus that coin)"
+      "keep the SMALLEST"
+      "coins can be reused, so the coin list never shrinks"
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS THE BOX FOR THE FULL AMOUNT"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the numbers drawn as small boxes where they are a list:
+      "coins 1, 2, 5    AMOUNT 11"
+      "5 + 5 + 1"
+      "COUNT 3 coins"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "impossible must come back as -1, not 0. amount 3 with only a 2 coin has no answer."
+
+Kit small in a bottom corner, arms folded, not covering anything.
+
+================================================================================
+PROMPT: COIN CHANGE 2, COUNT COMBINATIONS -> recall_coin_ways.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: ORANGE (#FB923C)
+Small family tag under the title, in the accent colour: "UNBOUNDED FAMILY"
+
+Big header: "COIN CHANGE 2, COUNT COMBINATIONS"
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "how many different combinations of coins add up to this amount?"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "USE THIS COIN AGAIN  ->  amount shrinks, STAY on the same coin"
+      "MOVE TO THE NEXT COIN  ->  same amount, next coin"
+      "ADD the two counts"
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS THE BOX FOR: FIRST COIN, FULL AMOUNT"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the numbers drawn as small boxes where they are a list:
+      "coins 1, 2, 5    AMOUNT 5"
+      "5      2+2+1      2+1+1+1      1+1+1+1+1"
+      "COUNT 4"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "walk the COINS on the outside and the amount inside, or you will count 1+2 and 2+1 as different."
+
+Kit small in a bottom corner, arms folded, not covering anything.
+
+================================================================================
+PROMPT: WORD BREAK -> recall_word_break.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: ORANGE (#FB923C)
+Small family tag under the title, in the accent colour: "UNBOUNDED FAMILY"
+
+Big header: "WORD BREAK"
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "can the rest of the string be cut into dictionary words?"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "try EVERY cut point in the rest of the string"
+      "a cut works if the front piece is a word AND the back piece also works"
+      "TRUE if ANY cut point works.  this is OR."
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS THE BOX FOR THE START OF THE STRING"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the numbers drawn as small boxes where they are a list:
+      "text 'leetcode'    words: leet, code"
+      "cut after 4 letters  ->  'leet' and 'code' are both words"
+      "TRUE"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "greedy longest word first fails. 'catsandog' with cats, cat, sand, and, dog is FALSE."
+
+Kit small in a bottom corner, arms folded, not covering anything.
+
+================================================================================
+PROMPT: LONGEST COMMON SUBSEQUENCE -> recall_lcs.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: VIOLET (#8B5CF6)
+Small family tag under the title, in the accent colour: "2D TABLE FAMILY"
+
+Big header: "LONGEST COMMON SUBSEQUENCE"
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "longest run of shared letters, in order, in the rest of both strings"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "LETTERS MATCH  ->  1 + step BOTH strings forward"
+      "LETTERS DIFFER ->  try skipping a letter from A, and try skipping from B"
+      "keep the BIGGER of those two"
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS THE BOX WHERE BOTH STRINGS ARE UNTOUCHED"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the numbers drawn as small boxes where they are a list:
+      "A = 'abcde'    B = 'ace'"
+      "shared in order:  a, c, e"
+      "LENGTH 3"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "on a mismatch you must try BOTH skips. picking one and moving on loses answers."
+
+Kit small in a bottom corner, arms folded, not covering anything.
+
+================================================================================
+PROMPT: UNIQUE PATHS -> recall_unique_paths.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: VIOLET (#8B5CF6)
+Small family tag under the title, in the accent colour: "2D TABLE FAMILY"
+
+Big header: "UNIQUE PATHS"
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "how many ways from this square to the bottom right corner?"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "GO DOWN   ->  ways from the square below"
+      "GO RIGHT  ->  ways from the square to the right"
+      "ADD them.  this is +, not max."
+      "a blocked square is 0 ways"
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS THE TOP LEFT SQUARE"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the numbers drawn as small boxes where they are a list:
+      "a 3 by 3 grid"
+      "every path is 2 downs and 2 rights in some order"
+      "COUNT 6"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "this COUNTS ways, so the move is addition. reaching for max here is the usual slip."
+
+Kit small in a bottom corner, arms folded, not covering anything.
+
+================================================================================
+PROMPT: EDIT DISTANCE -> recall_edit_distance.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: VIOLET (#8B5CF6)
+Small family tag under the title, in the accent colour: "2D TABLE FAMILY"
+
+Big header: "EDIT DISTANCE"
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "fewest edits to turn the rest of A into the rest of B"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "LETTERS MATCH  ->  free, step BOTH forward"
+      "otherwise 1 + the SMALLEST of:"
+      "   INSERT  ->  step B forward"
+      "   DELETE  ->  step A forward"
+      "   REPLACE ->  step BOTH forward"
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS THE BOX WHERE BOTH STRINGS ARE UNTOUCHED"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the numbers drawn as small boxes where they are a list:
+      "A = 'horse'  ->  B = 'ros'"
+      "replace h with r,  delete o,  delete e"
+      "COST 3"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "when one string runs out, the answer is how many letters are LEFT in the other, not 0."
+
+Kit small in a bottom corner, arms folded, not covering anything.
+
+================================================================================
+PROMPT: INTERLEAVING STRING -> recall_interleaving.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: VIOLET (#8B5CF6)
+Small family tag under the title, in the accent colour: "2D TABLE FAMILY"
+
+Big header: "INTERLEAVING STRING"
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "can the rest of A and the rest of B weave together into the rest of C?"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "TAKE FROM A  ->  allowed only if A's letter equals C's letter"
+      "TAKE FROM B  ->  allowed only if B's letter equals C's letter"
+      "TRUE if EITHER works.  this is OR."
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS THE BOX WHERE ALL THREE STRINGS ARE UNTOUCHED"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the numbers drawn as small boxes where they are a list:
+      "A = 'ab'    B = 'cd'    C = 'acbd'"
+      "a from A, c from B, b from A, d from B"
+      "TRUE.   'abdc' is FALSE, it reverses c and d"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "the spot in C is always A's spot plus B's spot, so it needs no storage of its own."
+
+Kit small in a bottom corner, arms folded, not covering anything.
+
+================================================================================
+PROMPT: DISTINCT SUBSEQUENCES -> recall_distinct_subseq.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: VIOLET (#8B5CF6)
+Small family tag under the title, in the accent colour: "2D TABLE FAMILY"
+
+Big header: "DISTINCT SUBSEQUENCES"
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "how many times does the rest of T appear inside the rest of S?"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "ALWAYS  ->  skip this letter of S, count the ways without it"
+      "IF THE LETTERS MATCH  ->  also count the ways that use it, stepping BOTH forward"
+      "ADD the two counts"
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS THE BOX WHERE BOTH STRINGS ARE UNTOUCHED"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the numbers drawn as small boxes where they are a list:
+      "S = 'rabbbit'    T = 'rabbit'"
+      "three different b's can be the one left out"
+      "COUNT 3"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "when T runs out the answer is 1, not 0. there is exactly one way to match nothing."
+
+Kit small in a bottom corner, arms folded, not covering anything.
+
+================================================================================
+PROMPT: PALINDROMIC SUBSTRINGS -> recall_pal_substrings.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: PINK (#EC4899)
+Small family tag under the title, in the accent colour: "PALINDROME FAMILY"
+
+Big header: "PALINDROMIC SUBSTRINGS"
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "is the piece from LEFT to RIGHT a palindrome?"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "the two END letters must match"
+      "AND the piece inside must already be a palindrome"
+      "pieces of length 1 or 2 need no inside check"
+      "count EVERY box that came out TRUE"
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS THE TOTAL NUMBER OF TRUE BOXES"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the numbers drawn as small boxes where they are a list:
+      "text 'aaa'"
+      "three single letters, two pairs, one triple"
+      "COUNT 6"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "count every TRUE box. this asks HOW MANY, not how long."
+
+Kit small in a bottom corner, arms folded, not covering anything.
+
+================================================================================
+PROMPT: LONGEST PALINDROMIC SUBSTRING -> recall_longest_pal.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: PINK (#EC4899)
+Small family tag under the title, in the accent colour: "PALINDROME FAMILY"
+
+Big header: "LONGEST PALINDROMIC SUBSTRING"
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "is the piece from LEFT to RIGHT a palindrome?"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "exactly the same table as Palindromic Substrings"
+      "ends must match AND the inside must be a palindrome"
+      "but now REMEMBER the widest TRUE box you have seen"
+      "keep its start and its length"
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS THE WIDEST TRUE BOX, NOT THE COUNT OF THEM"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the numbers drawn as small boxes where they are a list:
+      "text 'babad'"
+      "'bab' is a palindrome, and so is 'aba'"
+      "LENGTH 3"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "same table as counting, different read out. do not rebuild it, just track the widest."
+
+Kit small in a bottom corner, arms folded, not covering anything.
+
+================================================================================
+PROMPT: STOCK WITH COOLDOWN -> recall_stock_cooldown.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: EMERALD (#10B981)
+Small family tag under the title, in the accent colour: "STATE MACHINE FAMILY"
+
+Big header: "STOCK WITH COOLDOWN"
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "best profit from this day on, given whether I am allowed to buy"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "CAN BUY  ->  BUY today, pay the price, tomorrow I hold"
+      "CAN BUY  ->  or WAIT, tomorrow I can still buy"
+      "HOLDING  ->  SELL today, gain the price, then SKIP a day"
+      "HOLDING  ->  or WAIT, tomorrow I still hold"
+      "keep the BIGGER"
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS THE BOX FOR: DAY 0, ALLOWED TO BUY"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the numbers drawn as small boxes where they are a list:
+      "prices 1, 2, 3, 0, 2"
+      "buy at 1, sell at 2, rest, buy at 0, sell at 2"
+      "PROFIT 3"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "after selling you skip ONE whole day. jumping only one step forward ignores the cooldown."
+
+Kit small in a bottom corner, arms folded, not covering anything.
+
+================================================================================
+PROMPT: BURST BALLOONS -> recall_burst_balloons.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: EMERALD (#10B981)
+Small family tag under the title, in the accent colour: "STATE MACHINE FAMILY"
+
+Big header: "BURST BALLOONS"
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "most coins from bursting everything strictly inside this range"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "pick which balloon in the range is burst LAST, not first"
+      "when it is last, its neighbours are the range EDGES, which never move"
+      "coins = left edge x that balloon x right edge"
+      "plus the best from the two smaller ranges either side"
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS THE BOX FOR THE WHOLE RANGE"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the numbers drawn as small boxes where they are a list:
+      "balloons 3, 1, 5, 8   with an invisible 1 at each end"
+      "burst 1, then 5, then 3, then 8"
+      "COINS 167"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "choosing which balloon goes LAST is the whole trick. choosing first leaves unknown neighbours."
+
+Kit small in a bottom corner, arms folded, not covering anything.
+
+================================================================================
+PROMPT: CLIMBING STAIRS -> recall_climbing_stairs.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: CRIMSON (#DC2626)
+Small family tag under the title, in the accent colour: "LINEAR FAMILY"
+
+Big header: "CLIMBING STAIRS"
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "how many ways to reach this step?"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "arrive from ONE step below"
+      "or arrive from TWO steps below"
+      "ADD the two counts"
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS THE BOX FOR THE TOP STEP"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the numbers drawn as small boxes where they are a list:
+      "5 steps"
+      "1,1,1,1,1   1,1,1,2   1,1,2,1   1,2,1,1   2,1,1,1   1,2,2   2,1,2   2,2,1"
+      "COUNT 8"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "this is Fibonacci. both starting boxes are 1, and only two boxes back are ever read."
+
+Kit small in a bottom corner, arms folded, not covering anything.
+
+================================================================================
+PROMPT: HOUSE ROBBER -> recall_house_robber.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: CRIMSON (#DC2626)
+Small family tag under the title, in the accent colour: "LINEAR FAMILY"
+
+This is a friendly cartoon puzzle diagram about a classic textbook exercise.
+Show a cheerful row of little cartoon houses with coin piles outside them.
+Kit is a PARCEL COLLECTOR on a delivery round, smiling, holding a clipboard.
+Nothing is taken from anyone. No masks, no breaking in, no night scene,
+no crime imagery of any kind. Bright daytime street, friendly picture book mood.
+
+Big header: "HOUSE ROBBER"
+Small line under the family tag, in grey: "the classic name for this exercise.
+we are simply collecting coins along a street."
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "most coins I can collect from this house onward"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "COLLECT HERE  ->  take its coins, then JUMP two houses"
+      "SKIP IT       ->  take nothing, move to the next house"
+      "keep the BIGGER"
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS THE BOX FOR THE FIRST HOUSE"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the coin piles drawn as small boxes:
+      "houses 2, 7, 9, 3, 1"
+      "collect 2, then 9, then 1"
+      "COINS 12"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "collecting means jumping TWO. moving only one lets you use next door, which the rules forbid."
+
+Kit small in a bottom corner, smiling with the clipboard, not covering anything.
+
+================================================================================
+PROMPT: MIN COST CLIMBING STAIRS -> recall_min_cost_stairs.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: CRIMSON (#DC2626)
+Small family tag under the title, in the accent colour: "LINEAR FAMILY"
+
+Big header: "MIN COST CLIMBING STAIRS"
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "cheapest way to reach the top from this step"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "pay this step's COST"
+      "then move ONE step, or move TWO steps"
+      "keep the SMALLER total"
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS THE SMALLER OF: STARTING AT STEP 0, OR STARTING AT STEP 1"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the numbers drawn as small boxes where they are a list:
+      "costs 10, 15, 20"
+      "start on step 1, pay 15, then step over the top"
+      "COST 15"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "you may START on step 0 or step 1, and the TOP is one past the last step, and it is free."
+
+Kit small in a bottom corner, arms folded, not covering anything.
+
+================================================================================
+PROMPT: DECODE WAYS -> recall_decode_ways.png
+================================================================================
+
+---BEGIN STYLE BIBLE---
+[Paste the full style bible from above here]
+---END STYLE BIBLE---
+
+Tall portrait recall card. NO story banners. Stands alone.
+ACCENT COLOUR for this card: CRIMSON (#DC2626)
+Small family tag under the title, in the accent colour: "LINEAR FAMILY"
+
+Big header: "DECODE WAYS"
+
+ZONE 1, cream card, number 1, title "THE QUESTION AT EVERY STEP":
+   one large line: "how many ways to decode the rest of the digits?"
+
+ZONE 2, cream card, number 2, title "THE MOVE". This is the biggest zone.
+   Show these as separate labelled rows with icons or arrows, not a paragraph:
+      "TAKE ONE DIGIT  ->  only if it is not a 0"
+      "TAKE TWO DIGITS ->  only if they read between 10 and 26"
+      "ADD the two counts"
+
+   Then a gold strip at the bottom of this zone: "THE ANSWER IS THE BOX FOR THE FIRST DIGIT"
+
+ZONE 3, gold card, number 3, title "WORKED EXAMPLE":
+   three short lines, the numbers drawn as small boxes where they are a list:
+      "digits '226'"
+      "2 2 6  ->  BBF      22 6  ->  VF      2 26  ->  BZ"
+      "COUNT 3"
+
+   The final answer shown once, very large, in gold.
+
+ZONE 4, dark strip, number 4, title "THE TRAP":
+   white text, one line: "a 0 on its own is worth nothing. '06' is 0 ways, because 06 is not a legal pair."
+
+Kit small in a bottom corner, arms folded, not covering anything.

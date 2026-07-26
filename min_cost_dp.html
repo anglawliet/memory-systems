@@ -53,12 +53,20 @@ code{font-family:'Fira Code','Courier New',monospace}
   .cell-walk{padding:12px}
   .ws{padding:14px}
 }
+
+a.wshome{color:inherit;text-decoration:none;display:block}
+a.wshome:hover h1{opacity:.82}
+.wsback{display:block;font-size:.62em;letter-spacing:.16em;text-transform:uppercase;font-weight:800;opacity:.75;margin-bottom:6px}
+
+.recallcard{border:2px solid var(--gold2);border-radius:12px;padding:16px 18px;margin:18px 0;background:rgba(245,158,11,.07)}
+.recallcard .rlbl{font-size:.62em;letter-spacing:.18em;font-weight:800;color:var(--gold2);text-transform:uppercase}
+.recallcard p{margin:6px 0 10px;font-size:.9em;color:var(--muted)}
 </style>
 </head>
 <body>
 
 <div class="hdr">
-<h1>Min Cost Climbing Stairs</h1>
+<a href="dp_workshop.html" class="wshome"><span class="wsback">&larr; The DP Workshop</span><h1>Min Cost Climbing Stairs</h1></a>
 <p>Same staircase, but each step has a toll. Pick the cheapest path up.</p>
 </div>
 
@@ -72,6 +80,13 @@ code{font-family:'Fira Code','Courier New',monospace}
 
 <!-- ==================== THE PROBLEM ==================== -->
 <img src="dp/images/min_cost_1.png" alt="The question: staircase with toll signs, two paths compared, DP triggers checklist" class="scene-img">
+
+
+<div class="recallcard">
+<div class="rlbl">Layer 0 &bull; Recall Card</div>
+<p>Coming back to this? Everything you need is on this one card. It stands alone, so you can stop right here.</p>
+<img src="dp/images/recall_min_cost_stairs.png" alt="Min Cost Climbing Stairs recall card: the question, the move, a worked example and the trap" class="scene-img">
+</div>
 
 <h2>The Problem</h2>
 

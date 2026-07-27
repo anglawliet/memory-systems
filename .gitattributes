@@ -1,2 +1,5 @@
-*.png filter=lfs diff=lfs merge=lfs -text
-*.pdf filter=lfs diff=lfs merge=lfs -text
+# These were tracked with Git LFS, which GitHub Pages does not resolve: the
+# published site was served the pointer files instead of the images. They are
+# ordinary blobs now, kept small by dp/optimize_images.py.
+*.png binary
+*.pdf binary

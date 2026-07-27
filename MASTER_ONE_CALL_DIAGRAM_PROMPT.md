@@ -40,7 +40,9 @@ Do not hand write prompt files any more. Adding a problem means adding one dict:
 python3 dp/build_cards.py
 # 3. generate any image whose prompt exists but whose PNG does not (resumable)
 bash dp/render_all.sh
-# 4. rebuild the One Call section of the workshop page
+# 4. shrink the new renders before they are committed
+python3 dp/optimize_images.py
+# 5. rebuild the One Call section of the workshop page
 python3 dp/gen_onecall_html.py
 ```
 
@@ -49,7 +51,18 @@ python3 dp/gen_onecall_html.py
 | `dp/specs.py` | per problem content only: question, code, four spoken lines, what each branch does |
 | `dp/build_cards.py` | renders both prompt files, applying every rule in this document identically |
 | `dp/render_all.sh` | generates missing images, skips finished ones, safe to re-run after an interruption |
+| `dp/optimize_images.py` | re-encodes cards to a 256 colour palette in place, safe to re-run |
 | `dp/gen_onecall_html.py` | rewrites the page section between the ONECALL markers, in the problems-tab order |
+
+**Step 4 is not optional.** The API returns roughly 2 MB per card, and the
+workshop is published with GitHub Pages, which does **not** resolve Git LFS
+objects: an LFS tracked image is served to the browser as its 132 byte pointer
+file with an `image/png` content type, so every card on the site silently comes
+up broken. The images therefore have to be ordinary git blobs, which only works
+if they are small. A 256 colour adaptive palette is visually identical on this
+flat marker art (mean error around 2 of 255, text edges unchanged) and cuts
+about 70% of the bytes. Never re-add `filter=lfs` for `*.png` in
+`.gitattributes`.
 
 `build_cards.py` supports three layouts, chosen by the `shape` field:
 

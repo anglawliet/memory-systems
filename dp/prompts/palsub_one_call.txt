@@ -1,0 +1,169 @@
+PALINDROMIC SUBSTRINGS, ONE RECURSIVE CALL (landscape)
+==============================================================
+Landscape 1536x1024. Explains exactly ONE invocation of
+is_palindrome(left_index, right_index).
+
+SHAPE: IF / ELSE. Only one branch ever runs, so the two columns
+NEVER merge, each ends in its own return.
+   letters match  -> ONE call, is_palindrome(left+1, right-1)
+   letters differ -> return False with NO call at all
+Note the asymmetry worth teaching: the differ branch is a DEAD STOP.
+It does not recurse. That is different from LCS, where both branches
+recursed.
+
+TWO POINTERS: this problem has two live positions on one bar, so the
+one-highlight rule is relaxed. Left square PURPLE, right square TEAL,
+each with its own label, and the span between them tinted as the part
+still in question. They move INWARD toward each other.
+
+DE-CLUTTER: the string is a plain flat GREY BAR. Only the two pointer
+squares are coloured. No row of index numbers.
+Calls are EXPRESSIONS with the numeric form under them.
+Read text[left_index] and text[right_index] ONCE into left_letter and
+right_letter, then use those names everywhere.
+==============================================================
+
+================================================================================
+PROMPT 1: One Recursive Call -> palsub_one_call.png
+================================================================================
+
+Create a landscape hand-drawn educational infographic, 1536x1024.
+
+STYLE: a bright, fun classroom poster for a 10 year old, in friendly hand-drawn
+marker lettering.
+- Page background: soft warm cream with a faint pale dotted grid, plus a few
+  small confetti dots and doodle stars in the empty areas.
+- Every major box has a SOLID SATURATED colored header bar with its title in
+  bold WHITE lettering, a soft pastel tint filling the body, a thick rounded
+  outline and a soft drop shadow.
+- Thick COLORED arrows matching the block they point to, big friendly
+  arrowheads.
+- Two or three BIG cute cartoon doodles with smiling faces and rosy cheeks,
+  tucked into the margins so they never overlap text.
+- A yellow sticky note with a red pushpin for the example.
+- All lettering large, dark and crisp on the pale fills. Never shrink text.
+
+HOW THE STRING IS DRAWN, VERY IMPORTANT:
+Never draw the string as a row of individually coloured letter cells, and never
+write a row of index numbers under it. Instead:
+- The string is ONE long flat rounded bar in plain neutral GREY, empty, with no
+  letters written along it. Keep the bar LONG.
+- TWO squares stick out of it, in DIFFERENT colours:
+     the left pointer, BRIGHT PURPLE, showing its letter in bold white,
+     the right pointer, TEAL, showing its letter in bold white.
+  Each has a small label naming it, "left_index" and "right_index", and its
+  index number written under it only in the CURRENT CALL box.
+- The span of bar BETWEEN the two squares is tinted pale yellow, labelled once
+  "still to check".
+- Anything outside the two pointers is pale grey, hatched, and crossed out.
+
+STEP BADGES: steps 1 to 4 each get a big round numbered badge in the colour of
+that step, on the top left corner of the block. The same numbers appear beside
+the matching lines in the code panel.
+
+TITLE across the top, very large, first word purple, rest black:
+   "PALINDROMIC SUBSTRINGS  -  ONE CALL"
+
+TOP LEFT: a yellow sticky note with a red pushpin and a small target doodle,
+tall enough for five short lines:
+   "THE EXAMPLE"
+   "text  =   a  b  b  a"
+   with the four letters as small plain cells and "0 1 2 3" underneath them
+   Then two short lines:
+   "GOAL: count every substring that reads the same both ways"
+   "here: a, b, b, a, bb, abba  ->  answer 6"
+   Then one small green line:
+   "right now we are asking about the whole thing, 0 to 3."
+
+TOP CENTER: box with a purple header bar reading "THE CALL ARRIVES".
+   On its left, large purple lettering on two lines:
+      "is_palindrome( left_index = 0 ,"
+      "                     right_index = 3 )"
+   under it, one small black line: "Returns true if this stretch is a palindrome."
+   On its right, the string drawn as a bar per the rule above:
+      a BRIGHT PURPLE square showing "a" labelled "left_index" with "0" under it,
+      then a pale yellow tinted span labelled "still to check",
+      then a TEAL square showing "a" labelled "right_index" with "3" under it.
+
+TOP RIGHT: a box with a dark slate header bar reading "THE CODE". Very pale grey
+body. Short lines, each numbered line carrying a small round coloured badge:
+      "is_palindrome( left_index , right_index ):"
+   badge 1, blue:    "if left_index >= right_index:"
+                     "      return True"
+   badge 2, blue:    "left_letter  = text[ left_index ]"
+                     "right_letter = text[ right_index ]"
+   badge 3, red:     "if left_letter != right_letter:"
+                     "      return False"
+   badge 4, green:   "return is_palindrome( left_index + 1 ,"
+                     "                              right_index - 1 )"
+
+A thick arrow leads down the centre from THE CALL ARRIVES into:
+
+=== STEP 1, full width, blue ===
+
+A wide band, solid BLUE header bar, white text: "STEP 1   HAVE THE POINTERS MET?"
+Big round blue badge "1". Pale blue body, two short lines:
+   "if  left_index >= right_index   ->   return True"
+   "zero or one letter left is always a palindrome"
+On the right end, a small green arrow curving down labelled
+   "still apart, keep going"
+
+=== STEP 2, full width, blue ===
+
+A centered SOLID BLUE pill, bold white lettering, big round blue badge "2":
+   "left_letter  ==  right_letter  ?"
+with a small line under the pill in black:
+   "'a'  vs  'a'"
+
+=== THE SPLIT ===
+
+From that pill, two thick coloured arrows fan out, one curving down LEFT and one
+curving down RIGHT, into two columns side by side that run to the bottom and
+never rejoin. Green arrow to the left column, red arrow to the right column.
+Between the columns, a long vertical DASHED grey line with a small grey pill on
+it reading "only one branch runs".
+
+=== STEP 4 CONTENT GOES IN THE LEFT COLUMN: THEY MATCH (green) ===
+
+Box with a solid GREEN header bar, white text: "THEY MATCH   ->   LOOK INSIDE".
+Big round green badge "4". Pale green body:
+   The bar redrawn: both pointer squares now FADED with small green checks, and
+   TWO thick green arrows drawn on the bar pointing INWARD toward each other,
+   with the new smaller yellow span between them labelled "the inside".
+   Then a purple-outlined box:
+      "is_palindrome( left_index + 1 , right_index - 1 )"
+      "=   is_palindrome( 1 , 2 )"
+   Then one short black line:
+      "the outside pair is settled, both pointers step inward"
+
+A thick green arrow leads down to a green return box at the bottom of the LEFT
+column, dark green lettering:
+   "return  is_palindrome( left_index + 1 , right_index - 1 )"
+
+=== STEP 3 CONTENT GOES IN THE RIGHT COLUMN: THEY DIFFER (red) ===
+
+Box with a solid RED header bar, white text: "THEY DIFFER   ->   STOP".
+Big round red badge "3". Pale red body:
+   A small chip at the top showing an example of the other case: a tiny bar with
+   a purple square "a" and a teal square "c", and "'a'  vs  'c'" with a big red X.
+   Then one line of black lettering:
+      "One mismatch is enough. Nothing inside can save it."
+   Then a big red STOP sign doodle with the words:
+      "NO recursive call"
+   drawn clearly so it is obvious this branch does not recurse.
+
+A thick red arrow leads down to a red return box at the bottom of the RIGHT
+column, red lettering:
+   "return  False"
+
+=== CORNER, bottom of the page, clear of both columns ===
+
+A small box with an AMBER header bar reading "WHERE THE COUNT COMES FROM", no
+arrow touching it:
+   "An outer loop asks this question for every pair of ends."
+   "Count how many come back True.   Here that is 6."
+
+COMPOSITION: the page reads top to bottom in the exact order the code runs. The
+big lesson is the asymmetry: the green branch recurses inward, the red branch is
+a dead stop. Airy and colorful, a calm grey bar with two coloured pointer squares
+drawing the eye. Every word spelled correctly.

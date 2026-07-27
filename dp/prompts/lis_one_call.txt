@@ -1,0 +1,213 @@
+LIS ONE RECURSIVE CALL (landscape, two real choices that MERGE)
+==============================================================
+Landscape 1536x1024. Explains exactly ONE invocation of
+lis(numbers_index, must_be_bigger_than).
+
+SHAPE, THE KEY DIFFERENCE FROM LCS: take and skip are two REAL
+CHOICES, not an if / else. BOTH are explored, so the two columns DO
+merge at the bottom into one shared max box. There is NO dashed
+"only one branch runs" divider here.
+The validity check gates ONLY the take branch. Skip is always legal.
+
+CODE FLOW: read top to bottom in the order the function runs.
+   STEP 1  base case guard
+   STEP 2  two choices from here
+   STEP 3  left column,  TAKE (gated by the check)
+   STEP 4  right column, SKIP (always allowed)
+   STEP 5  return max( take , skip )
+
+STATE: numbers_index points INTO the array, so it is drawn as a
+square on the bar. must_be_bigger_than is a VALUE we carry, not a
+position, so it is drawn as a separate chip beside the bar. That
+distinction is the whole point of the naming.
+
+DE-CLUTTER: the array is a plain flat GREY BAR. Only the ONE current
+element is highlighted. Used parts are faded and crossed out.
+Calls are EXPRESSIONS with the numeric form under them.
+State chosen so the take is VALID, so the "1 +" is a live path.
+==============================================================
+
+================================================================================
+PROMPT 1: One Recursive Call -> lis_one_call.png
+================================================================================
+
+Create a landscape hand-drawn educational infographic, 1536x1024.
+
+STYLE: a bright, fun classroom poster for a 10 year old, in friendly hand-drawn
+marker lettering.
+- Page background: soft warm cream with a faint pale dotted grid, plus a few
+  small confetti dots and doodle stars in the empty areas.
+- Every major box has a SOLID SATURATED colored header bar with its title in
+  bold WHITE lettering, a soft pastel tint filling the body, a thick rounded
+  outline and a soft drop shadow.
+- Thick COLORED arrows matching the block they point to, big friendly
+  arrowheads.
+- Two or three BIG cute cartoon doodles with smiling faces and rosy cheeks,
+  tucked into the margins so they never overlap text.
+- A yellow sticky note with a red pushpin for the goal.
+- All lettering large, dark and crisp on the pale fills. Never shrink text.
+
+HOW THE ARRAY IS DRAWN, VERY IMPORTANT:
+Never draw the array as a row of individually colored number cells, and never
+write a row of index numbers under it. Instead:
+- The array is ONE long flat rounded bar in plain neutral GREY, empty, with no
+  numbers inside it. Keep the bar LONG. The whole effect depends on one small
+  bright square sitting on a long empty bar.
+- Exactly ONE square sticks out of that bar: the current element, filled BRIGHT
+  PURPLE showing the number "5" in bold white, with the small index "3" written
+  under it only in the CURRENT CALL box.
+- Any part already passed is pale grey, hatched, and crossed out.
+- Never highlight two squares on the same bar.
+
+HOW must_be_bigger_than IS DRAWN:
+It is NOT a position on the bar. Draw it as a separate rounded GREEN CHIP
+sitting beside the bar, reading "must_be_bigger_than = 2", with a tiny label
+underneath reading "any number I take must beat this". It must never look like
+a pointer into the array. This chip is the memory of the last number that was
+taken, and it is the only thing standing between us and a non-increasing pick.
+
+STEP BADGES: steps 1 to 5 each get a big round numbered badge in the colour of
+that step, on the top left corner of the block. The same numbers appear beside
+the matching lines in the code panel.
+
+TITLE across the top, very large, first word purple, rest black:
+   "LIS  -  ONE CALL,  IN CODE ORDER"
+
+TOP LEFT: a yellow sticky note with a red pushpin and a small target doodle,
+tall enough to hold five short lines. This grounds every number on the page, so
+draw it clearly:
+   "THE EXAMPLE"
+   "numbers =  10  9  2  5  3  7  101  18"
+   with the eight values written out as small plain cells and the indexes
+   "0 1 2 3 4 5 6 7" underneath them, and a small bracket under the whole row
+   labelled "8 numbers, so the last index is 7"
+   Then two short lines:
+   "GOAL: longest run that keeps increasing"
+   "here that is  2, 3, 7, 101  ->  answer 4"
+   Then one small green line:
+   "we already took the 2. now we are looking at the 5."
+
+TOP CENTER: box with a purple header bar reading "THE CALL ARRIVES".
+   On its left, large purple lettering on two lines:
+      "lis( numbers_index = 3 ,"
+      "      must_be_bigger_than = 2 )"
+   On its right:
+      A row labelled "numbers": a pale grey hatched crossed-out stub, then a
+      bright purple square showing "5" with a small "3" under it, then a long
+      plain empty grey bar to the right. A small purple label points at that
+      square reading "current_value = 5".
+      Below the bar, a green chip: "must_be_bigger_than = 2", tiny label
+      "carried along".
+
+TOP RIGHT: a box with a dark slate header bar reading "THE CODE". Very pale
+grey body. Short plain-language pseudocode lines, each numbered line carrying a
+small round coloured badge on its left:
+      "lis( numbers_index , must_be_bigger_than ):"
+   badge 1, blue:    "if numbers_index == 8:   return 0"
+                     "current_value = numbers[ numbers_index ]"
+   badge 2, blue:    "take = 0        <- nothing gained yet"
+   badge 3, green:   "if current_value > must_be_bigger_than:"
+                     "      take = 1 + a smaller call"
+   badge 4, red:     "skip = a smaller call"
+   badge 5, purple:  "return max( take , skip )"
+   The line "take = 0" must be clearly visible, it is the reason max still
+   works when the take is blocked.
+
+A thick arrow leads down the centre from THE CALL ARRIVES into:
+
+=== STEP 1, full width, blue ===
+
+A wide band, solid BLUE header bar, white text: "STEP 1   FIRST, ARE WE DONE?"
+Big round blue badge "1". Pale blue body, two short lines:
+   "if  numbers_index == 8   ->   return 0"
+   "the last index is 7, so 8 means we walked off the end"
+On the right end, a small green arrow curving down labelled
+   "not done, keep going"
+
+=== STEP 2, full width, blue ===
+
+A centered SOLID BLUE pill, bold white lettering, big round blue badge "2":
+   "TWO CHOICES FOR THE NUMBER 5"
+
+=== THE SPLIT ===
+
+From that pill, two thick colored arrows fan out, one curving down LEFT and one
+curving down RIGHT, into two columns side by side. Green arrow to the left
+column, red arrow to the right column. Between the columns, near the top, a
+small PURPLE pill reading "both are explored". Do NOT draw a dashed divider
+between the columns, and do NOT write "only one branch runs".
+
+=== STEP 3, LEFT COLUMN: TAKE (green) ===
+
+Box with a solid GREEN header bar, white text: "STEP 3   TAKE THE 5".
+Big round green badge "3". Pale green body:
+   At the very top of this column, a small grey chip reading
+      "take starts at 0"
+   Then a gate: a small blue-outlined pill reading
+      "is current_value > must_be_bigger_than ?    5 > 2    YES"
+   with a big green check beside it, and a tiny label "gate opens".
+   Then the bar redrawn: the purple square FADED and marked with a small green
+   check, the remaining grey outlined in bright green.
+   Beside it, a green chip that now reads "must_be_bigger_than = 5", with a small
+   green arrow showing it changed from 2 to 5.
+   Then a purple-outlined box with a gold starburst around the "1 +":
+      "1 + lis( numbers_index + 1 , current_value )"
+      "=   1 + lis( 4 , 5 )"
+   Then one short black line: "must_be_bigger_than becomes 5"
+
+=== STEP 4, RIGHT COLUMN: SKIP (red) ===
+
+Box with a solid RED header bar, white text: "STEP 4   SKIP THE 5".
+Big round red badge "4". Pale red body:
+   One line of black lettering at the top: "no check needed, always allowed"
+   Then the bar redrawn: the purple square FADED and crossed out in red, the
+   remaining grey outlined in red.
+   Beside it, a green chip still reading "must_be_bigger_than = 2", unchanged.
+   Then a purple-outlined box:
+      "lis( numbers_index + 1 , must_be_bigger_than )"
+      "=   lis( 4 , 2 )"
+   Then one short black line: "must_be_bigger_than stays 2"
+
+=== STEP 5, THE MERGE, full width at the bottom, purple ===
+
+One thick GREEN arrow comes down from the left column and one thick RED arrow
+comes down from the right column, and BOTH enter the same wide box at the
+bottom centre. This shared box is the whole point: unlike an if / else, both
+choices really happen and are compared.
+Solid PURPLE header bar, white text: "STEP 5   KEEP THE BETTER ONE".
+Big round purple badge "5". Pale purple body, three lines of large lettering,
+with a shiny gold trophy doodle beside them:
+   "TAKE  =  1 + lis( 4 , 5 )"          written in green
+   "SKIP  =  lis( 4 , 2 )"              written in red
+   "return  max ( TAKE , SKIP )"        in purple, with "max" biggest
+Under them, one short black line:
+   "try both, keep the better one"
+
+=== THE GATE HAS TWO OUTCOMES, bottom left corner, beside the STEP 5 box ===
+
+A separate box, not connected by any arrow, with a solid AMBER header bar in
+white text: "THE GATE, BOTH WAYS". Pale amber body. Two small rows side by side
+inside it, split by a thin vertical line:
+
+   LEFT half, green tinted, titled "BIGGER  ->  GATE OPENS":
+      a tiny bar with a bright purple square showing "5"
+      "5 > 2 ?   YES"  with a green check
+      "take  =  1 + lis( 4 , 5 )"
+      "max( take , skip )   compares two real numbers"
+
+   RIGHT half, red tinted, titled "NOT BIGGER  ->  GATE SHUT":
+      a tiny bar with a grey square showing "1" instead of 5
+      "1 > 2 ?   NO"  with a red X
+      "no call is made, so  take  stays  0"
+      "max( 0 , skip )  =  skip"
+      with the "0" drawn large and circled in red.
+
+Under both halves, two lines of black lettering spanning the box:
+   "max never breaks: a blocked take is worth 0."
+   "SKIP is always there. TAKE has to earn its place."
+
+COMPOSITION: the page reads top to bottom in the exact order the code runs.
+The two columns fan apart and then come back together into the max box, which
+is the visual signature of a real-choice recurrence. Airy and colorful, a calm
+grey bar with a single bright purple square drawing the eye in each row. Every
+word spelled correctly.

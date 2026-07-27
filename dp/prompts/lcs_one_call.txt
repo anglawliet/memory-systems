@@ -1,0 +1,167 @@
+LCS ONE RECURSIVE CALL (landscape, condition splits left / right)
+==============================================================
+Landscape 1536x1024. Explains exactly ONE invocation of
+lcs(text1_index, text2_index).
+
+ORIENTATION: landscape, deliberately. This diagram is a FORK, and a
+fork needs two columns side by side so both outcomes can be compared
+at a glance. Portrait was tried and rejected: it squeezed the columns
+to ~380px, forced every call to wrap, and shortened the grey bars so
+much that the single purple highlight stopped standing out.
+
+CODE FLOW: read top to bottom in the order the function runs.
+   STEP 1  base case guard        (first line of the function)
+   STEP 2  compare the letters    (the if)
+   STEP 3  left column,  match  -> return 1 + one call
+   STEP 4  right column, differ -> return max of two calls
+A code panel top right carries the same 1-2-3-4 badges.
+
+DE-CLUTTER: a string is a plain flat GREY BAR. Only the ONE current
+element is highlighted. Used parts are faded and crossed out.
+
+NAMING: text1 with text1_index, text2 with text2_index.
+Calls are EXPRESSIONS with the numeric form under them.
+Steps 3 and 4 are an IF / ELSE, so they NEVER merge.
+==============================================================
+
+================================================================================
+PROMPT 1: One Recursive Call -> lcs_one_call.png
+================================================================================
+
+Create a landscape hand-drawn educational infographic, 1536x1024.
+
+STYLE: a bright, fun classroom poster for a 10 year old, in friendly hand-drawn
+marker lettering.
+- Page background: soft warm cream with a faint pale dotted grid, plus a few
+  small confetti dots and doodle stars in the empty areas.
+- Every major box has a SOLID SATURATED colored header bar with its title in
+  bold WHITE lettering, a soft pastel tint filling the body, a thick rounded
+  outline and a soft drop shadow.
+- Thick COLORED arrows matching the block they point to, big friendly
+  arrowheads.
+- Two or three BIG cute cartoon doodles with smiling faces and rosy cheeks,
+  tucked into the margins so they never overlap text.
+- A yellow sticky note with a red pushpin for the goal.
+- All lettering large, dark and crisp on the pale fills. Never shrink text.
+
+HOW STRINGS ARE DRAWN, VERY IMPORTANT:
+Never draw a string as a row of individually colored letter cells, and never
+write a row of index numbers under it. Instead:
+- A string is ONE long flat rounded bar in plain neutral GREY, empty, with no
+  letters and no numbers inside it. Keep these bars LONG. The whole effect
+  depends on one small bright square sitting on a long empty bar.
+- Exactly ONE square sticks out of that bar: the current element, filled BRIGHT
+  PURPLE with its letter in bold white. Only in the CURRENT CALL box, write its
+  index number just under that square.
+- Any part already used or dropped is pale grey, hatched, and crossed out.
+- Never highlight two squares on the same bar.
+
+STEP BADGES: steps 1 to 4 each get a big round numbered badge in the colour of
+that step, sitting on the top left corner of the block. The same numbers appear
+beside the matching lines in the code panel.
+
+TITLE across the top, very large, first word purple, rest black:
+   "LCS  -  ONE CALL,  IN CODE ORDER"
+
+TOP LEFT: small yellow sticky note with a red pushpin and a target doodle:
+   "GOAL"
+   "Length of the Longest Common Subsequence."
+
+TOP CENTER: box with a purple header bar reading "THE CALL ARRIVES".
+   On its left, large purple lettering:
+      "lcs( text1_index = 2 , text2_index = 1 )"
+   On its right, the two strings as bars:
+      Row labelled "text1": a pale grey hatched crossed-out stub, then a bright
+         purple square holding "c" with a small "2" under it, then a long plain
+         empty grey bar to the right.
+      Row labelled "text2": a pale grey hatched crossed-out stub, then a bright
+         purple square holding "c" with a small "1" under it, then a long plain
+         empty grey bar to the right.
+
+TOP RIGHT: a box with a dark slate header bar reading "THE CODE". Body is very
+pale grey. Inside, six short lines in a neat monospace-looking hand, each of
+the four numbered lines carrying a small round coloured badge on its left:
+      "lcs( text1_index , text2_index ):"
+   badge 1, blue:    "if either index is past the end:"
+                     "      return 0"
+   badge 2, blue:    "if the two letters match:"
+   badge 3, green:   "      return 1 + one smaller call"
+   badge 4, red:     "else: return max of two smaller calls"
+
+A thick arrow leads down the centre of the page from THE CALL ARRIVES into:
+
+=== STEP 1, full width, blue ===
+
+A wide band box, solid BLUE header bar, white text: "STEP 1   FIRST, ARE WE DONE?"
+Big round blue badge "1" on its corner. Pale blue body, two short lines:
+   "if  text1_index == 5   or   text2_index == 3   ->   return 0"
+   "nothing left to compare"
+On the right end of this band, a small green arrow curving downward labelled
+   "not done, keep going"
+so the eye continues down the page.
+
+=== STEP 2, full width, blue ===
+
+Below it, a centered SOLID BLUE pill with bold white lettering, with a big
+round blue badge "2" beside it:
+   "text1[ text1_index ]  ==  text2[ text2_index ] ?"
+
+=== THE SPLIT ===
+
+From that pill, two thick colored arrows fan out, one curving down to the LEFT
+and one curving down to the RIGHT, into two columns that sit SIDE BY SIDE and
+run to the bottom of the page. Green arrow to the left column, red arrow to the
+right column. Between them, a long vertical DASHED grey line with a small grey
+pill sitting on it reading "only one branch runs".
+
+=== STEP 3, LEFT COLUMN: MATCH (green) ===
+
+Box with a solid GREEN header bar, white text: "STEP 3   THEY MATCH".
+Big round green badge "3" on its corner. Pale green body:
+   The two bars redrawn, stacked, each with its purple square now FADED and
+   marked with a small green CHECK (not a cross, the letter was consumed, not
+   rejected), and the remaining grey outlined in bright green, labelled once
+   underneath both bars: "smaller subproblem"
+   Then a wide purple-outlined box with a gold starburst around the "1 +":
+      "1 + lcs( text1_index + 1 , text2_index + 1 )"
+      "=   1 + lcs( 3 , 2 )"
+   Then one short black line:  "both indexes move forward"
+
+A thick green arrow leads down to a green return box at the bottom of the LEFT
+column, dark green lettering on two lines:
+   "return  1 + lcs( text1_index + 1 , text2_index + 1 )"
+   "=   1 + lcs( 3 , 2 )"
+
+=== STEP 4, RIGHT COLUMN: DIFFER (red) ===
+
+Box with a solid RED header bar, white text: "STEP 4   THEY DIFFER".
+Big round red badge "4" on its corner. Pale red body:
+   TWO groups stacked one above the other, each in its own thin purple-outlined
+   box:
+   Upper group:
+      text1 bar with its purple square FADED and crossed out in red.
+      text2 bar with its purple square STILL bright purple.
+      Under the pair, purple lettering:
+         "lcs( text1_index + 1 , text2_index )"
+         "=   lcs( 3 , 1 )"
+      small black line: "only text1_index moves"
+   Lower group:
+      text1 bar with its purple square STILL bright purple.
+      text2 bar with its purple square FADED and crossed out in red.
+      Under the pair, purple lettering:
+         "lcs( text1_index , text2_index + 1 )"
+         "=   lcs( 2 , 2 )"
+      small black line: "only text2_index moves"
+   A big red curly brace to the LEFT of the two groups spanning both, with
+   "max" in large red letters beside it.
+
+A thick red arrow leads down to a red return box at the bottom of the RIGHT
+column, red lettering on three lines:
+   "return  max("
+   "     lcs( text1_index + 1 , text2_index )  ,"
+   "     lcs( text1_index , text2_index + 1 )  )"
+
+COMPOSITION: the page reads top to bottom in the exact order the code runs,
+step 1, then step 2, then the branch that fires. Airy and colorful, calm grey
+bars with a single bright purple square drawing the eye in each row. Every word
+spelled correctly.

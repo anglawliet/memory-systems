@@ -41,8 +41,18 @@ row of index numbers under it. That is visual noise. Instead:
 - Never highlight two squares on the same bar.
 
 STEP BADGES: each step gets a big round numbered badge in the colour of that
-step, on the top left corner of its block. The same numbers appear beside the
-matching lines in the code panel.
+step, on the top left corner of its block.
+
+NO CODE PANEL. This page never shows the source code. The code lives on the
+companion practice card, and repeating it here only competes with the diagram.
+Do not draw a "THE CODE" box anywhere.
+
+NO REDUNDANT NUMBERS IN THE TEXT. The concrete index or value is already shown
+on the bar diagram, so never restate it in the sentences beside it. Write the
+recursive call symbolically, in terms of the parameter name, and stop there.
+This rule is about the WRITING ONLY. The bars keep every number they already
+had, and a square that moves must show the value of its NEW position, not the
+old one. Dropping numbers from the diagram is a mistake, not the goal.
 
 TITLE across the top, very large, first words purple, rest black:
    "CLIMBING STAIRS  -  ONE CALL"
@@ -65,16 +75,8 @@ TOP CENTER: box with a purple header bar reading "THE CALL ARRIVES".
       A BRIGHT PURPLE square sits on the bar at step 1 with a small "1" under
       it, labelled "current_step". Everything left of it is pale grey hatched
       and crossed out.
-
-TOP RIGHT: a box with a dark slate header bar reading "THE CODE". Very pale
-grey body. Short lines, each numbered line carrying a small round coloured badge:
-      "climb( current_step ):"
-   badge 1, blue:    "if current_step == total: return 1"
-                     "if current_step > total:  return 0"
-   badge 2, blue:    "two moves are allowed"
-   badge 3, green:   "one_step = climb( current_step + 1 )"
-   badge 4, red:     "two_step = climb( current_step + 2 )"
-   badge 5, purple:  "return one_step + two_step"
+This box is WIDE. The top row of the page holds only two things, the sticky note
+on the left and this box filling all the remaining width. There is no third box.
 
 A thick arrow leads down the centre from THE CALL ARRIVES into:
 
@@ -82,8 +84,8 @@ A thick arrow leads down the centre from THE CALL ARRIVES into:
 
 A wide band, solid BLUE header bar, white text: "STEP 1   AM I AT THE TOP?".
 Big round blue badge "1". Pale blue body, two short lines:
-   "if  current_step == 4   ->   return 1"
-   "landing exactly on the top is one finished route. Overshooting returns 0."
+   "Did I reach the final step?"
+   "If so, return 1, because that is one way of reaching the top."
 On the right end, a small green arrow curving down labelled
    "not done, keep going"
 
@@ -104,22 +106,22 @@ and do NOT write "only one branch runs".
 
 Solid GREEN header bar, white text: "CLIMB 1 STEP".
 Pale green body:
-   The bar redrawn with the purple square moved one segment right, a green
-   arrow of length one drawn above it labelled "+1 step".
-   Then a purple-outlined box:
-      "climb( current_step + 1 )"
-      "=   climb( 2 )"
+   The bar redrawn with the purple square moved one segment right, so the
+   square now reads "2", not "1". A green arrow of length one is drawn above
+   it labelled "+1 step".
+   Then a purple-outlined box, holding ONE line and nothing else:
+      "one_step   ->   climb( current_step + 1 )"
    Then one short black line: "I am now standing one step higher"
 
 === RIGHT COLUMN (red), badge "4" ===
 
 Solid RED header bar, white text: "CLIMB 2 STEPS".
 Pale red body:
-   The bar redrawn with the purple square moved two segments right, a red
-   arrow of length two drawn above it labelled "+2 steps".
-   Then a purple-outlined box:
-      "climb( current_step + 2 )"
-      "=   climb( 3 )"
+   The bar redrawn with the purple square moved two segments right, so the
+   square now reads "3", not "1". A red arrow of length two is drawn above it
+   labelled "+2 steps".
+   Then a purple-outlined box, holding ONE line and nothing else:
+      "two_step   ->   climb( current_step + 2 )"
    Then one short black line: "I am now standing two steps higher"
 
 === THE MERGE, full width at the bottom, purple ===
@@ -128,11 +130,11 @@ One thick GREEN arrow from the left column and one thick RED arrow from the
 right column BOTH enter the same wide box at the bottom centre. This shared box
 is the point: unlike an if / else, both choices really happen and are compared.
 Solid PURPLE header bar, white text: "ADD THEM UP".
-Pale purple body, three lines of large lettering, gold trophy doodle beside:
-   "ONE STEP  =  climb( 2 )"      written in green
-   "TWO STEPS  =  climb( 3 )"      written in red
+Pale purple body, gold trophy doodle beside it. ONE line only, very large:
    "return  one_step + two_step"        in purple, with the operator biggest
-Under them, one short black line:
+Do not restate what each branch evaluated to. The two columns above already
+named those, and repeating them here is the clutter to avoid.
+Under it, one short black line:
    "routes through one are never routes through the other, so the counts add"
 
 === CORNER BOX, no arrow touching it ===

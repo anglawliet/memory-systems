@@ -111,7 +111,8 @@ def render(items):
         num = f' <span class="lcnum">#{e["lc"]}</span>' if e["lc"] else ""
         imgs = []
         for path in e["images"]:
-            kind = ("the frozen call, read in the order the code runs"
+            kind = ("one frozen call, showing where I am, the base case, the "
+                    "choices, and the one operator that combines them"
                     if path.endswith("one_call.png")
                     else "the code beside four sentences to say out loud")
             exists = (ROOT / path).exists()
@@ -132,11 +133,22 @@ def render(items):
     intro = (
         '<h2>One Call, and How to Say It</h2>\n'
         '<p style="color:var(--muted)">Two pages per problem. The first freezes a '
-        'single recursive call and reads top to bottom in the order the code runs: '
-        'base case, then the condition, then the branch that fires. The second pairs '
+        'single recursive call and reads straight down: where I am standing, the '
+        'base case hanging off to one side, the choices open to me, and the one '
+        'operator that combines them. Every card uses the same layout and the same '
+        'colour code, so the only thing that really changes between problems is '
+        'that operator, which is the thing worth learning. The second page pairs '
         'the code with four sentences to say out loud, so you can explain the idea '
         'before writing a line. The <strong>Shape</strong> line on each card is the '
-        'thing worth carrying between problems.</p>'
+        'thing worth carrying between problems.</p>\n'
+        '<p style="color:var(--muted)">Colours mean the same thing on every card. '
+        '<strong>Amber</strong> is where I am now, and anything belonging to that '
+        'position. <strong>Espresso</strong> is the base case, which always sits '
+        'off to the side rather than in the flow. <strong>Blue</strong> and '
+        '<strong>red</strong> are the two choices. <strong>Green</strong> is what '
+        'the call hands back. Count the amber objects in the top box and you have '
+        'counted the arguments the function needs, which is also how many '
+        'dimensions its memo table will have.</p>'
     )
     return START + "\n" + intro + "\n\n" + "\n\n".join(rows) + "\n" + END
 

@@ -55,8 +55,18 @@ row of index numbers under it. Instead:
 - Anything outside the two pointers is pale grey, hatched, and crossed out."""
 
 BADGES = """STEP BADGES: each step gets a big round numbered badge in the colour of that
-step, on the top left corner of its block. The same numbers appear beside the
-matching lines in the code panel."""
+step, on the top left corner of its block.
+
+NO CODE PANEL. This page never shows the source code. The code lives on the
+companion practice card, and repeating it here only competes with the diagram.
+Do not draw a "THE CODE" box anywhere.
+
+NO REDUNDANT NUMBERS IN THE TEXT. The concrete index or value is already shown
+on the bar diagram, so never restate it in the sentences beside it. Write the
+recursive call symbolically, in terms of the parameter name, and stop there.
+This rule is about the WRITING ONLY. The bars keep every number they already
+had, and a square that moves must show the value of its NEW position, not the
+old one. Dropping numbers from the diagram is a mistake, not the goal."""
 
 
 def loop_call(p):
@@ -71,9 +81,8 @@ def loop_call(p):
       A pill reading "{lane['label']}".
       Below it:
 {lane['body']}
-      Then a purple-outlined box:
-         "{lane['expr']}"
-         "=   {lane['numeric']}\""""
+      Then a purple-outlined box, holding ONE line and nothing else:
+         "{lane['expr']}\""""
         for i, lane in enumerate(p["lanes"])
     )
 
@@ -113,10 +122,8 @@ TOP CENTER: box with a purple header bar reading "THE CALL ARRIVES".
    under it, one small black line: "{p['promise']}"
    On its right:
 {p['state']}
-
-TOP RIGHT: a box with a dark slate header bar reading "THE CODE". Very pale
-grey body. Short lines, each numbered line carrying a small round coloured badge:
-{p['code_panel']}
+This box is WIDE. The top row of the page holds only two things, the sticky note
+on the left and this box filling all the remaining width. There is no third box.
 
 === STEP 1, full width, blue, badge "1" ===
 
@@ -163,6 +170,18 @@ correctly.
 """
 
 
+def branch_var(branch):
+    """The name the branch result is bound to, e.g. "one_step".
+
+    Written on the card as `one_step -> climb( current_step + 1 )`, which ties
+    the box to the name used in the final return without repeating the concrete
+    index that the bar diagram above it already shows.
+    """
+    if branch.get("var"):
+        return branch["var"]
+    return branch["label"].lower().replace(" ", "_")
+
+
 def one_call(p):
     """Render the frozen-call diagram prompt."""
     if p["shape"] == "loop":
@@ -191,11 +210,11 @@ One thick GREEN arrow from the left column and one thick RED arrow from the
 right column BOTH enter the same wide box at the bottom centre. This shared box
 is the point: unlike an if / else, both choices really happen and are compared.
 Solid PURPLE header bar, white text: "{p['merge_title']}".
-Pale purple body, three lines of large lettering, gold trophy doodle beside:
-   "{p['branch_a']['label']}  =  {p['branch_a']['numeric']}"      written in green
-   "{p['branch_b']['label']}  =  {p['branch_b']['numeric']}"      written in red
+Pale purple body, gold trophy doodle beside it. ONE line only, very large:
    "return  {p['combine']}"        in purple, with the operator biggest
-Under them, one short black line:
+Do not restate what each branch evaluated to. The two columns above already
+named those, and repeating them here is the clutter to avoid.
+Under it, one short black line:
    "{p['combine_note']}\""""
     else:
         ending = f"""A thick green arrow leads down to a green return box at the bottom of the LEFT
@@ -250,10 +269,8 @@ TOP CENTER: box with a purple header bar reading "THE CALL ARRIVES".
    under it, one small black line: "{p['promise']}"
    On its right:
 {p['state']}
-
-TOP RIGHT: a box with a dark slate header bar reading "THE CODE". Very pale
-grey body. Short lines, each numbered line carrying a small round coloured badge:
-{p['code_panel']}
+This box is WIDE. The top row of the page holds only two things, the sticky note
+on the left and this box filling all the remaining width. There is no third box.
 
 A thick arrow leads down the centre from THE CALL ARRIVES into:
 
@@ -280,9 +297,8 @@ A centered SOLID BLUE pill, bold white lettering, big round blue badge "2":
 Solid GREEN header bar, white text: "{p['branch_a']['title']}".
 Pale green body:
 {p['branch_a']['body']}
-   Then a purple-outlined box{' with a gold starburst around the added value' if p['branch_a'].get('adds') else ''}:
-      "{p['branch_a']['expr']}"
-      "=   {p['branch_a']['numeric']}"
+   Then a purple-outlined box{' with a gold starburst around the added value' if p['branch_a'].get('adds') else ''}, holding ONE line and nothing else:
+      "{branch_var(p['branch_a'])}   ->   {p['branch_a']['expr']}"
    Then one short black line: "{p['branch_a']['change']}"
 
 === RIGHT COLUMN (red), badge "4" ===
@@ -290,9 +306,8 @@ Pale green body:
 Solid RED header bar, white text: "{p['branch_b']['title']}".
 Pale red body:
 {p['branch_b']['body']}
-   Then a purple-outlined box:
-      "{p['branch_b']['expr']}"
-      "=   {p['branch_b']['numeric']}"
+   Then a purple-outlined box, holding ONE line and nothing else:
+      "{branch_var(p['branch_b'])}   ->   {p['branch_b']['expr']}"
    Then one short black line: "{p['branch_b']['change']}"
 
 {ending}

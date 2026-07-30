@@ -49,14 +49,14 @@ def extract_prompts(filepath):
     return prompts
 
 
-def generate_image(client, prompt_text, output_path):
+def generate_image(client, prompt_text, output_path, size="auto"):
     """Call OpenAI image generation and save the result."""
-    print(f"  Generating {output_path.name}...")
+    print(f"  Generating {output_path.name} at {size}...")
 
     response = client.images.generate(
         model="gpt-image-2",
         prompt=prompt_text,
-        size="auto",
+        size=size,
         quality="high",
     )
 
@@ -66,6 +66,16 @@ def generate_image(client, prompt_text, output_path):
 
 
 def main():
+    # A portrait page has to be asked for explicitly. Left on "auto" the model
+    # tends to return landscape even when the prompt insists on portrait.
+    args = sys.argv[1:]
+    size = "auto"
+    for flag in list(args):
+        if flag.startswith("--size="):
+            size = flag.split("=", 1)[1]
+            args.remove(flag)
+    sys.argv = [sys.argv[0]] + args
+
     if len(sys.argv) < 2:
         print("Usage: python generate_image.py <prompt_file> [image_name]")
         print()
@@ -107,7 +117,7 @@ def main():
     print(f"Generating {len(prompts)} image(s) from {filepath.name}")
     for filename, prompt_text in prompts:
         output_path = IMAGES_DIR / filename
-        generate_image(client, prompt_text, output_path)
+        generate_image(client, prompt_text, output_path, size)
 
     print("Done!")
 

@@ -44,27 +44,31 @@ PROBLEMS = [
    badge 4, red:     "two_step = climb( current_step + 2 )"
    badge 5, purple:  "return one_step + two_step\"""",
  "base_title": "AM I AT THE TOP?",
- "base_case": "if  current_step == 4   ->   return 1",
- "base_why": "landing exactly on the top is one finished route. Overshooting returns 0.",
+ "base_case": "Did I reach the final step?",
+ "base_why": "If so, return 1, because that is one way of reaching the top.",
  "question_pill": "TWO MOVES FROM HERE",
  "branch_a": {
    "title": "CLIMB 1 STEP",
-   "body": """   The bar redrawn with the purple square moved one segment right, a green
-   arrow of length one drawn above it labelled "+1 step".""",
+   "body": """   The bar redrawn with the purple square moved one segment right, so the
+   square now reads "2", not "1". A green arrow of length one is drawn above
+   it labelled "+1 step".""",
    "expr": "climb( current_step + 1 )",
    "numeric": "climb( 2 )",
    "change": "I am now standing one step higher",
    "label": "ONE STEP",
+   "var": "one_step",
    "ret": "climb( current_step + 1 )",
  },
  "branch_b": {
    "title": "CLIMB 2 STEPS",
-   "body": """   The bar redrawn with the purple square moved two segments right, a red
-   arrow of length two drawn above it labelled "+2 steps".""",
+   "body": """   The bar redrawn with the purple square moved two segments right, so the
+   square now reads "3", not "1". A red arrow of length two is drawn above it
+   labelled "+2 steps".""",
    "expr": "climb( current_step + 2 )",
    "numeric": "climb( 3 )",
    "change": "I am now standing two steps higher",
    "label": "TWO STEPS",
+   "var": "two_step",
    "ret": "climb( current_step + 2 )",
  },
  "merge_title": "ADD THEM UP",

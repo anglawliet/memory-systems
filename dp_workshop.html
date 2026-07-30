@@ -106,6 +106,7 @@ a.homelink:hover h1{opacity:.82}
 <button onclick="go('problems')">All 26 Problems</button>
 <button onclick="go('quiz')">Quiz</button>
 <button onclick="go('onecall')">One Call</button>
+<button onclick="go('concepts')">Concepts</button>
 </div>
 <!-- ==================== TAB 1: THE PIPELINE ==================== -->
 <div class="sec vis" id="sec-home">
@@ -2063,6 +2064,56 @@ Overlapping subintervals. dp[0][3] and dp[2][5] both need dp[2][3]. Same range, 
 <img src="dp/images/burst_code_and_script.png" alt="Burst Balloons: the code beside four sentences to say out loud" class="scene-img" loading="lazy">
 </div>
 <!-- ONECALL-END -->
+
+</div>
+
+<!-- ==================== TAB 7: CONCEPTS ==================== -->
+<div class="sec" id="sec-concepts">
+<h2>Concepts: Three Ways to Write the Same DP</h2>
+<p style="color:var(--muted)">These are the three approaches you can take once you have the recurrence. They are not three algorithms. They compute the same values in the same order, and they differ only in <strong style="color:var(--teal)">who is holding the previous answer at the moment it is needed</strong>. One question is used throughout so the comparison is fair.</p>
+
+<div class="onecall">
+<h3>Maximum Product Subarray <span class="lcnum">#152</span></h3>
+<div class="oc-q">Given an array of numbers, find the largest product any run of neighbouring numbers can make. The run has to be unbroken, and it has to be non empty.</div>
+<div class="oc-shape"><strong>Shape:</strong> A scan, not a fork. One call back into a single past, with three expressions built from it, rather than several calls out to different futures.</div>
+
+<table>
+<tr><th>Input</th><th>Answer</th><th>What it is testing</th></tr>
+<tr><td><code>2, 3, 4</code></td><td><strong>24</strong></td><td>All positive, so keep extending. This works with one variable.</td></tr>
+<tr><td><code>2, 3, -2, 4</code></td><td><strong>6</strong></td><td>A negative cuts the run. The best answer ends before it, so you must be willing to start fresh.</td></tr>
+<tr><td><code>-2, 3, -4</code></td><td><strong>24</strong></td><td>Two negatives make a positive. One variable answers 3 here, because it throws away the -6 that later becomes the winner.</td></tr>
+<tr><td><code>-2, 0, -1</code></td><td><strong>0</strong></td><td>A zero resets both carried values. No special case is needed, the three candidates handle it.</td></tr>
+</table>
+
+<p style="color:var(--muted);font-size:.92em;margin:14px 0 0">The third example is the one that forces the design. At the number 3, two runs end there, <code>3</code> and <code>-2 &times; 3 = -6</code>. Keeping only the larger looks obviously right and is wrong, because <code>-6 &times; -4 = 24</code>. Multiplying by a negative reverses order, so the best run ending here can be built from the <em>worst</em> run ending before it. That is why both a biggest and a smallest are carried.</p>
+</div>
+
+<div class="onecall">
+<h3>1. Top Down Recursion <span class="lcnum">pull</span></h3>
+<div class="oc-q">Start at the last index and ask for what you need. The trip down computes nothing, it only records what still needs answering. Every piece of arithmetic happens on the way back up, and the answers arrive through return values.</div>
+<div class="oc-shape"><strong>Use it when:</strong> the order the subproblems should be solved in is not obvious, or you only need some of them.</div>
+<img src="dp/images/concept_top_down.png" alt="Top down recursion: asking down to the base case, then answers returning back up" class="scene-img" loading="lazy">
+</div>
+
+<div class="onecall">
+<h3>2. Bottom Up Tabulation <span class="lcnum">push</span></h3>
+<div class="oc-q">Start at the first index and walk forward. You never ask for anything, because you already hold what you need from the step before. Information moves forward through variables.</div>
+<div class="oc-shape"><strong>Use it when:</strong> you already know a safe order to fill the subproblems in. Here that order is simply left to right.</div>
+<img src="dp/images/concept_bottom_up.png" alt="Bottom up tabulation: walking forward, updating the carried values at each index" class="scene-img" loading="lazy">
+</div>
+
+<div class="onecall">
+<h3>3. Forward Recursion <span class="lcnum">push</span></h3>
+<div class="oc-q">Still recursive, but starting at the first index and going up. It works because it carries its values forward as arguments instead of going back to fetch them. Nothing ever returns until the very end, which is why the running best has to travel forward too.</div>
+<div class="oc-shape"><strong>Worth knowing:</strong> this is the loop wearing a recursion costume. It also mixes two promises into one function, the recurrence and the sweep, which is why the plain loop reads more cleanly.</div>
+<img src="dp/images/concept_forward.png" alt="Forward recursion: passing the carried values and the running best to the next call" class="scene-img" loading="lazy">
+</div>
+
+<div class="onecall" style="border-left-color:var(--teal)">
+<h3>Two things that are easy to miss</h3>
+<div class="oc-q"><strong style="color:var(--teal)">The running best is not part of the DP.</strong> <code>big</code> and <code>small</code> are DP values, each built from the position before. <code>answer</code> never appears on the right hand side of anything except its own update. It is a sweep over the DP values, not one of them. It exists here because the best run can end anywhere, so no single call holds the answer. Climbing Stairs needs no such sweep, because <code>climb(0)</code> is the answer.</div>
+<div class="oc-q" style="margin-top:12px"><strong style="color:var(--teal)">This chain needs no memoization.</strong> Count the recursive calls: there is one. So every subproblem is reached exactly once and there is nothing to cache. Climbing Stairs calls two different places, so <code>climb(5)</code> is reached from both <code>climb(4)</code> and <code>climb(3)</code>, and memoization is what saves it. One call means a chain and a loop. Two or more means a tree and a cache.</div>
+</div>
 
 </div>
 

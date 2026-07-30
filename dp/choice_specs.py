@@ -229,11 +229,20 @@ pill, and it is the thing a coder forgets.""",
     "a": {"chip": "EXTEND THE RUN",
           "picture": """   Inside, the same five cells as above with the cell immediately after the AMBER one
    painted solid BLUE, and a dashed grey arc from the amber cell landing on it.
-   Under the row, the two pills redrawn in BLUE, with a small blue swap arrow curling
-   between them, and one small blue caption: "a negative swaps these two"
-   The fox stands just outside the row on its left.""",
-          "line": "current_number * biggest_so_far", "hi": "*",
-          "amber": ["current_number", "biggest_so_far"], "var": "extend_big, extend_small"},
+   Under the row, the two pills redrawn in BLUE, side by side, with NO arrow of any
+   kind between them and nothing swapping places. Under the pills, one small blue
+   caption: "when this number is negative, the one built from the SMALLEST wins"
+   The fox stands just outside the row on its left.
+
+   THERE IS NO SWAP ON THIS PAGE. Nothing is reordered before multiplying. Both
+   products are worked out and the winner is decided later, at the MAX. Drawing a
+   swap arrow between the two pills would claim a step that does not exist, which is
+   the single most misleading thing this card could do.""",
+          "lines": ["current_number * biggest_so_far",
+                    "current_number * smallest_so_far"],
+          "hi": "*",
+          "amber": ["current_number", "biggest_so_far", "smallest_so_far"],
+          "var": "from_biggest, from_smallest"},
     "b": {"chip": "START A NEW RUN HERE",
           "picture": """   Inside, the same five cells as above with the AMBER cell ringed in RED and every
    cell before it faded, so the run plainly begins again at this position.
@@ -242,12 +251,24 @@ pill, and it is the thing a coder forgets.""",
           "line": "current_number", "hi": "current_number",
           "amber": ["current_number"], "var": "start_fresh"},
     "op": {"kind": "call", "name": "max", "glyph": "MAX",
-           "args": "extend_big, extend_small, start_fresh"},
-    "why": ["three candidates go in and one comes out,",
-            "because a negative number can make the smallest into the largest."],
-    "numbers": ['the "0" in "return 0", because that is what the code returns'],
-    "note_extra": ("THIS IS THE ONE CARD WHERE THE OPERATOR TAKES THREE ARGUMENTS. The left "
-                   "panel produces TWO values, not one, so its arrow carries two names."),
+           "args": "from_biggest, from_smallest, start_fresh"},
+    "why": ["carrying only the biggest fails on -2, 3, -4: it answers 3, not 24,",
+            "because the -6 it threw away was the one that mattered."],
+    "numbers": ['the "0" in "return 0", because that is what the code returns',
+                'the "-2, 3, -4" and the "3", "24" and "-6" in the two green lines under '
+                'the operator, because that failing example IS the lesson of this card '
+                'and it cannot be shown as a picture'],
+    "note_extra": ("THIS IS THE ONE CARD WHERE THE OPERATOR TAKES THREE ARGUMENTS, and the "
+                   "left panel produces TWO values rather than one. Every name inside the "
+                   "MAX must be defined by a line the reader can see above it: "
+                   "from_biggest and from_smallest by the two lines in the blue panel, and "
+                   "start_fresh by the single line in the red panel. A name that appears "
+                   "first inside the MAX has come from nowhere.\n\n"
+                   "THE NAMES SAY WHERE EACH PRODUCT CAME FROM, NOT HOW BIG IT IS. "
+                   "from_biggest is the product built FROM biggest_so_far, and when the "
+                   "current number is negative that product is the smaller of the two. "
+                   "Naming it extend_big would be wrong for exactly the case this card "
+                   "exists to teach."),
 },
 
 "stock": {

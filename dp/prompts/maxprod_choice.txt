@@ -227,7 +227,7 @@ should be able to say what this panel does before reading any code.
 
 THE VARIABLE NAME IS NOT IN THE PANEL. It rides on the ARROW that leaves the
 panel's bottom edge on its way to the return box. The panel body therefore opens
-with a bare "=" instead of with "extend_big, extend_small =". The equals sign says this panel
+with a bare "=" instead of with "from_biggest, from_smallest =". The equals sign says this panel
 produces a value, and the arrow below says what that value is called, so the name
 is never written twice.
 
@@ -242,18 +242,30 @@ LEFT BOX, BLUE FAMILY. A rounded box with a thin BLUE outline and a white fill.
 On its top edge, a solid BLUE chip with bold white capitals: "EXTEND THE RUN"
    Inside, the same five cells as above with the cell immediately after the AMBER one
    painted solid BLUE, and a dashed grey arc from the amber cell landing on it.
-   Under the row, the two pills redrawn in BLUE, with a small blue swap arrow curling
-   between them, and one small blue caption: "a negative swaps these two"
+   Under the row, the two pills redrawn in BLUE, side by side, with NO arrow of any
+   kind between them and nothing swapping places. Under the pills, one small blue
+   caption: "when this number is negative, the one built from the SMALLEST wins"
    The fox stands just outside the row on its left.
-   Under the picture, ONE SINGLE LINE and never two, in charcoal, set large and on
-   one line without wrapping:
-      "= current_number * biggest_so_far"
-   with the leading "=" in BLUE and bold, and "*" in
-   BLUE.
-   "current_number" and "biggest_so_far" in that line are AMBER, not charcoal,
+
+   THERE IS NO SWAP ON THIS PAGE. Nothing is reordered before multiplying. Both
+   products are worked out and the winner is decided later, at the MAX. Drawing a
+   swap arrow between the two pills would claim a step that does not exist, which is
+   the single most misleading thing this card could do.
+   Under the picture, TWO lines of code stacked one above the other, in charcoal,
+   both set at the same size and both starting at the same left edge so they read as
+   a matched pair:
+         "= current_number * biggest_so_far"
+         "= current_number * smallest_so_far"
+   Each line opens with its own "=" in BLUE and bold, and "*"
+   is in BLUE.
+   "current_number" and "biggest_so_far" and "smallest_so_far" in that line are AMBER, not charcoal,
    because they belong to the one position I
    am standing on rather than to the call being made. Every other word in the line
    is charcoal.
+
+   THIS PANEL PRODUCES TWO VALUES, NOT ONE, which is why it has two lines. They are
+   not one line wrapped. They must be the same length and the same size, one under
+   the other, and neither may be smaller than the other.
 
 RIGHT BOX, RED FAMILY. A rounded box with a thin RED outline and a white fill.
 On its top edge, a solid RED chip with bold white capitals: "START A NEW RUN HERE"
@@ -280,7 +292,9 @@ NO PANEL BODY EVER WRAPS ONTO A SECOND LINE. A short name stacked above a long c
 reads as a ragged block. If the line looks tight, make the panel wider or the page
 gutters narrower. Never shrink the code, and never break it across two lines.
 
-THIS IS THE ONE CARD WHERE THE OPERATOR TAKES THREE ARGUMENTS. The left panel produces TWO values, not one, so its arrow carries two names.
+THIS IS THE ONE CARD WHERE THE OPERATOR TAKES THREE ARGUMENTS, and the left panel produces TWO values rather than one. Every name inside the MAX must be defined by a line the reader can see above it: from_biggest and from_smallest by the two lines in the blue panel, and start_fresh by the single line in the red panel. A name that appears first inside the MAX has come from nowhere.
+
+THE NAMES SAY WHERE EACH PRODUCT CAME FROM, NOT HOW BIG IT IS. from_biggest is the product built FROM biggest_so_far, and when the current number is negative that product is the smaller of the two. Naming it extend_big would be wrong for exactly the case this card exists to teach.
 
 THE AMBER CELL APPEARS IN ALL THREE ROWS, because amber always means "where I am
 now". The blue and red cells mean "where this choice would put me". Only the landing
@@ -294,7 +308,7 @@ and they meet at one wide rounded box across the bottom of the page. That box ha
 a thin GREEN outline and a very pale green fill.
 
 EACH OF THOSE TWO ARROWS CARRIES A NAME. Beside the left arrow, in BLUE code
-lettering, small and tidy: "extend_big, extend_small". Beside the right arrow, in RED code
+lettering, small and tidy: "from_biggest, from_smallest". Beside the right arrow, in RED code
 lettering: "start_fresh". The name sits right against its own arrow, clear of
 the panel above and of the green box below, so it plainly reads as the value
 travelling down the arrow. This is the only place on the page where either variable
@@ -308,10 +322,10 @@ arguments in brackets and the giant word comes FIRST:
    "MAX"         ENORMOUS, in a solid green rounded badge, many times
                            taller than the lettering beside it, the largest thing
                            on the whole page
-   "(extend_big, extend_small, start_fresh)"        normal size, immediately after the giant word, with tight
+   "(from_biggest, from_smallest, start_fresh)"        normal size, immediately after the giant word, with tight
                            brackets and one comma followed by a single space
 
-So the completed line reads:  return MAX(extend_big, extend_small, start_fresh)
+So the completed line reads:  return MAX(from_biggest, from_smallest, start_fresh)
 
 Writing the two names on either side of MAX would not be valid code, which is
 exactly the mistake this card exists to prevent.
@@ -321,8 +335,8 @@ repeat the word in smaller text nearby. The giant word is itself the function be
 called, and the bracketed pair beside it are its two arguments.
 
 Under that line, separated by a thin green rule, two small green lines:
-   "three candidates go in and one comes out,"
-   "because a negative number can make the smallest into the largest."
+   "carrying only the biggest fails on -2, 3, -4: it answers 3, not 24,"
+   "because the -6 it threw away was the one that mattered."
 
 A small cute smiling star doodle sits at the bottom right corner of this box, and a
 few small green sparkle ticks sit just outside its left and right edges.
@@ -332,6 +346,7 @@ few small green sparkle ticks sit just outside its left and right edges.
 These numerals are allowed on this page, and no others:
 
    the "0" in "return 0", because that is what the code returns
+   the "-2, 3, -4" and the "3", "24" and "-6" in the two green lines under the operator, because that failing example IS the lesson of this card and it cannot be shown as a picture
 
 Everything else is shown by colour, by position or by distance. In particular:
 

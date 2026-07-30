@@ -53,6 +53,34 @@ produces a value, and the arrow below says what that value is called, so the nam
 is never written twice."""
 
 
+def body_block(s, branch, colour):
+    """The code inside a panel.
+
+    Almost every panel computes one value and gets one line. A panel that
+    genuinely produces TWO values gets two lines of the same shape, which is a
+    different thing from one line wrapping: parallel lines read as a pair, a
+    wrapped line reads as ragged.
+    """
+    prefix = body_prefix(s)
+    if branch.get("lines"):
+        listed = "\n".join(f'         "{prefix} {ln}"' for ln in branch["lines"])
+        return f"""   Under the picture, TWO lines of code stacked one above the other, in charcoal,
+   both set at the same size and both starting at the same left edge so they read as
+   a matched pair:
+{listed}
+   Each line opens with its own "{prefix}" in {colour} and bold, and "{branch['hi']}"
+   is in {colour}.{amber_terms(branch)}
+
+   THIS PANEL PRODUCES TWO VALUES, NOT ONE, which is why it has two lines. They are
+   not one line wrapped. They must be the same length and the same size, one under
+   the other, and neither may be smaller than the other."""
+    return f"""   Under the picture, ONE SINGLE LINE and never two, in charcoal, set large and on
+   one line without wrapping:
+      "{prefix} {branch['line']}"
+   with the leading "{prefix}" in {colour} and bold, and "{branch['hi']}" in
+   {colour}.{amber_terms(branch)}"""
+
+
 def body_prefix(s):
     """An if/else panel returns. A choice panel binds."""
     return "return" if s.get("mode") == "ifelse" else "="
@@ -66,11 +94,7 @@ on this card. Do not invent a right hand box to balance the page."""
     return f"""RIGHT BOX, RED FAMILY. A rounded box with a thin RED outline and a white fill.
 On its top edge, a solid RED chip with bold white capitals: "{s['b']['chip']}"
 {branch_picture(s, s['b'], 'RED')}{panel_extras(s['b'])}
-   Under the picture, ONE SINGLE LINE and never two, in charcoal, set large and on
-   one line without wrapping:
-      "{body_prefix(s)} {s['b']['line']}"
-   with the leading "{body_prefix(s)}" in RED and bold, and "{s['b']['hi']}" in
-   RED.{amber_terms(s['b'])}"""
+{body_block(s, s['b'], 'RED')}"""
 
 
 def result_block(s):
@@ -568,11 +592,7 @@ built from scratch instead of copied, and that is the mistake to avoid.
 LEFT BOX, BLUE FAMILY. A rounded box with a thin BLUE outline and a white fill.
 On its top edge, a solid BLUE chip with bold white capitals: "{s['a']['chip']}"
 {branch_picture(s, s['a'], 'BLUE')}{panel_extras(s['a'])}
-   Under the picture, ONE SINGLE LINE and never two, in charcoal, set large and on
-   one line without wrapping:
-      "{body_prefix(s)} {s['a']['line']}"
-   with the leading "{body_prefix(s)}" in BLUE and bold, and "{s['a']['hi']}" in
-   BLUE.{amber_terms(s['a'])}
+{body_block(s, s['a'], 'BLUE')}
 
 {right_panel(s)}
 

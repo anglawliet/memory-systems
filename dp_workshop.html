@@ -2109,16 +2109,8 @@ Overlapping subintervals. dp[0][3] and dp[2][5] both need dp[2][3]. Same range, 
 <img src="dp/images/concept_forward.png" alt="Forward recursion: passing the carried values and the running best to the next call" class="scene-img" loading="lazy">
 </div>
 
-<div class="onecall" style="border-left-color:var(--teal)">
-<h3>4. Where the Final Answer Lives <span class="lcnum">root call, or a sweep</span></h3>
-<div class="oc-q">Computing the DP values is only half the job. You still have to say which of them is the answer, and that differs by problem. Ask one question: <strong style="color:var(--teal)">if I plug in one starting state, usually zero, does that exactly answer the problem?</strong> If yes, return the root call. If no, the best could be sitting at any position and you have to sweep them all.</div>
-<div class="oc-shape"><strong>Why it matters:</strong> this is where a correct recurrence still returns the wrong number, because the last value computed is not the best one computed.</div>
-<img src="dp/images/concept_where_answer_lives.png" alt="Where the final answer lives: the root call versus sweeping every position, and the three ways to collect it" class="scene-img" loading="lazy">
-<div class="oc-q" style="margin-top:4px">Notice that the running best is <strong style="color:var(--teal)">not part of the DP</strong>. In Maximum Product, <code>big</code> and <code>small</code> are DP values, each built from the position before. <code>answer</code> never appears on the right hand side of anything except its own update. Delete it and the DP still computes correctly, you just have nothing to hand back. It is a reduction over the DP values, not one of them, which is why it can live in three different places without changing the algorithm.</div>
-</div>
-
 <div class="onecall" style="border-left-color:var(--violet)">
-<h3>5. Choosing the State: Index, Not Value <span class="lcnum">Longest Increasing Subsequence</span></h3>
+<h3>4. Choosing the State: Index, Not Value <span class="lcnum">Longest Increasing Subsequence</span></h3>
 <div class="oc-q">Two recurrences can both be correct and only one of them can be tabulated. A state variable becomes a table dimension, so it has to have a <strong style="color:var(--violet)">small and bounded range</strong>. An index is bounded by the array length. A value is bounded by nothing.</div>
 <div class="oc-shape"><strong>Use it when:</strong> your recursion needs to remember something about an earlier element. Remember <em>where</em> it was, not <em>what</em> it was.</div>
 <img src="dp/images/concept_state_design.png" alt="LIS state design: previous_index is bounded and tabulates, previous_value is unbounded and does not" class="scene-img" loading="lazy">
@@ -2126,7 +2118,7 @@ Overlapping subintervals. dp[0][3] and dp[2][5] both need dp[2][3]. Same range, 
 </div>
 
 <div class="onecall" style="border-left-color:var(--teal)">
-<h3>6. Chain or Tree, Before You Reach for a Cache</h3>
+<h3>5. Chain or Tree, Before You Reach for a Cache</h3>
 <div class="oc-q">Count the recursive calls at each step. <strong style="color:var(--teal)">One call means a chain.</strong> Every subproblem is reached exactly once, so there is nothing to cache and the loop is not an optimisation, it is the honest shape. Maximum Product and Stock with Cooldown are chains.</div>
 <div class="oc-q" style="margin-top:12px"><strong style="color:var(--teal)">Two or more calls, to different places, means a tree.</strong> Climbing Stairs calls <code>climb(step + 1)</code> and <code>climb(step + 2)</code>, so <code>climb(5)</code> is reached from both <code>climb(4)</code> and <code>climb(3)</code>, and without memoization you recompute it exponentially often. That is when a cache earns its place.</div>
 <div class="oc-q" style="margin-top:12px">Look at the arguments and not just the count. Maximum Product has three candidates, but all three read the <em>same</em> earlier position. Three expressions built from one past is a scan. Several calls to different futures is a fork.</div>

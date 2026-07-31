@@ -14,6 +14,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from specs import PROBLEMS
+from examples import examples_for
 
 ROOT = Path(__file__).parent.parent
 PAGE = ROOT / "dp_workshop.html"
@@ -101,8 +102,24 @@ def entries():
             "shape": p["html_shape"],
             "images": [f"dp/images/{key}_{kind}.png"
                        for kind in ("one_call", "code_and_script")],
+            "examples": examples_for(key),
         })
     return out, missing
+
+
+def examples_table(rows):
+    """Four worked examples. Answers come from dp/examples.py, not by hand."""
+    if not rows:
+        return ""
+    cells = "\n".join(
+        f'<tr><td><code>{html.escape(shown)}</code></td>'
+        f'<td><strong>{html.escape(answer)}</strong></td>'
+        f'<td style="color:var(--muted)">{html.escape(note)}</td></tr>'
+        for shown, answer, note in rows
+    )
+    return (f'<table class="oc-ex">\n'
+            f'<tr><th>Input</th><th>Answer</th><th>Why</th></tr>\n'
+            f'{cells}\n</table>')
 
 
 def render(items):
@@ -128,6 +145,7 @@ def render(items):
             f'<div class="oc-q">{html.escape(e["question"])}</div>\n'
             f'<div class="oc-shape"><strong>Shape:</strong> '
             f'{html.escape(e["shape"])}</div>\n'
+            + examples_table(e["examples"]) + "\n"
             + "\n".join(imgs) + "\n</div>"
         )
     intro = (

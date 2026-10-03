@@ -92,7 +92,7 @@ td{padding:10px 12px;border:1px solid var(--border)}
 <div style="background:rgba(220,38,38,.06);border:1px solid var(--crimson);border-radius:8px;padding:16px">
 <div style="font-size:1.1em;font-weight:700;color:var(--crimson);margin-bottom:8px">Place = Node</div>
 <div style="font-size:.95em;color:var(--text)">
-Each place on the map is a node, like a casino in Vegas or a city on a road trip. Some places have a <strong>number on the sign</strong> out front. That's the node's value.<br><br>
+Each place on the map is a node, like a chamber in a palace or a city on a road trip. Some places have a <strong>number on the sign</strong> out front. That's the node's value.<br><br>
 <strong>In code:</strong> A place = <code>node</code>. Number on the sign = <code>node.val</code> or <code>grid[r][c]</code>.
 </div>
 </div>
@@ -108,7 +108,7 @@ Roads connect places. Some roads are <strong>one-way</strong> (directed), so you
 <div style="background:rgba(220,38,38,.06);border:1px solid var(--crimson);border-radius:8px;padding:16px">
 <div style="font-size:1.1em;font-weight:700;color:var(--crimson);margin-bottom:8px">Visited Mark = Visited</div>
 <div style="font-size:.95em;color:var(--text)">
-Every story has a way to say "been here already". Shin Lim takes a <strong>polaroid</strong> at each venue. Prabhas gives each guest a <strong>wristband</strong>. See the mark? <strong>Skip it.</strong> Nobody gets visited twice.<br><br>
+Every story has a way to say "been here already". Arundhati puts a <strong>seal</strong> on each chamber door. Prabhas gives each guest a <strong>wristband</strong>. See the mark? <strong>Skip it.</strong> Nobody gets visited twice.<br><br>
 <strong>In code:</strong> The mark = <code>visited</code> set. Check: <code>if node in visited: return</code>. Mark: <code>visited.add(node)</code>.
 </div>
 </div>
@@ -135,7 +135,7 @@ Every story has a way to say "been here already". Shin Lim takes a <strong>polar
 <div class="map-cell"><span class="icon">&#x27A1;</span><div><div class="lbl">Edge</div><code>graph[node]</code> = list of neighbors</div></div>
 </div>
 <div class="map-row">
-<div class="map-cell"><span class="icon">&#x1F4F8;</span><div><div class="lbl">Visited Mark</div><div class="sub">Polaroid or wristband = been here already</div></div></div>
+<div class="map-cell"><span class="icon">&#x1F4F8;</span><div><div class="lbl">Visited Mark</div><div class="sub">Seal or wristband = been here already</div></div></div>
 <div class="map-cell"><span class="icon" style="color:var(--crimson)">&#x2714;</span><div><div class="lbl">Visited Set</div><code>visited.add(node)</code></div></div>
 </div>
 <div class="map-row">
@@ -159,7 +159,7 @@ Every story has a way to say "been here already". Shin Lim takes a <strong>polar
 <h3>The Characters</h3>
 <div class="map-grid">
 <div class="map-row">
-<div class="map-cell"><span class="icon">&#x1F0CF;</span><div><div class="lbl">Shin Lim (the Vegas explorer)</div><div class="sub">Goes as deep as he can down one road, hits a dead end, backtracks.</div></div></div>
+<div class="map-cell"><span class="icon">&#x1F3F0;</span><div><div class="lbl">Arundhati (the haunted palace)</div><div class="sub">Goes as deep as she can through one door, hits a dead end, comes back and tries the next door.</div></div></div>
 <div class="map-cell"><span class="icon">&#x1F504;</span><div><div class="lbl">DFS (Scene 1)</div><code>def dfs(node):</code></div></div>
 </div>
 <div class="map-row">
@@ -286,7 +286,7 @@ Every story has a way to say "been here already". Shin Lim takes a <strong>polar
 <div class="flow-step s1" style="flex:.5">
 <strong style="color:var(--crimson)">NO &rarr;</strong>
 <div><span class="tag t1">Scene 1</span></div>
-<div style="margin-top:6px"><strong style="color:var(--crimson);font-size:1.05em">SHIN LIM'S VEGAS ADVENTURE</strong></div>
+<div style="margin-top:6px"><strong style="color:var(--crimson);font-size:1.05em">ARUNDHATI'S HAUNTED PALACE</strong></div>
 <div style="font-size:.85em;color:var(--muted);margin-top:4px">DFS. Go deep, backtrack, repeat.</div>
 </div>
 </div>
@@ -305,23 +305,20 @@ Every story has a way to say "been here already". Shin Lim takes a <strong>polar
 <!-- ============ SCENE 1 ============ -->
 <div style="background:var(--card);border:2px solid var(--crimson);border-radius:12px;padding:20px;margin-bottom:24px">
 
-<div style="color:var(--crimson);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 1: Shin Lim's Vegas Adventure</div>
-<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">DFS: Shin Lim, Chip (stack), Snap (visited)</div>
+<div style="color:var(--crimson);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 1: Arundhati's Haunted Palace</div>
+<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">DFS: chambers = nodes, doors = edges, seal = visited</div>
 
-<img src="graphs/images/scene_1_A.png" alt="Scene 1 character reference — Shin Lim with Chip and Snap (DFS)" class="scene-img">
-<img src="graphs/images/scene_1_C_1.png" alt="Scene 1 page 1 — DFS intro, Arriving in Vegas, Going Deep" class="scene-img">
-<img src="graphs/images/scene_1_C_2.png" alt="Scene 1 page 2 — Vegas Branches, The Visited Trap" class="scene-img">
-<img src="graphs/images/scene_1_C_3.png" alt="Scene 1 page 3 — Golden Rule (snap before exploring), DFS on a Grid" class="scene-img">
-<img src="graphs/images/scene_1_C_4.png" alt="Scene 1 page 4 — Connected Components, Code, Three Golden Rules" class="scene-img">
+<img src="graphs/images/dfs_arundhati_palace.png" alt="DFS story: Arundhati checks each palace chamber for a seal, seals it before entering, reads the connected doors, goes deep through one door at a time, and returns only after every door is done" class="scene-img">
 
 <div style="background:rgba(220,38,38,.08);border:2px solid var(--crimson);border-radius:10px;padding:18px;margin-bottom:16px">
 <div style="color:var(--crimson);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL (Adjacency List)</div>
 <div style="font-size:.95em;color:var(--text);line-height:1.9">
-<strong style="color:var(--crimson);font-size:1.05em">&#10102;</strong> Shin Lim arrives at a venue. <strong>Already got a polaroid?</strong> Already visited, <strong>turn back</strong>.<br>
-<strong style="color:var(--crimson);font-size:1.05em">&#10103;</strong> Enters the venue. <strong>Snap takes a pic</strong> FIRST, before exploring.<br>
-<strong style="color:var(--crimson);font-size:1.05em">&#10104;</strong> Checks the map for all <strong>connected venues</strong>.<br>
-<strong style="color:var(--crimson);font-size:1.05em">&#10105;</strong> <strong>Goes DEEP into each venue</strong> one by one. Drops a <strong>Chip</strong> at each stop.<br>
-<strong style="color:var(--crimson);font-size:1.05em">&#10106;</strong> All venues explored. <strong>Follows chips back</strong> to the last fork.
+<strong style="color:var(--crimson);font-size:1.05em">&#10102;</strong> Arundhati reaches a chamber. <strong>Seal already on the door?</strong> Already visited, <strong>turn back</strong>.<br>
+<strong style="color:var(--crimson);font-size:1.05em">&#10103;</strong> No seal? She <strong>puts the seal on FIRST</strong>, then enters.<br>
+<strong style="color:var(--crimson);font-size:1.05em">&#10104;</strong> Reads the list of <strong>connected doors</strong> in this chamber.<br>
+<strong style="color:var(--crimson);font-size:1.05em">&#10105;</strong> Picks one door and <strong>goes all the way through it</strong>, as deep as it leads.<br>
+<strong style="color:var(--crimson);font-size:1.05em">&#10106;</strong> That door is fully done, so she comes back and <strong>tries the next door</strong>.<br>
+<strong style="color:var(--crimson);font-size:1.05em">&#10107;</strong> <strong>All doors done?</strong> Only now does she <strong>return</strong> to the chamber she came from.
 </div>
 </div>
 
@@ -329,17 +326,17 @@ Every story has a way to say "been here already". Shin Lim takes a <strong>polar
 <div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
 <div class="ritual-step">
 <div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10102;</div>
-<div style="background:#dc262612;font-size:.9em"><strong>Polaroid exists?</strong> Already visited, turn back.</div>
+<div style="background:#dc262612;font-size:.9em"><strong>Seal on the door?</strong> Already visited, turn back.</div>
 <div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>if node in visited: return</code></div>
 </div>
 <div class="ritual-step">
 <div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10103;</div>
-<div style="background:#dc262612;font-size:.9em"><strong>Snap takes a pic.</strong> Before exploring!</div>
+<div style="background:#dc262612;font-size:.9em"><strong>Seal it.</strong> Before entering!</div>
 <div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>visited.add(node)</code></div>
 </div>
 <div class="ritual-step">
 <div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10104;&#10105;</div>
-<div style="background:#dc262612;font-size:.9em"><strong>Check map</strong>, go DEEP into each venue.</div>
+<div style="background:#dc262612;font-size:.9em"><strong>Read the doors</strong>, go DEEP through each one.</div>
 <div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>for nei in graph[node]: dfs(nei)</code></div>
 </div>
 </div>
@@ -347,8 +344,8 @@ Every story has a way to say "been here already". Shin Lim takes a <strong>polar
 <div style="background:rgba(220,38,38,.08);border:2px solid var(--crimson);border-radius:10px;padding:18px;margin:16px 0">
 <div style="color:var(--crimson);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL (Grid)</div>
 <div style="font-size:.95em;color:var(--text);line-height:1.9">
-<strong style="color:var(--crimson);font-size:1.05em">&#10102;</strong> Shin Lim steps into a room. <strong>Off the map?</strong> Turn back. <strong>Wall?</strong> Turn back. <strong>Polaroid exists?</strong> Turn back.<br>
-<strong style="color:var(--crimson);font-size:1.05em">&#10103;</strong> Snap takes a pic of the room.<br>
+<strong style="color:var(--crimson);font-size:1.05em">&#10102;</strong> Arundhati steps into a chamber. <strong>Off the map?</strong> Turn back. <strong>Wall?</strong> Turn back. <strong>Seal on it?</strong> Turn back.<br>
+<strong style="color:var(--crimson);font-size:1.05em">&#10103;</strong> She seals the chamber.<br>
 <strong style="color:var(--crimson);font-size:1.05em">&#10104;</strong> Steps <strong>up, down, left, right</strong>, same ritual at each neighbor.
 </div>
 </div>
@@ -357,12 +354,12 @@ Every story has a way to say "been here already". Shin Lim takes a <strong>polar
 <div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
 <div class="ritual-step">
 <div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10102;</div>
-<div style="background:#dc262612;font-size:.9em"><strong>Off the map? Wall? Polaroid?</strong> Turn back.</div>
+<div style="background:#dc262612;font-size:.9em"><strong>Off the map? Wall? Seal?</strong> Turn back.</div>
 <div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>if r&lt;0 or r&gt;=R or c&lt;0 or c&gt;=C or grid[r][c]=='0': return</code></div>
 </div>
 <div class="ritual-step">
 <div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10103;</div>
-<div style="background:#dc262612;font-size:.9em"><strong>Snap takes a pic</strong> of the room.</div>
+<div style="background:#dc262612;font-size:.9em"><strong>Seal</strong> the chamber.</div>
 <div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>grid[r][c] = '0'  # or visited.add((r,c))</code></div>
 </div>
 <div class="ritual-step">
@@ -376,15 +373,15 @@ Every story has a way to say "been here already". Shin Lim takes a <strong>polar
 <div style="color:var(--crimson);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 <div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
-<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG: Snap AFTER exploring</div>
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG: seal AFTER exploring</div>
 <pre style="font-size:.82em;margin:0"><code>for nei in graph[node]:
     dfs(nei)
 visited.add(node)  # TOO LATE!
-# Revisits same venue = infinite loop</code></pre>
+# Same chamber entered again = infinite loop</code></pre>
 </div>
 <div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
-<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT: Snap BEFORE exploring</div>
-<pre style="font-size:.82em;margin:0"><code>visited.add(node)     # snap FIRST
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT: seal BEFORE exploring</div>
+<pre style="font-size:.82em;margin:0"><code>visited.add(node)     # seal FIRST
 for nei in graph[node]:
     dfs(nei)           # then explore</code></pre>
 </div>
@@ -807,7 +804,7 @@ for _ in range(n-1):       # n-1 rounds
 <h2>18 Problems by Scene</h2>
 
 <!-- ============ SCENE 1 PROBLEMS ============ -->
-<h3 style="color:var(--crimson);border-bottom:1px solid var(--crimson);padding-bottom:6px">Scene 1: Shin Lim's Vegas Adventure (DFS)</h3>
+<h3 style="color:var(--crimson);border-bottom:1px solid var(--crimson);padding-bottom:6px">Scene 1: Arundhati's Haunted Palace (DFS)</h3>
 
 <!-- PROBLEM 1: Number of Islands -->
 <div class="deriv" onclick="this.classList.toggle('open')">
@@ -816,11 +813,11 @@ for _ in range(n-1):       # n-1 rounds
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a 2D grid of <code>'1'</code> (land) and <code>'0'</code> (water), count the number of islands. An island is surrounded by water and formed by connecting adjacent lands horizontally or vertically.</div>
 
 <div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
-Prerequisites? No. Grouping? Not merging. Weighted? No. Waves? No. &rarr; <span class="tag t1">Scene 1</span> Shin Lim exploring a grid.
+Prerequisites? No. Grouping? Not merging. Weighted? No. Waves? No. &rarr; <span class="tag t1">Scene 1</span> Arundhati exploring a grid.
 </div>
 
 <div class="sbox"><div class="sl" style="color:var(--crimson)">THE RITUAL</div>
-Shin Lim walks the grid, cell by cell. Sees a land cell with no polaroid yet (<code>'1'</code>)? Starts a <strong>new trip</strong>. Goes deep through all connected land, marking each cell (<code>'1'</code> &rarr; <code>'0'</code>). Trip done = one island found. Move to the next unmarked cell. Count the trips.
+Arundhati walks the grid, cell by cell. Sees a land cell with no seal yet (<code>'1'</code>)? Starts a <strong>new trip</strong>. Goes deep through all connected land, marking each cell (<code>'1'</code> &rarr; <code>'0'</code>). Trip done = one island found. Move to the next unmarked cell. Count the trips.
 </div>
 
 <div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
@@ -857,7 +854,7 @@ Shin Lim walks the grid, cell by cell. Sees a land cell with no polaroid yet (<c
 Same as Number of Islands but track the SIZE of each trip. &rarr; <span class="tag t1">Scene 1</span></div>
 
 <div class="sbox"><div class="sl" style="color:var(--crimson)">THE RITUAL</div>
-Same trip as #200, but now Shin Lim <strong>counts</strong> how many cells he visits on each trip. After each trip, he checks if it was his biggest yet. Reports the biggest.
+Same trip as #200, but now Arundhati <strong>counts</strong> how many cells she visits on each trip. After each trip, she checks if it was her biggest yet. Reports the biggest.
 </div>
 
 <div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
@@ -887,7 +884,7 @@ Same trip as #200, but now Shin Lim <strong>counts</strong> how many cells he vi
 No prerequisites, no grouping, no weights, no waves. Just explore every node. &rarr; <span class="tag t1">Scene 1</span></div>
 
 <div class="sbox"><div class="sl" style="color:var(--crimson)">THE RITUAL</div>
-Shin Lim walks through the original map. At each place, he builds an <strong>exact replica</strong> on a new map. He keeps a <strong>mirror map</strong> (old &rarr; new) so he never clones the same place twice. When wiring up roads, he uses the mirror to connect the cloned places.
+Arundhati walks through the original palace. At each chamber, she builds an <strong>exact replica</strong> on a new map. She keeps a <strong>mirror map</strong> (old &rarr; new) so she never clones the same chamber twice. When wiring up doors, she uses the mirror to connect the cloned chambers.
 </div>
 
 <div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
@@ -962,7 +959,7 @@ No prerequisites, no grouping, no weights, no waves. Pure exploration. &rarr; <s
 Same structure as Pacific Atlantic &mdash; border-based DFS. &rarr; <span class="tag t1">Scene 1</span></div>
 
 <div class="sbox"><div class="sl" style="color:var(--crimson)">THE RITUAL</div>
-<strong>Save the border-connected, capture everything else.</strong> Shin Lim explores from every <code>'O'</code> cell on the border and marks them SAFE (temporary mark <code>'S'</code>). Then sweeps the whole grid: anything still <code>'O'</code> &rarr; captured (<code>'X'</code>). Anything <code>'S'</code> &rarr; restore to <code>'O'</code>.
+<strong>Save the border-connected, capture everything else.</strong> Arundhati explores from every <code>'O'</code> cell on the border and marks them SAFE (temporary mark <code>'S'</code>). Then sweeps the whole grid: anything still <code>'O'</code> &rarr; captured (<code>'X'</code>). Anything <code>'S'</code> &rarr; restore to <code>'O'</code>.
 </div>
 
 <div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
@@ -1001,7 +998,7 @@ Same structure as Pacific Atlantic &mdash; border-based DFS. &rarr; <span class=
 It's about traversing a graph using every EDGE exactly once (Eulerian path). No weights, no grouping, no prerequisites. &rarr; <span class="tag t1">Scene 1</span> (DFS variant)</div>
 
 <div class="sbox"><div class="sl" style="color:var(--crimson)">THE RITUAL</div>
-Shin Lim must use <strong>every road exactly once</strong>. At each place, he sorts the roads alphabetically and <strong>pops</strong> the first one (removes it so he never takes it again). He adds the place to his path <strong>AFTER</strong> all roads are used (post-order). Final path is <strong>reversed</strong>.
+Arundhati must use <strong>every door exactly once</strong>. In each chamber, she sorts the doors alphabetically and <strong>pops</strong> the first one (removes it so she never takes it again). She adds the chamber to her path <strong>AFTER</strong> all roads are used (post-order). Final path is <strong>reversed</strong>.
 </div>
 
 <div class="sbox"><div class="sl" style="color:var(--blue)">WHAT CHANGES FROM THE TEMPLATE?</div>
@@ -1569,7 +1566,7 @@ Weighted edges + shortest path with a constraint. &rarr; <span class="tag t5">Sc
 <h3>Scene Summary Table</h3>
 <table>
 <tr><th>Scene</th><th>Character</th><th>Algorithm</th><th>Key Data Structure</th><th>When to Use</th></tr>
-<tr><td><span class="tag t1">1</span></td><td>Shin Lim</td><td>DFS</td><td>Recursion + visited set</td><td>Explore connected regions, traversal, path finding</td></tr>
+<tr><td><span class="tag t1">1</span></td><td>Arundhati</td><td>DFS</td><td>Recursion + visited set</td><td>Explore connected regions, traversal, path finding</td></tr>
 <tr><td><span class="tag t2">2</span></td><td>Prabhas</td><td>BFS</td><td>Queue (deque) + visited set</td><td>Shortest unweighted path, level-by-level, simultaneous spread</td></tr>
 <tr><td><span class="tag t3">3</span></td><td>Gordon Ramsay</td><td>Topological Sort</td><td>In-degree array + queue</td><td>Prerequisites, ordering, dependency chains</td></tr>
 <tr><td><span class="tag t4">4</span></td><td>The Board Room</td><td>Union-Find</td><td>Parent + rank arrays</td><td>Merge companies, count components, detect cycles in undirected</td></tr>

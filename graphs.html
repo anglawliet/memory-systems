@@ -529,54 +529,104 @@ visited.add(node)  # TOO LATE!
 <div style="background:var(--card);border:2px solid var(--amber);border-radius:12px;padding:20px;margin-bottom:24px">
 
 <div style="color:var(--amber);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 3: Ramsay's Pizza Night</div>
-<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">Topological Sort &mdash; Gordon Ramsay, Indie (in_degree[]), Cue (queue)</div>
+<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">Topological Sort: Indie the ticket rail = in_degree[], Cue the service bell = queue</div>
 
-<img src="graphs/images/scene_3_A.png" alt="Scene 3 character reference — Gordon Ramsay with Indie (ticket rail) and Cue (service bell)" class="scene-img">
-<img src="graphs/images/scene_3_C_1.png" alt="Scene 3 C1 — Topo sort intro, kitchen setup, and Step 1: fire the dough (fan-out)" class="scene-img">
-<img src="graphs/images/scene_3_C_2.png" alt="Scene 3 C2 — Steps 2-6: sauce, salad, garlic bread, pizza, feast platter, SERVICE!" class="scene-img">
-<img src="graphs/images/scene_3_C_3.png" alt="Scene 3 C3 — Cycle detection (impossible menu), multiple valid orders, key insight (it's BFS)" class="scene-img">
-<img src="graphs/images/scene_3_C_4.png" alt="Scene 3 C4 — Recap, kitchen ritual, full Python code, three golden rules, O(V+E) complexity" class="scene-img">
+<img src="graphs/images/topo_kahn_steps.png" alt="Ramsay's Pizza Night: count what each dish waits on, queue the zeros, pop from the left, decrement neighbors, and new zeros join the back" class="scene-img">
 
 <div style="background:rgba(245,158,11,.08);border:2px solid var(--amber);border-radius:10px;padding:18px;margin-bottom:16px">
 <div style="color:var(--amber);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL</div>
 <div style="font-size:.95em;color:var(--text);line-height:1.9">
-<strong style="color:var(--amber);font-size:1.05em">&#10102;</strong> Ramsay counts how many <strong>other dishes</strong> each dish is waiting on (in-degree).<br>
-<strong style="color:var(--amber);font-size:1.05em">&#10103;</strong> Dishes waiting on <strong>NOTHING</strong> are ready to cook. Put them at the <strong>service bell</strong>.<br>
-<strong style="color:var(--amber);font-size:1.05em">&#10104;</strong> Take a dish from the bell. <strong>Cook it.</strong> Cross it off the menu.<br>
-<strong style="color:var(--amber);font-size:1.05em">&#10105;</strong> Every dish that was <strong>waiting on</strong> that one &rarr; its waiting count drops by 1. Hits zero? <strong>Send it to the bell.</strong><br>
-<strong style="color:var(--amber);font-size:1.05em">&#10106;</strong> Bell empty? If <strong>every dish is cooked</strong> &rarr; valid order. If some <strong>never got cooked</strong> &rarr; impossible menu (cycle!).
+<strong style="color:var(--amber);font-size:1.05em">&#10102;</strong> Ramsay writes on <strong>Indie the ticket rail</strong> how many dishes each dish is waiting on (in-degree).<br>
+<strong style="color:var(--amber);font-size:1.05em">&#10103;</strong> Dishes waiting on <strong>nothing</strong> line up at <strong>Cue the service bell</strong>. Front on the left, back on the right.<br>
+<strong style="color:var(--amber);font-size:1.05em">&#10104;</strong> <strong>POP from the left.</strong> Cook that dish and write it on the order pad.<br>
+<strong style="color:var(--amber);font-size:1.05em">&#10105;</strong> Every dish that was waiting on it: <strong>its count drops by 1</strong>.<br>
+<strong style="color:var(--amber);font-size:1.05em">&#10106;</strong> Count hits <strong>zero</strong>? It <strong>joins the back</strong> of the line. Not zero yet? It keeps waiting outside.<br>
+<strong style="color:var(--amber);font-size:1.05em">&#10107;</strong> Line empty? If <strong>every dish got cooked</strong>, the order pad is your answer. If some <strong>never got cooked</strong>, the menu is impossible (cycle!).
 </div>
 <div style="margin-top:10px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:6px;font-size:.88em;color:var(--muted)">
-<strong style="color:var(--amber)">Why cycle = impossible:</strong> If dish A waits on B and B waits on A, neither ever reaches zero. They sit uncooked forever. That's a deadlock.
+<strong style="color:var(--amber)">It's just BFS with one extra rule.</strong> In BFS, anyone new joins the line. Here, a dish joins the line only when its count hits 0.
 </div>
 </div>
+
+<div style="background:rgba(245,158,11,.12);border-radius:8px;padding:14px;margin-bottom:16px">
+<div style="color:var(--amber);font-weight:700;margin-bottom:8px">The Whole Night, step by step</div>
+<div style="font-size:.88em;color:var(--muted);margin-bottom:8px">Menu: Dough &rarr; Garlic Bread, Dough &rarr; Pizza, Sauce &rarr; Pizza, and Garlic Bread, Pizza, Salad &rarr; Feast Platter.</div>
+<table style="font-size:.85em">
+<tr><th>Pop</th><th>Counts that drop</th><th>Joins the back</th><th>Line after (front &rarr; back)</th></tr>
+<tr><td>start</td><td>Dough 0, Sauce 0, Salad 0, Garlic Bread 1, Pizza 2, Feast 3</td><td>Dough, Sauce, Salad</td><td>Dough, Sauce, Salad</td></tr>
+<tr><td>Dough</td><td>Garlic Bread 1&rarr;0, Pizza 2&rarr;1</td><td>Garlic Bread</td><td>Sauce, Salad, Garlic Bread</td></tr>
+<tr><td>Sauce</td><td>Pizza 1&rarr;0</td><td>Pizza</td><td>Salad, Garlic Bread, Pizza</td></tr>
+<tr><td>Salad</td><td>Feast 3&rarr;2</td><td>none</td><td>Garlic Bread, Pizza</td></tr>
+<tr><td>Garlic Bread</td><td>Feast 2&rarr;1</td><td>none</td><td>Pizza</td></tr>
+<tr><td>Pizza</td><td>Feast 1&rarr;0</td><td>Feast Platter</td><td>Feast Platter</td></tr>
+<tr><td>Feast Platter</td><td>none</td><td>none</td><td>empty</td></tr>
+</table>
+<div style="font-size:.9em;color:var(--text);margin-top:6px"><strong>Order pad:</strong> Dough, Sauce, Salad, Garlic Bread, Pizza, Feast Platter. All 6 cooked, so it's a valid order.</div>
+</div>
+
+<img src="graphs/images/topo_python_code.png" alt="Topological sort Python code, with each block of code matched to one kitchen step" class="scene-img">
 
 <div style="color:var(--gold2);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">RITUAL &rarr; CODE</div>
 <div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
 <div class="ritual-step">
 <div style="background:#d9770625;font-weight:700;color:var(--amber);display:flex;align-items:center;justify-content:center">&#10102;</div>
-<div style="background:#d9770612;font-size:.9em"><strong>Count what each dish waits on.</strong></div>
-<div style="background:#d9770608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>in_deg = [0]*n; for u,v in edges: in_deg[v] += 1</code></div>
+<div style="background:#d9770612;font-size:.9em"><strong>Fill Indie's ticket rail.</strong> Count what each dish waits on.</div>
+<div style="background:#d9770608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>graph[u].append(v); in_deg[v] += 1</code></div>
 </div>
 <div class="ritual-step">
 <div style="background:#d9770625;font-weight:700;color:var(--amber);display:flex;align-items:center;justify-content:center">&#10103;</div>
-<div style="background:#d9770612;font-size:.9em"><strong>Dishes waiting on nothing</strong> go to the bell.</div>
-<div style="background:#d9770608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>q = deque(i for i in range(n) if in_deg[i]==0)</code></div>
+<div style="background:#d9770612;font-size:.9em"><strong>Zeros line up at Cue.</strong></div>
+<div style="background:#d9770608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>q = deque(i for i in range(n) if in_deg[i] == 0)</code></div>
 </div>
 <div class="ritual-step">
 <div style="background:#d9770625;font-weight:700;color:var(--amber);display:flex;align-items:center;justify-content:center">&#10104;</div>
-<div style="background:#d9770612;font-size:.9em"><strong>Cook it.</strong> Cross it off the menu.</div>
+<div style="background:#d9770612;font-size:.9em"><strong>POP from the left.</strong> Write it on the pad.</div>
 <div style="background:#d9770608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>node = q.popleft(); order.append(node)</code></div>
 </div>
 <div class="ritual-step">
 <div style="background:#d9770625;font-weight:700;color:var(--amber);display:flex;align-items:center;justify-content:center">&#10105;</div>
-<div style="background:#d9770612;font-size:.9em"><strong>Lower the waiting counts.</strong> Hits zero? Send to the bell.</div>
-<div style="background:#d9770608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>for nei in graph[node]: in_deg[nei]-=1; if 0: q.append(nei)</code></div>
+<div style="background:#d9770612;font-size:.9em"><strong>Drop the waiting counts.</strong></div>
+<div style="background:#d9770608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>for nei in graph[node]: in_deg[nei] -= 1</code></div>
 </div>
 <div class="ritual-step">
 <div style="background:#d9770625;font-weight:700;color:var(--amber);display:flex;align-items:center;justify-content:center">&#10106;</div>
+<div style="background:#d9770612;font-size:.9em"><strong>Hit zero? Join the back.</strong></div>
+<div style="background:#d9770608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>if in_deg[nei] == 0: q.append(nei)</code></div>
+</div>
+<div class="ritual-step">
+<div style="background:#d9770625;font-weight:700;color:var(--amber);display:flex;align-items:center;justify-content:center">&#10107;</div>
 <div style="background:#d9770612;font-size:.9em"><strong>Everything cooked?</strong> Valid. Some left? Cycle!</div>
-<div style="background:#d9770608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>return len(order) == n</code></div>
+<div style="background:#d9770608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>return order if len(order) == n else []</code></div>
+</div>
+</div>
+
+<pre><code>from collections import deque
+
+def topo_sort(n, edges):
+    graph = [[] for _ in range(n)]
+    in_deg = [0] * n
+    for u, v in edges:
+        graph[u].append(v)       <span style="color:#6b9955"># u comes before v</span>
+        in_deg[v] += 1           <span style="color:#6b9955"># v waits on one more dish</span>
+
+    q = deque(i for i in range(n) if in_deg[i] == 0)  <span style="color:#6b9955"># zeros line up</span>
+    order = []                   <span style="color:#6b9955"># the order pad</span>
+    while q:
+        node = q.popleft()       <span style="color:#6b9955"># POP from the left</span>
+        order.append(node)       <span style="color:#6b9955"># cooked!</span>
+        for nei in graph[node]:
+            in_deg[nei] -= 1     <span style="color:#6b9955"># one less thing to wait on</span>
+            if in_deg[nei] == 0:
+                q.append(nei)    <span style="color:#6b9955"># ready, join the back</span>
+
+    return order if len(order) == n else []  <span style="color:#6b9955"># cycle = []</span></code></pre>
+
+<img src="graphs/images/topo_cycle.png" alt="Cycle detection: Pizza and Garlic Bread wait on each other, the queue goes empty with dishes still waiting, so there is a cycle" class="scene-img">
+
+<div style="background:rgba(239,68,68,.08);border:1px solid var(--red);border-radius:8px;padding:14px;margin-bottom:16px">
+<div style="color:var(--red);font-weight:700;margin-bottom:6px">The Impossible Menu: how cycles show up</div>
+<div style="font-size:.9em;color:var(--text)">
+Say Pizza waits on Garlic Bread, and Garlic Bread waits on Pizza. Neither count can ever reach 0, so <strong>neither ever joins the line</strong>. The line goes empty while they're still waiting. That's the whole check: <strong>line empty + dishes left = cycle</strong>. In code, <code>len(order) &lt; n</code>.
 </div>
 </div>
 
@@ -584,14 +634,14 @@ visited.add(node)  # TOO LATE!
 <div style="color:var(--amber);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 <div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
-<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; building in-degree but forgetting adjacency list</div>
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG: counting, but no menu arrows</div>
 <pre style="font-size:.82em;margin:0"><code>for u, v in edges:
     in_deg[v] += 1
     # but where is graph[u].append(v)?
     # Can't find neighbors later!</code></pre>
 </div>
 <div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
-<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; build BOTH at the same time</div>
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT: build BOTH at the same time</div>
 <pre style="font-size:.82em;margin:0"><code>for u, v in edges:
     graph[u].append(v)
     in_deg[v] += 1</code></pre>
@@ -599,9 +649,9 @@ visited.add(node)  # TOO LATE!
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 <div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
-<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; not checking for cycle</div>
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG: not checking for a cycle</div>
 <pre style="font-size:.82em;margin:0"><code>return order  # What if len(order) < n?
-              # Some nodes were in a cycle
+              # Some dishes were in a cycle
               # and never reached 0!</code></pre>
 </div>
 <div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">

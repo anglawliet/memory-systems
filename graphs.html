@@ -621,89 +621,38 @@ parent[root_b] = root_a  # merge the bosses</code></pre>
 <div style="background:var(--card);border:2px solid var(--emerald);border-radius:12px;padding:20px;margin-bottom:24px">
 
 <div style="color:var(--emerald);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 5: Dij the Traveler</div>
-<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">Dijkstra &mdash; Dex (dist), Poppy (heap), Shetty (settled set)</div>
+<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">Dijkstra: Dex = dist, Poppy = min-heap, Shetty = settled set</div>
 
-<img src="graphs/images/scene_5_A.png" alt="Scene 5 character reference — Dij with Dex (dist), Poppy (heap), Shetty (settled set)" class="scene-img">
-<img src="graphs/images/scene_5_C_1.png" alt="Scene 5 C1 — Dijkstra intro, setup, and iteration 1 with Dex, Poppy, and Shetty" class="scene-img">
-<img src="graphs/images/scene_5_C_2.png" alt="Scene 5 C2 — Relax Seattle neighbors, iteration 2 Portland, iteration 3 SF" class="scene-img">
-<img src="graphs/images/scene_5_C_3.png" alt="Scene 5 C3 — Iteration 4 Vegas, stale entry, all done with final distances" class="scene-img">
-<img src="graphs/images/scene_5_C_4.png" alt="Scene 5 C4 — Recap, repeat cycle, full Python code, and time complexity" class="scene-img">
-
-<div style="background:rgba(5,150,105,.08);border:2px solid var(--emerald);border-radius:10px;padding:18px;margin-bottom:16px">
-<div style="color:var(--emerald);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL</div>
-<div style="font-size:.95em;color:var(--text);line-height:1.9">
-<strong style="color:var(--emerald);font-size:1.05em">&#10102;</strong> Dij opens his <strong>notebook</strong> &mdash; writes <strong>&infin;</strong> for every city except the start (distance = 0). Seeds the <strong>heap queue</strong> with the start city.<br>
-<strong style="color:var(--emerald);font-size:1.05em">&#10103;</strong> <strong>Pop</strong> the closest city from the heap queue &mdash; smallest distance always comes out first.<br>
-<strong style="color:var(--emerald);font-size:1.05em">&#10104;</strong> Already <strong>DONE-stamped?</strong> Stale ticket &mdash; <strong>skip it</strong>.<br>
-<strong style="color:var(--emerald);font-size:1.05em">&#10105;</strong> Stamp it <strong>DONE</strong>. Its distance is now final.<br>
-<strong style="color:var(--emerald);font-size:1.05em">&#10106;</strong> <strong>Relax neighbors:</strong> for each road out, calculate <code>my dist + road weight</code>. <strong>Shorter than notebook?</strong> Update notebook, push neighbor into the heap queue.<br>
-<strong style="color:var(--emerald);font-size:1.05em">&#10107;</strong> Repeat from &#10103;. Stop when the heap queue is <strong>empty</strong>.
-</div>
-<div style="margin-top:10px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:6px;font-size:.88em;color:var(--muted)">
-<strong style="color:var(--emerald)">Three magic items:</strong> <code>dist</code> (notebook &mdash; best-known distance per city), <code>queue</code> (min-heap &mdash; always hands back the smallest ticket first), <code>settled</code> (DONE stamp set &mdash; once stamped, never touched again). Non-negative edges only!
-</div>
-</div>
-
-<div style="color:var(--gold2);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">RITUAL &rarr; CODE</div>
-<div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
-<div class="ritual-step">
-<div style="background:#059669 25;font-weight:700;color:var(--emerald);display:flex;align-items:center;justify-content:center">&#10102;</div>
-<div style="background:#05966912;font-size:.9em"><strong>Notebook = &infin; everywhere.</strong> Start = 0. Seed heap.</div>
-<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>dist={c:inf for c in graph}; dist[start]=0; queue=[(0,start)]; settled=set()</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#05966925;font-weight:700;color:var(--emerald);display:flex;align-items:center;justify-content:center">&#10103;</div>
-<div style="background:#05966912;font-size:.9em"><strong>Pop closest</strong> from heap queue.</div>
-<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>d, city = heappop(queue)</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#05966925;font-weight:700;color:var(--emerald);display:flex;align-items:center;justify-content:center">&#10104;</div>
-<div style="background:#05966912;font-size:.9em"><strong>DONE-stamped?</strong> Stale &mdash; skip.</div>
-<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>if city in settled: continue</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#05966925;font-weight:700;color:var(--emerald);display:flex;align-items:center;justify-content:center">&#10105;</div>
-<div style="background:#05966912;font-size:.9em"><strong>Stamp DONE.</strong> Distance is final.</div>
-<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>settled.add(city)</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#05966925;font-weight:700;color:var(--emerald);display:flex;align-items:center;justify-content:center">&#10106;</div>
-<div style="background:#05966912;font-size:.9em"><strong>Relax neighbors.</strong> Shorter? Update &amp; push.</div>
-<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>new_dist=d+w; if new_dist&lt;dist[nei]: dist[nei]=new_dist; heappush(queue,(new_dist,nei))</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#05966925;font-weight:700;color:var(--emerald);display:flex;align-items:center;justify-content:center">&#10107;</div>
-<div style="background:#05966912;font-size:.9em"><strong>Repeat.</strong> Stop when heap empty.</div>
-<div style="background:#05966908;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>while queue:  # outer loop wraps &#10103;</code></div>
-</div>
-</div>
+<img src="graphs/images/dj_code.png" alt="Dijkstra's algorithm: the cast, the road map, the full Python code, and the four steps: pop the closest city, skip if settled, settle it, relax its neighbors" class="scene-img">
+<img src="graphs/images/dj_worked.png" alt="One worked example from Seattle: distances improve step by step as Poppy pops the closest city and Dex updates shorter paths" class="scene-img">
+<img src="graphs/images/dj_stale.png" alt="Stale heap entries: an old (25, Vegas) ticket stays in the heap, the shorter (22, Vegas) is processed first, and the old one is skipped later" class="scene-img">
 
 <div style="background:rgba(5,150,105,.06);border:1px solid #047857;border-radius:10px;padding:18px;margin-top:12px">
 <div style="color:var(--emerald);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 <div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
-<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; no DONE check</div>
-<pre style="font-size:.82em;margin:0"><code>d, city = heappop(queue)
-# Process even if already stamped DONE!
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG: no settled check</div>
+<pre style="font-size:.82em;margin:0"><code>d, city = heappop(heap)
+# Processes a city even if already settled!
 # Wastes time on stale tickets.</code></pre>
 </div>
 <div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
-<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; skip DONE-stamped cities</div>
-<pre style="font-size:.82em;margin:0"><code>d, city = heappop(queue)
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT: skip settled cities</div>
+<pre style="font-size:.82em;margin:0"><code>d, city = heappop(heap)
 if city in settled:
-    continue  # already DONE — skip</code></pre>
+    continue  # already settled, skip</code></pre>
 </div>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 <div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
-<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; using Dijkstra with negative weights</div>
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG: Dijkstra with negative weights</div>
 <pre style="font-size:.82em;margin:0"><code># Road weight = -5?
-# Dijkstra assumes: once DONE-stamped,
+# Dijkstra assumes: once settled,
 # no shorter path exists.
 # Negative edges break this!</code></pre>
 </div>
 <div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
-<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; use Bellman-Ford for negative edges</div>
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT: use Bellman-Ford for negative edges</div>
 <pre style="font-size:.82em;margin:0"><code># Negative edges? Use Bellman-Ford:
 for _ in range(n-1):       # n-1 rounds
     for u,v,w in edges:     # relax ALL

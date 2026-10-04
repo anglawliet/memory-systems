@@ -71,233 +71,13 @@ td{padding:10px 12px;border:1px solid var(--border)}
 
 <div class="wrap">
 <div class="nav">
-<button class="on" onclick="go('map')">The Graph Map</button>
-<button onclick="go('flowchart')">Flowchart</button>
-<button onclick="go('scenes')">5 Scenes</button>
+<button class="on" onclick="go('scenes')">5 Scenes</button>
 <button onclick="go('problems')">18 Problems</button>
 <button onclick="go('quiz')">Quiz</button>
 </div>
 
-<!-- ==================== TAB 1: THE GRAPH MAP ==================== -->
-<div class="sec vis" id="sec-map">
-
-<h2>The Graph Map</h2>
-<p>Think of every graph as a city map: places connected by roads. Every graph problem is about moving around that map in a smart way.</p>
-
-<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px">
-<h3 style="margin-top:0;color:var(--crimson)">The Graph Map: What Everything Means</h3>
-
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
-
-<div style="background:rgba(220,38,38,.06);border:1px solid var(--crimson);border-radius:8px;padding:16px">
-<div style="font-size:1.1em;font-weight:700;color:var(--crimson);margin-bottom:8px">Place = Node</div>
-<div style="font-size:.95em;color:var(--text)">
-Each place on the map is a node, like a chamber in a palace or a city on a road trip. Some places have a <strong>number on the sign</strong> out front. That's the node's value.<br><br>
-<strong>In code:</strong> A place = <code>node</code>. Number on the sign = <code>node.val</code> or <code>grid[r][c]</code>.
-</div>
-</div>
-
-<div style="background:rgba(220,38,38,.06);border:1px solid var(--crimson);border-radius:8px;padding:16px">
-<div style="font-size:1.1em;font-weight:700;color:var(--crimson);margin-bottom:8px">Road = Edge</div>
-<div style="font-size:.95em;color:var(--text)">
-Roads connect places. Some roads are <strong>one-way</strong> (directed), so you can only drive one direction. Some are <strong>two-way</strong> (undirected). Some roads have <strong>tolls</strong> (weights or costs).<br><br>
-<strong>In code:</strong> Road = edge. One-way = directed edge. Toll = weight. All roads out of a place = <code>graph[node]</code>.
-</div>
-</div>
-
-<div style="background:rgba(220,38,38,.06);border:1px solid var(--crimson);border-radius:8px;padding:16px">
-<div style="font-size:1.1em;font-weight:700;color:var(--crimson);margin-bottom:8px">Visited Mark = Visited</div>
-<div style="font-size:.95em;color:var(--text)">
-Every story has a way to say "been here already". Arundhati puts a <strong>seal</strong> on each chamber door. Prabhas gives each guest a <strong>wristband</strong>. See the mark? <strong>Skip it.</strong> Nobody gets visited twice.<br><br>
-<strong>In code:</strong> The mark = <code>visited</code> set. Check: <code>if node in visited: return</code>. Mark: <code>visited.add(node)</code>.
-</div>
-</div>
-
-<div style="background:rgba(220,38,38,.06);border:1px solid var(--crimson);border-radius:8px;padding:16px">
-<div style="font-size:1.1em;font-weight:700;color:var(--crimson);margin-bottom:8px">Two Types of Maps</div>
-<div style="font-size:.95em;color:var(--text)">
-<strong>Road Map</strong> (adjacency list): Named places with specific roads between them. Each place has a <strong>signpost</strong> listing where its roads lead.<br>
-<code>graph = {A: [B, C], B: [A, D]}</code><br><br>
-<strong>Grid Map</strong> (2D matrix): A flat grid of cells, like city blocks. Each cell connects to <strong>4 neighbors</strong> (N/S/E/W). Land = <code>'1'</code>, Water = <code>'0'</code>.
-</div>
-</div>
-</div>
-
-<h2>Quick Reference: Map = Graph</h2>
-
-<div class="map-grid">
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x1F4CD;</span><div><div class="lbl">Place</div><div class="sub">A spot on the map you can visit</div></div></div>
-<div class="map-cell"><span class="icon">&#x2B55;</span><div><div class="lbl">Node / Vertex</div><code>node</code> or <code>grid[r][c]</code></div></div>
-</div>
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x1F6E4;</span><div><div class="lbl">Road</div><div class="sub">A road connecting two places</div></div></div>
-<div class="map-cell"><span class="icon">&#x27A1;</span><div><div class="lbl">Edge</div><code>graph[node]</code> = list of neighbors</div></div>
-</div>
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x1F4F8;</span><div><div class="lbl">Visited Mark</div><div class="sub">Seal or wristband = been here already</div></div></div>
-<div class="map-cell"><span class="icon" style="color:var(--crimson)">&#x2714;</span><div><div class="lbl">Visited Set</div><code>visited.add(node)</code></div></div>
-</div>
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x1FAA7;</span><div><div class="lbl">Signpost</div><div class="sub">List of roads out of this place</div></div></div>
-<div class="map-cell"><span class="icon">&#x1F4CB;</span><div><div class="lbl">Adjacency List</div><code>for nei in graph[node]</code></div></div>
-</div>
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x1F30D;</span><div><div class="lbl">Grid Map</div><div class="sub">Flat grid, 4 directions (N/S/E/W)</div></div></div>
-<div class="map-cell"><span class="icon">&#x1F4CA;</span><div><div class="lbl">2D Matrix</div><code>grid[r][c]</code>, 4-directional</div></div>
-</div>
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x1F4B0;</span><div><div class="lbl">Road Toll</div><div class="sub">Cost/weight on a road</div></div></div>
-<div class="map-cell"><span class="icon">&#x2696;</span><div><div class="lbl">Edge Weight</div><code>graph[node] = [(nei, weight)]</code></div></div>
-</div>
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x1F3E2;</span><div><div class="lbl">Company</div><div class="sub">Group of connected places under one CEO</div></div></div>
-<div class="map-cell"><span class="icon">&#x1F517;</span><div><div class="lbl">Connected Component</div><code>find(x) == find(y)</code></div></div>
-</div>
-</div>
-
-<h3>The Characters</h3>
-<div class="map-grid">
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x1F3F0;</span><div><div class="lbl">Arundhati (the haunted palace)</div><div class="sub">Goes as deep as she can through one door, hits a dead end, comes back and tries the next door.</div></div></div>
-<div class="map-cell"><span class="icon">&#x1F504;</span><div><div class="lbl">DFS (Scene 1)</div><code>def dfs(node):</code></div></div>
-</div>
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x1F35B;</span><div><div class="lbl">Prabhas (the food line)</div><div class="sub">Serves the front of the line. New people join the back, so closer people always get served first.</div></div></div>
-<div class="map-cell"><span class="icon">&#x1F4E6;</span><div><div class="lbl">BFS (Scene 2)</div><code>deque([start])</code></div></div>
-</div>
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x1F355;</span><div><div class="lbl">Gordon Ramsay (the kitchen)</div><div class="sub">Won't cook a dish until everything it needs is ready. Plans the order by dependencies.</div></div></div>
-<div class="map-cell"><span class="icon">&#x1F4CB;</span><div><div class="lbl">Topological Sort (Scene 3)</div><code>in_degree[node]</code></div></div>
-</div>
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x1F3E2;</span><div><div class="lbl">The Board Room (mergers)</div><div class="sub">Companies merge through acquisitions. Track who reports to which CEO.</div></div></div>
-<div class="map-cell"><span class="icon">&#x1F332;</span><div><div class="lbl">Union-Find (Scene 4)</div><code>parent[], find(), union()</code></div></div>
-</div>
-<div class="map-row">
-<div class="map-cell"><span class="icon">&#x1F9ED;</span><div><div class="lbl">Dij the Traveler</div><div class="sub">Roads have distances. Dij always visits the closest city next.</div></div></div>
-<div class="map-cell"><span class="icon">&#x1F4B0;</span><div><div class="lbl">Dijkstra (Scene 5)</div><code>heapq, dist[], settled</code></div></div>
-</div>
-</div>
-
-</div>
-</div>
-
-<!-- ==================== TAB 2: FLOWCHART ==================== -->
-<div class="sec" id="sec-flowchart">
-
-<h2>The Decision Flowchart</h2>
-<p>Four questions. That's all you need to pick the right scene for ANY graph problem.</p>
-
-<div class="flow-step" style="border-color:var(--crimson);background:rgba(220,38,38,.05)">
-<div style="font-size:.7em;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">START</div>
-<strong style="color:var(--crimson);font-size:1.1em">Read the graph problem</strong>
-</div>
-
-<div class="flow-arrow">&darr;</div>
-
-<!-- Q0: Prerequisites/ordering? -->
-<div class="flow-step q-step">
-<div style="font-size:.7em;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Q0</div>
-<strong>Do you need to plan the ORDER things happen in?</strong>
-<div style="background:rgba(251,191,36,.08);border-radius:6px;padding:10px;margin-top:8px;font-size:.88em">
-<div style="color:var(--gold2);font-weight:700;margin-bottom:4px">How to spot it:</div>
-<div style="color:var(--text)">The problem says <em>"prerequisites"</em>, <em>"ordering"</em>, <em>"before/after"</em>, <em>"dependency"</em>, <em>"alien dictionary"</em>.<br>
-<strong>Key signal:</strong> You need to find a valid <strong>sequence</strong> where dependencies are satisfied.</div>
-</div>
-</div>
-
-<div class="flow-branch">
-<div class="flow-step s3" style="flex:.6">
-<strong style="color:var(--amber)">YES &rarr;</strong>
-<div><span class="tag t3">Scene 3</span></div>
-<div style="margin-top:6px"><strong style="color:var(--amber);font-size:1.05em">RAMSAY'S PIZZA NIGHT</strong></div>
-<div style="font-size:.85em;color:var(--muted);margin-top:4px">Topological Sort. Count deps, process zero-dep first.</div>
-</div>
-<div style="display:flex;align-items:center;color:var(--muted);font-weight:700">NO &darr;</div>
-</div>
-
-<div class="flow-arrow">&darr;</div>
-
-<!-- Q1: Grouping/connectivity? -->
-<div class="flow-step q-step">
-<div style="font-size:.7em;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Q1</div>
-<strong>Are companies merging or checking if they share the same CEO?</strong>
-<div style="background:rgba(251,191,36,.08);border-radius:6px;padding:10px;margin-top:8px;font-size:.88em">
-<div style="color:var(--gold2);font-weight:700;margin-bottom:4px">How to spot it:</div>
-<div style="color:var(--text)">The problem says <em>"connected components"</em>, <em>"valid tree"</em>, <em>"redundant connection"</em>, <em>"union"</em>, <em>"groups"</em>.<br>
-<strong>Key signal:</strong> You need to <strong>merge companies</strong> of nodes or <strong>count groups</strong> efficiently, especially with edge-by-edge processing.</div>
-</div>
-</div>
-
-<div class="flow-branch">
-<div class="flow-step s4" style="flex:.6">
-<strong style="color:var(--violet)">YES &rarr;</strong>
-<div><span class="tag t4">Scene 4</span></div>
-<div style="margin-top:6px"><strong style="color:var(--violet);font-size:1.05em">THE CORPORATE MERGER</strong></div>
-<div style="font-size:.85em;color:var(--muted);margin-top:4px">Union-Find. Merge companies, track CEOs.</div>
-</div>
-<div style="display:flex;align-items:center;color:var(--muted);font-weight:700">NO &darr;</div>
-</div>
-
-<div class="flow-arrow">&darr;</div>
-
-<!-- Q2: Weighted edges? -->
-<div class="flow-step q-step">
-<div style="font-size:.7em;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Q2</div>
-<strong>Do the roads between places have TOLLS (weights/costs)?</strong>
-<div style="background:rgba(251,191,36,.08);border-radius:6px;padding:10px;margin-top:8px;font-size:.88em">
-<div style="color:var(--gold2);font-weight:700;margin-bottom:4px">How to spot it:</div>
-<div style="color:var(--text)">The problem says <em>"cost"</em>, <em>"time"</em>, <em>"distance"</em>, <em>"minimum cost"</em>, <em>"network delay"</em>.<br>
-<strong>Key signal:</strong> Edges have <strong>numbers attached</strong> and you need the shortest/cheapest path.</div>
-</div>
-</div>
-
-<div class="flow-branch">
-<div class="flow-step s5" style="flex:.6">
-<strong style="color:var(--emerald)">YES &rarr;</strong>
-<div><span class="tag t5">Scene 5</span></div>
-<div style="margin-top:6px"><strong style="color:var(--emerald);font-size:1.05em">DIJ THE TRAVELER</strong></div>
-<div style="font-size:.85em;color:var(--muted);margin-top:4px">Dijkstra. Heap queue. Always closest city next.</div>
-</div>
-<div style="display:flex;align-items:center;color:var(--muted);font-weight:700">NO &darr;</div>
-</div>
-
-<div class="flow-arrow">&darr;</div>
-
-<!-- Q3: Level-by-level / simultaneous spread? -->
-<div class="flow-step q-step">
-<div style="font-size:.7em;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Q3</div>
-<strong>Does it spread in WAVES or rounds? (shortest unweighted path or simultaneous spread)</strong>
-<div style="background:rgba(251,191,36,.08);border-radius:6px;padding:10px;margin-top:8px;font-size:.88em">
-<div style="color:var(--gold2);font-weight:700;margin-bottom:4px">How to spot it:</div>
-<div style="color:var(--text)">The problem says <em>"minimum minutes"</em>, <em>"nearest gate"</em>, <em>"spread simultaneously"</em>, <em>"multiple sources at once"</em>.<br>
-<strong>Key signal:</strong> Things happen <strong>at the same time</strong> (rotting, spreading) or you need <strong>shortest distance</strong> on an unweighted graph.</div>
-</div>
-</div>
-
-<div class="flow-branch">
-<div class="flow-step s2" style="flex:.5">
-<strong style="color:var(--blue)">YES &rarr;</strong>
-<div><span class="tag t2">Scene 2</span></div>
-<div style="margin-top:6px"><strong style="color:var(--blue);font-size:1.05em">PRABHAS'S FOOD LINE</strong></div>
-<div style="font-size:.85em;color:var(--muted);margin-top:4px">BFS. Serve the front, new people join the back.</div>
-</div>
-<div class="flow-step s1" style="flex:.5">
-<strong style="color:var(--crimson)">NO &rarr;</strong>
-<div><span class="tag t1">Scene 1</span></div>
-<div style="margin-top:6px"><strong style="color:var(--crimson);font-size:1.05em">ARUNDHATI'S HAUNTED PALACE</strong></div>
-<div style="font-size:.85em;color:var(--muted);margin-top:4px">DFS. Go deep, backtrack, repeat.</div>
-</div>
-</div>
-
-<div class="hi" style="margin-top:30px">
-<strong>Why this covers EVERY graph problem:</strong> You either need ordering (Topo Sort), grouping (Union-Find), weighted shortest path (Dijkstra), simultaneous spread (BFS), or plain exploration (DFS). There is no 6th type.
-</div>
-</div>
-
-<!-- ==================== TAB 3: 5 SCENES ==================== -->
-<div class="sec" id="sec-scenes">
+<!-- ==================== TAB 1: 5 SCENES ==================== -->
+<div class="sec vis" id="sec-scenes">
 
 <h2>The 5 Scenes</h2>
 <p>Each scene is a ritual. Each step in the ritual maps to exactly one line of code. Memorize the ritual, you've memorized the algorithm.</p>
@@ -556,7 +336,7 @@ for _ in range(n-1):       # n-1 rounds
 
 </div>
 
-<!-- ==================== TAB 4: 18 PROBLEMS ==================== -->
+<!-- ==================== TAB 2: 18 PROBLEMS ==================== -->
 <div class="sec" id="sec-problems">
 
 <h2>18 Problems by Scene</h2>
@@ -570,7 +350,7 @@ for _ in range(n-1):       # n-1 rounds
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a 2D grid of <code>'1'</code> (land) and <code>'0'</code> (water), count the number of islands. An island is surrounded by water and formed by connecting adjacent lands horizontally or vertically.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+<div class="sbox"><div class="sl" style="color:var(--gold2)">WHY THIS SCENE</div>
 Prerequisites? No. Grouping? Not merging. Weighted? No. Waves? No. &rarr; <span class="tag t1">Scene 1</span> Arundhati exploring a grid.
 </div>
 
@@ -608,7 +388,7 @@ Arundhati walks the grid, cell by cell. Sees a land cell with no seal yet (<code
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a 2D grid of <code>1</code> (land) and <code>0</code> (water), find the maximum area of an island.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+<div class="sbox"><div class="sl" style="color:var(--gold2)">WHY THIS SCENE</div>
 Same as Number of Islands but track the SIZE of each trip. &rarr; <span class="tag t1">Scene 1</span></div>
 
 <div class="sbox"><div class="sl" style="color:var(--crimson)">THE RITUAL</div>
@@ -638,7 +418,7 @@ Same trip as #200, but now Arundhati <strong>counts</strong> how many cells she 
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a reference of a node in a connected undirected graph, return a deep copy (clone) of the graph.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+<div class="sbox"><div class="sl" style="color:var(--gold2)">WHY THIS SCENE</div>
 No prerequisites, no grouping, no weights, no waves. Just explore every node. &rarr; <span class="tag t1">Scene 1</span></div>
 
 <div class="sbox"><div class="sl" style="color:var(--crimson)">THE RITUAL</div>
@@ -671,7 +451,7 @@ Arundhati walks through the original palace. At each chamber, she builds an <str
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given an m×n matrix of heights, water flows from higher to equal/lower cells. Pacific ocean touches the top and left edges. Atlantic touches the bottom and right edges. Find all cells that can reach BOTH oceans.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+<div class="sbox"><div class="sl" style="color:var(--gold2)">WHY THIS SCENE</div>
 No prerequisites, no grouping, no weights, no waves. Pure exploration. &rarr; <span class="tag t1">Scene 1</span></div>
 
 <div class="sbox"><div class="sl" style="color:var(--crimson)">THE RITUAL</div>
@@ -713,7 +493,7 @@ No prerequisites, no grouping, no weights, no waves. Pure exploration. &rarr; <s
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a 2D board with <code>'X'</code> and <code>'O'</code>, capture all regions of <code>'O'</code> that are NOT connected to the border. Captured regions are flipped to <code>'X'</code>.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+<div class="sbox"><div class="sl" style="color:var(--gold2)">WHY THIS SCENE</div>
 Same structure as Pacific Atlantic &mdash; border-based DFS. &rarr; <span class="tag t1">Scene 1</span></div>
 
 <div class="sbox"><div class="sl" style="color:var(--crimson)">THE RITUAL</div>
@@ -752,7 +532,7 @@ Same structure as Pacific Atlantic &mdash; border-based DFS. &rarr; <span class=
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a list of airline tickets <code>[from, to]</code>, reconstruct the itinerary starting from <code>"JFK"</code>. Use all tickets exactly once. If multiple valid itineraries, return the lexicographically smallest.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+<div class="sbox"><div class="sl" style="color:var(--gold2)">WHY THIS SCENE</div>
 It's about traversing a graph using every EDGE exactly once (Eulerian path). No weights, no grouping, no prerequisites. &rarr; <span class="tag t1">Scene 1</span> (DFS variant)</div>
 
 <div class="sbox"><div class="sl" style="color:var(--crimson)">THE RITUAL</div>
@@ -789,7 +569,7 @@ Arundhati must use <strong>every door exactly once</strong>. In each chamber, sh
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>In a grid, <code>0</code> = empty, <code>1</code> = fresh orange, <code>2</code> = rotten orange. Every minute, fresh oranges adjacent to rotten ones also rot. Return the minimum minutes until no fresh orange remains, or <code>-1</code> if impossible.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+<div class="sbox"><div class="sl" style="color:var(--gold2)">WHY THIS SCENE</div>
 No prerequisites. No grouping. No weights. Simultaneous spread (all rotten oranges rot neighbors at the SAME time)? YES &rarr; <span class="tag t2">Scene 2</span></div>
 
 <div class="sbox"><div class="sl" style="color:var(--blue)">THE RITUAL</div>
@@ -832,7 +612,7 @@ No prerequisites. No grouping. No weights. Simultaneous spread (all rotten orang
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>In a grid: <code>-1</code> = wall, <code>0</code> = gate, <code>INF</code> = empty room. Fill each empty room with the distance to its nearest gate.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+<div class="sbox"><div class="sl" style="color:var(--gold2)">WHY THIS SCENE</div>
 Nearest distance from multiple sources simultaneously. &rarr; <span class="tag t2">Scene 2</span> (Multi-source BFS)</div>
 
 <div class="sbox"><div class="sl" style="color:var(--blue)">THE RITUAL</div>
@@ -871,7 +651,7 @@ ALL gates are the crowd waiting at opening time. Round 1 reaches rooms 1 step aw
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>There are <code>numCourses</code> courses with prerequisites. Return <code>true</code> if you can finish all courses.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+<div class="sbox"><div class="sl" style="color:var(--gold2)">WHY THIS SCENE</div>
 Prerequisites/ordering? YES &rarr; <span class="tag t3">Scene 3</span></div>
 
 <div class="sbox"><div class="sl" style="color:var(--amber)">THE RITUAL</div>
@@ -908,7 +688,7 @@ Standard Ramsay ritual. Count what each course waits on. Start with courses that
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Return the ordering of courses you should take. If impossible, return empty array.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+<div class="sbox"><div class="sl" style="color:var(--gold2)">WHY THIS SCENE</div>
 Same as Course Schedule but return the ORDER. &rarr; <span class="tag t3">Scene 3</span></div>
 
 <div class="sbox"><div class="sl" style="color:var(--amber)">THE RITUAL</div>
@@ -945,7 +725,7 @@ Identical to Course Schedule, but instead of just counting, <strong>record the c
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a sorted list of words in an alien language, derive the order of characters.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+<div class="sbox"><div class="sl" style="color:var(--gold2)">WHY THIS SCENE</div>
 "Derive the ORDER of characters" = ordering with dependencies. &rarr; <span class="tag t3">Scene 3</span></div>
 
 <div class="sbox"><div class="sl" style="color:var(--amber)">THE RITUAL</div>
@@ -995,7 +775,7 @@ Identical to Course Schedule, but instead of just counting, <strong>record the c
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given <code>n</code> nodes and a list of undirected edges, determine if these edges form a valid tree (connected, no cycles).</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+<div class="sbox"><div class="sl" style="color:var(--gold2)">WHY THIS SCENE</div>
 "Connected, no cycles" = checking connectivity of groups. &rarr; <span class="tag t4">Scene 4</span></div>
 
 <div class="sbox"><div class="sl" style="color:var(--violet)">THE RITUAL</div>
@@ -1036,7 +816,7 @@ A valid tree has exactly <strong>n-1 edges</strong> and is <strong>fully connect
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given <code>n</code> nodes and a list of undirected edges, find the number of connected components.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+<div class="sbox"><div class="sl" style="color:var(--gold2)">WHY THIS SCENE</div>
 Count groups = grouping/connectivity. &rarr; <span class="tag t4">Scene 4</span></div>
 
 <div class="sbox"><div class="sl" style="color:var(--violet)">THE RITUAL</div>
@@ -1077,7 +857,7 @@ Start with <strong>n separate companies</strong> (components = n). Each successf
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a graph that started as a tree and has one extra edge added, find that extra edge.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+<div class="sbox"><div class="sl" style="color:var(--gold2)">WHY THIS SCENE</div>
 Find the edge that creates a cycle = grouping/connectivity check. &rarr; <span class="tag t4">Scene 4</span></div>
 
 <div class="sbox"><div class="sl" style="color:var(--violet)">THE RITUAL</div>
@@ -1120,7 +900,7 @@ Process mergers one by one. The merger where both nodes are <strong>ALREADY in t
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given a network of <code>n</code> nodes with directed weighted edges and a source node <code>k</code>, find how long it takes for a signal to reach ALL nodes. Return <code>-1</code> if not all reachable.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+<div class="sbox"><div class="sl" style="color:var(--gold2)">WHY THIS SCENE</div>
 Weighted edges + shortest path from source. &rarr; <span class="tag t5">Scene 5</span></div>
 
 <div class="sbox"><div class="sl" style="color:var(--emerald)">THE RITUAL</div>
@@ -1161,7 +941,7 @@ Standard Dijkstra from source <code>k</code>. After the traversal, the answer is
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given an n×n grid of elevations, find the minimum time <code>t</code> to swim from <code>(0,0)</code> to <code>(n-1,n-1)</code>. At time <code>t</code>, you can be on any cell with elevation ≤ t.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+<div class="sbox"><div class="sl" style="color:var(--gold2)">WHY THIS SCENE</div>
 Grid with costs (elevations) and need minimum cost path. &rarr; <span class="tag t5">Scene 5</span></div>
 
 <div class="sbox"><div class="sl" style="color:var(--emerald)">THE RITUAL</div>
@@ -1197,7 +977,7 @@ Modified Dijkstra on a grid. Pop the cell with the <strong>lowest elevation</str
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Find the cheapest flight from <code>src</code> to <code>dst</code> with at most <code>k</code> stops.</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+<div class="sbox"><div class="sl" style="color:var(--gold2)">WHY THIS SCENE</div>
 Weighted edges + shortest path with a constraint. &rarr; <span class="tag t5">Scene 5</span> (modified)</div>
 
 <div class="sbox"><div class="sl" style="color:var(--emerald)">THE RITUAL</div>
@@ -1229,7 +1009,7 @@ Weighted edges + shortest path with a constraint. &rarr; <span class="tag t5">Sc
 <div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">PROBLEM</div>Given points on a 2D plane, connect ALL points with minimum total Manhattan distance. (Minimum Spanning Tree)</div>
 
-<div class="sbox"><div class="sl" style="color:var(--gold2)">FLOWCHART REASONING</div>
+<div class="sbox"><div class="sl" style="color:var(--gold2)">WHY THIS SCENE</div>
 "Minimum cost to connect ALL" = weighted edges + connect everything. &rarr; <span class="tag t5">Scene 5</span> (Prim's MST, very similar to Dijkstra)</div>
 
 <div class="sbox"><div class="sl" style="color:var(--emerald)">THE RITUAL</div>
@@ -1265,15 +1045,15 @@ Weighted edges + shortest path with a constraint. &rarr; <span class="tag t5">Sc
 
 </div>
 
-<!-- ==================== TAB 5: QUIZ ==================== -->
+<!-- ==================== TAB 3: QUIZ ==================== -->
 <div class="sec" id="sec-quiz">
 
 <h2>Quiz: Test Your Graph Knowledge</h2>
 <p>Click each card to reveal the answer.</p>
 
 <div class="quiz" onclick="this.classList.toggle('show')">
-<strong>1. Place = ?, Road = ?, Visited Mark = ?</strong>
-<div class="ans"><strong>Place = Node.</strong> Road = Edge. Visited Mark = Visited set. These are the three fundamentals of every graph problem.</div>
+<strong>1. In the stories, what do Arundhati's seal and Prabhas's wristband stand for?</strong>
+<div class="ans"><strong>The visited set.</strong> Both mean "been here already, skip it." Chambers and guests are the nodes, and doors and "who came with you" are the edges.</div>
 </div>
 
 <div class="quiz" onclick="this.classList.toggle('show')">

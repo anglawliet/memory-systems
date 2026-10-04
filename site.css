@@ -1,0 +1,77 @@
+/* Shared look for every page. Loaded after each page's own styles, so it
+   only restyles: it never changes any content. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root{
+  --bg:#0e0f11;--card:#15171a;--card2:#1b1d21;--border:#262a2f;
+  --text:#e6e6e3;--muted:#8d929a;
+  --gold:#c9a85c;--gold2:#d8b86a;--amber:#dfa64b;--sand:#c9a27a;
+  --green:#4fae6b;--blue:#5b8def;--red:#e5534b;--crimson:#e5534b;
+  --purple:#9a82e6;--violet:#8f7de8;--indigo:#7b83e8;--lav:#b1a6d6;
+  --emerald:#3fb489;--teal:#3fb3a6;--cyan:#4cb8d0;
+  --ms-bar:52px;--ms-accent:#d8b86a;
+}
+
+body{min-height:calc(100vh - var(--ms-bar))!important}
+html{scroll-padding-top:calc(var(--ms-bar) + 64px)}
+body{
+  background:var(--bg)!important;color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif!important;
+  font-feature-settings:'cv11','ss01';
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  margin-top:var(--ms-bar)!important;
+}
+code,pre,kbd,samp{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace!important}
+::selection{background:#d8b86a33}
+
+/* Top bar with the home link */
+.ms-topbar{position:fixed;top:0;left:0;right:0;z-index:1000;height:var(--ms-bar);
+  background:rgba(14,15,17,.86);backdrop-filter:saturate(140%) blur(12px);-webkit-backdrop-filter:saturate(140%) blur(12px);
+  border-bottom:1px solid var(--border)}
+.ms-topbar .ms-inner{max-width:1040px;height:100%;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.ms-home{display:flex;align-items:center;gap:10px;color:var(--text)!important;text-decoration:none;font-weight:600;font-size:15px;letter-spacing:-.01em}
+.ms-home svg{width:18px;height:18px;color:var(--ms-accent)}
+.ms-home:hover{color:#fff!important}
+.ms-links{display:flex;gap:4px}
+.ms-links a{color:var(--muted)!important;text-decoration:none;font-size:14px;font-weight:500;padding:6px 12px;border-radius:8px;transition:color .15s,background .15s}
+.ms-links a:hover{color:var(--text)!important;background:var(--card2)}
+.ms-links a.on{color:var(--text)!important;background:var(--card2)}
+@media(max-width:560px){.ms-links a{padding:6px 8px;font-size:13px}.ms-home span{display:none}}
+
+/* Page header */
+.hdr{background:none!important;border-bottom:1px solid var(--border)!important;padding:64px 20px 44px!important}
+.hdr h1{color:var(--text)!important;font-size:clamp(1.9rem,4vw,2.6rem)!important;font-weight:700!important;letter-spacing:-.025em;line-height:1.15!important}
+.hdr p{color:var(--muted)!important;font-size:1.02rem;margin-top:10px}
+.hdr a{text-decoration:none}
+.wsback{color:var(--muted)!important;font-size:.85rem;font-weight:500;letter-spacing:0}
+
+/* Headings */
+h1,h2,h3,h4{letter-spacing:-.015em}
+h2{color:var(--text)!important;font-weight:650;border-bottom:1px solid var(--border)!important}
+h3{font-weight:600}
+
+/* Tabs */
+.nav{top:var(--ms-bar)!important;background:rgba(14,15,17,.92)!important;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--border)!important;gap:6px!important}
+.nav button{background:transparent!important;color:var(--muted)!important;border:1px solid var(--border)!important;border-radius:999px!important;padding:7px 15px!important;font-weight:500;font-family:inherit;transition:color .15s,background .15s,border-color .15s!important}
+.nav button:hover{color:var(--text)!important;border-color:#3a3f46!important}
+.nav button.on{background:var(--text)!important;color:var(--bg)!important;border-color:var(--text)!important}
+
+/* Surfaces */
+.card,.deriv,.quiz,.flow-step{border-width:1px!important;border-radius:12px!important;box-shadow:none!important}
+pre{background:#0a0b0d!important;border:1px solid var(--border)!important;border-radius:10px!important}
+table{border-collapse:collapse}
+th{color:var(--muted)!important;font-weight:600;font-size:.82em;text-transform:uppercase;letter-spacing:.05em}
+.scene-img,img.scene-img{border:1px solid var(--border)!important;border-radius:12px!important}
+.scene-img:hover{transform:none!important}
+.nav-link{border-radius:999px!important;font-weight:500!important}
+a{text-underline-offset:3px}
+
+/* Home page */
+body > h1{color:var(--text)!important;font-weight:700;letter-spacing:-.03em;font-size:clamp(2.2rem,5vw,3rem)!important}
+body > .sub{color:var(--muted)!important}
+a.card{border:1px solid var(--border)!important;background:var(--card)!important;transition:border-color .2s,background .2s,transform .2s!important}
+a.card:hover{border-color:#3a3f46!important;background:var(--card2)!important;transform:translateY(-2px)!important;box-shadow:none!important}
+a.card .title{color:var(--text)!important;font-weight:650!important;letter-spacing:-.015em}
+
+/* Calmer outlines on boxes that set a thick colored border inline */
+[style*="border:2px solid"],[style*="border: 2px solid"],[style*="border:3px solid"]{border-width:1px!important}

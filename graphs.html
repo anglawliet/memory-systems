@@ -311,62 +311,14 @@ Every story has a way to say "been here already". Arundhati puts a <strong>seal<
 <img src="graphs/images/dfs_arundhati_palace.png" alt="DFS story: Arundhati checks each palace chamber for a seal, seals it before entering, reads the connected doors, goes deep through one door at a time, and returns only after every door is done" class="scene-img">
 
 <div style="background:rgba(220,38,38,.08);border:2px solid var(--crimson);border-radius:10px;padding:18px;margin-bottom:16px">
-<div style="color:var(--crimson);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL (Adjacency List)</div>
-<div style="font-size:.95em;color:var(--text);line-height:1.9">
-<strong style="color:var(--crimson);font-size:1.05em">&#10102;</strong> Arundhati reaches a chamber. <strong>Seal already on the door?</strong> Already visited, <strong>turn back</strong>.<br>
-<strong style="color:var(--crimson);font-size:1.05em">&#10103;</strong> No seal? She <strong>puts the seal on FIRST</strong>, then enters.<br>
-<strong style="color:var(--crimson);font-size:1.05em">&#10104;</strong> Reads the list of <strong>connected doors</strong> in this chamber.<br>
-<strong style="color:var(--crimson);font-size:1.05em">&#10105;</strong> Picks one door and <strong>goes all the way through it</strong>, as deep as it leads.<br>
-<strong style="color:var(--crimson);font-size:1.05em">&#10106;</strong> That door is fully done, so she comes back and <strong>tries the next door</strong>.<br>
-<strong style="color:var(--crimson);font-size:1.05em">&#10107;</strong> <strong>All doors done?</strong> Only now does she <strong>return</strong> to the chamber she came from.
-</div>
-</div>
-
-<div style="color:var(--gold2);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">RITUAL &rarr; CODE (Adjacency List)</div>
-<div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
-<div class="ritual-step">
-<div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10102;</div>
-<div style="background:#dc262612;font-size:.9em"><strong>Seal on the door?</strong> Already visited, turn back.</div>
-<div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>if node in visited: return</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10103;</div>
-<div style="background:#dc262612;font-size:.9em"><strong>Seal it.</strong> Before entering!</div>
-<div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>visited.add(node)</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10104;&#10105;</div>
-<div style="background:#dc262612;font-size:.9em"><strong>Read the doors</strong>, go DEEP through each one.</div>
-<div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>for nei in graph[node]: dfs(nei)</code></div>
-</div>
-</div>
-
-<div style="background:rgba(220,38,38,.08);border:2px solid var(--crimson);border-radius:10px;padding:18px;margin:16px 0">
-<div style="color:var(--crimson);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL (Grid)</div>
-<div style="font-size:.95em;color:var(--text);line-height:1.9">
-<strong style="color:var(--crimson);font-size:1.05em">&#10102;</strong> Arundhati steps into a chamber. <strong>Off the map?</strong> Turn back. <strong>Wall?</strong> Turn back. <strong>Seal on it?</strong> Turn back.<br>
-<strong style="color:var(--crimson);font-size:1.05em">&#10103;</strong> She seals the chamber.<br>
-<strong style="color:var(--crimson);font-size:1.05em">&#10104;</strong> Steps <strong>up, down, left, right</strong>, same ritual at each neighbor.
-</div>
-</div>
-
-<div style="color:var(--gold2);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">RITUAL &rarr; CODE (Grid)</div>
-<div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
-<div class="ritual-step">
-<div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10102;</div>
-<div style="background:#dc262612;font-size:.9em"><strong>Off the map? Wall? Seal?</strong> Turn back.</div>
-<div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>if r&lt;0 or r&gt;=R or c&lt;0 or c&gt;=C or grid[r][c]=='0': return</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10103;</div>
-<div style="background:#dc262612;font-size:.9em"><strong>Seal</strong> the chamber.</div>
-<div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>grid[r][c] = '0'  # or visited.add((r,c))</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#dc262625;font-weight:700;color:var(--crimson);display:flex;align-items:center;justify-content:center">&#10104;</div>
-<div style="background:#dc262612;font-size:.9em"><strong>Step up/down/left/right</strong>, same ritual each direction.</div>
-<div style="background:#dc262608;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>for dr,dc in [(1,0),(-1,0),(0,1),(0,-1)]: dfs(r+dr,c+dc)</code></div>
-</div>
+<div style="color:var(--crimson);font-weight:700;font-size:1.1em;margin-bottom:8px">Same ritual on a grid</div>
+<div style="font-size:.92em;color:var(--text);margin-bottom:8px">Each cell is a chamber, and its doors are up, down, left and right. Off the map, a wall, or already sealed? Turn back.</div>
+<pre style="margin:0"><code>def dfs(r, c):
+    if r &lt; 0 or r &gt;= R or c &lt; 0 or c &gt;= C or grid[r][c] == '0':
+        return                       <span style="color:#6b9955"># off map, wall, or sealed</span>
+    grid[r][c] = '0'                 <span style="color:#6b9955"># seal it</span>
+    for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:
+        dfs(r + dr, c + dc)          <span style="color:#6b9955"># try every door</span></code></pre>
 </div>
 
 <div style="background:rgba(220,38,38,.06);border:1px solid #b91c1c;border-radius:10px;padding:18px;margin-top:12px">
@@ -413,21 +365,6 @@ for nei in graph[node]:
 
 <img src="graphs/images/bfs_food_serving_vertical.png" alt="BFS food serving story: Prabhas serves the front of the line, asks who came with each guest, skips anyone with a wristband, gives wristbands to new people, and sends them to the back" class="scene-img">
 
-<div style="background:rgba(37,99,235,.08);border:2px solid var(--blue);border-radius:10px;padding:18px;margin-bottom:16px">
-<div style="color:var(--blue);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL</div>
-<div style="font-size:.95em;color:var(--text);line-height:1.9">
-<strong style="color:var(--blue);font-size:1.05em">&#10102;</strong> Rana is first in line. Prabhas gives him a <strong>wristband</strong> right away.<br>
-<strong style="color:var(--blue);font-size:1.05em">&#10103;</strong> Prabhas <strong>POPs the person at the left end</strong> (the front) and serves him.<br>
-<strong style="color:var(--blue);font-size:1.05em">&#10104;</strong> He asks: <strong>"Who came with you?"</strong> Those people are the neighbors.<br>
-<strong style="color:var(--blue);font-size:1.05em">&#10105;</strong> Already wearing a wristband? <strong>Skip.</strong> Nobody stands in line twice.<br>
-<strong style="color:var(--blue);font-size:1.05em">&#10106;</strong> New people get a <strong>wristband the moment they join</strong>.<br>
-<strong style="color:var(--blue);font-size:1.05em">&#10107;</strong> They <strong>join on the right</strong> (the back) and wait. Repeat until the line is empty.
-</div>
-<div style="margin-top:10px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:6px;font-size:.88em;color:var(--muted)">
-<strong style="color:var(--blue)">Line = queue. Wristbands = visited set.</strong> The front of the line is always on the left, the back is always on the right. <code>popleft</code> takes from the left, <code>append</code> adds on the right.
-</div>
-</div>
-
 <div style="background:rgba(37,99,235,.12);border-radius:8px;padding:14px;margin-bottom:16px">
 <div style="color:var(--blue);font-weight:700;margin-bottom:6px">Serving Rounds: counting levels</div>
 <div style="font-size:.9em;color:var(--text)">
@@ -441,52 +378,6 @@ Some problems ask <em>how many steps</em> or <em>how many minutes</em>. For thos
 Sometimes there isn't just one first person. When the stall opens, <strong>a whole group is already waiting</strong> (all the rotten oranges, or all the gates). They all get wristbands and stand in line together. Same ritual, the line just starts longer.
 </div>
 </div>
-
-<div style="color:var(--gold2);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">RITUAL &rarr; CODE</div>
-<div style="display:grid;gap:0;border-radius:8px;overflow:hidden;border:1px solid #ffffff15">
-<div class="ritual-step">
-<div style="background:#2563eb25;font-weight:700;color:var(--blue);display:flex;align-items:center;justify-content:center">&#10102;</div>
-<div style="background:#2563eb12;font-size:.9em"><strong>Start the line.</strong> First person gets a wristband.</div>
-<div style="background:#2563eb08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>q = deque([start]); visited = {start}</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#2563eb25;font-weight:700;color:var(--blue);display:flex;align-items:center;justify-content:center">&#10103;</div>
-<div style="background:#2563eb12;font-size:.9em"><strong>POP from the left.</strong> Serve the front.</div>
-<div style="background:#2563eb08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>node = q.popleft()</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#2563eb25;font-weight:700;color:var(--blue);display:flex;align-items:center;justify-content:center">&#10104;</div>
-<div style="background:#2563eb12;font-size:.9em"><strong>Who came with him?</strong></div>
-<div style="background:#2563eb08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>for nei in graph[node]:</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#2563eb25;font-weight:700;color:var(--blue);display:flex;align-items:center;justify-content:center">&#10105;</div>
-<div style="background:#2563eb12;font-size:.9em"><strong>Has a wristband?</strong> Skip.</div>
-<div style="background:#2563eb08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>if nei not in visited:</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#2563eb25;font-weight:700;color:var(--blue);display:flex;align-items:center;justify-content:center">&#10106;</div>
-<div style="background:#2563eb12;font-size:.9em"><strong>Wristband for the new person.</strong></div>
-<div style="background:#2563eb08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>visited.add(nei)</code></div>
-</div>
-<div class="ritual-step">
-<div style="background:#2563eb25;font-weight:700;color:var(--blue);display:flex;align-items:center;justify-content:center">&#10107;</div>
-<div style="background:#2563eb12;font-size:.9em"><strong>Join on the right.</strong> Repeat while anyone is in line.</div>
-<div style="background:#2563eb08;font-family:'Fira Code',monospace;font-size:.82em;display:flex;align-items:center"><code>q.append(nei)  # inside: while q:</code></div>
-</div>
-</div>
-
-<pre><code>from collections import deque
-
-def bfs(graph, start):
-    q = deque([start])           <span style="color:#6b9955"># start the line</span>
-    visited = {start}            <span style="color:#6b9955"># first wristband</span>
-    while q:                     <span style="color:#6b9955"># anyone still in line?</span>
-        node = q.popleft()       <span style="color:#6b9955"># POP from the left</span>
-        for nei in graph[node]:  <span style="color:#6b9955"># who came with him?</span>
-            if nei not in visited:   <span style="color:#6b9955"># no wristband yet</span>
-                visited.add(nei)     <span style="color:#6b9955"># give one now</span>
-                q.append(nei)        <span style="color:#6b9955"># join on the right</span></code></pre>
 
 <div style="background:rgba(37,99,235,.06);border:1px solid #1d4ed8;border-radius:10px;padding:18px;margin-top:12px">
 <div style="color:var(--blue);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>

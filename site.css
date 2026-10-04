@@ -216,6 +216,7 @@ a.card::after{content:"";position:absolute;z-index:-1;inset:0;background:linear-
 a.card.trees::before{background-image:url('trees/images/scene_1.png')}
 a.card.graphs::before{background-image:url('graphs/images/scene_1.png')}
 a.card.dp::before{background-image:url('dp/images/scene_1.png')}
+a.card.arrays::before{background-image:url('arrays/images/p1_two_sum.png')}
 a.card:hover{transform:translateY(-5px)!important;border-color:#4a5159!important;box-shadow:0 28px 70px rgba(0,0,0,.32)!important}
 a.card:hover::before{opacity:.34;transform:scale(1.025)}
 .card .icon{position:absolute;top:22px;left:24px;margin:0!important;font-size:1.7rem!important;filter:grayscale(.15)}

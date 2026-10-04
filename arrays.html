@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arrays</title>
+<style>
+:root{--bg:#1a1916;--card:#252320;--card2:#2d2a26;--gold:#d4a843;--gold2:#fbbf24;--amber:#f59e0b;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;--red:#ef4444;--crimson:#dc2626;--emerald:#059669;--violet:#7c3aed;--text:#e8e2d6;--muted:#9b9484;--border:#3d3930}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;padding:0 0 80px}
+.hdr{background:linear-gradient(135deg,#1f0e0e,#1a1916);border-bottom:3px solid var(--crimson);padding:40px 20px;text-align:center}
+.hdr h1{font-size:2em;color:var(--crimson)}.hdr p{color:var(--muted)}
+.wrap{max-width:920px;margin:0 auto;padding:20px}
+.nav{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0;position:sticky;top:0;background:var(--bg);padding:12px 0;z-index:100;border-bottom:1px solid var(--border)}
+.nav button{background:var(--card);color:var(--muted);border:1px solid var(--border);padding:8px 16px;border-radius:6px;cursor:pointer;font-size:.85em;transition:.2s}
+.nav button:hover,.nav button.on{background:var(--crimson);color:#fff;border-color:var(--crimson)}
+.sec{display:none}.sec.vis{display:block}
+h2{color:var(--crimson);font-size:1.4em;margin:32px 0 12px;border-bottom:2px solid var(--border);padding-bottom:8px}
+h3{color:var(--amber);margin:20px 0 8px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin:16px 0}
+.map-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:2px solid var(--border);border-radius:10px;overflow:hidden;margin:16px 0}
+.map-row{display:contents}
+.map-cell{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.map-cell:nth-child(odd){background:var(--card);border-right:1px solid var(--border)}
+.map-cell:nth-child(even){background:var(--card2)}
+.map-cell .icon{font-size:1.5em;flex-shrink:0;width:36px;text-align:center}
+.map-cell .lbl{font-weight:700;color:var(--gold2);font-size:.9em}
+.map-cell .sub{color:var(--muted);font-size:.8em}
+.map-cell code{background:#0d0d0b;padding:2px 6px;border-radius:3px;font-family:'Fira Code',monospace;font-size:.8em;color:var(--amber)}
+.flow-step{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:20px;margin:0 auto;max-width:600px;text-align:center;position:relative}
+.flow-step.q-step{border-color:var(--gold)}
+.flow-arrow{text-align:center;font-size:2em;color:var(--muted);margin:4px 0;line-height:1}
+.flow-branch{display:flex;gap:16px;margin:8px auto;max-width:650px}
+.flow-step.s1{border-color:var(--crimson);background:#7f1d1d15}.flow-step.s2{border-color:var(--blue);background:#1e3a5f15}
+.flow-step.s3{border-color:var(--amber);background:#92400e15}.flow-step.s4{border-color:var(--violet);background:#581c8715}
+.flow-step.s5{border-color:var(--emerald);background:#064e3b15}
+.flow-step .tag{display:inline-block;padding:2px 10px;border-radius:4px;font-size:.8em;font-weight:700}
+.t1{background:#991b1b;color:#fecaca}.t2{background:#1e40af;color:#bfdbfe}.t3{background:#92400e;color:#fef3c7}.t4{background:#581c87;color:#e9d5ff}.t5{background:#064e3b;color:#a7f3d0}
+.deriv{background:var(--card);border:1px solid var(--border);border-radius:10px;margin:16px 0;overflow:hidden}
+.deriv-h{padding:14px 20px;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+.deriv-h:hover{background:var(--card2)}
+.deriv-h h3{margin:0;display:flex;align-items:center;gap:10px;font-size:1em}
+.deriv-n{background:var(--crimson);color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8em;font-weight:800;flex-shrink:0}
+.deriv-a{color:var(--muted);transition:.3s}.deriv.open .deriv-a{transform:rotate(90deg)}
+.deriv-b{display:none;padding:0 20px 16px;border-top:1px solid var(--border)}.deriv.open .deriv-b{display:block}
+.sbox{background:var(--card2);border-radius:8px;padding:12px 16px;margin:10px 0}
+.sl{font-size:.7em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+pre{background:#0d0d0b;border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;font-size:.85em;line-height:1.6;margin:10px 0}
+code{font-family:'Fira Code','Courier New',monospace}
+.hi{background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.3);border-radius:6px;padding:12px 16px;margin:12px 0}
+.tag-e{background:#166534;color:#bbf7d0;padding:2px 8px;border-radius:3px;font-size:.75em;font-weight:700;margin-left:6px}
+.tag-m{background:#92400e;color:#fef3c7;padding:2px 8px;border-radius:3px;font-size:.75em;font-weight:700;margin-left:6px}
+.tag-h{background:#991b1b;color:#fecaca;padding:2px 8px;border-radius:3px;font-size:.75em;font-weight:700;margin-left:6px}
+.quiz{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin:14px 0;cursor:pointer}
+.quiz .ans{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}.quiz.show .ans{display:block}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+th{background:var(--card2);color:var(--gold);text-align:left;padding:10px 12px;border:1px solid var(--border)}
+td{padding:10px 12px;border:1px solid var(--border)}
+.ritual-step{display:grid;grid-template-columns:auto 1fr 1fr;gap:0}
+.ritual-step>div{padding:10px 14px;border-bottom:1px solid #ffffff10}
+.scene-img{width:100%;border-radius:10px;border:1px solid var(--border);margin-bottom:16px;cursor:pointer;transition:transform .2s}
+.scene-img:hover{transform:scale(1.02)}
+</style>
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<header class="ms-topbar"><div class="ms-inner"><a class="ms-home" href="index.html" aria-label="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg><span>Memory Systems</span></a><nav class="ms-links"><a href="shankar_dada_trees.html">Trees</a><a href="graphs.html">Graphs</a><a href="dp_workshop.html">DP</a><a href="arrays.html" class="on">Arrays</a></nav></div></header>
+<div class="hdr">
+<h1>Arrays</h1>
+<p>NeetCode 150 array and hashing problems, one picture each</p>
+</div>
+<div class="wrap">
+
+<h2>Arrays &amp; Hashing</h2>
+<p>Open a problem to see its picture: the question, the key idea, the full code, and a step by step walkthrough.</p>
+
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">1</span>#217 Contains Duplicate<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<img src="arrays/images/p217_contains_duplicate.png" alt="Contains Duplicate: keep a set of numbers seen so far, and return True the moment a number is already in it" class="scene-img">
+</div></div>
+
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">2</span>#242 Valid Anagram<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<img src="arrays/images/p242_valid_anagram.png" alt="Valid Anagram: count the characters in both strings with Counter and compare the counts" class="scene-img">
+</div></div>
+
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">3</span>#1 Two Sum<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<img src="arrays/images/p1_two_sum.png" alt="Two Sum: for each number, look up its complement target minus x in a value to index map" class="scene-img">
+</div></div>
+
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">4</span>#238 Product of Array Except Self<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv-b">
+<img src="arrays/images/p238_product_except_self.png" alt="Product of Array Except Self: a left pass fills prefix products, a right pass multiplies in suffix products, and nums never changes" class="scene-img">
+</div></div>
+
+</div>
+</body>
+</html>

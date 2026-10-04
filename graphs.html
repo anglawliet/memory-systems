@@ -574,56 +574,18 @@ return order</code></pre>
 <div style="background:var(--card);border:2px solid var(--violet);border-radius:12px;padding:20px;margin-bottom:24px">
 
 <div style="color:var(--violet);font-weight:800;font-size:1.25em;margin-bottom:4px">Scene 4: The Corporate Merger</div>
-<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">Union-Find &mdash; Root (merger queen), Finch (parent[]), Reese (rank[])</div>
+<div style="color:var(--muted);font-size:.88em;margin-bottom:16px">Union-Find: Root the merger queen, Finch = parent[], Reese = rank[]</div>
 
-<img src="graphs/images/scene_4_A.png" alt="Scene 4 character reference — Root with Finch (parent book) and Reese (military stars)" class="scene-img">
-<img src="graphs/images/scene_4_C_1.png" alt="Scene 4 C1 — Union-Find intro, setup, and Step 1: Eddie hires Kyle" class="scene-img">
-<img src="graphs/images/scene_4_C_2.png" alt="Scene 4 C2 — Step 2: Arye hires Nambi, Step 3: big merger, why rank 2 not rank 4" class="scene-img">
-<img src="graphs/images/scene_4_C_3.png" alt="Scene 4 C3 — Step 4: Rockwell acquires, path compression find(Kyle), the lazy truth" class="scene-img">
-<img src="graphs/images/scene_4_C_4.png" alt="Scene 4 C4 — Recap, merger ritual, full Python code, three golden rules, time complexity" class="scene-img">
-
-<div style="background:rgba(124,58,237,.08);border:2px solid var(--violet);border-radius:10px;padding:18px;margin-bottom:16px">
-<div style="color:var(--violet);font-weight:700;font-size:1.1em;margin-bottom:12px">THE RITUAL</div>
-<div style="font-size:.95em;color:var(--text);line-height:1.9">
-<strong style="color:var(--violet);font-size:1.05em">&#10102;</strong> Every person starts as their own <strong>CEO</strong>. <code>parent[x] = x</code> &mdash; "I am my own boss."<br>
-<strong style="color:var(--violet);font-size:1.05em">&#10103;</strong> A <strong>merger</strong> between two people: trace each person's chain up to find their <strong>true CEO</strong>.<br>
-<strong style="color:var(--violet);font-size:1.05em">&#10104;</strong> Same CEO already? They're the <strong>same company</strong> &mdash; this merger is <strong>REDUNDANT</strong>. Return False.<br>
-<strong style="color:var(--violet);font-size:1.05em">&#10105;</strong> Different CEOs? The <strong>smaller company goes under the bigger</strong> one (union by rank). Companies merge.<br>
-<strong style="color:var(--violet);font-size:1.05em">&#10106;</strong> <strong>The Efficiency Hack:</strong> every person in the chain now points <strong>directly to the top CEO</strong> (path compression). Next lookup is instant.
-</div>
-<div style="margin-top:10px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:6px;font-size:.88em;color:var(--muted)">
-<strong style="color:var(--violet)">No recursion. No queue. Just arrays.</strong> Two arrays: <code>parent[]</code> (who's my boss?) and <code>rank[]</code> (how tall is my tree?). Two functions: <code>find()</code> and <code>union()</code>. That's the entire data structure.
-</div>
-</div>
-
-<div style="color:var(--gold2);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">RITUAL &rarr; CODE</div>
-
-<pre><code><span style="color:#6b9955"># &#10102; Every person = own CEO</span>
-parent = list(range(n))
-rank = [0] * n
-
-<span style="color:#6b9955"># &#10103;&#10106; Find CEO (with efficiency hack)</span>
-def find(x):
-    if parent[x] != x:
-        parent[x] = find(parent[x])  <span style="color:#6b9955"># efficiency hack: point straight to CEO</span>
-    return parent[x]
-
-<span style="color:#6b9955"># &#10103;&#10104;&#10105; Merger</span>
-def union(x, y):
-    px, py = find(x), find(y)
-    if px == py: return False   <span style="color:#6b9955"># &#10104; same company = redundant</span>
-    if rank[px] < rank[py]:     <span style="color:#6b9955"># &#10105; smaller under bigger</span>
-        px, py = py, px
-    parent[py] = px
-    if rank[px] == rank[py]:
-        rank[px] += 1
-    return True</code></pre>
+<img src="graphs/images/uf_cast.png" alt="Meet the cast: Root the merger queen holding Finch the parent book and Reese the rank badge, with Kyle, Eddie, Nambi, Arye and Rock" class="scene-img">
+<img src="graphs/images/uf_union.png" alt="union(): find both bosses, stop if they match, otherwise the smaller rank goes under the bigger one, and equal ranks raise the new boss's rank" class="scene-img">
+<img src="graphs/images/uf_find.png" alt="find() with path compression: walk up the chain to the boss, then point everyone on the way straight at the boss" class="scene-img">
+<img src="graphs/images/uf_code.png" alt="The full union-find code, each block matched to a step, plus how union's True and False answers solve the problems" class="scene-img">
 
 <div style="background:rgba(124,58,237,.06);border:1px solid #6d28d9;border-radius:10px;padding:18px;margin-top:12px">
 <div style="color:var(--violet);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 <div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
-<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; no path compression</div>
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG: no path compression</div>
 <pre style="font-size:.82em;margin:0"><code>def find(x):
     while parent[x] != x:
         x = parent[x]
@@ -631,7 +593,7 @@ def union(x, y):
 # Works but O(n) per find in worst case</code></pre>
 </div>
 <div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
-<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; path compression = instant next time</div>
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT: path compression = instant next time</div>
 <pre style="font-size:.82em;margin:0"><code>def find(x):
     if parent[x] != x:
         parent[x] = find(parent[x])
@@ -641,15 +603,15 @@ def union(x, y):
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 <div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
-<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG &mdash; union without checking find first</div>
-<pre style="font-size:.82em;margin:0"><code>parent[x] = y  # Direct assignment!
-# Destroys existing company structure</code></pre>
+<div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG: union without finding the bosses first</div>
+<pre style="font-size:.82em;margin:0"><code>parent[a] = b  # Direct assignment!
+# Breaks up existing companies</code></pre>
 </div>
 <div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
-<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT &mdash; always find CEOs first, then merge</div>
-<pre style="font-size:.82em;margin:0"><code>px, py = find(x), find(y)
-if px == py: return False
-parent[py] = px  # merge CEOs</code></pre>
+<div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT: always find the bosses first, then merge</div>
+<pre style="font-size:.82em;margin:0"><code>root_a, root_b = find(a), find(b)
+if root_a == root_b: return False
+parent[root_b] = root_a  # merge the bosses</code></pre>
 </div>
 </div>
 </div>

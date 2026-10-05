@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Arrays</title>
+<title>Two Pointers</title>
 <style>
 :root{--bg:#1a1916;--card:#252320;--card2:#2d2a26;--gold:#d4a843;--gold2:#fbbf24;--amber:#f59e0b;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;--red:#ef4444;--crimson:#dc2626;--emerald:#059669;--violet:#7c3aed;--text:#e8e2d6;--muted:#9b9484;--border:#3d3930}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -64,59 +64,39 @@ td{padding:10px 12px;border:1px solid var(--border)}
 <link rel="stylesheet" href="site.css">
 </head>
 <body>
-<header class="ms-topbar"><div class="ms-inner"><a class="ms-home" href="index.html" aria-label="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg><span>Memory Systems</span></a><nav class="ms-links"><a href="shankar_dada_trees.html">Trees</a><a href="graphs.html">Graphs</a><a href="dp_workshop.html">DP</a><a href="arrays.html" class="on">Arrays</a><a href="two_pointers.html">Two Pointers</a><a href="sliding_window.html">Sliding Window</a><a href="stack.html">Stack</a></nav></div></header>
+<header class="ms-topbar"><div class="ms-inner"><a class="ms-home" href="index.html" aria-label="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg><span>Memory Systems</span></a><nav class="ms-links"><a href="shankar_dada_trees.html">Trees</a><a href="graphs.html">Graphs</a><a href="dp_workshop.html">DP</a><a href="arrays.html">Arrays</a><a href="two_pointers.html" class="on">Two Pointers</a><a href="sliding_window.html">Sliding Window</a><a href="stack.html">Stack</a></nav></div></header>
 <div class="hdr">
-<h1>Arrays</h1>
-<p>All 9 NeetCode 150 array and hashing problems, one picture each</p>
+<h1>Two Pointers</h1>
+<p>All 5 NeetCode 150 two pointer problems, one picture each</p>
 </div>
 <div class="wrap">
 
-<h2>Arrays &amp; Hashing</h2>
-<p>Open a problem to see its picture: the question, the key idea, the full code, and a step by step walkthrough.</p>
+<h2>Two Pointers</h2>
+<p>Open a problem to see its picture: the question, the main trick, how we think through the example, the full code, and why it works.</p>
 
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">1</span>#217 Contains Duplicate<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">1</span>#125 Valid Palindrome<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
-<img src="arrays/images/p217_contains_duplicate.png" alt="Contains Duplicate: keep a set of numbers seen so far, and return True the moment a number is already in it" class="scene-img">
+<img src="two_pointers/images/p125_valid_palindrome.png" alt="Valid Palindrome: Put one pointer at each end and walk them toward the middle. Skip characters that are not letters or digits. Compare the lowercase letters." class="scene-img">
 </div></div>
 
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">2</span>#242 Valid Anagram<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">2</span>#167 Two Sum II: Input Array Is Sorted<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
-<img src="arrays/images/p242_valid_anagram.png" alt="Valid Anagram: count the characters in both strings with Counter and compare the counts" class="scene-img">
+<img src="two_pointers/images/p167_two_sum_ii.png" alt="Two Sum II: Input Array Is Sorted: The array is sorted. Sum too big? Move right pointer left to make it smaller. Sum too small? Move left pointer right to make it bigger." class="scene-img">
 </div></div>
 
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">3</span>#1 Two Sum<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">3</span>#15 3Sum<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
-<img src="arrays/images/p1_two_sum.png" alt="Two Sum: for each number, look up its complement target minus x in a value to index map" class="scene-img">
+<img src="two_pointers/images/p15_3sum.png" alt="3Sum: Sort first. Fix one number a, then run Two Sum II on the rest to find two numbers that sum to -a. Skip repeated values so no triplet appears twice." class="scene-img">
 </div></div>
 
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">4</span>#49 Group Anagrams<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">4</span>#11 Container With Most Water<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
-<img src="arrays/images/p49_group_anagrams.png" alt="Group Anagrams: sort each word to get a key, and words with the same key go in the same group" class="scene-img">
+<img src="two_pointers/images/p11_container_water.png" alt="Container With Most Water: Start with the widest container. Area = shorter wall x width. Always move the SHORTER wall inward: the short wall limits the water, so keeping it can never give more." class="scene-img">
 </div></div>
 
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">5</span>#347 Top K Frequent Elements<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">5</span>#42 Trapping Rain Water<span class="tag-h">Hard</span></h3><span class="deriv-a">&#9654;</span></div>
 <div class="deriv-b">
-<img src="arrays/images/p347_top_k_frequent.png" alt="Top K Frequent Elements: count each number, drop it into a bucket by count, then walk the buckets from the highest count down" class="scene-img">
-</div></div>
-
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">6</span>#271 Encode and Decode Strings<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
-<div class="deriv-b">
-<img src="arrays/images/p271_encode_decode.png" alt="Encode and Decode Strings: put each word length and a # in front of it, then read the length to cut each word back out" class="scene-img">
-</div></div>
-
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">7</span>#238 Product of Array Except Self<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
-<div class="deriv-b">
-<img src="arrays/images/p238_product_except_self.png" alt="Product of Array Except Self: a left pass fills prefix products, a right pass multiplies in suffix products, and nums never changes" class="scene-img">
-</div></div>
-
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">8</span>#36 Valid Sudoku<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
-<div class="deriv-b">
-<img src="arrays/images/p36_valid_sudoku.png" alt="Valid Sudoku: keep a set for each row, column and 3 by 3 box, and fail the moment a digit repeats" class="scene-img">
-</div></div>
-
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">9</span>#128 Longest Consecutive Sequence<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div>
-<div class="deriv-b">
-<img src="arrays/images/p128_longest_consecutive.png" alt="Longest Consecutive Sequence: put everything in a set and only start counting at numbers whose left neighbor is missing" class="scene-img">
+<img src="two_pointers/images/p42_trapping_rain_water.png" alt="Trapping Rain Water: Water above a bar = min(tallest on its left, tallest on its right) - its height. Use two pointers: whichever side has the smaller max is decided, so add its water and move it." class="scene-img">
 </div></div>
 
 </div>

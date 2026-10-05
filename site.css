@@ -217,6 +217,9 @@ a.card.trees::before{background-image:url('trees/images/scene_1.png')}
 a.card.graphs::before{background-image:url('graphs/images/scene_1.png')}
 a.card.dp::before{background-image:url('dp/images/scene_1.png')}
 a.card.arrays::before{background-image:url('arrays/images/p1_two_sum.png')}
+a.card.twoptr::before{background-image:url('two_pointers/images/p11_container_water.png')}
+a.card.window::before{background-image:url('sliding_window/images/p3_longest_substring.png')}
+a.card.stackc::before{background-image:url('stack/images/p739_daily_temperatures.png')}
 a.card:hover{transform:translateY(-5px)!important;border-color:#4a5159!important;box-shadow:0 28px 70px rgba(0,0,0,.32)!important}
 a.card:hover::before{opacity:.34;transform:scale(1.025)}
 .card .icon{position:absolute;top:22px;left:24px;margin:0!important;font-size:1.7rem!important;filter:grayscale(.15)}
@@ -256,4 +259,11 @@ a.card:hover::before{opacity:.34;transform:scale(1.025)}
 }
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+
+/* Top bar: let the links scroll sideways on narrow screens */
+@media(max-width:900px){
+  .ms-links{overflow-x:auto;scrollbar-width:none;flex:1 1 auto;justify-content:flex-start;min-width:0}
+  .ms-links::-webkit-scrollbar{display:none}
+  .ms-links a{flex:0 0 auto}
 }

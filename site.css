@@ -267,3 +267,13 @@ a.card:hover::before{opacity:.34;transform:scale(1.025)}
   .ms-links::-webkit-scrollbar{display:none}
   .ms-links a{flex:0 0 auto}
 }
+
+a.card.c_binary_search::before{background-image:url('binary_search/images/p875_koko_bananas.png')}
+a.card.c_linked_list::before{background-image:url('linked_list/images/p141_cycle.png')}
+a.card.c_heap::before{background-image:url('heap/images/p295_median_stream.png')}
+a.card.c_tries::before{background-image:url('tries/images/p208_implement_trie.png')}
+
+/* Top bar: many sections, so the links scroll sideways at every width */
+.ms-links{overflow-x:auto;scrollbar-width:none;min-width:0;flex:1 1 auto;justify-content:flex-end}
+.ms-links::-webkit-scrollbar{display:none}
+.ms-links a{flex:0 0 auto}

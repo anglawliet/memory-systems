@@ -287,11 +287,35 @@ a.card.c_tries::before{background-image:url('tries/images/p208_implement_trie.pn
   .panel-stack img{display:block;width:100%;height:auto;border-radius:8px;border:1px solid var(--border)}
 }
 
-/* Phone view: show the Python code as real text instead of the code picture. */
+/* Phone view: show the Python code as real, colored text instead of the code picture.
+   Notes under a line match the colored notes in the pictures. */
 .code-text{display:none}
 @media (max-width:760px){
   .panel-stack img.code-img{display:none}
-  .code-text{display:block;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#1e2430}
-  .code-text .code-label{font-weight:700;font-size:15px;padding:9px 12px;background:#f6e3a1;color:#1b1b1b}
-  .code-text pre{margin:0!important;border:0!important;border-radius:0!important;font-size:13px!important;line-height:1.5;padding:12px!important;white-space:pre!important;word-break:normal!important;overflow-x:auto;color:#e8e8e8;background:#1e2430}
+  .code-text{display:block;border:2px solid #2b2b2b;border-radius:12px;overflow:hidden;background:#1f2633;box-shadow:0 2px 0 rgba(0,0,0,.25)}
+  .code-text .code-label{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;padding:9px 12px;background:#fbe7a1;color:#1b1b1b;border-bottom:2px solid #2b2b2b}
+  .code-text .dots{display:flex;gap:5px}
+  .code-text .dots i{width:10px;height:10px;border-radius:50%;background:#ff5f57}
+  .code-text .dots i:nth-child(2){background:#febc2e}
+  .code-text .dots i:nth-child(3){background:#28c840}
+  .code-text .code-body{padding:12px 0}
+  .code-text .code-inner{display:block;font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;font-size:13px;line-height:1.6;color:#e6e9ef;font-variant-ligatures:none;font-feature-settings:'liga' 0,'calt' 0}
+  .code-text .ln{white-space:pre-wrap;word-break:break-word;padding-right:12px}
+  .code-text .k-kw{color:#ff79b0}
+  .code-text .k-def{color:#ffd866}
+  .code-text .k-bi{color:#78dce8}
+  .code-text .k-const{color:#56c8ff}
+  .code-text .k-self{color:#9fb6ff}
+  .code-text .k-str{color:#b8e986}
+  .code-text .k-num{color:#56c8ff}
+  .code-text .k-com{color:#8a93a6;font-style:italic}
+  .code-text .hl-pink{background:rgba(255,121,176,.16);box-shadow:inset 3px 0 #ff79b0}
+  .code-text .hl-yellow{background:rgba(255,216,102,.16);box-shadow:inset 3px 0 #ffd866}
+  .code-text .hl-green{background:rgba(120,220,120,.16);box-shadow:inset 3px 0 #6fdc6f}
+  .code-text .note-row{padding:3px 14px 7px;font-family:inherit;white-space:normal}
+  .code-text .note-row{margin-left:14px}
+  .code-text .note{display:inline-block;font-family:system-ui,-apple-system,sans-serif;font-weight:800;font-size:13.5px;line-height:1.3;padding:5px 11px;border-radius:10px;border:2px solid;color:#1b1b1b}
+  .code-text .note-pink{background:#ffe1ee;border-color:#ff5fa2}
+  .code-text .note-yellow{background:#fff1b8;border-color:#f2c230}
+  .code-text .note-green{background:#dcf7d4;border-color:#46b946}
 }

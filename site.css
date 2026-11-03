@@ -286,3 +286,12 @@ a.card.c_tries::before{background-image:url('tries/images/p208_implement_trie.pn
   .panel-stack{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
   .panel-stack img{display:block;width:100%;height:auto;border-radius:8px;border:1px solid var(--border)}
 }
+
+/* Phone view: show the Python code as real text instead of the code picture. */
+.code-text{display:none}
+@media (max-width:760px){
+  .panel-stack img.code-img{display:none}
+  .code-text{display:block;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#1e2430}
+  .code-text .code-label{font-weight:700;font-size:15px;padding:9px 12px;background:#f6e3a1;color:#1b1b1b}
+  .code-text pre{margin:0!important;border:0!important;border-radius:0!important;font-size:13px!important;line-height:1.5;padding:12px!important;white-space:pre!important;word-break:normal!important;overflow-x:auto;color:#e8e8e8;background:#1e2430}
+}

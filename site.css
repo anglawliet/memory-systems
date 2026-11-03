@@ -284,6 +284,7 @@ a.card.c_tries::before{background-image:url('tries/images/p208_implement_trie.pn
 @media (max-width:760px){
   .scene-img.has-panels{display:none}
   .panel-stack{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+  .deriv-b:has(.panel-stack){padding:0 4px 12px!important}
   .panel-stack img{display:block;width:100%;height:auto;border-radius:8px;border:1px solid var(--border)}
 }
 
@@ -300,7 +301,7 @@ a.card.c_tries::before{background-image:url('tries/images/p208_implement_trie.pn
   .code-text .dots i:nth-child(3){background:#28c840}
   .code-text .code-body{padding:12px 0}
   .code-text .code-inner{display:block;font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;font-size:13px;line-height:1.6;color:#e6e9ef;font-variant-ligatures:none;font-feature-settings:'liga' 0,'calt' 0}
-  .code-text .ln{white-space:pre-wrap;word-break:break-word;padding-right:12px}
+  .code-text .ln{white-space:pre-wrap;word-break:break-word;padding-right:8px}
   .code-text .k-kw{color:#ff79b0}
   .code-text .k-def{color:#ffd866}
   .code-text .k-bi{color:#78dce8}
@@ -312,10 +313,13 @@ a.card.c_tries::before{background-image:url('tries/images/p208_implement_trie.pn
   .code-text .hl-pink{background:rgba(255,121,176,.16);box-shadow:inset 3px 0 #ff79b0}
   .code-text .hl-yellow{background:rgba(255,216,102,.16);box-shadow:inset 3px 0 #ffd866}
   .code-text .hl-green{background:rgba(120,220,120,.16);box-shadow:inset 3px 0 #6fdc6f}
-  .code-text .note-row{padding:3px 14px 7px;font-family:inherit;white-space:normal}
-  .code-text .note-row{margin-left:14px}
+  .code-text .note-row{padding:3px 8px 7px;font-family:inherit;white-space:normal}
+  .code-text .note-row{margin-left:10px}
   .code-text .note{display:inline-block;font-family:system-ui,-apple-system,sans-serif;font-weight:800;font-size:13.5px;line-height:1.3;padding:5px 11px;border-radius:10px;border:2px solid;color:#1b1b1b}
   .code-text .note-pink{background:#ffe1ee;border-color:#ff5fa2}
   .code-text .note-yellow{background:#fff1b8;border-color:#f2c230}
   .code-text .note-green{background:#dcf7d4;border-color:#46b946}
+}
+@media (max-width:375px){
+  .code-text .code-inner{font-size:12px}
 }

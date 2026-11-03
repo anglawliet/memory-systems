@@ -277,3 +277,12 @@ a.card.c_tries::before{background-image:url('tries/images/p208_implement_trie.pn
 .ms-links{overflow-x:auto;scrollbar-width:none;min-width:0;flex:1 1 auto;justify-content:flex-end}
 .ms-links::-webkit-scrollbar{display:none}
 .ms-links a{flex:0 0 auto}
+
+/* Phone view: show each picture as separate panels stacked top to bottom,
+   so every panel fills the screen width and its text is readable without zooming. */
+.panel-stack{display:none}
+@media (max-width:760px){
+  .scene-img.has-panels{display:none}
+  .panel-stack{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+  .panel-stack img{display:block;width:100%;height:auto;border-radius:8px;border:1px solid var(--border)}
+}

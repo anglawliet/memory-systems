@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trie Step Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#090a0b;--card:#121519;--card2:#181c21;--border:#282e35;
+  --text:#f2eee5;--muted:#969da6;--gold:#e0c37d;--green:#63b57a;--red:#e7655e;--gray:#6b737c;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 24px 60px}
+h1{font-size:28px;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 20px;font-size:15px}
+
+/* progress and buttons */
+.bar{display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.dots{display:flex;gap:6px;flex:1;min-width:180px}
+.dots button{flex:1;height:8px;border:0;border-radius:4px;background:#2a3038;cursor:pointer;padding:0}
+.dots button.done{background:#7a6a45}
+.dots button.cur{background:var(--gold)}
+.count{color:var(--muted);font-size:14px;white-space:nowrap}
+.nav{display:flex;gap:10px}
+.nav button{font:inherit;font-weight:700;font-size:15px;padding:9px 18px;border-radius:10px;border:1px solid var(--border);background:var(--card2);color:var(--text);cursor:pointer}
+.nav button.next{background:var(--gold);color:#1b1b1b;border-color:var(--gold)}
+.nav button:disabled{opacity:.35;cursor:default}
+
+/* main layout: code on the left, story on the right */
+.grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:22px;align-items:start}
+.story{display:flex;flex-direction:column;gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px}
+.step-title{font-size:21px;font-weight:700;margin:0 0 10px;color:var(--gold)}
+.explain p{margin:0 0 10px;line-height:1.6;font-size:16px}
+.explain p:last-child{margin-bottom:0}
+.explain code{font-family:'JetBrains Mono',monospace;font-size:14px;background:#232a33;padding:1px 6px;border-radius:5px}
+.pic-title{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:13px;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px;background:var(--c)}
+
+/* code box, same look as the site's phone code box */
+.code{border:2px solid #2b2b2b;border-radius:12px;overflow:hidden;background:#1f2633;position:sticky;top:16px}
+.code-label{display:flex;align-items:center;gap:10px;font-weight:800;font-size:15px;padding:9px 12px;background:#fbe7a1;color:#1b1b1b;border-bottom:2px solid #2b2b2b}
+.code-label .d{display:flex;gap:5px}
+.code-label .d i{width:10px;height:10px;border-radius:50%;background:#ff5f57}
+.code-label .d i:nth-child(2){background:#febc2e}
+.code-label .d i:nth-child(3){background:#28c840}
+.code-body{padding:12px 0;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:14px;line-height:1.65;color:#e6e9ef;font-variant-ligatures:none}
+.ln{white-space:pre-wrap;word-break:break-word;padding:0 10px;transition:background .3s,opacity .3s}
+/* lines from earlier steps turn plain gray, so only the current lines are in color */
+.ln.old{color:#7f8894}
+.ln.old span{color:inherit}
+.ln.new{background:rgba(255,216,102,.17);box-shadow:inset 3px 0 #ffd866;opacity:1}
+.ln.run{background:rgba(120,190,255,.13);box-shadow:inset 3px 0 #78bfff;opacity:1}
+.ln.hide{display:none}
+.k-kw{color:#ff79b0}.k-def{color:#ffd866}.k-self{color:#9fb6ff}.k-const{color:#56c8ff}
+.note-row{padding:3px 10px 8px}
+.note{display:inline-block;font-family:'DM Sans',system-ui,sans-serif;font-weight:700;font-size:13.5px;line-height:1.3;padding:5px 11px;border-radius:10px;border:2px solid;color:#1b1b1b}
+.note-yellow{background:#fff1b8;border-color:#f2c230}
+.note-green{background:#dcf7d4;border-color:#46b946}
+.note-red{background:#ffe0de;border-color:#e7655e}
+.note-blue{background:#dcecff;border-color:#5a9be8}
+.hint{color:var(--muted);font-size:13px;margin-top:14px}
+
+/* phones: the explanation and picture sit right under the new lines inside the code,
+   and Back / Next stay fixed at the bottom of the screen */
+.inline-story{white-space:normal;margin:10px 8px 14px;display:flex;flex-direction:column;gap:10px;font-family:'DM Sans',system-ui,sans-serif;color:var(--text)}
+.inline-story .card{border-color:#3a4350}
+@media (max-width:760px){
+  .wrap{padding:18px 12px 130px}
+  h1{font-size:23px}
+  .sub{margin-bottom:12px}
+  .grid{grid-template-columns:1fr;gap:14px}
+  .code{position:static}
+  .card{padding:14px 14px}
+  .explain p{font-size:15.5px}
+  .code-body{font-size:13px}
+  .bar{position:fixed;left:0;right:0;bottom:0;z-index:10;margin:0;gap:10px;
+       background:rgba(9,10,11,.96);border-top:1px solid var(--border);
+       padding:10px 12px calc(10px + env(safe-area-inset-bottom))}
+  .dots{flex-basis:100%;min-width:0}
+  .count{flex:1}
+  .nav button{padding:12px 22px;font-size:16px}
+  .hint{display:none}
+}
+@media (max-width:375px){.code-body{font-size:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>#208 Implement Trie, built one step at a time</h1>
+  <p class="sub">Each step adds a few lines of code. The picture shows what the trie looks like after those lines run.</p>
+
+  <div class="bar">
+    <div class="dots" id="dots"></div>
+    <span class="count" id="count"></span>
+    <div class="nav">
+      <button id="back">&#8592; Back</button>
+      <button id="next" class="next">Next &#8594;</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="code">
+      <div class="code-label"><span class="d"><i></i><i></i><i></i></span>Python code</div>
+      <div class="code-body" id="code"></div>
+    </div>
+    <div class="story">
+      <div class="card explain">
+        <div class="step-title" id="title"></div>
+        <div id="text"></div>
+      </div>
+      <div class="card">
+        <div class="pic-title" id="pictitle"></div>
+        <svg id="pic" viewBox="0 0 440 290"></svg>
+        <div class="legend">
+          <span style="--c:#e0c37d">gold means new or being walked</span>
+          <span style="--c:#63b57a">green means a word ends here</span>
+          <span style="--c:#e7655e">red means the trap or a dead end</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="hint">You can also press the left and right arrow keys.</p>
+</div>
+
+<script>
+// Every code line, with the step where it first appears.
+const LINES = [
+  [1,"class TrieNode:"],
+  [1,"  def __init__(self):"],
+  [1,"    self.children = {}"],
+  [1,"    self.is_end = False"],
+  [2,""],
+  [2,"class Trie:"],
+  [2,"  def __init__(self):"],
+  [2,"    self.root = TrieNode()"],
+  [3,""],
+  [3,"  def insert(self, word):"],
+  [3,"    node = self.root"],
+  [3,"    for ch in word:"],
+  [3,"      if ch not in node.children:"],
+  [3,"        node.children[ch] = TrieNode()"],
+  [3,"      node = node.children[ch]"],
+  [4,"    node.is_end = True"],
+  [6,""],
+  [6,"  def _walk(self, text):"],
+  [6,"    node = self.root"],
+  [6,"    for ch in text:"],
+  [6,"      if ch not in node.children:"],
+  [6,"        return None"],
+  [6,"      node = node.children[ch]"],
+  [6,"    return node"],
+  [7,""],
+  [7,"  def search(self, word):"],
+  [7,"    node = self._walk(word)"],
+  [7,"    return (node is not None"],
+  [7,"            and node.is_end)"],
+  [8,""],
+  [8,"  def startsWith(self, prefix):"],
+  [8,"    return (self._walk(prefix)"],
+  [8,"            is not None)"],
+];
+
+// Node positions in the picture. They stay fixed so nothing jumps around.
+const POS = {root:[220,34], c:[220,100], a:[220,166], t:[150,236], r:[290,236], o:[350,140]};
+// Where each node's label text goes.
+const SIDE = {root:"right", c:"left", a:"left", t:"below", r:"below", o:"below"};
+const PARENT = {c:"root", a:"c", t:"a", r:"a", o:"c"};
+const LABEL = {root:"root", c:"c", a:"a", t:"t", r:"r", o:"o"};
+
+// Each step: title, explanation, which lines run (for steps without new code),
+// notes under lines, and how each node in the picture looks.
+// Node looks: n = normal, g = gold (new or walked), e = word end (green ring),
+// ge = walked and word end, x = red dead end (dashed).
+const STEPS = [
+ {t:"One node is a box of next letters",
+  p:["A trie is a tree where each node stands for one letter. A node does not store a word. A node only stores which letters can come next.",
+     "<code>children</code> is a dictionary. The keys are letters and the values are the next nodes. For example, <code>{'c': node}</code> means the letter c can come next.",
+     "<code>is_end</code> says whether a whole word stops at this node. A new node starts with no children and <code>is_end = False</code>."],
+  notes:{2:["yellow","Letter to next node"]},
+  pt:"One empty node", nodes:{root:"g"}, tags:{root:["children = {}","#e0c37d"]}},
+ {t:"The trie starts with one empty root",
+  p:["The <code>Trie</code> class holds one node called <code>root</code>. The root has no letter of its own. The root is the starting point for every word.",
+     "Every insert and every search begins at the root and moves down one letter at a time."],
+  notes:{7:["yellow","Every walk starts here"]},
+  pt:"An empty trie", nodes:{root:"g"}, tags:{}},
+ {t:"insert walks down and creates missing letters",
+  p:["Let us insert the word <code>\"cat\"</code>. The loop looks at c, then a, then t.",
+     "First, the <code>if</code> checks whether the letter is already a child of the current node. If the letter is missing, the next line creates a new node for that letter. At the start, the root has no children, so the c node gets created.",
+     "Then <code>node = node.children[ch]</code> moves down to the child for that letter. This line runs for every letter, whether the child was just created or was already there.",
+     "After the loop, <code>node</code> points at the t node. The trie now has the path root, c, a, t."],
+  notes:{13:["yellow","Create the letter only if it is missing"],14:["yellow","Move down to that letter"]},
+  pt:"After insert(\"cat\") walks the letters", nodes:{root:"n",c:"g",a:"g",t:"g"}, tags:{}},
+ {t:"Mark the last node as the end of a word",
+  p:["The path root, c, a, t now exists, but the trie still does not know that <code>\"cat\"</code> is a whole word. The path could also be the start of a longer word, such as \"cats\".",
+     "<code>node.is_end = True</code> marks the t node. The green ring means a word ends here."],
+  notes:{15:["green","This flag is what makes \"cat\" a word"]},
+  pt:"After insert(\"cat\") finishes", nodes:{root:"n",c:"n",a:"n",t:"e"}, tags:{t:["is_end = True","#63b57a"]}},
+ {t:"A second word reuses the shared letters",
+  p:["There is no new code in this step. We run the same insert with the word <code>\"car\"</code>.",
+     "For c and a, the <code>if</code> check finds that the letters already exist, so nothing new is created and the loop only moves down. Only r is missing, so only r gets a new node. Then the r node gets <code>is_end = True</code>.",
+     "This sharing is the whole point of a trie. \"cat\" and \"car\" store the letters c and a only once."],
+  run:[10,11,12,13,14,15],
+  notes:{12:["blue","c and a are reused, only r is new"]},
+  pt:"After insert(\"car\")", nodes:{root:"n",c:"n",a:"n",t:"e",r:"ge"}, tags:{c:["reused","#969da6"],a:["reused","#969da6"],r:["new","#e0c37d"]}},
+ {t:"_walk follows letters until it runs out or gets stuck",
+  p:["Both search and startsWith need the same thing. They need to follow the letters of a text from the root. So we write that once, in a helper named <code>_walk</code>.",
+     "If a letter is missing, the walk returns <code>None</code>. For example, <code>_walk(\"co\")</code> finds c but no o under c, so the walk returns <code>None</code>.",
+     "If every letter is found, the walk returns the last node. For example, <code>_walk(\"ca\")</code> returns the a node."],
+  notes:{21:["red","A missing letter means a dead end"],23:["yellow","Returns the node of the last letter"]},
+  pt:"_walk(\"ca\") and _walk(\"co\")", nodes:{root:"n",c:"g",a:"g",t:"e",r:"e",o:"x"}, tags:{a:["_walk(\"ca\") stops here","#e0c37d"],o:["no o, so None","#e7655e"]}},
+ {t:"search needs the end flag, not only the path",
+  p:["<code>search(\"ca\")</code> walks to the a node, so the node is not <code>None</code>. But the a node has <code>is_end = False</code>, so the answer is <code>False</code>. We never inserted the word \"ca\".",
+     "This is the trap. If search only checked that the path exists, \"ca\" would wrongly count as a word.",
+     "<code>search(\"cat\")</code> walks to the t node, and the t node has <code>is_end = True</code>, so the answer is <code>True</code>."],
+  notes:{28:["red","Without this check, \"ca\" would count as a word"]},
+  pt:"search(\"ca\") and search(\"cat\")", nodes:{root:"n",c:"g",a:"g",t:"ge",r:"e"}, tags:{a:["search(\"ca\") is False","#e7655e"],t:["search(\"cat\") is True","#63b57a"]}},
+ {t:"startsWith only needs the path to exist",
+  p:["<code>startsWith(\"ca\")</code> asks whether any word begins with \"ca\". The walk reaches the a node, so the answer is <code>True</code>. Here we do not care about <code>is_end</code>.",
+     "<code>startsWith(\"co\")</code> returns <code>False</code>, because the walk gets stuck at the missing o.",
+     "That is the full trie. Inserting a word and searching for a word both take one step for each letter. So a 5 letter word costs 5 steps, no matter how many words the trie holds."],
+  notes:{32:["green","Any node at all means True"]},
+  pt:"startsWith(\"ca\") and startsWith(\"co\")", nodes:{root:"n",c:"g",a:"g",t:"e",r:"e",o:"x"}, tags:{a:["startsWith(\"ca\") is True","#63b57a"],o:["startsWith(\"co\") is False","#e7655e"]}},
+];
+
+const KW = new Set(["class","def","for","in","if","not","return","is","and","or"]);
+function color(line){
+  // color one word at a time, so nothing gets colored twice
+  let prev = "";
+  return line.replace(/[A-Za-z_]\w*|[^A-Za-z_]+/g, w => {
+    let out = w.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+    if (/^\w/.test(w)) {
+      if (prev==="class"||prev==="def") out = `<span class="k-def">${w}</span>`;
+      else if (KW.has(w)) out = `<span class="k-kw">${w}</span>`;
+      else if (w==="self") out = `<span class="k-self">self</span>`;
+      else if (w==="None"||w==="True"||w==="False") out = `<span class="k-const">${w}</span>`;
+      prev = w;
+    }
+    return out;
+  });
+}
+function indentOf(s){ return s.length - s.trimStart().length; }
+
+let cur = 0;
+function render(){
+  const s = STEPS[cur], n = cur + 1;
+  document.getElementById("title").textContent = `Step ${n}. ${s.t}`;
+  document.getElementById("text").innerHTML = s.p.map(x=>`<p>${x}</p>`).join("");
+  document.getElementById("count").textContent = `Step ${n} of ${STEPS.length}`;
+  document.getElementById("back").disabled = cur === 0;
+  document.getElementById("next").disabled = cur === STEPS.length - 1;
+  document.querySelectorAll("#dots button").forEach((b,i)=>{
+    b.className = i<cur ? "done" : i===cur ? "cur" : "";
+  });
+
+  // on phones the story lives inside the code box, so take it out before redrawing the code
+  const story = document.querySelector(".story");
+  const grid = document.querySelector(".grid");
+  if (story.parentElement !== grid) grid.appendChild(story);
+  const phone = matchMedia("(max-width:760px)").matches;
+  story.classList.toggle("inline-story", phone);
+
+  // the last line that is highlighted in this step; the story goes right after it on phones
+  let last = -1;
+  LINES.forEach(([st], i) => {
+    if (st > n) return;
+    if (s.run ? s.run.includes(i) : st === n) last = i;
+  });
+
+  // code: lines from earlier steps are gray, new lines are in color with a gold stripe
+  let html = "";
+  LINES.forEach(([st, txt], i) => {
+    if (st > n) return;
+    let cls = "old";
+    if (s.run) { if (s.run.includes(i)) cls = "run"; }
+    else if (st === n) cls = "new";
+    const ind = indentOf(txt), hang = ind + 2;
+    html += `<div class="ln ${cls}" style="padding-left:calc(10px + ${hang}ch);text-indent:-${hang}ch">${txt ? color(txt) : " "}</div>`;
+    if (s.notes && s.notes[i]) {
+      const [c, msg] = s.notes[i];
+      // put the note under the start of the statement, not under a continuation line
+      let j = i;
+      while (j > 0 && /[(,]$/.test(LINES[j-1][1].trim())) j--;
+      const base = indentOf(LINES[j][1]);
+      html += `<div class="note-row" style="padding-left:calc(10px + ${base}ch)"><span class="note note-${c}">&#8593; ${msg}</span></div>`;
+    }
+    if (i === last) html += `<div id="slot"></div>`;
+  });
+  document.getElementById("code").innerHTML = html;
+  if (phone) document.getElementById("slot").appendChild(story);
+
+  // picture
+  document.getElementById("pictitle").textContent = s.pt;
+  let svg = "";
+  for (const [k, look] of Object.entries(s.nodes)) {
+    const p = PARENT[k]; if (!p || !(p in s.nodes)) continue;
+    const [x1,y1] = POS[p], [x2,y2] = POS[k];
+    const walked = (look[0]==="g") , dead = look==="x";
+    const col = dead ? "#e7655e" : walked ? "#e0c37d" : "#4a525c";
+    svg += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}" stroke-width="${walked||dead?3.5:2.5}" ${dead?'stroke-dasharray="6 5"':''}/>`;
+  }
+  for (const [k, look] of Object.entries(s.nodes)) {
+    const [x,y] = POS[k];
+    const gold = look[0]==="g", end = look.includes("e"), dead = look==="x";
+    const fill = dead ? "#2a1513" : gold ? "#3a3220" : "#1d2228";
+    const stroke = dead ? "#e7655e" : gold ? "#e0c37d" : "#5a636e";
+    if (end) svg += `<circle cx="${x}" cy="${y}" r="27" fill="none" stroke="#63b57a" stroke-width="3.5"/>`;
+    svg += `<circle cx="${x}" cy="${y}" r="21" fill="${fill}" stroke="${stroke}" stroke-width="2.5" ${dead?'stroke-dasharray="5 4"':''}/>`;
+    const lab = LABEL[k];
+    svg += `<text x="${x}" y="${y+6}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="${lab.length>1?13:19}" font-weight="600" fill="${dead?'#e7655e':'#f2eee5'}">${lab}</text>`;
+  }
+  for (const [k, [msg, col]] of Object.entries(s.tags || {})) {
+    const [x,y] = POS[k];
+    const side = SIDE[k];
+    const tx = side==="below" ? x : side==="right" ? x+34 : x-34;
+    const ty = side==="below" ? y+46 : y+5;
+    const anchor = side==="below" ? "middle" : side==="right" ? "start" : "end";
+    svg += `<text x="${tx}" y="${ty}" text-anchor="${anchor}" font-family="DM Sans,sans-serif" font-size="15" font-weight="700" fill="${col}">${msg.replace(/</g,"&lt;")}</text>`;
+  }
+  document.getElementById("pic").innerHTML = svg;
+
+  // on phones, after Back or Next, scroll so the first highlighted line is near the top
+  if (phone && moved) {
+    const first = document.querySelector(".ln.new, .ln.run");
+    if (first) window.scrollTo({top: first.getBoundingClientRect().top + scrollY - 16, behavior: "smooth"});
+  }
+  moved = false;
+}
+let moved = false;
+matchMedia("(max-width:760px)").addEventListener("change", render);
+
+const dots = document.getElementById("dots");
+STEPS.forEach((_, i) => {
+  const b = document.createElement("button");
+  b.setAttribute("aria-label", `Go to step ${i+1}`);
+  b.onclick = () => { cur = i; moved = true; render(); };
+  dots.appendChild(b);
+});
+document.getElementById("back").onclick = () => { if (cur>0) { cur--; moved = true; render(); } };
+document.getElementById("next").onclick = () => { if (cur<STEPS.length-1) { cur++; moved = true; render(); } };
+document.addEventListener("keydown", e => {
+  if (e.key==="ArrowRight") document.getElementById("next").click();
+  if (e.key==="ArrowLeft") document.getElementById("back").click();
+});
+const start = parseInt(new URLSearchParams(location.search).get("step"));
+if (start >= 1 && start <= STEPS.length) cur = start - 1;
+render();
+</script>
+</body>
+</html>

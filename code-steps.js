@@ -1,32 +1,31 @@
 // "Build it" mode for the colored code boxes.
 // Each step lights up the lines I would write next in an interview, in the order I would build them.
-// A small window above the Back / Next bar says what I would say out loud for that piece.
+// One panel at the bottom of the screen shows what I would say, with Back and Next under it.
 (function () {
   var boxes = document.querySelectorAll(".code-text");
   if (!boxes.length) return;
 
-  var say = document.createElement("div");
-  say.className = "say-box";
-  say.innerHTML = '<div class="say-k"></div><div class="say-t"></div>';
-  var bar = document.createElement("div");
-  bar.className = "step-bar";
-  bar.innerHTML =
-    '<button type="button" class="sb-back">&#8592; Back</button>' +
-    '<span class="sb-count"></span>' +
-    '<button type="button" class="sb-next">Next &#8594;</button>' +
-    '<button type="button" class="sb-done" aria-label="Stop">&#10005;</button>';
-  document.body.appendChild(say);
-  document.body.appendChild(bar);
-  var back = bar.querySelector(".sb-back"), next = bar.querySelector(".sb-next"),
-      count = bar.querySelector(".sb-count"), done = bar.querySelector(".sb-done");
+  var sheet = document.createElement("div");
+  sheet.className = "build-sheet";
+  sheet.innerHTML =
+    '<div class="bs-head"><span class="bs-step"></span>' +
+    '<button type="button" class="bs-close" aria-label="Close">&#10005;</button></div>' +
+    '<div class="bs-track"><i></i></div>' +
+    '<div class="bs-text"></div>' +
+    '<div class="bs-nav"><button type="button" class="bs-back">Back</button>' +
+    '<button type="button" class="bs-next">Next</button></div>';
+  document.body.appendChild(sheet);
+  var stepLabel = sheet.querySelector(".bs-step"), fill = sheet.querySelector(".bs-track i"),
+      text = sheet.querySelector(".bs-text"), back = sheet.querySelector(".bs-back"),
+      next = sheet.querySelector(".bs-next"), close = sheet.querySelector(".bs-close");
 
   var active = null, steps = [], cur = 0, inView = false, timer = null;
 
   // plain lines become paragraphs, and lines starting with "* " become a bullet list
-  function format(text) {
-    var esc = function (t) { return t.replace(/&/g, "&amp;").replace(/</g, "&lt;"); };
+  function format(t) {
+    var esc = function (s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;"); };
     var out = "", list = false;
-    text.split("\n").forEach(function (line) {
+    t.split("\n").forEach(function (line) {
       if (line.indexOf("* ") === 0) {
         if (!list) { out += "<ul>"; list = true; }
         out += "<li>" + esc(line.slice(2)) + "</li>";
@@ -59,64 +58,75 @@
       el.classList.toggle("on", now.indexOf(l) >= 0);
       el.classList.toggle("built", before.indexOf(l) >= 0);
     });
-    count.textContent = "Step " + (cur + 1) + " of " + steps.length;
+    stepLabel.textContent = summary ? "Wrap up" : "Step " + (cur + 1) + " of " + steps.length;
+    fill.style.width = ((cur + 1) / steps.length * 100) + "%";
     back.disabled = cur === 0;
-    next.disabled = cur === steps.length - 1;
+    next.textContent = cur === steps.length - 1 ? "Done" : "Next";
 
-    // the window fades out, gets the new words, then fades back in
-    say.classList.remove("in");
+    // only the words fade, so the panel itself stays still
+    text.classList.add("out");
     clearTimeout(timer);
     timer = setTimeout(function () {
-      say.querySelector(".say-k").textContent = summary ? "To wrap up, I would say" : "What I would say";
-      say.querySelector(".say-t").innerHTML = format(steps[cur].say);
-      say.classList.add("in");
+      text.innerHTML = format(steps[cur].say);
+      text.classList.remove("out");
+      pad();
       if (scroll) place();
-    }, 160);
+    }, 140);
   }
 
-  // scroll so the lit lines sit in the space above the window
+  // leave enough room under the page so the last lines can scroll above the panel
+  function pad() {
+    document.body.style.paddingBottom = active && inView ? (sheet.offsetHeight + 40) + "px" : "";
+  }
+
+  // scroll so the lit lines sit between the top menu and the panel
   function place() {
-    var first = active.querySelector(".ln.on");
-    if (!first) return;
-    var top = first.getBoundingClientRect().top;
-    var room = say.getBoundingClientRect().top;
-    var lit = active.querySelectorAll(".ln.on");
+    var lit = active.querySelectorAll(".ln.on, .note-row.on");
+    if (!lit.length) return;
+    var top = lit[0].getBoundingClientRect().top;
     var bottom = lit[lit.length - 1].getBoundingClientRect().bottom;
-    if (top < 70 || bottom > room - 10) {
-      window.scrollTo({ top: top + window.scrollY - 80, behavior: "smooth" });
+    var room = sheet.getBoundingClientRect().top;
+    if (top < 90 || bottom > room - 16) {
+      window.scrollTo({ top: top + window.scrollY - 96, behavior: "smooth" });
     }
   }
 
-  function updateBar() {
+  function update() {
     var on = !!active && inView;
-    bar.classList.toggle("shown", on);
-    say.classList.toggle("shown", on);
-    document.body.classList.toggle("has-step-bar", on);
+    sheet.classList.toggle("shown", on);
+    pad();
   }
 
   function stop() {
     if (!active) return;
-    active.classList.remove("stepping", "summary");
-    active.querySelectorAll(".on, .built").forEach(function (el) { el.classList.remove("on", "built"); });
-    active.querySelector(".step-btn").innerHTML = "Build it &#9654;";
+    var box = active;
+    box.classList.remove("stepping", "summary");
+    var stack = box.closest(".panel-stack");
+    if (stack) stack.classList.remove("building");
+    box.querySelectorAll(".on, .built").forEach(function (el) { el.classList.remove("on", "built"); });
+    box.querySelector(".step-btn").innerHTML = "Build it &#9654;";
     active = null;
-    updateBar();
+    update();
+    box.scrollIntoView({ block: "start", behavior: "smooth" });
   }
 
   function start(box) {
-    stop();
+    if (active) stop();
     active = box; cur = 0;
     steps = JSON.parse(box.querySelector("script.steps").textContent);
     box.classList.add("stepping");
-    box.querySelector(".step-btn").innerHTML = "Show all";
+    // hide the picture panels around the code while building, so only the code is on screen
+    var stack = box.closest(".panel-stack");
+    if (stack) stack.classList.add("building");
+    box.querySelector(".step-btn").innerHTML = "Exit";
     inView = true;
-    updateBar();
+    update();
     show(true);
   }
 
   var watcher = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) {
-      if (e.target === active) { inView = e.isIntersecting; updateBar(); }
+      if (e.target === active) { inView = e.isIntersecting; update(); }
     });
   });
 
@@ -131,8 +141,10 @@
   });
 
   back.addEventListener("click", function () { if (cur > 0) { cur--; show(true); } });
-  next.addEventListener("click", function () { if (cur < steps.length - 1) { cur++; show(true); } });
-  done.addEventListener("click", stop);
+  next.addEventListener("click", function () {
+    if (cur < steps.length - 1) { cur++; show(true); } else stop();
+  });
+  close.addEventListener("click", stop);
   document.addEventListener("keydown", function (e) {
     if (!active) return;
     if (e.key === "ArrowRight") next.click();

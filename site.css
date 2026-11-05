@@ -328,3 +328,23 @@ a.card.c_tries::before{background-image:url('tries/images/p208_implement_trie.pn
 @media (max-width:375px){
   .code-text .code-inner{font-size:12px}
 }
+
+/* "Step through" mode for the code boxes: one block of code in color, the rest gray,
+   with Back and Next fixed to the bottom of the screen. */
+.code-text .step-btn{margin-left:auto;font:700 13px/1 'DM Sans',system-ui,sans-serif;padding:7px 11px;border:2px solid #2b2b2b;border-radius:8px;background:#fff;color:#1b1b1b;cursor:pointer}
+.code-text.stepping .ln:not(.on){color:#7f8894;background:none;box-shadow:none}
+.code-text.stepping .ln:not(.on) span{color:inherit;font-style:normal}
+.code-text.stepping .ln.on:not([class*="hl-"]){background:rgba(255,216,102,.10);box-shadow:inset 3px 0 #ffd866}
+.code-text.stepping .note-row:not(.on){display:none}
+.step-bar{display:none}
+.step-bar.shown{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:50;align-items:center;gap:10px;
+  padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(9,10,11,.96);border-top:1px solid var(--border)}
+.step-bar button{font:700 16px 'DM Sans',system-ui,sans-serif;padding:12px 20px;border-radius:10px;border:1px solid var(--border);background:#181c21;color:var(--text);cursor:pointer}
+.step-bar .sb-next{background:#e0c37d;border-color:#e0c37d;color:#1b1b1b}
+.step-bar .sb-done{padding:12px 14px}
+.step-bar button:disabled{opacity:.35;cursor:default}
+.step-bar .sb-count{flex:1;text-align:center;color:var(--muted);font-size:14px;white-space:nowrap}
+body.has-step-bar{padding-bottom:80px}
+@media (min-width:761px){
+  .step-bar.shown{left:50%;right:auto;transform:translateX(-50%);bottom:16px;border:1px solid var(--border);border-radius:14px;min-width:420px}
+}

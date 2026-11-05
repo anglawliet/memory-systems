@@ -352,6 +352,10 @@ a.card.c_tries::before{background-image:url('tries/images/p208_implement_trie.pn
 .say-box.shown.in{opacity:1;transform:none}
 .say-box .say-k{font:800 12px 'DM Sans',system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#9a7412;margin-bottom:4px}
 .say-box .say-t{font:500 16px/1.5 'DM Sans',system-ui,sans-serif}
+.say-box .say-t p{margin:0 0 6px}
+.say-box .say-t p:last-child{margin-bottom:0}
+.say-box .say-t ul{margin:4px 0 0;padding-left:20px}
+.say-box .say-t li{margin:3px 0}
 body.has-step-bar{padding-bottom:45vh}
 @media (min-width:761px){
   .step-bar.shown{left:50%;right:auto;transform:translateX(-50%);bottom:16px;border:1px solid var(--border);border-radius:14px;min-width:440px}

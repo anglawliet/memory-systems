@@ -22,6 +22,22 @@
 
   var active = null, steps = [], cur = 0, inView = false, timer = null;
 
+  // plain lines become paragraphs, and lines starting with "* " become a bullet list
+  function format(text) {
+    var esc = function (t) { return t.replace(/&/g, "&amp;").replace(/</g, "&lt;"); };
+    var out = "", list = false;
+    text.split("\n").forEach(function (line) {
+      if (line.indexOf("* ") === 0) {
+        if (!list) { out += "<ul>"; list = true; }
+        out += "<li>" + esc(line.slice(2)) + "</li>";
+      } else {
+        if (list) { out += "</ul>"; list = false; }
+        if (line.trim()) out += "<p>" + esc(line) + "</p>";
+      }
+    });
+    return out + (list ? "</ul>" : "");
+  }
+
   // "10-12,15" becomes [10, 11, 12, 15]
   function lines(spec) {
     var out = [];
@@ -52,7 +68,7 @@
     clearTimeout(timer);
     timer = setTimeout(function () {
       say.querySelector(".say-k").textContent = summary ? "To wrap up, I would say" : "What I would say";
-      say.querySelector(".say-t").textContent = steps[cur].say;
+      say.querySelector(".say-t").innerHTML = format(steps[cur].say);
       say.classList.add("in");
       if (scroll) place();
     }, 160);

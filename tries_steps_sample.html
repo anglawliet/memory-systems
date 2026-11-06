@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Trie Step Builder</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Memory">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="theme-color" content="#f8f7f4">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -350,6 +357,6 @@ const start = parseInt(new URLSearchParams(location.search).get("step"));
 if (start >= 1 && start <= STEPS.length) cur = start - 1;
 render();
 </script>
-<script src="site.js?v=20261106c" defer></script>
+<script src="site.js?v=20261106d" defer></script>
 </body>
 </html>

@@ -322,7 +322,7 @@ a.card.c_tries::before{background-image:url('tries/images/p208_implement_trie.pn
 @media (min-width:761px){
   .panel-stack:has(.code-text){display:block;margin:18px 0 6px}
   .panel-stack:has(.code-text) > img{display:none}
-  .code-text{max-width:680px}
+  .code-text{max-width:none}
   .code-text .code-inner{font-size:14.5px}
 }
 @media (max-width:375px){
@@ -340,7 +340,7 @@ a.card.c_tries::before{background-image:url('tries/images/p208_implement_trie.pn
 .code-text.stepping .ln.on{background:rgba(255,216,102,.08);box-shadow:inset 3px 0 #e0c37d}
 .code-text.stepping:not(.summary) .note-row:not(.on){display:none}
 .code-text.stepping .ln,.code-text.stepping .ln span{transition:color .2s,background .2s}
-.panel-stack.building > :not(.code-text){display:none}
+.panel-stack.building > :not(.code-text):not(.build-sheet){display:none}
 
 .build-sheet{display:none}
 .build-sheet.shown{display:block;position:fixed;left:0;right:0;bottom:0;z-index:60;
@@ -366,4 +366,13 @@ a.card.c_tries::before{background-image:url('tries/images/p208_implement_trie.pn
 .build-sheet .bs-back:disabled{opacity:.35;cursor:default}
 @media (min-width:761px){
   .build-sheet.shown{left:50%;right:auto;width:600px;margin-left:-300px;bottom:20px;border:1px solid #2a3038;border-radius:16px}
+}
+/* wide screens: the code box leaves room on its right, and the panel sits there,
+   following the code while scrolling (code-steps.js sets its left and top) */
+@media (min-width:1000px){
+  .panel-stack.building.docked{padding-right:380px}
+  .panel-stack.docked .code-text{max-width:none}
+  .build-sheet.docked.shown{position:fixed;right:auto;bottom:auto;width:360px;margin:0;
+    border:1px solid #2a3038;border-radius:16px;padding:14px 16px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+  .build-sheet.docked .bs-text{max-height:none}
 }

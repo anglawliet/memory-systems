@@ -20,6 +20,9 @@
       next = sheet.querySelector(".bs-next"), close = sheet.querySelector(".bs-close");
 
   var active = null, steps = [], cur = 0, inView = false, timer = null;
+  // on wide screens the panel sits beside the code instead of floating over it
+  var wide = window.matchMedia("(min-width: 1000px)");
+  function docked() { return sheet.classList.contains("docked"); }
 
   // plain lines become paragraphs, and lines starting with "* " become a bullet list
   function format(t) {
@@ -70,13 +73,14 @@
       text.innerHTML = format(steps[cur].say);
       text.classList.remove("out");
       pad();
+      dock();
       if (scroll) place();
     }, 140);
   }
 
   // leave enough room under the page so the last lines can scroll above the panel
   function pad() {
-    document.body.style.paddingBottom = active && inView ? (sheet.offsetHeight + 40) + "px" : "";
+    document.body.style.paddingBottom = active && inView && !docked() ? (sheet.offsetHeight + 40) + "px" : "";
   }
 
   // scroll so the lit lines sit between the top menu and the panel
@@ -85,7 +89,7 @@
     if (!lit.length) return;
     var top = lit[0].getBoundingClientRect().top;
     var bottom = lit[lit.length - 1].getBoundingClientRect().bottom;
-    var room = sheet.getBoundingClientRect().top;
+    var room = docked() ? window.innerHeight : sheet.getBoundingClientRect().top;
     if (top < 90 || bottom > room - 16) {
       window.scrollTo({ top: top + window.scrollY - 96, behavior: "smooth" });
     }
@@ -95,14 +99,29 @@
     var on = !!active && inView;
     sheet.classList.toggle("shown", on);
     pad();
+    dock();
   }
+
+  // on wide screens, keep the panel to the right of the code box, below the top menu,
+  // and never past the bottom of the code box
+  function dock() {
+    if (!active || !docked()) return;
+    var r = active.getBoundingClientRect();
+    var top = Math.min(Math.max(r.top, 90), r.bottom - sheet.offsetHeight);
+    sheet.style.left = (r.right + 20) + "px";
+    sheet.style.top = Math.max(top, r.top) + "px";
+  }
+  window.addEventListener("scroll", dock, { passive: true });
+  window.addEventListener("resize", dock);
 
   function stop() {
     if (!active) return;
     var box = active;
     box.classList.remove("stepping", "summary");
     var stack = box.closest(".panel-stack");
-    if (stack) stack.classList.remove("building");
+    if (stack) stack.classList.remove("building", "docked");
+    sheet.classList.remove("docked");
+    sheet.style.left = sheet.style.top = "";
     box.querySelectorAll(".on, .built").forEach(function (el) { el.classList.remove("on", "built"); });
     box.querySelector(".step-btn").innerHTML = "Build it &#9654;";
     active = null;
@@ -118,10 +137,16 @@
     // hide the picture panels around the code while building, so only the code is on screen
     var stack = box.closest(".panel-stack");
     if (stack) stack.classList.add("building");
+    if (stack && wide.matches) {
+      stack.classList.add("docked");
+      sheet.classList.add("docked");
+    }
     box.querySelector(".step-btn").innerHTML = "Exit";
     inView = true;
     update();
-    show(true);
+    // bring the code box to the top of the screen so the code and the panel start together
+    window.scrollTo({ top: box.getBoundingClientRect().top + window.scrollY - 80, behavior: "smooth" });
+    show(false);
   }
 
   var watcher = new IntersectionObserver(function (entries) {

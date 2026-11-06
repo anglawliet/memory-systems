@@ -18,17 +18,17 @@
   --ink:#1c1e22;
   --ink-2:#454a52;
   --ink-3:#6a7079;
-  --accent:#9a6a0f;
-  --accent-strong:#c8962e;
-  --accent-soft:#f7edd8;
-  --on-accent:#1c1404;
+  --accent:#1d5fd6;
+  --accent-strong:#2563eb;
+  --accent-soft:#e3ecfd;
+  --on-accent:#ffffff;
   --shadow-1:0 1px 2px rgba(28,30,34,.06),0 1px 1px rgba(28,30,34,.04);
   --shadow-2:0 6px 20px rgba(28,30,34,.08),0 2px 6px rgba(28,30,34,.05);
   --img-filter:none;
 
   --card:var(--surface);--card2:var(--surface-2);--card3:var(--surface-3);
   --border:var(--line);--border-soft:var(--line);--text:var(--ink);--muted:var(--ink-3);
-  --gold:#a8790f;--gold2:#9a6a0f;--amber:#b45309;--sand:#8a6538;--green:#15803d;--blue:#1d4ed8;
+  --gold:#1d5fd6;--gold2:#1d5fd6;--amber:#c2410c;--sand:#1d5fd6;--green:#15803d;--blue:#1d4ed8;
   --red:#b91c1c;--crimson:#b91c1c;--purple:#7e22ce;--violet:#6d28d9;--indigo:#4338ca;--lav:#5b4fa0;
   --emerald:#047857;--teal:#0f766e;--cyan:#0e7490;
   --ms-bar:60px;--reading:960px;
@@ -44,15 +44,15 @@
   --ink:#eceae4;
   --ink-2:#c4c7cc;
   --ink-3:#9aa0a8;
-  --accent:#e0c37d;
-  --accent-strong:#e0c37d;
-  --accent-soft:rgba(224,195,125,.12);
-  --on-accent:#16130c;
+  --accent:#8ab4ff;
+  --accent-strong:#3b7bf0;
+  --accent-soft:rgba(96,150,255,.16);
+  --on-accent:#ffffff;
   --shadow-1:0 1px 2px rgba(0,0,0,.4);
   --shadow-2:0 10px 30px rgba(0,0,0,.35);
   --img-filter:brightness(.9);
 
-  --gold:#cbaa63;--gold2:#e0c37d;--amber:#e0a64b;--sand:#d4b18a;--green:#63b57a;--blue:#7ea6f0;
+  --gold:#8ab4ff;--gold2:#8ab4ff;--amber:#fb923c;--sand:#8ab4ff;--green:#63b57a;--blue:#7ea6f0;
   --red:#e7655e;--crimson:#e7655e;--purple:#b49cf0;--violet:#a796ef;--indigo:#939cf0;--lav:#b9aedc;
   --emerald:#54bd93;--teal:#4fc0b2;--cyan:#57bed5;
 }
@@ -174,10 +174,10 @@ strong,b{font-weight:650}
 .deriv-b{padding:4px 20px 22px!important;border-top:1px solid var(--line)!important}
 .tag-e,.tag-m,.tag-h{border-radius:999px!important;padding:3px 10px!important;font-size:.72rem!important;font-weight:650!important;letter-spacing:.01em;margin-left:8px}
 .tag-e{background:#e3f5e8!important;color:#166534!important}
-.tag-m{background:#fbf0d9!important;color:#8a5a00!important}
+.tag-m{background:#fdeaa0!important;color:#1c1e22!important}
 .tag-h{background:#fbe4e4!important;color:#991b1b!important}
 :root[data-theme="dark"] .tag-e{background:rgba(99,181,122,.16)!important;color:#8fd3a3!important}
-:root[data-theme="dark"] .tag-m{background:rgba(224,166,75,.16)!important;color:#efc27e!important}
+:root[data-theme="dark"] .tag-m{background:rgba(250,204,21,.16)!important;color:#fde68a!important}
 :root[data-theme="dark"] .tag-h{background:rgba(231,101,94,.16)!important;color:#f19a95!important}
 .sbox{background:var(--surface-2)!important;border:1px solid var(--line);border-radius:10px!important;padding:14px 16px!important}
 .quiz{padding:20px 22px!important;transition:border-color .15s,box-shadow .15s}
@@ -323,13 +323,13 @@ a.card.c_tries::before{background-image:url('tries/images/p208_implement_trie.pn
 /* 14. "Build it" mode for the code boxes. Lines light up in the order I would write them in an
    interview: the current piece is in color, earlier pieces are gray, later pieces are faint.
    One panel shows what I would say, with Back and Next under it. */
-.code-text .step-btn{margin-left:auto;font:650 13px/1 'Inter',system-ui,sans-serif;padding:8px 14px;border:0;border-radius:999px;background:#e0c37d;color:#16130c;cursor:pointer}
-.code-text .step-btn:hover{background:#ebd197}
+.code-text .step-btn{margin-left:auto;font:650 13px/1 'Inter',system-ui,sans-serif;padding:8px 14px;border:0;border-radius:999px;background:#3b7bf0;color:#ffffff;cursor:pointer}
+.code-text .step-btn:hover{background:#5a91f5}
 .code-text.stepping .step-btn{background:#2a313c;color:#e6e9ef}
 .code-text.stepping:not(.summary) .ln:not(.on){color:#4a5361;background:none;box-shadow:none}
 .code-text.stepping:not(.summary) .ln.built{color:#8a93a1}
 .code-text.stepping:not(.summary) .ln:not(.on) span{color:inherit;font-style:normal}
-.code-text.stepping .ln.on{background:rgba(255,216,102,.08);box-shadow:inset 3px 0 #e0c37d}
+.code-text.stepping .ln.on{background:rgba(96,150,255,.12);box-shadow:inset 3px 0 #60a5fa}
 .code-text.stepping:not(.summary) .note-row:not(.on){display:none}
 .code-text.stepping .ln,.code-text.stepping .ln span{transition:color .2s,background .2s}
 .panel-stack.building > :not(.code-text):not(.build-sheet){display:none}

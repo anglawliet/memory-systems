@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script>try{var t=localStorage.getItem("ms-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Graph System</title>
 <style>
 :root{--bg:#1a1916;--card:#252320;--card2:#2d2a26;--gold:#d4a843;--gold2:#fbbf24;--amber:#f59e0b;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;--red:#ef4444;--crimson:#dc2626;--emerald:#059669;--violet:#7c3aed;--text:#e8e2d6;--muted:#9b9484;--border:#3d3930}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;padding:0 0 80px}
-.hdr{background:linear-gradient(135deg,#1f0e0e,#1a1916);border-bottom:3px solid var(--crimson);padding:40px 20px;text-align:center}
+.hdr{background:linear-gradient(135deg,var(--lb-1f0e0e,#1f0e0e),var(--lb-1a1916,#1a1916));border-bottom:3px solid var(--crimson);padding:40px 20px;text-align:center}
 .hdr h1{font-size:2em;color:var(--crimson)}.hdr p{color:var(--muted)}
 .wrap{max-width:920px;margin:0 auto;padding:20px}
 .nav{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0;position:sticky;top:0;background:var(--bg);padding:12px 0;z-index:100;border-bottom:1px solid var(--border)}
@@ -26,16 +27,16 @@ h3{color:var(--amber);margin:20px 0 8px}
 .map-cell .icon{font-size:1.5em;flex-shrink:0;width:36px;text-align:center}
 .map-cell .lbl{font-weight:700;color:var(--gold2);font-size:.9em}
 .map-cell .sub{color:var(--muted);font-size:.8em}
-.map-cell code{background:#0d0d0b;padding:2px 6px;border-radius:3px;font-family:'Fira Code',monospace;font-size:.8em;color:var(--amber)}
+.map-cell code{background:var(--lb-0d0d0b,#0d0d0b);padding:2px 6px;border-radius:3px;font-family:'Fira Code',monospace;font-size:.8em;color:var(--amber)}
 .flow-step{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:20px;margin:0 auto;max-width:600px;text-align:center;position:relative}
 .flow-step.q-step{border-color:var(--gold)}
 .flow-arrow{text-align:center;font-size:2em;color:var(--muted);margin:4px 0;line-height:1}
 .flow-branch{display:flex;gap:16px;margin:8px auto;max-width:650px}
-.flow-step.s1{border-color:var(--crimson);background:#7f1d1d15}.flow-step.s2{border-color:var(--blue);background:#1e3a5f15}
-.flow-step.s3{border-color:var(--amber);background:#92400e15}.flow-step.s4{border-color:var(--violet);background:#581c8715}
-.flow-step.s5{border-color:var(--emerald);background:#064e3b15}
+.flow-step.s1{border-color:var(--crimson);background:var(--lb-7f1d1d15,#7f1d1d15)}.flow-step.s2{border-color:var(--blue);background:var(--lb-1e3a5f15,#1e3a5f15)}
+.flow-step.s3{border-color:var(--amber);background:var(--lb-92400e15,#92400e15)}.flow-step.s4{border-color:var(--violet);background:var(--lb-581c8715,#581c8715)}
+.flow-step.s5{border-color:var(--emerald);background:var(--lb-064e3b15,#064e3b15)}
 .flow-step .tag{display:inline-block;padding:2px 10px;border-radius:4px;font-size:.8em;font-weight:700}
-.t1{background:#991b1b;color:#fecaca}.t2{background:#1e40af;color:#bfdbfe}.t3{background:#92400e;color:#fef3c7}.t4{background:#581c87;color:#e9d5ff}.t5{background:#064e3b;color:#a7f3d0}
+.t1{background:var(--lb-991b1b,#991b1b);color:var(--lc-fecaca,#fecaca)}.t2{background:var(--lb-1e40af,#1e40af);color:var(--lc-bfdbfe,#bfdbfe)}.t3{background:var(--lb-92400e,#92400e);color:var(--lc-fef3c7,#fef3c7)}.t4{background:var(--lb-581c87,#581c87);color:var(--lc-e9d5ff,#e9d5ff)}.t5{background:var(--lb-064e3b,#064e3b);color:var(--lc-a7f3d0,#a7f3d0)}
 .deriv{background:var(--card);border:1px solid var(--border);border-radius:10px;margin:16px 0;overflow:hidden}
 .deriv-h{padding:14px 20px;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
 .deriv-h:hover{background:var(--card2)}
@@ -45,23 +46,24 @@ h3{color:var(--amber);margin:20px 0 8px}
 .deriv-b{display:none;padding:0 20px 16px;border-top:1px solid var(--border)}.deriv.open .deriv-b{display:block}
 .sbox{background:var(--card2);border-radius:8px;padding:12px 16px;margin:10px 0}
 .sl{font-size:.7em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
-pre{background:#0d0d0b;border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;font-size:.85em;line-height:1.6;margin:10px 0}
+pre{background:var(--lb-0d0d0b,#0d0d0b);border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;font-size:.85em;line-height:1.6;margin:10px 0}
 code{font-family:'Fira Code','Courier New',monospace}
-.hi{background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.3);border-radius:6px;padding:12px 16px;margin:12px 0}
-.tag-e{background:#166534;color:#bbf7d0;padding:2px 8px;border-radius:3px;font-size:.75em;font-weight:700;margin-left:6px}
-.tag-m{background:#92400e;color:#fef3c7;padding:2px 8px;border-radius:3px;font-size:.75em;font-weight:700;margin-left:6px}
-.tag-h{background:#991b1b;color:#fecaca;padding:2px 8px;border-radius:3px;font-size:.75em;font-weight:700;margin-left:6px}
+.hi{background:var(--lb-rgba22038381,rgba(220,38,38,.1));border:1px solid var(--ld-rgba22038383,rgba(220,38,38,.3));border-radius:6px;padding:12px 16px;margin:12px 0}
+.tag-e{background:var(--lb-166534,#166534);color:var(--lc-bbf7d0,#bbf7d0);padding:2px 8px;border-radius:3px;font-size:.75em;font-weight:700;margin-left:6px}
+.tag-m{background:var(--lb-92400e,#92400e);color:var(--lc-fef3c7,#fef3c7);padding:2px 8px;border-radius:3px;font-size:.75em;font-weight:700;margin-left:6px}
+.tag-h{background:var(--lb-991b1b,#991b1b);color:var(--lc-fecaca,#fecaca);padding:2px 8px;border-radius:3px;font-size:.75em;font-weight:700;margin-left:6px}
 .quiz{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin:14px 0;cursor:pointer}
 .quiz .ans{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}.quiz.show .ans{display:block}
 table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
 th{background:var(--card2);color:var(--gold);text-align:left;padding:10px 12px;border:1px solid var(--border)}
 td{padding:10px 12px;border:1px solid var(--border)}
 .ritual-step{display:grid;grid-template-columns:auto 1fr 1fr;gap:0}
-.ritual-step>div{padding:10px 14px;border-bottom:1px solid #ffffff10}
+.ritual-step>div{padding:10px 14px;border-bottom:1px solid var(--ld-ffffff10,#ffffff10)}
 .scene-img{width:100%;border-radius:10px;border:1px solid var(--border);margin-bottom:16px;cursor:pointer;transition:transform .2s}
 .scene-img:hover{transform:scale(1.02)}
 </style>
-<link rel="stylesheet" href="site.css?v=20261106a">
+<link rel="stylesheet" href="legacy-colors.css?v=20261106b">
+<link rel="stylesheet" href="site.css?v=20261106b">
 </head>
 <body>
 <header class="ms-topbar"><div class="ms-inner"><a class="ms-home" href="index.html" aria-label="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg><span>Memory Systems</span></a><nav class="ms-links"><a href="shankar_dada_trees.html">Trees</a><a href="graphs.html" class="on">Graphs</a><a href="dp_workshop.html">DP</a><a href="arrays.html">Arrays</a><a href="two_pointers.html">Two Pointers</a><a href="sliding_window.html">Sliding Window</a><a href="stack.html">Stack</a><a href="binary_search.html">Binary Search</a><a href="linked_list.html">Linked List</a><a href="heap.html">Heap</a><a href="tries.html">Tries</a></nav></div></header>
@@ -92,28 +94,28 @@ td{padding:10px 12px;border:1px solid var(--border)}
 
 <img src="graphs/images/dfs_arundhati_palace.png" alt="DFS story: Arundhati checks each palace chamber for a seal, seals it before entering, reads the connected doors, goes deep through one door at a time, and returns only after every door is done" class="scene-img">
 
-<div style="background:rgba(220,38,38,.08);border:2px solid var(--crimson);border-radius:10px;padding:18px;margin-bottom:16px">
+<div style="background:var(--lb-rgba220383808,rgba(220,38,38,.08));border:2px solid var(--crimson);border-radius:10px;padding:18px;margin-bottom:16px">
 <div style="color:var(--crimson);font-weight:700;font-size:1.1em;margin-bottom:8px">Same ritual on a grid</div>
 <div style="font-size:.92em;color:var(--text);margin-bottom:8px">Each cell is a chamber, and its doors are up, down, left and right. Off the map, a wall, or already sealed? Turn back.</div>
 <pre style="margin:0"><code>def dfs(r, c):
     if r &lt; 0 or r &gt;= R or c &lt; 0 or c &gt;= C or grid[r][c] == '0':
-        return                       <span style="color:#6b9955"># off map, wall, or sealed</span>
-    grid[r][c] = '0'                 <span style="color:#6b9955"># seal it</span>
+        return                       <span style="color:var(--lc-6b9955,#6b9955)"># off map, wall, or sealed</span>
+    grid[r][c] = '0'                 <span style="color:var(--lc-6b9955,#6b9955)"># seal it</span>
     for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:
-        dfs(r + dr, c + dc)          <span style="color:#6b9955"># try every door</span></code></pre>
+        dfs(r + dr, c + dc)          <span style="color:var(--lc-6b9955,#6b9955)"># try every door</span></code></pre>
 </div>
 
-<div style="background:rgba(220,38,38,.06);border:1px solid #b91c1c;border-radius:10px;padding:18px;margin-top:12px">
+<div style="background:var(--lb-rgba220383806,rgba(220,38,38,.06));border:1px solid #b91c1c;border-radius:10px;padding:18px;margin-top:12px">
 <div style="color:var(--crimson);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="background:var(--lb-rgba23968681,rgba(239,68,68,.1));border-radius:6px;padding:10px">
 <div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG: seal AFTER exploring</div>
 <pre style="font-size:.82em;margin:0"><code>for nei in graph[node]:
     dfs(nei)
 visited.add(node)  # TOO LATE!
 # Same chamber entered again = infinite loop</code></pre>
 </div>
-<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="background:var(--lb-rgba34197941,rgba(34,197,94,.1));border-radius:6px;padding:10px">
 <div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT: seal BEFORE exploring</div>
 <pre style="font-size:.82em;margin:0"><code>visited.add(node)     # seal FIRST
 for nei in graph[node]:
@@ -121,13 +123,13 @@ for nei in graph[node]:
 </div>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="background:var(--lb-rgba23968681,rgba(239,68,68,.1));border-radius:6px;padding:10px">
 <div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG: forgetting boundary check on grid</div>
 <pre style="font-size:.82em;margin:0"><code>def dfs(r, c):
     grid[r][c] = '0'
     # IndexError when r or c is out of bounds!</code></pre>
 </div>
-<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="background:var(--lb-rgba34197941,rgba(34,197,94,.1));border-radius:6px;padding:10px">
 <div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT: check ALL three base cases FIRST</div>
 <pre style="font-size:.82em;margin:0"><code>def dfs(r, c):
     if r<0 or r>=R or c<0 or c>=C:
@@ -147,31 +149,31 @@ for nei in graph[node]:
 
 <img src="graphs/images/bfs_food_serving_vertical.png" alt="BFS food serving story: Prabhas serves the front of the line, asks who came with each guest, skips anyone with a wristband, gives wristbands to new people, and sends them to the back" class="scene-img">
 
-<div style="background:rgba(37,99,235,.12);border-radius:8px;padding:14px;margin-bottom:16px">
+<div style="background:var(--lb-rgba379923512,rgba(37,99,235,.12));border-radius:8px;padding:14px;margin-bottom:16px">
 <div style="color:var(--blue);font-weight:700;margin-bottom:6px">Serving Rounds: counting levels</div>
 <div style="font-size:.9em;color:var(--text)">
 Some problems ask <em>how many steps</em> or <em>how many minutes</em>. For those, Prabhas serves in <strong>rounds</strong>. Before each round, he counts how many people are in line <strong>right now</strong>, and serves exactly that many. Anyone who joins during the round waits for the next one. <strong>One round = one level = one minute.</strong>
 </div>
 </div>
 
-<div style="background:rgba(37,99,235,.12);border-radius:8px;padding:14px;margin-bottom:16px">
+<div style="background:var(--lb-rgba379923512,rgba(37,99,235,.12));border-radius:8px;padding:14px;margin-bottom:16px">
 <div style="color:var(--blue);font-weight:700;margin-bottom:6px">Multi-Source BFS: a crowd at opening time</div>
 <div style="font-size:.9em;color:var(--text)">
 Sometimes there isn't just one first person. When the stall opens, <strong>a whole group is already waiting</strong> (all the rotten oranges, or all the gates). They all get wristbands and stand in line together. Same ritual, the line just starts longer.
 </div>
 </div>
 
-<div style="background:rgba(37,99,235,.06);border:1px solid #1d4ed8;border-radius:10px;padding:18px;margin-top:12px">
+<div style="background:var(--lb-rgba379923506,rgba(37,99,235,.06));border:1px solid #1d4ed8;border-radius:10px;padding:18px;margin-top:12px">
 <div style="color:var(--blue);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="background:var(--lb-rgba23968681,rgba(239,68,68,.1));border-radius:6px;padding:10px">
 <div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG: wristband when SERVED</div>
 <pre style="font-size:.82em;margin:0"><code>node = q.popleft()
 visited.add(node)  # TOO LATE!
 # Venkatesh came with 3 people,
 # so he joins the line 3 times</code></pre>
 </div>
-<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="background:var(--lb-rgba34197941,rgba(34,197,94,.1));border-radius:6px;padding:10px">
 <div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT: wristband when JOINING</div>
 <pre style="font-size:.82em;margin:0"><code>if nei not in visited:
     visited.add(nei)  # wristband NOW
@@ -180,14 +182,14 @@ visited.add(node)  # TOO LATE!
 </div>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="background:var(--lb-rgba23968681,rgba(239,68,68,.1));border-radius:6px;padding:10px">
 <div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG: no rounds when you need levels</div>
 <pre style="font-size:.82em;margin:0"><code>while q:
     node = q.popleft()
     # How many rounds? No idea!
     # Can't count levels.</code></pre>
 </div>
-<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="background:var(--lb-rgba34197941,rgba(34,197,94,.1));border-radius:6px;padding:10px">
 <div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT: count heads, serve one round</div>
 <pre style="font-size:.82em;margin:0"><code>while q:
     for _ in range(len(q)):  # this round
@@ -209,17 +211,17 @@ visited.add(node)  # TOO LATE!
 <img src="graphs/images/topo_python_code.png" alt="Kahn's algorithm Python code, with each block of code matched to a kitchen step" class="scene-img">
 <img src="graphs/images/topo_cycle.png" alt="Cycle detection: three dishes wait on each other in a loop, the queue goes empty with nodes left, so there is a cycle" class="scene-img">
 
-<div style="background:rgba(245,158,11,.06);border:1px solid #b45309;border-radius:10px;padding:18px;margin-top:12px">
+<div style="background:var(--lb-rgba2451581106,rgba(245,158,11,.06));border:1px solid #b45309;border-radius:10px;padding:18px;margin-top:12px">
 <div style="color:var(--amber);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="background:var(--lb-rgba23968681,rgba(239,68,68,.1));border-radius:6px;padding:10px">
 <div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG: counting, but no menu arrows</div>
 <pre style="font-size:.82em;margin:0"><code>for u, v in edges:
     in_deg[v] += 1
     # but where is graph[u].append(v)?
     # Can't find neighbors later!</code></pre>
 </div>
-<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="background:var(--lb-rgba34197941,rgba(34,197,94,.1));border-radius:6px;padding:10px">
 <div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT: build BOTH at the same time</div>
 <pre style="font-size:.82em;margin:0"><code>for u, v in edges:
     graph[u].append(v)
@@ -227,13 +229,13 @@ visited.add(node)  # TOO LATE!
 </div>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="background:var(--lb-rgba23968681,rgba(239,68,68,.1));border-radius:6px;padding:10px">
 <div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG: not checking for a cycle</div>
 <pre style="font-size:.82em;margin:0"><code>return order  # What if len(order) < n?
               # Some dishes were in a cycle
               # and never reached 0!</code></pre>
 </div>
-<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="background:var(--lb-rgba34197941,rgba(34,197,94,.1));border-radius:6px;padding:10px">
 <div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT: check everything got cooked</div>
 <pre style="font-size:.82em;margin:0"><code>if len(order) != n:
     return []  # cycle detected!
@@ -254,10 +256,10 @@ return order</code></pre>
 <img src="graphs/images/uf_find.png" alt="find() with path compression: walk up the chain to the boss, then point everyone on the way straight at the boss" class="scene-img">
 <img src="graphs/images/uf_union.png" alt="union(): find both bosses, stop if they match, otherwise the smaller rank goes under the bigger one, and equal ranks raise the new boss's rank" class="scene-img">
 
-<div style="background:rgba(124,58,237,.06);border:1px solid #6d28d9;border-radius:10px;padding:18px;margin-top:12px">
+<div style="background:var(--lb-rgba1245823706,rgba(124,58,237,.06));border:1px solid #6d28d9;border-radius:10px;padding:18px;margin-top:12px">
 <div style="color:var(--violet);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="background:var(--lb-rgba23968681,rgba(239,68,68,.1));border-radius:6px;padding:10px">
 <div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG: no path compression</div>
 <pre style="font-size:.82em;margin:0"><code>def find(x):
     while parent[x] != x:
@@ -265,7 +267,7 @@ return order</code></pre>
     return x
 # Works but O(n) per find in worst case</code></pre>
 </div>
-<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="background:var(--lb-rgba34197941,rgba(34,197,94,.1));border-radius:6px;padding:10px">
 <div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT: path compression = instant next time</div>
 <pre style="font-size:.82em;margin:0"><code>def find(x):
     if parent[x] != x:
@@ -275,12 +277,12 @@ return order</code></pre>
 </div>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="background:var(--lb-rgba23968681,rgba(239,68,68,.1));border-radius:6px;padding:10px">
 <div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG: union without finding the bosses first</div>
 <pre style="font-size:.82em;margin:0"><code>parent[a] = b  # Direct assignment!
 # Breaks up existing companies</code></pre>
 </div>
-<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="background:var(--lb-rgba34197941,rgba(34,197,94,.1));border-radius:6px;padding:10px">
 <div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT: always find the bosses first, then merge</div>
 <pre style="font-size:.82em;margin:0"><code>root_a, root_b = find(a), find(b)
 if root_a == root_b: return False
@@ -300,16 +302,16 @@ parent[root_b] = root_a  # merge the bosses</code></pre>
 <img src="graphs/images/dj_worked.png" alt="One worked example from Seattle: distances improve step by step as Poppy pops the closest city and Dex updates shorter paths" class="scene-img">
 <img src="graphs/images/dj_stale.png" alt="Stale heap entries: an old (25, Vegas) ticket stays in the heap, the shorter (22, Vegas) is processed first, and the old one is skipped later" class="scene-img">
 
-<div style="background:rgba(5,150,105,.06);border:1px solid #047857;border-radius:10px;padding:18px;margin-top:12px">
+<div style="background:var(--lb-rgba515010506,rgba(5,150,105,.06));border:1px solid var(--ld-047857,#047857);border-radius:10px;padding:18px;margin-top:12px">
 <div style="color:var(--emerald);font-weight:700;font-size:1.05em;margin-bottom:12px">Common Mistakes</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="background:var(--lb-rgba23968681,rgba(239,68,68,.1));border-radius:6px;padding:10px">
 <div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG: no settled check</div>
 <pre style="font-size:.82em;margin:0"><code>d, city = heappop(heap)
 # Processes a city even if already settled!
 # Wastes time on stale tickets.</code></pre>
 </div>
-<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="background:var(--lb-rgba34197941,rgba(34,197,94,.1));border-radius:6px;padding:10px">
 <div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT: skip settled cities</div>
 <pre style="font-size:.82em;margin:0"><code>d, city = heappop(heap)
 if city in settled:
@@ -317,14 +319,14 @@ if city in settled:
 </div>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:10px">
+<div style="background:var(--lb-rgba23968681,rgba(239,68,68,.1));border-radius:6px;padding:10px">
 <div style="color:var(--red);font-weight:700;font-size:.85em;margin-bottom:6px">WRONG: Dijkstra with negative weights</div>
 <pre style="font-size:.82em;margin:0"><code># Road weight = -5?
 # Dijkstra assumes: once settled,
 # no shorter path exists.
 # Negative edges break this!</code></pre>
 </div>
-<div style="background:rgba(34,197,94,.1);border-radius:6px;padding:10px">
+<div style="background:var(--lb-rgba34197941,rgba(34,197,94,.1));border-radius:6px;padding:10px">
 <div style="color:var(--green);font-weight:700;font-size:.85em;margin-bottom:6px">RIGHT: use Bellman-Ford for negative edges</div>
 <pre style="font-size:.82em;margin:0"><code># Negative edges? Use Bellman-Ford:
 for _ in range(n-1):       # n-1 rounds
@@ -371,16 +373,16 @@ Arundhati walks the grid, cell by cell. Sees a land cell with no seal yet (<code
 
     def dfs(r, c):
         if r < 0 or r >= R or c < 0 or c >= C or grid[r][c] == '0':
-            return                     <span style="color:#6b9955"># off map, water, or visited</span>
-        grid[r][c] = '0'               <span style="color:#6b9955"># mark visited</span>
+            return                     <span style="color:var(--lc-6b9955,#6b9955)"># off map, water, or visited</span>
+        grid[r][c] = '0'               <span style="color:var(--lc-6b9955,#6b9955)"># mark visited</span>
         for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:
-            dfs(r + dr, c + dc)        <span style="color:#6b9955"># go N/S/E/W</span>
+            dfs(r + dr, c + dc)        <span style="color:var(--lc-6b9955,#6b9955)"># go N/S/E/W</span>
 
     for r in range(R):
         for c in range(C):
-            if grid[r][c] == '1':      <span style="color:#6b9955"># unvisited land!</span>
-                dfs(r, c)              <span style="color:#6b9955"># new trip</span>
-                count += 1             <span style="color:#6b9955"># one more island</span>
+            if grid[r][c] == '1':      <span style="color:var(--lc-6b9955,#6b9955)"># unvisited land!</span>
+                dfs(r, c)              <span style="color:var(--lc-6b9955,#6b9955)"># new trip</span>
+                count += 1             <span style="color:var(--lc-6b9955,#6b9955)"># one more island</span>
     return count</code></pre>
 </div></div>
 
@@ -406,9 +408,9 @@ Same trip as #200, but now Arundhati <strong>counts</strong> how many cells she 
 
     def dfs(r, c):
         if r < 0 or r >= R or c < 0 or c >= C or grid[r][c] == 0:
-            return 0                   <span style="color:#6b9955"># off map or water = 0 cells</span>
-        grid[r][c] = 0                 <span style="color:#6b9955"># mark visited</span>
-        return 1 + sum(dfs(r+dr, c+dc) <span style="color:#6b9955"># me + all 4 directions</span>
+            return 0                   <span style="color:var(--lc-6b9955,#6b9955)"># off map or water = 0 cells</span>
+        grid[r][c] = 0                 <span style="color:var(--lc-6b9955,#6b9955)"># mark visited</span>
+        return 1 + sum(dfs(r+dr, c+dc) <span style="color:var(--lc-6b9955,#6b9955)"># me + all 4 directions</span>
             for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)])
 
     return max((dfs(r, c) for r in range(R) for c in range(C)), default=0)</code></pre>
@@ -433,15 +435,15 @@ Arundhati walks through the original palace. At each chamber, she builds an <str
 </div>
 
 <pre><code>def cloneGraph(node):
-    old_to_new = {}                    <span style="color:#6b9955"># mirror map: original → clone</span>
+    old_to_new = {}                    <span style="color:var(--lc-6b9955,#6b9955)"># mirror map: original → clone</span>
 
     def dfs(node):
-        if node in old_to_new:         <span style="color:#6b9955"># already cloned = visited</span>
+        if node in old_to_new:         <span style="color:var(--lc-6b9955,#6b9955)"># already cloned = visited</span>
             return old_to_new[node]
-        clone = Node(node.val)         <span style="color:#6b9955"># build replica</span>
-        old_to_new[node] = clone       <span style="color:#6b9955"># register in mirror</span>
-        for nei in node.neighbors:     <span style="color:#6b9955"># map scroll — all roads</span>
-            clone.neighbors.append(dfs(nei))  <span style="color:#6b9955"># wire cloned roads</span>
+        clone = Node(node.val)         <span style="color:var(--lc-6b9955,#6b9955)"># build replica</span>
+        old_to_new[node] = clone       <span style="color:var(--lc-6b9955,#6b9955)"># register in mirror</span>
+        for nei in node.neighbors:     <span style="color:var(--lc-6b9955,#6b9955)"># map scroll — all roads</span>
+            clone.neighbors.append(dfs(nei))  <span style="color:var(--lc-6b9955,#6b9955)"># wire cloned roads</span>
         return clone
 
     return dfs(node) if node else None</code></pre>
@@ -473,20 +475,20 @@ No prerequisites, no grouping, no weights, no waves. Pure exploration. &rarr; <s
     def dfs(r, c, visit, prev_h):
         if (r,c) in visit or r<0 or r>=R or c<0 or c>=C:
             return
-        if heights[r][c] < prev_h:     <span style="color:#6b9955"># can't go downhill (reverse!)</span>
+        if heights[r][c] < prev_h:     <span style="color:var(--lc-6b9955,#6b9955)"># can't go downhill (reverse!)</span>
             return
-        visit.add((r, c))              <span style="color:#6b9955"># visited mark for this team</span>
+        visit.add((r, c))              <span style="color:var(--lc-6b9955,#6b9955)"># visited mark for this team</span>
         for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:
             dfs(r+dr, c+dc, visit, heights[r][c])
 
     for c in range(C):
-        dfs(0, c, pac, 0)              <span style="color:#6b9955"># Pacific: top border</span>
-        dfs(R-1, c, atl, 0)            <span style="color:#6b9955"># Atlantic: bottom border</span>
+        dfs(0, c, pac, 0)              <span style="color:var(--lc-6b9955,#6b9955)"># Pacific: top border</span>
+        dfs(R-1, c, atl, 0)            <span style="color:var(--lc-6b9955,#6b9955)"># Atlantic: bottom border</span>
     for r in range(R):
-        dfs(r, 0, pac, 0)              <span style="color:#6b9955"># Pacific: left border</span>
-        dfs(r, C-1, atl, 0)            <span style="color:#6b9955"># Atlantic: right border</span>
+        dfs(r, 0, pac, 0)              <span style="color:var(--lc-6b9955,#6b9955)"># Pacific: left border</span>
+        dfs(r, C-1, atl, 0)            <span style="color:var(--lc-6b9955,#6b9955)"># Atlantic: right border</span>
 
-    return list(pac & atl)             <span style="color:#6b9955"># both teams reached = answer</span></code></pre>
+    return list(pac & atl)             <span style="color:var(--lc-6b9955,#6b9955)"># both teams reached = answer</span></code></pre>
 </div></div>
 
 <!-- PROBLEM 5: Surrounded Regions -->
@@ -513,19 +515,19 @@ Same structure as Pacific Atlantic &mdash; border-based DFS. &rarr; <span class=
     def dfs(r, c):
         if r<0 or r>=R or c<0 or c>=C or board[r][c] != 'O':
             return
-        board[r][c] = 'S'              <span style="color:#6b9955"># mark SAFE</span>
+        board[r][c] = 'S'              <span style="color:var(--lc-6b9955,#6b9955)"># mark SAFE</span>
         for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:
             dfs(r + dr, c + dc)
 
-    for r in range(R):                 <span style="color:#6b9955"># start from ALL borders</span>
+    for r in range(R):                 <span style="color:var(--lc-6b9955,#6b9955)"># start from ALL borders</span>
         for c in range(C):
             if (r in (0, R-1) or c in (0, C-1)) and board[r][c] == 'O':
                 dfs(r, c)
 
-    for r in range(R):                 <span style="color:#6b9955"># sweep</span>
+    for r in range(R):                 <span style="color:var(--lc-6b9955,#6b9955)"># sweep</span>
         for c in range(C):
-            if board[r][c] == 'O': board[r][c] = 'X'    <span style="color:#6b9955"># captured!</span>
-            elif board[r][c] == 'S': board[r][c] = 'O'  <span style="color:#6b9955"># restore safe</span></code></pre>
+            if board[r][c] == 'O': board[r][c] = 'X'    <span style="color:var(--lc-6b9955,#6b9955)"># captured!</span>
+            elif board[r][c] == 'S': board[r][c] = 'O'  <span style="color:var(--lc-6b9955,#6b9955)"># restore safe</span></code></pre>
 </div></div>
 
 <!-- PROBLEM 6: Reconstruct Itinerary -->
@@ -549,17 +551,17 @@ Arundhati must use <strong>every door exactly once</strong>. In each chamber, sh
 
 <pre><code>def findItinerary(tickets):
     graph = defaultdict(list)
-    for src, dst in sorted(tickets, reverse=True):  <span style="color:#6b9955"># reverse sort</span>
-        graph[src].append(dst)         <span style="color:#6b9955"># so pop() gives smallest</span>
+    for src, dst in sorted(tickets, reverse=True):  <span style="color:var(--lc-6b9955,#6b9955)"># reverse sort</span>
+        graph[src].append(dst)         <span style="color:var(--lc-6b9955,#6b9955)"># so pop() gives smallest</span>
 
     route = []
     def dfs(node):
-        while graph[node]:             <span style="color:#6b9955"># roads left?</span>
-            dfs(graph[node].pop())     <span style="color:#6b9955"># take the road (removes it)</span>
-        route.append(node)             <span style="color:#6b9955"># post-order: add AFTER all roads used</span>
+        while graph[node]:             <span style="color:var(--lc-6b9955,#6b9955)"># roads left?</span>
+            dfs(graph[node].pop())     <span style="color:var(--lc-6b9955,#6b9955)"># take the road (removes it)</span>
+        route.append(node)             <span style="color:var(--lc-6b9955,#6b9955)"># post-order: add AFTER all roads used</span>
 
     dfs("JFK")
-    return route[::-1]                 <span style="color:#6b9955"># reverse = correct order</span></code></pre>
+    return route[::-1]                 <span style="color:var(--lc-6b9955,#6b9955)"># reverse = correct order</span></code></pre>
 </div></div>
 
 <!-- ============ SCENE 2 PROBLEMS ============ -->
@@ -590,20 +592,20 @@ No prerequisites. No grouping. No weights. Simultaneous spread (all rotten orang
     fresh = 0
     for r in range(R):
         for c in range(C):
-            if grid[r][c] == 2: q.append((r, c))    <span style="color:#6b9955"># all rotten → in line</span>
-            elif grid[r][c] == 1: fresh += 1         <span style="color:#6b9955"># count fresh</span>
+            if grid[r][c] == 2: q.append((r, c))    <span style="color:var(--lc-6b9955,#6b9955)"># all rotten → in line</span>
+            elif grid[r][c] == 1: fresh += 1         <span style="color:var(--lc-6b9955,#6b9955)"># count fresh</span>
 
     minutes = 0
-    while q and fresh > 0:             <span style="color:#6b9955"># stop if no fresh left</span>
-        for _ in range(len(q)):        <span style="color:#6b9955"># one serving round</span>
+    while q and fresh > 0:             <span style="color:var(--lc-6b9955,#6b9955)"># stop if no fresh left</span>
+        for _ in range(len(q)):        <span style="color:var(--lc-6b9955,#6b9955)"># one serving round</span>
             r, c = q.popleft()
             for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:
                 nr, nc = r+dr, c+dc
                 if 0<=nr<R and 0<=nc<C and grid[nr][nc] == 1:
-                    grid[nr][nc] = 2   <span style="color:#6b9955"># rot it (wristband)</span>
+                    grid[nr][nc] = 2   <span style="color:var(--lc-6b9955,#6b9955)"># rot it (wristband)</span>
                     fresh -= 1
-                    q.append((nr, nc)) <span style="color:#6b9955"># join on the right</span>
-        minutes += 1                   <span style="color:#6b9955"># round done = 1 minute</span>
+                    q.append((nr, nc)) <span style="color:var(--lc-6b9955,#6b9955)"># join on the right</span>
+        minutes += 1                   <span style="color:var(--lc-6b9955,#6b9955)"># round done = 1 minute</span>
 
     return minutes if fresh == 0 else -1</code></pre>
 </div></div>
@@ -632,7 +634,7 @@ ALL gates are the crowd waiting at opening time. Round 1 reaches rooms 1 step aw
     q = deque()
     for r in range(R):
         for c in range(C):
-            if rooms[r][c] == 0:       <span style="color:#6b9955"># gate → in line</span>
+            if rooms[r][c] == 0:       <span style="color:var(--lc-6b9955,#6b9955)"># gate → in line</span>
                 q.append((r, c))
 
     while q:
@@ -640,7 +642,7 @@ ALL gates are the crowd waiting at opening time. Round 1 reaches rooms 1 step aw
         for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:
             nr, nc = r+dr, c+dc
             if 0<=nr<R and 0<=nc<C and rooms[nr][nc] == INF:
-                rooms[nr][nc] = rooms[r][c] + 1  <span style="color:#6b9955"># distance = parent + 1</span>
+                rooms[nr][nc] = rooms[r][c] + 1  <span style="color:var(--lc-6b9955,#6b9955)"># distance = parent + 1</span>
                 q.append((nr, nc))</code></pre>
 </div></div>
 
@@ -668,20 +670,20 @@ Standard Ramsay ritual. Count what each course waits on. Start with courses that
     graph = defaultdict(list)
     in_deg = [0] * numCourses
     for crs, pre in prerequisites:
-        graph[pre].append(crs)         <span style="color:#6b9955"># prereq → course</span>
-        in_deg[crs] += 1               <span style="color:#6b9955"># count what it waits on</span>
+        graph[pre].append(crs)         <span style="color:var(--lc-6b9955,#6b9955)"># prereq → course</span>
+        in_deg[crs] += 1               <span style="color:var(--lc-6b9955,#6b9955)"># count what it waits on</span>
 
     q = deque(i for i in range(numCourses) if in_deg[i] == 0)
     count = 0
     while q:
-        node = q.popleft()             <span style="color:#6b9955"># cook it</span>
+        node = q.popleft()             <span style="color:var(--lc-6b9955,#6b9955)"># cook it</span>
         count += 1
         for nei in graph[node]:
-            in_deg[nei] -= 1           <span style="color:#6b9955"># reduce deps</span>
+            in_deg[nei] -= 1           <span style="color:var(--lc-6b9955,#6b9955)"># reduce deps</span>
             if in_deg[nei] == 0:
-                q.append(nei)          <span style="color:#6b9955"># unlocked!</span>
+                q.append(nei)          <span style="color:var(--lc-6b9955,#6b9955)"># unlocked!</span>
 
-    return count == numCourses         <span style="color:#6b9955"># everything done?</span></code></pre>
+    return count == numCourses         <span style="color:var(--lc-6b9955,#6b9955)"># everything done?</span></code></pre>
 </div></div>
 
 <!-- PROBLEM 10: Course Schedule II -->
@@ -712,7 +714,7 @@ Identical to Course Schedule, but instead of just counting, <strong>record the c
     order = []
     while q:
         node = q.popleft()
-        order.append(node)             <span style="color:#6b9955"># record conquest order</span>
+        order.append(node)             <span style="color:var(--lc-6b9955,#6b9955)"># record conquest order</span>
         for nei in graph[node]:
             in_deg[nei] -= 1
             if in_deg[nei] == 0:
@@ -744,16 +746,16 @@ Identical to Course Schedule, but instead of just counting, <strong>record the c
     graph = {c: set() for w in words for c in w}
     in_deg = {c: 0 for c in graph}
 
-    for i in range(len(words) - 1):    <span style="color:#6b9955"># compare adjacent words</span>
+    for i in range(len(words) - 1):    <span style="color:var(--lc-6b9955,#6b9955)"># compare adjacent words</span>
         w1, w2 = words[i], words[i+1]
         if len(w1) > len(w2) and w1[:len(w2)] == w2:
-            return ""                  <span style="color:#6b9955"># invalid: prefix is longer</span>
+            return ""                  <span style="color:var(--lc-6b9955,#6b9955)"># invalid: prefix is longer</span>
         for c1, c2 in zip(w1, w2):
             if c1 != c2:
                 if c2 not in graph[c1]:
-                    graph[c1].add(c2)  <span style="color:#6b9955"># c1 → c2 edge</span>
+                    graph[c1].add(c2)  <span style="color:var(--lc-6b9955,#6b9955)"># c1 → c2 edge</span>
                     in_deg[c2] += 1
-                break                  <span style="color:#6b9955"># only first diff matters</span>
+                break                  <span style="color:var(--lc-6b9955,#6b9955)"># only first diff matters</span>
 
     q = deque(c for c in in_deg if in_deg[c] == 0)
     order = []
@@ -791,7 +793,7 @@ A valid tree has exactly <strong>n-1 edges</strong> and is <strong>fully connect
 </div>
 
 <pre><code>def validTree(n, edges):
-    if len(edges) != n - 1: return False  <span style="color:#6b9955"># tree must have n-1 edges</span>
+    if len(edges) != n - 1: return False  <span style="color:var(--lc-6b9955,#6b9955)"># tree must have n-1 edges</span>
 
     parent = list(range(n))
     rank = [0] * n
@@ -803,7 +805,7 @@ A valid tree has exactly <strong>n-1 edges</strong> and is <strong>fully connect
 
     def union(x, y):
         px, py = find(x), find(y)
-        if px == py: return False      <span style="color:#6b9955"># same company = cycle!</span>
+        if px == py: return False      <span style="color:var(--lc-6b9955,#6b9955)"># same company = cycle!</span>
         if rank[px] < rank[py]: px, py = py, px
         parent[py] = px
         if rank[px] == rank[py]: rank[px] += 1
@@ -832,7 +834,7 @@ Start with <strong>n separate companies</strong> (components = n). Each successf
 <pre><code>def countComponents(n, edges):
     parent = list(range(n))
     rank = [0] * n
-    components = n                     <span style="color:#6b9955"># start: n clans</span>
+    components = n                     <span style="color:var(--lc-6b9955,#6b9955)"># start: n clans</span>
 
     def find(x):
         if parent[x] != x:
@@ -846,7 +848,7 @@ Start with <strong>n separate companies</strong> (components = n). Each successf
         if rank[px] < rank[py]: px, py = py, px
         parent[py] = px
         if rank[px] == rank[py]: rank[px] += 1
-        components -= 1                <span style="color:#6b9955"># merged! one fewer company</span>
+        components -= 1                <span style="color:var(--lc-6b9955,#6b9955)"># merged! one fewer company</span>
 
     for u, v in edges:
         union(u, v)
@@ -872,7 +874,7 @@ Process mergers one by one. The merger where both nodes are <strong>ALREADY in t
 
 <pre><code>def findRedundantConnection(edges):
     n = len(edges)
-    parent = list(range(n + 1))        <span style="color:#6b9955"># 1-indexed</span>
+    parent = list(range(n + 1))        <span style="color:var(--lc-6b9955,#6b9955)"># 1-indexed</span>
     rank = [0] * (n + 1)
 
     def find(x):
@@ -882,15 +884,15 @@ Process mergers one by one. The merger where both nodes are <strong>ALREADY in t
 
     def union(x, y):
         px, py = find(x), find(y)
-        if px == py: return False      <span style="color:#6b9955"># REDUNDANT!</span>
+        if px == py: return False      <span style="color:var(--lc-6b9955,#6b9955)"># REDUNDANT!</span>
         if rank[px] < rank[py]: px, py = py, px
         parent[py] = px
         if rank[px] == rank[py]: rank[px] += 1
         return True
 
     for u, v in edges:
-        if not union(u, v):            <span style="color:#6b9955"># same company already</span>
-            return [u, v]              <span style="color:#6b9955"># this is the extra road</span></code></pre>
+        if not union(u, v):            <span style="color:var(--lc-6b9955,#6b9955)"># same company already</span>
+            return [u, v]              <span style="color:var(--lc-6b9955,#6b9955)"># this is the extra road</span></code></pre>
 </div></div>
 
 <!-- ============ SCENE 5 PROBLEMS ============ -->
@@ -919,16 +921,16 @@ Standard Dijkstra from source <code>k</code>. After the traversal, the answer is
         graph[u].append((v, w))
 
     dist = {i: float('inf') for i in range(1, n+1)}
-    dist[k] = 0                        <span style="color:#6b9955"># start = 0</span>
-    heap = [(0, k)]                    <span style="color:#6b9955"># heap queue</span>
+    dist[k] = 0                        <span style="color:var(--lc-6b9955,#6b9955)"># start = 0</span>
+    heap = [(0, k)]                    <span style="color:var(--lc-6b9955,#6b9955)"># heap queue</span>
     settled = set()
 
     while heap:
-        cost, node = heappop(heap)     <span style="color:#6b9955"># pop closest city</span>
-        if node in settled: continue   <span style="color:#6b9955"># already DONE-stamped</span>
+        cost, node = heappop(heap)     <span style="color:var(--lc-6b9955,#6b9955)"># pop closest city</span>
+        if node in settled: continue   <span style="color:var(--lc-6b9955,#6b9955)"># already DONE-stamped</span>
         settled.add(node)
         for nei, w in graph[node]:
-            nc = cost + w              <span style="color:#6b9955"># my dist + road weight</span>
+            nc = cost + w              <span style="color:var(--lc-6b9955,#6b9955)"># my dist + road weight</span>
             if nc < dist[nei]:
                 dist[nei] = nc
                 heappush(heap, (nc, nei))
@@ -958,19 +960,19 @@ Modified Dijkstra on a grid. Pop the cell with the <strong>lowest elevation</str
 <pre><code>def swimInWater(grid):
     n = len(grid)
     visited = set()
-    heap = [(grid[0][0], 0, 0)]        <span style="color:#6b9955"># (elevation, row, col)</span>
+    heap = [(grid[0][0], 0, 0)]        <span style="color:var(--lc-6b9955,#6b9955)"># (elevation, row, col)</span>
 
     while heap:
-        t, r, c = heappop(heap)        <span style="color:#6b9955"># lowest elevation cell</span>
+        t, r, c = heappop(heap)        <span style="color:var(--lc-6b9955,#6b9955)"># lowest elevation cell</span>
         if (r, c) in visited: continue
         visited.add((r, c))
-        if r == n-1 and c == n-1:      <span style="color:#6b9955"># reached destination!</span>
+        if r == n-1 and c == n-1:      <span style="color:var(--lc-6b9955,#6b9955)"># reached destination!</span>
             return t
         for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:
             nr, nc = r+dr, c+dc
             if 0<=nr<n and 0<=nc<n and (nr,nc) not in visited:
                 heappush(heap, (max(t, grid[nr][nc]), nr, nc))
-                                       <span style="color:#6b9955"># cost = max elevation on path</span></code></pre>
+                                       <span style="color:var(--lc-6b9955,#6b9955)"># cost = max elevation on path</span></code></pre>
 </div></div>
 
 <!-- PROBLEM 17: Cheapest Flights Within K Stops -->
@@ -995,10 +997,10 @@ Weighted edges + shortest path with a constraint. &rarr; <span class="tag t5">Sc
     dist = [float('inf')] * n
     dist[src] = 0
 
-    for _ in range(k + 1):             <span style="color:#6b9955"># at most k+1 flights</span>
-        temp = dist[:]                 <span style="color:#6b9955"># snapshot! don't mix rounds</span>
+    for _ in range(k + 1):             <span style="color:var(--lc-6b9955,#6b9955)"># at most k+1 flights</span>
+        temp = dist[:]                 <span style="color:var(--lc-6b9955,#6b9955)"># snapshot! don't mix rounds</span>
         for u, v, w in flights:
-            if dist[u] + w < temp[v]:  <span style="color:#6b9955"># read old, write new</span>
+            if dist[u] + w < temp[v]:  <span style="color:var(--lc-6b9955,#6b9955)"># read old, write new</span>
                 temp[v] = dist[u] + w
         dist = temp
 
@@ -1027,20 +1029,20 @@ Weighted edges + shortest path with a constraint. &rarr; <span class="tag t5">Sc
 <pre><code>def minCostConnectPoints(points):
     n = len(points)
     visited = set()
-    heap = [(0, 0)]                    <span style="color:#6b9955"># (cost, point_index)</span>
+    heap = [(0, 0)]                    <span style="color:var(--lc-6b9955,#6b9955)"># (cost, point_index)</span>
     total = 0
 
     while len(visited) < n:
         cost, i = heappop(heap)
         if i in visited: continue
         visited.add(i)
-        total += cost                  <span style="color:#6b9955"># add this road's cost</span>
+        total += cost                  <span style="color:var(--lc-6b9955,#6b9955)"># add this road's cost</span>
 
         xi, yi = points[i]
         for j in range(n):
             if j not in visited:
                 d = abs(xi - points[j][0]) + abs(yi - points[j][1])
-                heappush(heap, (d, j)) <span style="color:#6b9955"># potential road</span>
+                heappush(heap, (d, j)) <span style="color:var(--lc-6b9955,#6b9955)"># potential road</span>
 
     return total</code></pre>
 </div></div>
@@ -1125,5 +1127,6 @@ document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('on'));
 event.target.classList.add('on');
 }
 </script>
+<script src="site.js?v=20261106b" defer></script>
 </body>
 </html>

@@ -2,21 +2,22 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script>try{var t=localStorage.getItem("ms-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>2D Table DP: Two Sequences, One Grid</title>
 <style>
 :root{--bg:#1a1916;--card:#252320;--card2:#2d2a26;--gold:#d4a843;--gold2:#fbbf24;--amber:#f59e0b;--green:#22c55e;--blue:#3b82f6;--red:#ef4444;--text:#e8e2d6;--muted:#9b9484;--border:#3d3930;--sand:#c2956a;--purple:#8b5cf6;--indigo:#6366f1}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;padding:0 0 80px;overflow-x:hidden}
-.hdr{background:linear-gradient(135deg,#1f1a0e,#1a1916);border-bottom:3px solid var(--purple);padding:40px 20px;text-align:center}
+.hdr{background:linear-gradient(135deg,var(--lb-1f1a0e,#1f1a0e),var(--lb-1a1916,#1a1916));border-bottom:3px solid var(--purple);padding:40px 20px;text-align:center}
 .hdr h1{font-size:2em;color:var(--purple)}.hdr p{color:var(--muted)}
 .wrap{max-width:920px;margin:0 auto;padding:20px}
 h2{color:var(--purple);font-size:1.4em;margin:32px 0 12px;border-bottom:2px solid var(--border);padding-bottom:8px}
 h3{color:var(--purple);margin:20px 0 8px}
 .scene-img{width:100%;border-radius:10px;margin:12px 0;border:1px solid var(--border)}
-pre{background:#0d0d0b;border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;font-size:.85em;line-height:1.6;margin:10px 0}
+pre{background:var(--lb-0d0d0b,#0d0d0b);border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;font-size:.85em;line-height:1.6;margin:10px 0}
 code{font-family:'Fira Code','Courier New',monospace}
-.hi{background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.3);border-radius:6px;padding:12px 16px;margin:12px 0}
+.hi{background:var(--lb-rgba139922461,rgba(139,92,246,.1));border:1px solid var(--ld-rgba139922463,rgba(139,92,246,.3));border-radius:6px;padding:12px 16px;margin:12px 0}
 .ws{background:var(--card);border-radius:12px;padding:20px;margin:20px 0;border-left:4px solid var(--purple)}
 .ws h3{color:var(--purple);margin-top:0}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -24,13 +25,13 @@ code{font-family:'Fira Code','Courier New',monospace}
 .nav-link{display:inline-block;background:var(--card);border:1px solid var(--border);padding:10px 20px;border-radius:8px;color:var(--purple);text-decoration:none;font-weight:700;margin:8px 4px;transition:.2s}
 .nav-link:hover{background:var(--purple);color:#000;border-color:var(--purple)}
 .cell-walk{border-radius:10px;padding:16px;margin:12px 0;font-size:.95em;line-height:1.8}
-.cell-fill{background:rgba(34,197,94,.06);border:1px solid var(--green)}
+.cell-fill{background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:1px solid var(--green)}
 .grid-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
 .grid-table th,.grid-table td{border:1px solid var(--border);padding:8px 12px;text-align:center}
 .grid-table th{background:var(--card2);color:var(--purple)}
-.grid-table td.hi-cell{background:rgba(34,197,94,.1);color:var(--green);font-weight:700}
-.grid-table td.diag{background:rgba(251,191,36,.1);color:var(--gold2);font-weight:700}
-.grid-table td.base{background:rgba(251,191,36,.05);color:var(--gold2)}
+.grid-table td.hi-cell{background:var(--lb-rgba34197941,rgba(34,197,94,.1));color:var(--green);font-weight:700}
+.grid-table td.diag{background:var(--lb-rgba251191361,rgba(251,191,36,.1));color:var(--gold2);font-weight:700}
+.grid-table td.base{background:var(--lb-rgba2511913605,rgba(251,191,36,.05));color:var(--gold2)}
 .deriv{background:var(--card);border:1px solid var(--border);border-radius:10px;margin:16px 0;overflow:hidden}
 .deriv-h{padding:14px 20px;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
 .deriv-h:hover{background:var(--card2)}
@@ -57,11 +58,12 @@ a.wshome{color:inherit;text-decoration:none;display:block}
 a.wshome:hover h1{opacity:.82}
 .wsback{display:block;font-size:.62em;letter-spacing:.16em;text-transform:uppercase;font-weight:800;opacity:.75;margin-bottom:6px}
 
-.recallcard{border:2px solid var(--gold2);border-radius:12px;padding:16px 18px;margin:18px 0;background:rgba(245,158,11,.07)}
+.recallcard{border:2px solid var(--gold2);border-radius:12px;padding:16px 18px;margin:18px 0;background:var(--lb-rgba2451581107,rgba(245,158,11,.07))}
 .recallcard .rlbl{font-size:.62em;letter-spacing:.18em;font-weight:800;color:var(--gold2);text-transform:uppercase}
 .recallcard p{margin:6px 0 10px;font-size:.9em;color:var(--muted)}
 </style>
-<link rel="stylesheet" href="site.css?v=20261106a">
+<link rel="stylesheet" href="legacy-colors.css?v=20261106b">
+<link rel="stylesheet" href="site.css?v=20261106b">
 </head>
 <body>
 <header class="ms-topbar"><div class="ms-inner"><a class="ms-home" href="index.html" aria-label="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg><span>Memory Systems</span></a><nav class="ms-links"><a href="shankar_dada_trees.html">Trees</a><a href="graphs.html">Graphs</a><a href="dp_workshop.html" class="on">DP</a><a href="arrays.html">Arrays</a><a href="two_pointers.html">Two Pointers</a><a href="sliding_window.html">Sliding Window</a><a href="stack.html">Stack</a><a href="binary_search.html">Binary Search</a><a href="linked_list.html">Linked List</a><a href="heap.html">Heap</a><a href="tries.html">Tries</a></nav></div></header>
@@ -141,11 +143,11 @@ a.wshome:hover h1{opacity:.82}
 <p style="font-size:.93em;margin-bottom:10px">A <strong>subsequence</strong> keeps the original order but can skip characters. It does NOT need to be contiguous.</p>
 
 <div class="two-col" style="margin:12px 0">
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:8px;padding:14px">
 <div style="color:var(--green);font-weight:700;margin-bottom:6px">Valid subsequences of "abcde"</div>
 <div style="font-size:.93em">"ace" (skip b,d) &#10003;<br>"abcde" (skip nothing) &#10003;<br>"a" (skip b,c,d,e) &#10003;<br>"" (skip everything) &#10003;</div>
 </div>
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">NOT subsequences of "abcde"</div>
 <div style="font-size:.93em">"aec" (e comes before c in result, but after c in original) &#10007;<br>"ba" (b comes before a in result, but after a in original) &#10007;</div>
 </div>
@@ -178,7 +180,7 @@ a.wshome:hover h1{opacity:.82}
 
 <p>Most beginners think: "Walk through text1 left to right. For each character, grab its first available match in text2."</p>
 
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:12px">GREEDY ON THE EASY CASE: text1 = "abcde", text2 = "ace"</div>
 <div style="display:grid;gap:8px;font-size:.93em">
 <div>text1[0] = 'a'. Scan text2 for 'a' &rarr; found at text2[0]. <strong style="color:var(--green)">Match!</strong></div>
@@ -198,7 +200,7 @@ a.wshome:hover h1{opacity:.82}
 
 <div class="ws">
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--red);font-weight:800;font-size:1.05em;margin-bottom:12px">GREEDY FAILS: text1 = "cab", text2 = "abc"</div>
 <div style="display:grid;gap:8px;font-size:.93em">
 <div>text1[0] = 'c'. Scan text2 for 'c' &rarr; found at text2[2]. <strong style="color:var(--green)">Match!</strong> (j moves to 3)</div>
@@ -251,7 +253,7 @@ text1 has 'a' at index 1, 'b' at index 2. text2 has 'a' at index 0, 'b' at index
 </div>
 </div>
 
-<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba2511913608,rgba(251,191,36,.08));border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--gold2);font-weight:700;font-size:1.05em;margin-bottom:10px">What is preventing me from finishing?</div>
 <p style="font-size:.93em">I need to decide: <strong>what do I do with these two characters?</strong> The answer depends on whether they're the same or not. That's the most natural first check when comparing two sequences: <strong>do these two characters match?</strong></p>
 </div>
@@ -269,7 +271,7 @@ text1 has 'a' at index 1, 'b' at index 2. text2 has 'a' at index 0, 'b' at index
 
 <p style="font-size:.93em"><strong>Is there ever a reason to skip a match?</strong> No. Taking a match gives +1. Skipping it gives +0 at best. A free match is always worth taking. (This is different from Distinct Subsequences, where skipping a match can lead to more total <em>counts</em>. Here we're maximizing length, so a guaranteed +1 is always optimal.)</p>
 
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
 <strong style="color:var(--green)">Match:</strong> Take it. Both characters consumed. +1 to the LCS. Move to <code>lcs(i+1, j+1)</code>.
 </div>
 
@@ -277,7 +279,7 @@ text1 has 'a' at index 1, 'b' at index 2. text2 has 'a' at index 0, 'b' at index
 
 <p style="font-size:.93em">If <code>text1[i] != text2[j]</code>, at least one character is useless right now. Which one should I skip? I don't know.</p>
 
-<div style="background:rgba(245,158,11,.06);border:2px solid var(--amber);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
+<div style="background:var(--lb-rgba2451581106,rgba(245,158,11,.06));border:2px solid var(--amber);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
 <strong style="color:var(--amber)">Two options:</strong><br><br>
 <strong>Skip text1[i]:</strong> Maybe it doesn't match anything useful in text2. Move to <code>lcs(i+1, j)</code>.<br>
 <strong>Skip text2[j]:</strong> Maybe it doesn't match anything useful in text1. Move to <code>lcs(i, j+1)</code>.<br><br>
@@ -293,28 +295,28 @@ I don't know which is better. <strong>Try both, keep the better result.</strong>
 
 <div style="display:grid;gap:10px;margin:14px 0;font-size:.93em">
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Can I skip both characters at once?</div>
 <strong>No.</strong> Skipping both throws away a character that might match something later. Maybe text1[i] matches a future text2 character, or vice versa. Skipping both is always &le; skipping just one. It's wasteful.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Can I take a non-matching pair?</div>
 <strong>No.</strong> A common subsequence requires the <em>same</em> character at each position. A mismatched pair contributes nothing.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Can I jump ahead to find a match instead of skipping one at a time?</div>
 <strong>That's what the recursion does.</strong> By skipping text1[i], the next call tries text1[i+1] against text2[j]. Then text1[i+2], and so on. Each skip-one-at-a-time call explores all future matches. Jumping ahead is just multiple skips.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Can I use text1[i] to match a different character in text2 (not text2[j])?</div>
 <strong>Yes, and the recursion handles it.</strong> When I skip text2[j], the next call compares text1[i] against text2[j+1]. If that matches, great. If not, it skips again. Every possible pairing is explored.
 </div>
 </div>
 
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:16px;margin:14px 0">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:10px;padding:16px;margin:14px 0">
 <div style="color:var(--green);font-weight:700;margin-bottom:8px">After eliminating everything illegal:</div>
 <div style="font-size:.93em">
 <strong>Match?</strong> Take it. One branch. No choice needed.<br>
@@ -404,7 +406,7 @@ I don't know which is better. <strong>Try both, keep the better result.</strong>
 </div>
 </div>
 
-<div style="background:rgba(139,92,246,.08);border:2px solid var(--purple);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
+<div style="background:var(--lb-rgba1399224608,rgba(139,92,246,.08));border:2px solid var(--purple);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
 <div style="font-size:1.05em;font-weight:700;color:var(--purple);margin-bottom:6px">State = (i, j)</div>
 <div style="font-size:.93em">Two numbers. The minimum information needed to uniquely identify the remaining problem.</div>
 </div>
@@ -454,7 +456,7 @@ text2: <span style="opacity:.4">a</span> <span style="background:var(--purple);c
 <div class="ws">
 <h3>Before writing a single line, state the contract in English</h3>
 
-<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:12px 0;text-align:center;font-size:1.1em">
+<div style="background:var(--lb-rgba2511913608,rgba(251,191,36,.08));border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:12px 0;text-align:center;font-size:1.1em">
 <strong style="color:var(--gold2)">lcs(i, j) returns the length of the longest common subsequence of text1[i:] and text2[j:].</strong>
 </div>
 
@@ -487,14 +489,14 @@ text2: <span style="opacity:.4">a</span> <span style="background:var(--purple);c
 <p style="font-size:.93em;margin-bottom:10px">Don't look at the recurrence to find base cases. Ask: <strong>"What situation makes the answer trivially obvious?"</strong></p>
 
 <div class="two-col" style="margin:12px 0">
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:8px;padding:14px">
 <div style="color:var(--green);font-weight:700;margin-bottom:6px">i == len(text1): text1 is exhausted</div>
 <strong>Situation:</strong> No characters left in text1.<br>
 <strong>Why stop?</strong> Can't form any common pair without characters from both strings.<br>
 <strong>Return:</strong> <code>0</code>.<br>
 <span style="font-size:.85em;color:var(--muted)">Why 0 and not something else? An empty string shares nothing with any string. The longest common subsequence between "" and anything is length 0.</span>
 </div>
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:8px;padding:14px">
 <div style="color:var(--green);font-weight:700;margin-bottom:6px">j == len(text2): text2 is exhausted</div>
 <strong>Situation:</strong> No characters left in text2.<br>
 <strong>Why stop?</strong> Same reason. Need both strings to form a common subsequence.<br>
@@ -517,7 +519,7 @@ text2: <span style="opacity:.4">a</span> <span style="background:var(--purple);c
 <div class="ws">
 <h3>For each choice, what exactly changes and why?</h3>
 
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:12px">MATCH: text1[i] == text2[j]</div>
 <div style="display:grid;gap:8px;font-size:.93em">
 <div><strong>What did I just do?</strong> Matched one character. This character is part of the LCS.</div>
@@ -532,7 +534,7 @@ text2: <span style="opacity:.4">a</span> <span style="background:var(--purple);c
 </div>
 </div>
 
-<div style="background:rgba(245,158,11,.04);border:2px solid var(--amber);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba2451581104,rgba(245,158,11,.04));border:2px solid var(--amber);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--amber);font-weight:800;font-size:1.05em;margin-bottom:12px">NO MATCH: text1[i] != text2[j]</div>
 
 <p style="margin-bottom:14px">Skip one character. Try both options, keep the better result.</p>
@@ -668,16 +670,16 @@ lcs(i,j) =&#9474; 1 + lcs(i+1, j+1)             if text1[i] == text2[j]
 <div class="ws">
 <h3>Color-highlighted code walkthrough</h3>
 
-<pre style="line-height:2.2"><code><span style="background:rgba(34,197,94,.15);padding:2px 4px;border-radius:3px">def lcs_length(text1, text2, i, j):</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">    if i == len(text1) or j == len(text2):</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">        return 0</span>
+<pre style="line-height:2.2"><code><span style="background:var(--lb-rgba341979415,rgba(34,197,94,.15));padding:2px 4px;border-radius:3px">def lcs_length(text1, text2, i, j):</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">    if i == len(text1) or j == len(text2):</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">        return 0</span>
 
-<span style="background:rgba(251,191,36,.15);padding:2px 4px;border-radius:3px">    if text1[i] == text2[j]:</span>
-<span style="background:rgba(245,158,11,.15);padding:2px 4px;border-radius:3px">        return 1 + lcs_length(text1, text2, i + 1, j + 1)</span>
+<span style="background:var(--lb-rgba2511913615,rgba(251,191,36,.15));padding:2px 4px;border-radius:3px">    if text1[i] == text2[j]:</span>
+<span style="background:var(--lb-rgba2451581115,rgba(245,158,11,.15));padding:2px 4px;border-radius:3px">        return 1 + lcs_length(text1, text2, i + 1, j + 1)</span>
 
-<span style="background:rgba(239,68,68,.15);padding:2px 4px;border-radius:3px">    skip_first = lcs_length(text1, text2, i + 1, j)</span>
-<span style="background:rgba(239,68,68,.15);padding:2px 4px;border-radius:3px">    skip_second = lcs_length(text1, text2, i, j + 1)</span>
-<span style="background:rgba(139,92,246,.15);padding:2px 4px;border-radius:3px">    return max(skip_first, skip_second)</span></code></pre>
+<span style="background:var(--lb-rgba239686815,rgba(239,68,68,.15));padding:2px 4px;border-radius:3px">    skip_first = lcs_length(text1, text2, i + 1, j)</span>
+<span style="background:var(--lb-rgba239686815,rgba(239,68,68,.15));padding:2px 4px;border-radius:3px">    skip_second = lcs_length(text1, text2, i, j + 1)</span>
+<span style="background:var(--lb-rgba1399224615,rgba(139,92,246,.15));padding:2px 4px;border-radius:3px">    return max(skip_first, skip_second)</span></code></pre>
 
 <div style="display:grid;gap:8px;margin-top:14px;font-size:.9em">
 
@@ -772,7 +774,7 @@ Each call returns the LCS length for <em>its</em> remaining subproblem. <code>lc
           lcs(1, 3)=0)           | reach (2,2)!
                                  +</code></pre>
 
-<div style="background:rgba(251,191,36,.12);border:2px solid var(--gold2);border-radius:10px;padding:14px;margin:14px 0;text-align:center">
+<div style="background:var(--lb-rgba2511913612,rgba(251,191,36,.12));border:2px solid var(--gold2);border-radius:10px;padding:14px;margin:14px 0;text-align:center">
 <div style="font-size:1.05em;font-weight:800;color:var(--gold2);margin-bottom:6px">lcs(2, 2) computed from two different skip paths</div>
 <div style="font-size:.93em">Different roads, same destination. Same state &rarr; same answer. Why compute it twice?</div>
 </div>
@@ -795,11 +797,11 @@ Each call returns the LCS length for <em>its</em> remaining subproblem. <code>lc
 <div style="background:var(--card2);border-radius:6px;padding:10px 14px"><strong>Total entries:</strong> At most m &times; n, where m = len(text1), n = len(text2).</div>
 </div>
 
-<pre style="line-height:2"><code><span style="background:rgba(34,197,94,.15);padding:2px 4px;border-radius:3px">def lcs_length(text1, text2, i, j, cache):</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">    if i == len(text1) or j == len(text2):</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">        return 0</span>
-<span style="background:rgba(0,128,128,.15);padding:2px 4px;border-radius:3px">    if (i, j) in cache:</span>
-<span style="background:rgba(0,128,128,.15);padding:2px 4px;border-radius:3px">        return cache[(i, j)]</span>
+<pre style="line-height:2"><code><span style="background:var(--lb-rgba341979415,rgba(34,197,94,.15));padding:2px 4px;border-radius:3px">def lcs_length(text1, text2, i, j, cache):</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">    if i == len(text1) or j == len(text2):</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">        return 0</span>
+<span style="background:var(--lb-rgba012812815,rgba(0,128,128,.15));padding:2px 4px;border-radius:3px">    if (i, j) in cache:</span>
+<span style="background:var(--lb-rgba012812815,rgba(0,128,128,.15));padding:2px 4px;border-radius:3px">        return cache[(i, j)]</span>
 
     if text1[i] == text2[j]:
         result = 1 + lcs_length(text1, text2, i + 1, j + 1, cache)
@@ -808,8 +810,8 @@ Each call returns the LCS length for <em>its</em> remaining subproblem. <code>lc
         skip_second = lcs_length(text1, text2, i, j + 1, cache)
         result = max(skip_first, skip_second)
 
-<span style="background:rgba(0,128,128,.15);padding:2px 4px;border-radius:3px">    cache[(i, j)] = result</span>
-<span style="background:rgba(0,128,128,.15);padding:2px 4px;border-radius:3px">    return result</span></code></pre>
+<span style="background:var(--lb-rgba012812815,rgba(0,128,128,.15));padding:2px 4px;border-radius:3px">    cache[(i, j)] = result</span>
+<span style="background:var(--lb-rgba012812815,rgba(0,128,128,.15));padding:2px 4px;border-radius:3px">    return result</span></code></pre>
 
 <div style="display:grid;gap:8px;margin-top:14px;font-size:.9em">
 <div style="border-left:4px solid teal;padding:8px 14px;background:var(--card2);border-radius:0 6px 6px 0">
@@ -874,12 +876,12 @@ Both are already 0 from initialization.</p>
 <h3 style="color:var(--amber);margin-top:16px">The rules at each cell</h3>
 
 <div class="two-col" style="margin:12px 0">
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:8px;padding:14px">
 <div style="color:var(--green);font-weight:700">MATCH</div>
 <code>table[i][j] = table[i-1][j-1] + 1</code><br>
 <span style="font-size:.88em">Diagonal + 1. Both chars consumed.</span>
 </div>
-<div style="background:rgba(245,158,11,.06);border:2px solid var(--amber);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba2451581106,rgba(245,158,11,.06));border:2px solid var(--amber);border-radius:8px;padding:14px">
 <div style="color:var(--amber);font-weight:700">NO MATCH</div>
 <code>table[i][j] = max(table[i-1][j], table[i][j-1])</code><br>
 <span style="font-size:.88em">Best of: skip from text1 (up) or text2 (left).</span>
@@ -899,19 +901,19 @@ Both are already 0 from initialization.</p>
 
 <h3 style="color:var(--amber);margin-top:16px">The code</h3>
 
-<pre style="line-height:2"><code><span style="background:rgba(219,112,147,.15);padding:2px 4px;border-radius:3px">def lcs_length(text1, text2):</span>
-<span style="background:rgba(219,112,147,.15);padding:2px 4px;border-radius:3px">    rows = len(text1)</span>
-<span style="background:rgba(219,112,147,.15);padding:2px 4px;border-radius:3px">    cols = len(text2)</span>
-<span style="background:rgba(219,112,147,.15);padding:2px 4px;border-radius:3px">    table = [[0] * (cols + 1) for _ in range(rows + 1)]</span>
+<pre style="line-height:2"><code><span style="background:var(--lb-rgba21911214715,rgba(219,112,147,.15));padding:2px 4px;border-radius:3px">def lcs_length(text1, text2):</span>
+<span style="background:var(--lb-rgba21911214715,rgba(219,112,147,.15));padding:2px 4px;border-radius:3px">    rows = len(text1)</span>
+<span style="background:var(--lb-rgba21911214715,rgba(219,112,147,.15));padding:2px 4px;border-radius:3px">    cols = len(text2)</span>
+<span style="background:var(--lb-rgba21911214715,rgba(219,112,147,.15));padding:2px 4px;border-radius:3px">    table = [[0] * (cols + 1) for _ in range(rows + 1)]</span>
 
-<span style="background:rgba(139,90,43,.15);padding:2px 4px;border-radius:3px">    for i in range(1, rows + 1):</span>
-<span style="background:rgba(139,90,43,.15);padding:2px 4px;border-radius:3px">        for j in range(1, cols + 1):</span>
-<span style="background:rgba(251,191,36,.15);padding:2px 4px;border-radius:3px">            if text1[i - 1] == text2[j - 1]:</span>
-<span style="background:rgba(245,158,11,.15);padding:2px 4px;border-radius:3px">                table[i][j] = table[i - 1][j - 1] + 1</span>
+<span style="background:var(--lb-rgba139904315,rgba(139,90,43,.15));padding:2px 4px;border-radius:3px">    for i in range(1, rows + 1):</span>
+<span style="background:var(--lb-rgba139904315,rgba(139,90,43,.15));padding:2px 4px;border-radius:3px">        for j in range(1, cols + 1):</span>
+<span style="background:var(--lb-rgba2511913615,rgba(251,191,36,.15));padding:2px 4px;border-radius:3px">            if text1[i - 1] == text2[j - 1]:</span>
+<span style="background:var(--lb-rgba2451581115,rgba(245,158,11,.15));padding:2px 4px;border-radius:3px">                table[i][j] = table[i - 1][j - 1] + 1</span>
             else:
-<span style="background:rgba(239,68,68,.15);padding:2px 4px;border-radius:3px">                table[i][j] = max(table[i - 1][j], table[i][j - 1])</span>
+<span style="background:var(--lb-rgba239686815,rgba(239,68,68,.15));padding:2px 4px;border-radius:3px">                table[i][j] = max(table[i - 1][j], table[i][j - 1])</span>
 
-<span style="background:rgba(139,92,246,.15);padding:2px 4px;border-radius:3px">    return table[rows][cols]</span></code></pre>
+<span style="background:var(--lb-rgba1399224615,rgba(139,92,246,.15));padding:2px 4px;border-radius:3px">    return table[rows][cols]</span></code></pre>
 
 <div style="display:grid;gap:8px;margin-top:14px;font-size:.9em">
 <div style="border-left:4px solid palevioletred;padding:8px 14px;background:var(--card2);border-radius:0 6px 6px 0">
@@ -984,41 +986,41 @@ Bottom-right corner: full text1 prefix, full text2 prefix. The answer to the ori
 
 <div style="display:grid;gap:12px;font-size:.93em">
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Adding +1 on the skip branch</div>
 <code style="color:var(--red)">return 1 + lcs(i+1, j)</code> &larr; WRONG<br>
 Skipping doesn't match anything. No character was paired. +0, not +1.<br>
 <strong>Detection:</strong> lcs("a", "b") returns 1 instead of 0.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Using addition instead of max on no-match</div>
 <code style="color:var(--red)">return lcs(i+1, j) + lcs(i, j+1)</code> &larr; WRONG<br>
 Addition counts all paths. That's for "number of ways" problems (like Distinct Subsequences). Here we want the single longest, so max().<br>
 <strong>Detection:</strong> lcs("ab", "cd") returns a number greater than the shorter string's length.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Only advancing one pointer on match</div>
 <code style="color:var(--red)">return 1 + lcs(i+1, j)</code> or <code style="color:var(--red)">return 1 + lcs(i, j+1)</code> &larr; WRONG<br>
 A match consumes one from EACH string. If only i advances, text2[j] remains available and the same character gets matched again later. Double-counting.<br>
 <strong>Detection:</strong> lcs("a", "a") returns more than 1.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Returning 1 for the base case instead of 0</div>
 <code style="color:var(--red)">if i == len(text1): return 1</code> &larr; WRONG<br>
 Running out of characters isn't a success. It's the end. No match happened here. Return 0.<br>
 <strong>Detection:</strong> lcs("a", "b") returns 1 instead of 0.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Wrong table iteration order</div>
 Filling bottom-to-top or right-to-left with the standard recurrence. Each cell needs up, left, and diagonal. If the row above isn't filled yet, the values are wrong.<br>
 <strong>Detection:</strong> The table produces different results than the recursive solution on the same input.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Off-by-one in tabulation indices</div>
 <code style="color:var(--red)">text1[i] == text2[j]</code> in the tabulation loop &larr; WRONG<br>
 Tabulation uses 1-indexed table but 0-indexed strings. The correct comparison is <code>text1[i-1] == text2[j-1]</code>.<br>
@@ -1100,7 +1102,7 @@ Any time I have two sequences and I'm comparing elements pairwise, the structure
 <!-- ==================== CHILDREN ==================== -->
 <h2>The 2D Table Family</h2>
 
-<div style="background:rgba(139,92,246,.15);border:2px solid var(--purple);border-radius:8px;padding:14px;text-align:center;margin-bottom:16px">
+<div style="background:var(--lb-rgba1399224615,rgba(139,92,246,.15));border:2px solid var(--purple);border-radius:8px;padding:14px;text-align:center;margin-bottom:16px">
 <strong style="color:var(--purple);font-size:1.1em">LONGEST COMMON SUBSEQUENCE (parent)</strong><br>
 <span style="font-size:.88em;color:var(--muted)">Two sequences, one grid. Match = diagonal + 1, else max(up, left). Every child is the same grid with different rules.</span>
 </div>
@@ -1160,11 +1162,11 @@ Any time I have two sequences and I'm comparing elements pairwise, the structure
 <p style="font-size:.93em;margin-bottom:10px">A path is a sequence of down/right moves from (0,0) to (rows-1, cols-1). Two paths differ if the sequence of moves differs anywhere.</p>
 
 <div class="two-col" style="margin:12px 0">
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:8px;padding:14px">
 <div style="color:var(--green);font-weight:700;margin-bottom:6px">Legal moves</div>
 <div style="font-size:.93em">Down: (row+1, col). Right: (row, col+1).</div>
 </div>
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Illegal moves</div>
 <div style="font-size:.93em">Up, left, diagonal, staying, leaving the grid.</div>
 </div>
@@ -1181,7 +1183,7 @@ Any time I have two sequences and I'm comparing elements pairwise, the structure
 <div class="ws">
 <p style="margin-bottom:10px;font-size:.93em">No greedy trap here, every path reaches the same destination. The natural first attempt: draw every path and count them.</p>
 
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:12px">MANUAL COUNT ON THE EASY CASE: rows = 2, cols = 3</div>
 <div style="display:grid;gap:6px;font-size:.93em">
 <div>right, right, down</div>
@@ -1196,7 +1198,7 @@ Any time I have two sequences and I'm comparing elements pairwise, the structure
 <h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">3</span> Where Does That Fail?</h3>
 
 <div class="ws">
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--red);font-weight:800;font-size:1.05em;margin-bottom:12px">MANUAL COUNTING COLLAPSES: rows = 10, cols = 10</div>
 <div style="font-size:.93em">Every path needs 9 down and 9 right moves in some order: <code>18 choose 9 = 48,620</code> paths. Impossible to draw by hand.</div>
 </div>
@@ -1223,7 +1225,7 @@ Any time I have two sequences and I'm comparing elements pairwise, the structure
 <div style="font-size:.8em;color:var(--muted);margin-top:6px">Faded: decided. Gold: destination, still ahead.</div>
 </div>
 
-<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba2511913608,rgba(251,191,36,.08));border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--gold2);font-weight:700;font-size:1.05em;margin-bottom:10px">What is preventing me from finishing?</div>
 <p style="font-size:.93em">From this one cell: which moves are legal?</p>
 </div>
@@ -1237,10 +1239,10 @@ Any time I have two sequences and I'm comparing elements pairwise, the structure
 <div class="ws">
 <p style="font-size:.93em;margin-bottom:10px">Standing on (row, col), the robot has exactly two legal next moves.</p>
 
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
 <strong style="color:var(--green)">Move down:</strong> (row+1, col). Count paths from there.
 </div>
-<div style="background:rgba(59,130,246,.06);border:2px solid var(--blue);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
+<div style="background:var(--lb-rgba5913024606,rgba(59,130,246,.06));border:2px solid var(--blue);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
 <strong style="color:var(--blue)">Move right:</strong> (row, col+1). Count paths from there.
 </div>
 
@@ -1255,33 +1257,33 @@ Any time I have two sequences and I'm comparing elements pairwise, the structure
 <div class="ws">
 <div style="display:grid;gap:10px;margin:14px 0;font-size:.93em">
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Up or left?</div>
 <strong>No.</strong> Not a legal move for this robot.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Diagonal?</div>
 <strong>No.</strong> Not down or right, and it would skip cells.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Stay in place?</div>
 <strong>No.</strong> No progress, no finite path.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Teleport multiple cells?</div>
 <strong>No.</strong> Each move advances exactly one cell.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Down/right leaves the grid?</div>
 <strong>Then it isn't available</strong> &mdash; a boundary condition (Step 12), not a third choice.
 </div>
 </div>
 
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:16px;margin:14px 0">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:10px;padding:16px;margin:14px 0">
 <div style="color:var(--green);font-weight:700;margin-bottom:8px">After eliminating everything illegal:</div>
 <div style="font-size:.93em">Exactly two moves remain: down, right. Both always tried when in bounds.</div>
 </div>
@@ -1363,7 +1365,7 @@ Any time I have two sequences and I'm comparing elements pairwise, the structure
 </div>
 </div>
 
-<div style="background:rgba(139,92,246,.08);border:2px solid var(--purple);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
+<div style="background:var(--lb-rgba1399224608,rgba(139,92,246,.08));border:2px solid var(--purple);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
 <div style="font-size:1.05em;font-weight:700;color:var(--purple);margin-bottom:6px">State = (row, col)</div>
 <div style="font-size:.93em">The minimum information needed to identify the remaining problem.</div>
 </div>
@@ -1394,7 +1396,7 @@ Any time I have two sequences and I'm comparing elements pairwise, the structure
 <h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">10</span> What Does the Function Promise?</h3>
 
 <div class="ws">
-<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:12px 0;text-align:center;font-size:1.1em">
+<div style="background:var(--lb-rgba2511913608,rgba(251,191,36,.08));border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:12px 0;text-align:center;font-size:1.1em">
 <strong style="color:var(--gold2)">count_paths(row, col) returns the number of unique paths from (row, col) to the destination (rows-1, cols-1).</strong>
 </div>
 
@@ -1423,11 +1425,11 @@ Any time I have two sequences and I'm comparing elements pairwise, the structure
 
 <div class="ws">
 <div class="two-col" style="margin:12px 0">
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:8px;padding:14px">
 <div style="color:var(--green);font-weight:700;margin-bottom:6px">row == rows-1 and col == cols-1: destination</div>
 Already there. One complete valid path. <strong>Return 1.</strong>
 </div>
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">row &ge; rows or col &ge; cols: out of bounds</div>
 Not a real position, contributes nothing. <strong>Return 0.</strong>
 </div>
@@ -1440,12 +1442,12 @@ Not a real position, contributes nothing. <strong>Return 0.</strong>
 <h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">12</span> What Smaller Problem Remains? (Transitions)</h3>
 
 <div class="ws">
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:12px">MOVE DOWN</div>
 <div style="font-size:.93em"><code>row &rarr; row+1</code>, col unchanged. No direct reward. <strong>Remaining:</strong> <code>count_paths(row+1, col)</code></div>
 </div>
 
-<div style="background:rgba(59,130,246,.05);border:2px solid var(--blue);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba5913024605,rgba(59,130,246,.05));border:2px solid var(--blue);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--blue);font-weight:800;font-size:1.05em;margin-bottom:12px">MOVE RIGHT</div>
 <div style="font-size:.93em"><code>col &rarr; col+1</code>, row unchanged. No direct reward. <strong>Remaining:</strong> <code>count_paths(row, col+1)</code></div>
 </div>
@@ -1535,16 +1537,16 @@ count_paths(row,col) =&#9474; 0                                          if row 
 <h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">16</span> Why Every Line Exists</h3>
 
 <div class="ws">
-<pre style="line-height:2.2"><code><span style="background:rgba(34,197,94,.15);padding:2px 4px;border-radius:3px">def count_paths(rows, cols, row, col):</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">    if row == rows - 1 and col == cols - 1:</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">        return 1</span>
+<pre style="line-height:2.2"><code><span style="background:var(--lb-rgba341979415,rgba(34,197,94,.15));padding:2px 4px;border-radius:3px">def count_paths(rows, cols, row, col):</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">    if row == rows - 1 and col == cols - 1:</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">        return 1</span>
 
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">    if row >= rows or col >= cols:</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">        return 0</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">    if row >= rows or col >= cols:</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">        return 0</span>
 
-<span style="background:rgba(245,158,11,.15);padding:2px 4px;border-radius:3px">    move_down = count_paths(rows, cols, row + 1, col)</span>
-<span style="background:rgba(239,68,68,.15);padding:2px 4px;border-radius:3px">    move_right = count_paths(rows, cols, row, col + 1)</span>
-<span style="background:rgba(139,92,246,.15);padding:2px 4px;border-radius:3px">    return move_down + move_right</span></code></pre>
+<span style="background:var(--lb-rgba2451581115,rgba(245,158,11,.15));padding:2px 4px;border-radius:3px">    move_down = count_paths(rows, cols, row + 1, col)</span>
+<span style="background:var(--lb-rgba239686815,rgba(239,68,68,.15));padding:2px 4px;border-radius:3px">    move_right = count_paths(rows, cols, row, col + 1)</span>
+<span style="background:var(--lb-rgba1399224615,rgba(139,92,246,.15));padding:2px 4px;border-radius:3px">    return move_down + move_right</span></code></pre>
 
 <div style="display:grid;gap:8px;margin-top:14px;font-size:.9em">
 
@@ -1615,7 +1617,7 @@ count_paths(row,col) =&#9474; 0                                          if row 
 <div class="ws">
 <p style="font-size:.93em">The trace shows <code>count_paths(1, 1)</code> computed twice, and <code>count_paths(1, 2)</code> too.</p>
 
-<div style="background:rgba(251,191,36,.12);border:2px solid var(--gold2);border-radius:10px;padding:14px;margin:14px 0;text-align:center">
+<div style="background:var(--lb-rgba2511913612,rgba(251,191,36,.12));border:2px solid var(--gold2);border-radius:10px;padding:14px;margin:14px 0;text-align:center">
 <div style="font-size:1.05em;font-weight:800;color:var(--gold2)">(1, 1) is reachable two different ways: down-then-right, or right-then-down</div>
 <div style="font-size:.93em">Same state &rarr; same answer. Why compute it twice?</div>
 </div>
@@ -1635,19 +1637,19 @@ count_paths(row,col) =&#9474; 0                                          if row 
 <div style="background:var(--card2);border-radius:6px;padding:10px 14px"><strong>Total entries:</strong> at most rows &times; cols.</div>
 </div>
 
-<pre style="line-height:2"><code><span style="background:rgba(34,197,94,.15);padding:2px 4px;border-radius:3px">def count_paths(rows, cols, row, col, cache):</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">    if row == rows - 1 and col == cols - 1:</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">        return 1</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">    if row >= rows or col >= cols:</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">        return 0</span>
-<span style="background:rgba(0,128,128,.15);padding:2px 4px;border-radius:3px">    if (row, col) in cache:</span>
-<span style="background:rgba(0,128,128,.15);padding:2px 4px;border-radius:3px">        return cache[(row, col)]</span>
+<pre style="line-height:2"><code><span style="background:var(--lb-rgba341979415,rgba(34,197,94,.15));padding:2px 4px;border-radius:3px">def count_paths(rows, cols, row, col, cache):</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">    if row == rows - 1 and col == cols - 1:</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">        return 1</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">    if row >= rows or col >= cols:</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">        return 0</span>
+<span style="background:var(--lb-rgba012812815,rgba(0,128,128,.15));padding:2px 4px;border-radius:3px">    if (row, col) in cache:</span>
+<span style="background:var(--lb-rgba012812815,rgba(0,128,128,.15));padding:2px 4px;border-radius:3px">        return cache[(row, col)]</span>
 
     move_down = count_paths(rows, cols, row + 1, col, cache)
     move_right = count_paths(rows, cols, row, col + 1, cache)
 
-<span style="background:rgba(0,128,128,.15);padding:2px 4px;border-radius:3px">    cache[(row, col)] = move_down + move_right</span>
-<span style="background:rgba(0,128,128,.15);padding:2px 4px;border-radius:3px">    return cache[(row, col)]</span></code></pre>
+<span style="background:var(--lb-rgba012812815,rgba(0,128,128,.15));padding:2px 4px;border-radius:3px">    cache[(row, col)] = move_down + move_right</span>
+<span style="background:var(--lb-rgba012812815,rgba(0,128,128,.15));padding:2px 4px;border-radius:3px">    return cache[(row, col)]</span></code></pre>
 
 <div class="hi" style="margin-top:14px">
 <strong style="color:var(--purple)">What changed?</strong> Three lines added. Recurrence and answer unchanged. Runtime: exponential to O(rows &times; cols).
@@ -1677,19 +1679,19 @@ count_paths(row,col) =&#9474; 0                                          if row 
 
 <p style="font-size:.9em;color:var(--muted)">Gold cells = base cases. Bottom-right = answer: 6.</p>
 
-<div style="background:rgba(245,158,11,.06);border:2px solid var(--amber);border-radius:8px;padding:14px;margin:12px 0">
+<div style="background:var(--lb-rgba2451581106,rgba(245,158,11,.06));border:2px solid var(--amber);border-radius:8px;padding:14px;margin:12px 0">
 <div style="color:var(--amber);font-weight:700">EVERY NON-BASE CELL</div>
 <code>table[row][col] = table[row-1][col] + table[row][col-1]</code>
 </div>
 
-<pre style="line-height:2"><code><span style="background:rgba(219,112,147,.15);padding:2px 4px;border-radius:3px">def count_paths(rows, cols):</span>
-<span style="background:rgba(219,112,147,.15);padding:2px 4px;border-radius:3px">    table = [[1] * cols for _ in range(rows)]</span>
+<pre style="line-height:2"><code><span style="background:var(--lb-rgba21911214715,rgba(219,112,147,.15));padding:2px 4px;border-radius:3px">def count_paths(rows, cols):</span>
+<span style="background:var(--lb-rgba21911214715,rgba(219,112,147,.15));padding:2px 4px;border-radius:3px">    table = [[1] * cols for _ in range(rows)]</span>
 
-<span style="background:rgba(139,90,43,.15);padding:2px 4px;border-radius:3px">    for row in range(1, rows):</span>
-<span style="background:rgba(139,90,43,.15);padding:2px 4px;border-radius:3px">        for col in range(1, cols):</span>
-<span style="background:rgba(245,158,11,.15);padding:2px 4px;border-radius:3px">            table[row][col] = table[row - 1][col] + table[row][col - 1]</span>
+<span style="background:var(--lb-rgba139904315,rgba(139,90,43,.15));padding:2px 4px;border-radius:3px">    for row in range(1, rows):</span>
+<span style="background:var(--lb-rgba139904315,rgba(139,90,43,.15));padding:2px 4px;border-radius:3px">        for col in range(1, cols):</span>
+<span style="background:var(--lb-rgba2451581115,rgba(245,158,11,.15));padding:2px 4px;border-radius:3px">            table[row][col] = table[row - 1][col] + table[row][col - 1]</span>
 
-<span style="background:rgba(139,92,246,.15);padding:2px 4px;border-radius:3px">    return table[rows - 1][cols - 1]</span></code></pre>
+<span style="background:var(--lb-rgba1399224615,rgba(139,92,246,.15));padding:2px 4px;border-radius:3px">    return table[rows - 1][cols - 1]</span></code></pre>
 
 <div style="display:grid;gap:8px;margin-top:14px;font-size:.9em">
 <div style="border-left:4px solid palevioletred;padding:8px 14px;background:var(--card2);border-radius:0 6px 6px 0">
@@ -1735,31 +1737,31 @@ count_paths(row,col) =&#9474; 0                                          if row 
 <div class="ws">
 <div style="display:grid;gap:12px;font-size:.93em">
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Returning 0 at the destination instead of 1</div>
 <code style="color:var(--red)">if row == rows-1 and col == cols-1: return 0</code> &larr; WRONG<br>
 <strong>Detection:</strong> 1x1 grid returns 0 instead of 1.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Using max instead of add</div>
 <code style="color:var(--red)">return max(move_down, move_right)</code> &larr; WRONG<br>
 <strong>Detection:</strong> 3x3 grid returns 3 instead of 6.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Wrong base case for out-of-bounds</div>
 <code style="color:var(--red)">if row >= rows or col >= cols: return 1</code> &larr; WRONG<br>
 <strong>Detection:</strong> any grid larger than 1x1 returns too much.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Off-by-one in grid dimensions</div>
 <code style="color:var(--red)">if row == rows and col == cols: return 1</code> &larr; WRONG<br>
 <strong>Detection:</strong> function always returns 0.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Wrong table iteration order</div>
 Filling bottom-to-top or right-to-left before up/left are ready.<br>
 <strong>Detection:</strong> table disagrees with the recursive solution.
@@ -1887,7 +1889,7 @@ Filling bottom-to-top or right-to-left before up/left are ready.<br>
 <div class="ws">
 <p>Greedy instinct: walk both strings together, replace on any mismatch.</p>
 
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:12px">GREEDY ON AN EASY CASE: word1 = "abc", word2 = "abd"</div>
 <div style="display:grid;gap:8px;font-size:.93em">
 <div>Position 0: 'a' vs 'a'. <strong style="color:var(--green)">Match, do nothing.</strong></div>
@@ -1903,7 +1905,7 @@ Filling bottom-to-top or right-to-left before up/left are ready.<br>
 
 <div class="ws">
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--red);font-weight:800;font-size:1.05em;margin-bottom:12px">GREEDY FAILS: word1 = "abc", word2 = "abdc"</div>
 <div style="display:grid;gap:8px;font-size:.93em">
 <div>Position 0: 'a' vs 'a'. <strong style="color:var(--green)">Match.</strong></div>
@@ -1943,7 +1945,7 @@ Filling bottom-to-top or right-to-left before up/left are ready.<br>
 </div>
 </div>
 
-<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba2511913608,rgba(251,191,36,.08));border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:14px 0">
 <p style="font-size:.93em">Do word1[i] and word2[j] already agree? If yes, is there ever a reason to spend an operation? If not, which operation fixes it cheapest?</p>
 </div>
 </div>
@@ -1954,11 +1956,11 @@ Filling bottom-to-top or right-to-left before up/left are ready.<br>
 <h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">5</span> What Can I Do With These Two Characters?</h3>
 
 <div class="ws">
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
 <strong style="color:var(--green)">Match:</strong> Do nothing. +0 cost. Move to <code>min_edits(i+1, j+1)</code>.
 </div>
 
-<div style="background:rgba(245,158,11,.06);border:2px solid var(--amber);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
+<div style="background:var(--lb-rgba2451581106,rgba(245,158,11,.06));border:2px solid var(--amber);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
 <strong style="color:var(--amber)">Mismatch, three options, each costing 1:</strong><br><br>
 <strong>Replace word1[i]</strong> with word2[j]. Move to <code>min_edits(i+1, j+1)</code>.<br>
 <strong>Delete word1[i]</strong> entirely. Move to <code>min_edits(i+1, j)</code>.<br>
@@ -1973,28 +1975,28 @@ Try all three, keep the smallest result.
 <div class="ws">
 <div style="display:grid;gap:10px;margin:14px 0;font-size:.93em">
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Zero operations on a mismatch?</div>
 <strong>No.</strong> Only three legal moves exist. A mismatch left unresolved never becomes word2.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Two operations for one unit of cost?</div>
 <strong>No.</strong> Every operation costs 1. Chaining moves is already modeled by chaining recursive calls.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Reorder characters instead?</div>
 <strong>No.</strong> Not an allowed operation; the only way to relocate a character is delete-then-insert.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">A fourth operation, like swap?</div>
 <strong>Not for this problem.</strong> LeetCode #72 defines only insert, delete, replace.
 </div>
 </div>
 
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:16px;margin:14px 0">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:10px;padding:16px;margin:14px 0">
 <div style="font-size:.93em">
 <strong>Match?</strong> Do nothing. One branch.<br>
 <strong>No match?</strong> Replace, delete, or insert. Take the minimum.
@@ -2069,7 +2071,7 @@ Try all three, keep the smallest result.
 </div>
 </div>
 
-<div style="background:rgba(139,92,246,.08);border:2px solid var(--purple);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
+<div style="background:var(--lb-rgba1399224608,rgba(139,92,246,.08));border:2px solid var(--purple);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
 <div style="font-size:1.05em;font-weight:700;color:var(--purple)">State = (i, j)</div>
 </div>
 </div>
@@ -2105,7 +2107,7 @@ word2: <span style="opacity:.4">r</span> <span style="background:var(--purple);c
 <h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">10</span> What Does the Function Promise?</h3>
 
 <div class="ws">
-<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:12px 0;text-align:center;font-size:1.1em">
+<div style="background:var(--lb-rgba2511913608,rgba(251,191,36,.08));border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:12px 0;text-align:center;font-size:1.1em">
 <strong style="color:var(--gold2)">min_edits(i, j) returns the minimum number of operations to convert word1[i:] into word2[j:].</strong>
 </div>
 
@@ -2125,11 +2127,11 @@ word2: <span style="opacity:.4">r</span> <span style="background:var(--purple);c
 
 <div class="ws">
 <div class="two-col" style="margin:12px 0">
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:8px;padding:14px">
 <div style="color:var(--green);font-weight:700;margin-bottom:6px">i == len(word1): word1 is exhausted</div>
 <strong>Return:</strong> <code>len(word2) - j</code>. Every leftover word2 character needs a dedicated insert.
 </div>
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:8px;padding:14px">
 <div style="color:var(--green);font-weight:700;margin-bottom:6px">j == len(word2): word2 is exhausted</div>
 <strong>Return:</strong> <code>len(word1) - i</code>. Every leftover word1 character needs a dedicated delete.
 </div>
@@ -2146,13 +2148,13 @@ Unlike LCS's 0, Edit Distance still owes work on exhaustion: leftover characters
 <h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">12</span> What Smaller Problem Remains? (Transitions)</h3>
 
 <div class="ws">
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:12px">MATCH: word1[i] == word2[j]</div>
 <div style="font-size:.93em">+0 cost. Both pointers advance since a match confirms one character correct in both strings at once.<br>
 <strong>Remaining problem:</strong> <code>min_edits(i+1, j+1)</code></div>
 </div>
 
-<div style="background:rgba(245,158,11,.04);border:2px solid var(--amber);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba2451581104,rgba(245,158,11,.04));border:2px solid var(--amber);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--amber);font-weight:800;font-size:1.05em;margin-bottom:12px">NO MATCH: word1[i] != word2[j]</div>
 
 <div style="background:var(--card2);border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--amber)">
@@ -2254,19 +2256,19 @@ min_edits(i,j)=&#9474; min_edits(i+1, j+1)                                if wor
 
 <div class="ws">
 
-<pre style="line-height:2.2"><code><span style="background:rgba(34,197,94,.15);padding:2px 4px;border-radius:3px">def min_edits(word1, word2, i, j):</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">    if i == len(word1):</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">        return len(word2) - j</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">    if j == len(word2):</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">        return len(word1) - i</span>
+<pre style="line-height:2.2"><code><span style="background:var(--lb-rgba341979415,rgba(34,197,94,.15));padding:2px 4px;border-radius:3px">def min_edits(word1, word2, i, j):</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">    if i == len(word1):</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">        return len(word2) - j</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">    if j == len(word2):</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">        return len(word1) - i</span>
 
-<span style="background:rgba(251,191,36,.15);padding:2px 4px;border-radius:3px">    if word1[i] == word2[j]:</span>
-<span style="background:rgba(34,197,94,.15);padding:2px 4px;border-radius:3px">        return min_edits(word1, word2, i + 1, j + 1)</span>
+<span style="background:var(--lb-rgba2511913615,rgba(251,191,36,.15));padding:2px 4px;border-radius:3px">    if word1[i] == word2[j]:</span>
+<span style="background:var(--lb-rgba341979415,rgba(34,197,94,.15));padding:2px 4px;border-radius:3px">        return min_edits(word1, word2, i + 1, j + 1)</span>
 
-<span style="background:rgba(245,158,11,.15);padding:2px 4px;border-radius:3px">    replace = min_edits(word1, word2, i + 1, j + 1)</span>
-<span style="background:rgba(239,68,68,.15);padding:2px 4px;border-radius:3px">    delete = min_edits(word1, word2, i + 1, j)</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">    insert = min_edits(word1, word2, i, j + 1)</span>
-<span style="background:rgba(139,92,246,.15);padding:2px 4px;border-radius:3px">    return 1 + min(replace, delete, insert)</span></code></pre>
+<span style="background:var(--lb-rgba2451581115,rgba(245,158,11,.15));padding:2px 4px;border-radius:3px">    replace = min_edits(word1, word2, i + 1, j + 1)</span>
+<span style="background:var(--lb-rgba239686815,rgba(239,68,68,.15));padding:2px 4px;border-radius:3px">    delete = min_edits(word1, word2, i + 1, j)</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">    insert = min_edits(word1, word2, i, j + 1)</span>
+<span style="background:var(--lb-rgba1399224615,rgba(139,92,246,.15));padding:2px 4px;border-radius:3px">    return 1 + min(replace, delete, insert)</span></code></pre>
 
 <div style="display:grid;gap:8px;margin-top:14px;font-size:.9em">
 
@@ -2343,7 +2345,7 @@ min_edits(i,j)=&#9474; min_edits(i+1, j+1)                                if wor
         the SAME (i, j) that min_edits(1, 0)         |
         or min_edits(0, 1) also reaches               +</code></pre>
 
-<div style="background:rgba(251,191,36,.12);border:2px solid var(--gold2);border-radius:10px;padding:14px;margin:14px 0;text-align:center">
+<div style="background:var(--lb-rgba2511913612,rgba(251,191,36,.12));border:2px solid var(--gold2);border-radius:10px;padding:14px;margin:14px 0;text-align:center">
 <div style="font-size:1.05em;font-weight:800;color:var(--gold2)">The same (i, j) gets recomputed from multiple decision paths</div>
 </div>
 
@@ -2363,13 +2365,13 @@ min_edits(i,j)=&#9474; min_edits(i+1, j+1)                                if wor
 <div style="background:var(--card2);border-radius:6px;padding:10px 14px"><strong>Total entries:</strong> at most (m+1) &times; (n+1).</div>
 </div>
 
-<pre style="line-height:2"><code><span style="background:rgba(34,197,94,.15);padding:2px 4px;border-radius:3px">def min_edits(word1, word2, i, j, cache):</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">    if i == len(word1):</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">        return len(word2) - j</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">    if j == len(word2):</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">        return len(word1) - i</span>
-<span style="background:rgba(0,128,128,.15);padding:2px 4px;border-radius:3px">    if (i, j) in cache:</span>
-<span style="background:rgba(0,128,128,.15);padding:2px 4px;border-radius:3px">        return cache[(i, j)]</span>
+<pre style="line-height:2"><code><span style="background:var(--lb-rgba341979415,rgba(34,197,94,.15));padding:2px 4px;border-radius:3px">def min_edits(word1, word2, i, j, cache):</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">    if i == len(word1):</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">        return len(word2) - j</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">    if j == len(word2):</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">        return len(word1) - i</span>
+<span style="background:var(--lb-rgba012812815,rgba(0,128,128,.15));padding:2px 4px;border-radius:3px">    if (i, j) in cache:</span>
+<span style="background:var(--lb-rgba012812815,rgba(0,128,128,.15));padding:2px 4px;border-radius:3px">        return cache[(i, j)]</span>
 
     if word1[i] == word2[j]:
         result = min_edits(word1, word2, i + 1, j + 1, cache)
@@ -2379,8 +2381,8 @@ min_edits(i,j)=&#9474; min_edits(i+1, j+1)                                if wor
         insert = min_edits(word1, word2, i, j + 1, cache)
         result = 1 + min(replace, delete, insert)
 
-<span style="background:rgba(0,128,128,.15);padding:2px 4px;border-radius:3px">    cache[(i, j)] = result</span>
-<span style="background:rgba(0,128,128,.15);padding:2px 4px;border-radius:3px">    return result</span></code></pre>
+<span style="background:var(--lb-rgba012812815,rgba(0,128,128,.15));padding:2px 4px;border-radius:3px">    cache[(i, j)] = result</span>
+<span style="background:var(--lb-rgba012812815,rgba(0,128,128,.15));padding:2px 4px;border-radius:3px">    return result</span></code></pre>
 
 <div class="hi" style="margin-top:14px">
 <strong style="color:var(--purple)">What changed?</strong> Three lines (lookup, store, pass cache). Runtime: exponential to O(m &times; n).
@@ -2414,38 +2416,38 @@ First row: <code>table[0][j] = j</code> (insert j chars). First column: <code>ta
 <p style="font-size:.9em;color:var(--muted)">Gold cells = matches (diagonal, no +1). Bottom-right = answer: 3.</p>
 
 <div class="two-col" style="margin:12px 0">
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:8px;padding:14px">
 <div style="color:var(--green);font-weight:700">MATCH</div>
 <code>table[i][j] = table[i-1][j-1]</code>
 </div>
-<div style="background:rgba(245,158,11,.06);border:2px solid var(--amber);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba2451581106,rgba(245,158,11,.06));border:2px solid var(--amber);border-radius:8px;padding:14px">
 <div style="color:var(--amber);font-weight:700">NO MATCH</div>
 <code>table[i][j] = 1 + min(diag, up, left)</code>
 </div>
 </div>
 
-<pre style="line-height:2"><code><span style="background:rgba(219,112,147,.15);padding:2px 4px;border-radius:3px">def min_edits(word1, word2):</span>
-<span style="background:rgba(219,112,147,.15);padding:2px 4px;border-radius:3px">    rows = len(word1)</span>
-<span style="background:rgba(219,112,147,.15);padding:2px 4px;border-radius:3px">    cols = len(word2)</span>
-<span style="background:rgba(219,112,147,.15);padding:2px 4px;border-radius:3px">    table = [[0] * (cols + 1) for _ in range(rows + 1)]</span>
+<pre style="line-height:2"><code><span style="background:var(--lb-rgba21911214715,rgba(219,112,147,.15));padding:2px 4px;border-radius:3px">def min_edits(word1, word2):</span>
+<span style="background:var(--lb-rgba21911214715,rgba(219,112,147,.15));padding:2px 4px;border-radius:3px">    rows = len(word1)</span>
+<span style="background:var(--lb-rgba21911214715,rgba(219,112,147,.15));padding:2px 4px;border-radius:3px">    cols = len(word2)</span>
+<span style="background:var(--lb-rgba21911214715,rgba(219,112,147,.15));padding:2px 4px;border-radius:3px">    table = [[0] * (cols + 1) for _ in range(rows + 1)]</span>
 
-<span style="background:rgba(139,90,43,.15);padding:2px 4px;border-radius:3px">    for i in range(rows + 1):</span>
-<span style="background:rgba(139,90,43,.15);padding:2px 4px;border-radius:3px">        table[i][0] = i</span>
-<span style="background:rgba(139,90,43,.15);padding:2px 4px;border-radius:3px">    for j in range(cols + 1):</span>
-<span style="background:rgba(139,90,43,.15);padding:2px 4px;border-radius:3px">        table[0][j] = j</span>
+<span style="background:var(--lb-rgba139904315,rgba(139,90,43,.15));padding:2px 4px;border-radius:3px">    for i in range(rows + 1):</span>
+<span style="background:var(--lb-rgba139904315,rgba(139,90,43,.15));padding:2px 4px;border-radius:3px">        table[i][0] = i</span>
+<span style="background:var(--lb-rgba139904315,rgba(139,90,43,.15));padding:2px 4px;border-radius:3px">    for j in range(cols + 1):</span>
+<span style="background:var(--lb-rgba139904315,rgba(139,90,43,.15));padding:2px 4px;border-radius:3px">        table[0][j] = j</span>
 
-<span style="background:rgba(139,90,43,.15);padding:2px 4px;border-radius:3px">    for i in range(1, rows + 1):</span>
-<span style="background:rgba(139,90,43,.15);padding:2px 4px;border-radius:3px">        for j in range(1, cols + 1):</span>
-<span style="background:rgba(251,191,36,.15);padding:2px 4px;border-radius:3px">            if word1[i - 1] == word2[j - 1]:</span>
-<span style="background:rgba(34,197,94,.15);padding:2px 4px;border-radius:3px">                table[i][j] = table[i - 1][j - 1]</span>
+<span style="background:var(--lb-rgba139904315,rgba(139,90,43,.15));padding:2px 4px;border-radius:3px">    for i in range(1, rows + 1):</span>
+<span style="background:var(--lb-rgba139904315,rgba(139,90,43,.15));padding:2px 4px;border-radius:3px">        for j in range(1, cols + 1):</span>
+<span style="background:var(--lb-rgba2511913615,rgba(251,191,36,.15));padding:2px 4px;border-radius:3px">            if word1[i - 1] == word2[j - 1]:</span>
+<span style="background:var(--lb-rgba341979415,rgba(34,197,94,.15));padding:2px 4px;border-radius:3px">                table[i][j] = table[i - 1][j - 1]</span>
             else:
-<span style="background:rgba(239,68,68,.15);padding:2px 4px;border-radius:3px">                table[i][j] = 1 + min(</span>
-<span style="background:rgba(239,68,68,.15);padding:2px 4px;border-radius:3px">                    table[i - 1][j - 1],</span>
-<span style="background:rgba(239,68,68,.15);padding:2px 4px;border-radius:3px">                    table[i - 1][j],</span>
-<span style="background:rgba(239,68,68,.15);padding:2px 4px;border-radius:3px">                    table[i][j - 1]</span>
-<span style="background:rgba(239,68,68,.15);padding:2px 4px;border-radius:3px">                )</span>
+<span style="background:var(--lb-rgba239686815,rgba(239,68,68,.15));padding:2px 4px;border-radius:3px">                table[i][j] = 1 + min(</span>
+<span style="background:var(--lb-rgba239686815,rgba(239,68,68,.15));padding:2px 4px;border-radius:3px">                    table[i - 1][j - 1],</span>
+<span style="background:var(--lb-rgba239686815,rgba(239,68,68,.15));padding:2px 4px;border-radius:3px">                    table[i - 1][j],</span>
+<span style="background:var(--lb-rgba239686815,rgba(239,68,68,.15));padding:2px 4px;border-radius:3px">                    table[i][j - 1]</span>
+<span style="background:var(--lb-rgba239686815,rgba(239,68,68,.15));padding:2px 4px;border-radius:3px">                )</span>
 
-<span style="background:rgba(139,92,246,.15);padding:2px 4px;border-radius:3px">    return table[rows][cols]</span></code></pre>
+<span style="background:var(--lb-rgba1399224615,rgba(139,92,246,.15));padding:2px 4px;border-radius:3px">    return table[rows][cols]</span></code></pre>
 
 <div style="display:grid;gap:8px;margin-top:14px;font-size:.9em">
 <div style="border-left:4px solid palevioletred;padding:8px 14px;background:var(--card2);border-radius:0 6px 6px 0">
@@ -2504,37 +2506,37 @@ First row: <code>table[0][j] = j</code> (insert j chars). First column: <code>ta
 
 <div style="display:grid;gap:12px;font-size:.93em">
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Forgetting +1 on the operation branches</div>
 <code style="color:var(--red)">replace = min_edits(i+1, j+1)</code> used directly &larr; WRONG<br>
 <strong>Detection:</strong> min_edits("a", "b") returns 0 instead of 1.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Using max instead of min</div>
 <code style="color:var(--red)">return 1 + max(replace, delete, insert)</code> &larr; WRONG<br>
 <strong>Detection:</strong> min_edits("horse", "ros") returns far more than 3.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Copying LCS's base case of 0</div>
 <code style="color:var(--red)">if i == len(word1): return 0</code> &larr; WRONG, should be <code>len(word2) - j</code><br>
 <strong>Detection:</strong> min_edits("", "abc") returns 0 instead of 3.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Mixing up which pointer moves for insert vs delete</div>
 <code style="color:var(--red)">insert = min_edits(i+1, j)</code> or <code style="color:var(--red)">delete = min_edits(i, j+1)</code> &larr; swapped<br>
 <strong>Detection:</strong> min_edits("abc", "abdc") stops returning 1 consistently.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Adding +1 on a match</div>
 <code style="color:var(--red)">return 1 + min_edits(i+1, j+1)</code> when matched &larr; WRONG<br>
 <strong>Detection:</strong> min_edits("abc", "abc") returns 3 instead of 0.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Wrong tabulation edge initialization</div>
 Leaving <code>table[i][0]</code>/<code>table[0][j]</code> at 0 (LCS-style) instead of <code>i</code>/<code>j</code>.<br>
 <strong>Detection:</strong> tabulated answer is lower than the recursive answer.
@@ -2662,11 +2664,11 @@ Leaving <code>table[i][0]</code>/<code>table[0][j]</code> at 0 (LCS-style) inste
 <p style="font-size:.93em;margin-bottom:10px">Pick characters from s1 and s2, one at a time, in each string's original order, to exactly reconstruct s3.</p>
 
 <div class="two-col" style="margin:12px 0">
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:8px;padding:14px">
 <div style="color:var(--green);font-weight:700;margin-bottom:6px">Allowed</div>
 <div style="font-size:.93em">Interleaving order between s1 and s2.</div>
 </div>
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">NOT allowed</div>
 <div style="font-size:.93em">Reordering characters within s1 or within s2.</div>
 </div>
@@ -2683,7 +2685,7 @@ Leaving <code>table[i][0]</code>/<code>table[0][j]</code> at 0 (LCS-style) inste
 <div class="ws">
 <p style="font-size:.93em">Greedy instinct: walk s3 left to right, take from whichever string's next character matches.</p>
 
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:12px">s1="ab", s2="cd", s3="acbd"</div>
 <div style="font-size:.93em">Only one string ever matches at each step, so greedy gets <strong style="color:var(--gold2)">True</strong>, but it's never actually tested against a tie.</div>
 </div>
@@ -2694,7 +2696,7 @@ Leaving <code>table[i][0]</code>/<code>table[0][j]</code> at 0 (LCS-style) inste
 
 <div class="ws">
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--red);font-weight:800;font-size:1.05em;margin-bottom:12px">s1="aax", s2="aay", s3="aayaax"</div>
 <div style="font-size:.93em">Greedy always prefers s1 on ties, uses up s1's "aa", then has no source for s3[2]='y'. <strong style="color:var(--red)">Greedy says False.</strong></div>
 
@@ -2731,7 +2733,7 @@ Leaving <code>table[i][0]</code>/<code>table[0][j]</code> at 0 (LCS-style) inste
 </div>
 </div>
 
-<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba2511913608,rgba(251,191,36,.08));border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--gold2);font-weight:700;font-size:1.05em;margin-bottom:10px">What is preventing me from finishing?</div>
 <p style="font-size:.93em">s3[k] needs a source: <code>s1[i]</code> or <code>s2[j]</code>. If both match, which one actually supplied it?</p>
 </div>
@@ -2743,15 +2745,15 @@ Leaving <code>table[i][0]</code>/<code>table[0][j]</code> at 0 (LCS-style) inste
 <h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">5</span> What Can I Do?</h3>
 
 <div class="ws">
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
 <strong style="color:var(--green)">If s1[i] == s3[i+j]:</strong> try <code>can_interleave(i+1, j)</code>.
 </div>
 
-<div style="background:rgba(59,130,246,.06);border:2px solid var(--blue);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
+<div style="background:var(--lb-rgba5913024606,rgba(59,130,246,.06));border:2px solid var(--blue);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
 <strong style="color:var(--blue)">If s2[j] == s3[i+j]:</strong> try <code>can_interleave(i, j+1)</code>.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
 <strong style="color:var(--red)">If neither matches:</strong> dead end, return False.
 </div>
 
@@ -2764,24 +2766,24 @@ Leaving <code>table[i][0]</code>/<code>table[0][j]</code> at 0 (LCS-style) inste
 <div class="ws">
 <div style="display:grid;gap:10px;margin:14px 0;font-size:.93em">
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <strong style="color:var(--red)">Skip s3[i+j] and come back later?</strong> No, s3 is built left to right, one character per step.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <strong style="color:var(--red)">Source from deeper in s1 or s2?</strong> No, characters must be consumed strictly in order.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <strong style="color:var(--red)">Take from both at once?</strong> No, one slot in s3 needs exactly one source.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <strong style="color:var(--red)">Neither matches?</strong> Dead end, return False.
 </div>
 </div>
 
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:16px;margin:14px 0;font-size:.93em">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:10px;padding:16px;margin:14px 0;font-size:.93em">
 At most two branches, sometimes zero, never more than two.
 </div>
 </div>
@@ -2836,7 +2838,7 @@ Both s1[0] and s2[0] match 'a'. <strong>Branch A</strong> (take s1 twice) dead-e
 </div>
 </div>
 
-<div style="background:rgba(139,92,246,.08);border:2px solid var(--purple);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
+<div style="background:var(--lb-rgba1399224608,rgba(139,92,246,.08));border:2px solid var(--purple);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
 <div style="font-size:1.05em;font-weight:700;color:var(--purple);margin-bottom:6px">State = (i, j)</div>
 <div style="font-size:.93em">k = i + j is always derivable, so a third state variable would be redundant.</div>
 </div>
@@ -2868,7 +2870,7 @@ Both s1[0] and s2[0] match 'a'. <strong>Branch A</strong> (take s1 twice) dead-e
 <h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">10</span> What Does the Function Promise?</h3>
 
 <div class="ws">
-<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:12px 0;text-align:center;font-size:1.1em">
+<div style="background:var(--lb-rgba2511913608,rgba(251,191,36,.08));border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:12px 0;text-align:center;font-size:1.1em">
 <strong style="color:var(--gold2)">can_interleave(i, j) returns True if s1[i:] and s2[j:] can be interleaved to form s3[i+j:].</strong>
 </div>
 
@@ -2884,11 +2886,11 @@ Both s1[0] and s2[0] match 'a'. <strong>Branch A</strong> (take s1 twice) dead-e
 
 <div class="ws">
 <div class="two-col" style="margin:12px 0">
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:8px;padding:14px">
 <div style="color:var(--green);font-weight:700;margin-bottom:6px">i + j == len(s3)</div>
 <strong>Return:</strong> <code>i == len(s1) and j == len(s2)</code>.
 </div>
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Neither s1[i] nor s2[j] matches</div>
 <strong>Return:</strong> <code>False</code>.
 </div>
@@ -2903,12 +2905,12 @@ Both s1[0] and s2[0] match 'a'. <strong>Branch A</strong> (take s1 twice) dead-e
 <h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">12</span> What Smaller Problem Remains? (Transitions)</h3>
 
 <div class="ws">
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:12px">TAKE FROM s1: s1[i] == s3[i+j]</div>
 <div style="font-size:.93em"><code>i &rarr; i+1</code>, j unchanged. <strong>Remaining:</strong> <code>can_interleave(i+1, j)</code></div>
 </div>
 
-<div style="background:rgba(59,130,246,.04);border:2px solid var(--blue);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba5913024604,rgba(59,130,246,.04));border:2px solid var(--blue);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--blue);font-weight:800;font-size:1.05em;margin-bottom:12px">TAKE FROM s2: s2[j] == s3[i+j]</div>
 <div style="font-size:.93em">i unchanged, <code>j &rarr; j+1</code>. <strong>Remaining:</strong> <code>can_interleave(i, j+1)</code></div>
 </div>
@@ -2985,17 +2987,17 @@ can_interleave(i,j) =&#9474; (s1[i]==s3[i+j] and can_interleave(i+1,j))
 <div class="ws">
 <h3>Color-highlighted code walkthrough</h3>
 
-<pre style="line-height:2.2"><code><span style="background:rgba(34,197,94,.15);padding:2px 4px;border-radius:3px">def can_interleave(s1, s2, s3, i, j):</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">    if i + j == len(s3):</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">        return i == len(s1) and j == len(s2)</span>
+<pre style="line-height:2.2"><code><span style="background:var(--lb-rgba341979415,rgba(34,197,94,.15));padding:2px 4px;border-radius:3px">def can_interleave(s1, s2, s3, i, j):</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">    if i + j == len(s3):</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">        return i == len(s1) and j == len(s2)</span>
 
-<span style="background:rgba(251,191,36,.15);padding:2px 4px;border-radius:3px">    result = False</span>
-<span style="background:rgba(245,158,11,.15);padding:2px 4px;border-radius:3px">    if i < len(s1) and s1[i] == s3[i + j]:</span>
-<span style="background:rgba(245,158,11,.15);padding:2px 4px;border-radius:3px">        result = can_interleave(s1, s2, s3, i + 1, j)</span>
-<span style="background:rgba(239,68,68,.15);padding:2px 4px;border-radius:3px">    if not result and j < len(s2) and s2[j] == s3[i + j]:</span>
-<span style="background:rgba(239,68,68,.15);padding:2px 4px;border-radius:3px">        result = can_interleave(s1, s2, s3, i, j + 1)</span>
+<span style="background:var(--lb-rgba2511913615,rgba(251,191,36,.15));padding:2px 4px;border-radius:3px">    result = False</span>
+<span style="background:var(--lb-rgba2451581115,rgba(245,158,11,.15));padding:2px 4px;border-radius:3px">    if i < len(s1) and s1[i] == s3[i + j]:</span>
+<span style="background:var(--lb-rgba2451581115,rgba(245,158,11,.15));padding:2px 4px;border-radius:3px">        result = can_interleave(s1, s2, s3, i + 1, j)</span>
+<span style="background:var(--lb-rgba239686815,rgba(239,68,68,.15));padding:2px 4px;border-radius:3px">    if not result and j < len(s2) and s2[j] == s3[i + j]:</span>
+<span style="background:var(--lb-rgba239686815,rgba(239,68,68,.15));padding:2px 4px;border-radius:3px">        result = can_interleave(s1, s2, s3, i, j + 1)</span>
 
-<span style="background:rgba(139,92,246,.15);padding:2px 4px;border-radius:3px">    return result</span></code></pre>
+<span style="background:var(--lb-rgba1399224615,rgba(139,92,246,.15));padding:2px 4px;border-radius:3px">    return result</span></code></pre>
 
 <div style="display:grid;gap:8px;margin-top:14px;font-size:.9em">
 
@@ -3082,11 +3084,11 @@ can_interleave(i,j) =&#9474; (s1[i]==s3[i+j] and can_interleave(i+1,j))
 
 <p style="font-size:.93em;margin-bottom:12px">Same (i, j) always gives the same boolean. Cache it.</p>
 
-<pre style="line-height:2"><code><span style="background:rgba(34,197,94,.15);padding:2px 4px;border-radius:3px">def can_interleave(s1, s2, s3, i, j, cache):</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">    if i + j == len(s3):</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">        return i == len(s1) and j == len(s2)</span>
-<span style="background:rgba(0,128,128,.15);padding:2px 4px;border-radius:3px">    if (i, j) in cache:</span>
-<span style="background:rgba(0,128,128,.15);padding:2px 4px;border-radius:3px">        return cache[(i, j)]</span>
+<pre style="line-height:2"><code><span style="background:var(--lb-rgba341979415,rgba(34,197,94,.15));padding:2px 4px;border-radius:3px">def can_interleave(s1, s2, s3, i, j, cache):</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">    if i + j == len(s3):</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">        return i == len(s1) and j == len(s2)</span>
+<span style="background:var(--lb-rgba012812815,rgba(0,128,128,.15));padding:2px 4px;border-radius:3px">    if (i, j) in cache:</span>
+<span style="background:var(--lb-rgba012812815,rgba(0,128,128,.15));padding:2px 4px;border-radius:3px">        return cache[(i, j)]</span>
 
     result = False
     if i < len(s1) and s1[i] == s3[i + j]:
@@ -3094,8 +3096,8 @@ can_interleave(i,j) =&#9474; (s1[i]==s3[i+j] and can_interleave(i+1,j))
     if not result and j < len(s2) and s2[j] == s3[i + j]:
         result = can_interleave(s1, s2, s3, i, j + 1, cache)
 
-<span style="background:rgba(0,128,128,.15);padding:2px 4px;border-radius:3px">    cache[(i, j)] = result</span>
-<span style="background:rgba(0,128,128,.15);padding:2px 4px;border-radius:3px">    return result</span></code></pre>
+<span style="background:var(--lb-rgba012812815,rgba(0,128,128,.15));padding:2px 4px;border-radius:3px">    cache[(i, j)] = result</span>
+<span style="background:var(--lb-rgba012812815,rgba(0,128,128,.15));padding:2px 4px;border-radius:3px">    return result</span></code></pre>
 
 <div style="display:grid;gap:8px;margin-top:14px;font-size:.9em">
 <div style="border-left:4px solid teal;padding:8px 14px;background:var(--card2);border-radius:0 6px 6px 0">
@@ -3130,11 +3132,11 @@ can_interleave(i,j) =&#9474; (s1[i]==s3[i+j] and can_interleave(i+1,j))
 <p style="font-size:.9em;color:var(--muted)">Green cells = the path that succeeds. Bottom-right = answer.</p>
 
 <div class="two-col" style="margin:12px 0">
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:8px;padding:14px">
 <div style="color:var(--green);font-weight:700">TAKE FROM s1</div>
 <code>table[i-1][j] and s1[i-1] == s3[i+j-1]</code>
 </div>
-<div style="background:rgba(59,130,246,.06);border:2px solid var(--blue);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba5913024606,rgba(59,130,246,.06));border:2px solid var(--blue);border-radius:8px;padding:14px">
 <div style="color:var(--blue);font-weight:700">TAKE FROM s2</div>
 <code>table[i][j-1] and s2[j-1] == s3[i+j-1]</code>
 </div>
@@ -3144,26 +3146,26 @@ can_interleave(i,j) =&#9474; (s1[i]==s3[i+j] and can_interleave(i+1,j))
 <code>table[i][j] = take_from_s1 or take_from_s2</code>
 </div>
 
-<pre style="line-height:2"><code><span style="background:rgba(219,112,147,.15);padding:2px 4px;border-radius:3px">def can_interleave(s1, s2, s3):</span>
-<span style="background:rgba(219,112,147,.15);padding:2px 4px;border-radius:3px">    if len(s1) + len(s2) != len(s3):</span>
-<span style="background:rgba(219,112,147,.15);padding:2px 4px;border-radius:3px">        return False</span>
-<span style="background:rgba(219,112,147,.15);padding:2px 4px;border-radius:3px">    rows = len(s1)</span>
-<span style="background:rgba(219,112,147,.15);padding:2px 4px;border-radius:3px">    cols = len(s2)</span>
-<span style="background:rgba(219,112,147,.15);padding:2px 4px;border-radius:3px">    table = [[False] * (cols + 1) for _ in range(rows + 1)]</span>
-<span style="background:rgba(219,112,147,.15);padding:2px 4px;border-radius:3px">    table[0][0] = True</span>
+<pre style="line-height:2"><code><span style="background:var(--lb-rgba21911214715,rgba(219,112,147,.15));padding:2px 4px;border-radius:3px">def can_interleave(s1, s2, s3):</span>
+<span style="background:var(--lb-rgba21911214715,rgba(219,112,147,.15));padding:2px 4px;border-radius:3px">    if len(s1) + len(s2) != len(s3):</span>
+<span style="background:var(--lb-rgba21911214715,rgba(219,112,147,.15));padding:2px 4px;border-radius:3px">        return False</span>
+<span style="background:var(--lb-rgba21911214715,rgba(219,112,147,.15));padding:2px 4px;border-radius:3px">    rows = len(s1)</span>
+<span style="background:var(--lb-rgba21911214715,rgba(219,112,147,.15));padding:2px 4px;border-radius:3px">    cols = len(s2)</span>
+<span style="background:var(--lb-rgba21911214715,rgba(219,112,147,.15));padding:2px 4px;border-radius:3px">    table = [[False] * (cols + 1) for _ in range(rows + 1)]</span>
+<span style="background:var(--lb-rgba21911214715,rgba(219,112,147,.15));padding:2px 4px;border-radius:3px">    table[0][0] = True</span>
 
-<span style="background:rgba(139,90,43,.15);padding:2px 4px;border-radius:3px">    for j in range(1, cols + 1):</span>
-<span style="background:rgba(139,90,43,.15);padding:2px 4px;border-radius:3px">        table[0][j] = table[0][j - 1] and s2[j - 1] == s3[j - 1]</span>
-<span style="background:rgba(139,90,43,.15);padding:2px 4px;border-radius:3px">    for i in range(1, rows + 1):</span>
-<span style="background:rgba(139,90,43,.15);padding:2px 4px;border-radius:3px">        table[i][0] = table[i - 1][0] and s1[i - 1] == s3[i - 1]</span>
+<span style="background:var(--lb-rgba139904315,rgba(139,90,43,.15));padding:2px 4px;border-radius:3px">    for j in range(1, cols + 1):</span>
+<span style="background:var(--lb-rgba139904315,rgba(139,90,43,.15));padding:2px 4px;border-radius:3px">        table[0][j] = table[0][j - 1] and s2[j - 1] == s3[j - 1]</span>
+<span style="background:var(--lb-rgba139904315,rgba(139,90,43,.15));padding:2px 4px;border-radius:3px">    for i in range(1, rows + 1):</span>
+<span style="background:var(--lb-rgba139904315,rgba(139,90,43,.15));padding:2px 4px;border-radius:3px">        table[i][0] = table[i - 1][0] and s1[i - 1] == s3[i - 1]</span>
 
-<span style="background:rgba(139,90,43,.15);padding:2px 4px;border-radius:3px">    for i in range(1, rows + 1):</span>
-<span style="background:rgba(139,90,43,.15);padding:2px 4px;border-radius:3px">        for j in range(1, cols + 1):</span>
-<span style="background:rgba(34,197,94,.15);padding:2px 4px;border-radius:3px">            from_s1 = table[i - 1][j] and s1[i - 1] == s3[i + j - 1]</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">            from_s2 = table[i][j - 1] and s2[j - 1] == s3[i + j - 1]</span>
-<span style="background:rgba(139,92,246,.15);padding:2px 4px;border-radius:3px">            table[i][j] = from_s1 or from_s2</span>
+<span style="background:var(--lb-rgba139904315,rgba(139,90,43,.15));padding:2px 4px;border-radius:3px">    for i in range(1, rows + 1):</span>
+<span style="background:var(--lb-rgba139904315,rgba(139,90,43,.15));padding:2px 4px;border-radius:3px">        for j in range(1, cols + 1):</span>
+<span style="background:var(--lb-rgba341979415,rgba(34,197,94,.15));padding:2px 4px;border-radius:3px">            from_s1 = table[i - 1][j] and s1[i - 1] == s3[i + j - 1]</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">            from_s2 = table[i][j - 1] and s2[j - 1] == s3[i + j - 1]</span>
+<span style="background:var(--lb-rgba1399224615,rgba(139,92,246,.15));padding:2px 4px;border-radius:3px">            table[i][j] = from_s1 or from_s2</span>
 
-<span style="background:rgba(139,92,246,.15);padding:2px 4px;border-radius:3px">    return table[rows][cols]</span></code></pre>
+<span style="background:var(--lb-rgba1399224615,rgba(139,92,246,.15));padding:2px 4px;border-radius:3px">    return table[rows][cols]</span></code></pre>
 
 <div style="display:grid;gap:8px;margin-top:14px;font-size:.9em">
 <div style="border-left:4px solid palevioletred;padding:8px 14px;background:var(--card2);border-radius:0 6px 6px 0">
@@ -3225,27 +3227,27 @@ Loses the ability to reconstruct which interleaving worked; only existence remai
 
 <div style="display:grid;gap:12px;font-size:.93em">
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Forgetting the length pre-check</div>
 Without it, recursion/tabulation may chase a target that's unreachable.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Introducing k as a separate parameter</div>
 k is always i+j; carrying it separately invites drift bugs.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Off-by-one in tabulation</div>
 table[i][j] needs <code>s3[i+j-1]</code>, not <code>s3[i+j]</code>.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Treating a no-match as "skip"</div>
 Unlike LCS, there's no skip move; neither source matching means dead end.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">Using AND instead of OR</div>
 We need only one valid interleaving to exist, not both branches to succeed.
 </div>
@@ -3365,11 +3367,11 @@ Given two strings <code>source</code> and <code>target</code>, return the number
 </div>
 
 <div class="two-col" style="margin:12px 0">
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:8px;padding:14px">
 <div style="color:var(--green);font-weight:700;margin-bottom:6px">source: flexible</div>
 Use or skip each character.
 </div>
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">target: fixed</div>
 Must be spelled exactly, in order.
 </div>
@@ -3382,7 +3384,7 @@ Must be spelled exactly, in order.
 <div class="ws">
 <p style="font-size:.93em">Natural instinct: scan source left to right, grab a character the moment it matches the next unmatched target character.</p>
 
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:8px">GREEDY: source = "rabbit", target = "rabbit"</div>
 <div style="font-size:.93em">Matches every character in lockstep. <strong style="color:var(--green)">Reports 1 way.</strong> Looks right, try a harder case.</div>
 </div>
@@ -3392,7 +3394,7 @@ Must be spelled exactly, in order.
 <h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">4</span> Where Does That Fail?</h3>
 
 <div class="ws">
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--red);font-weight:800;font-size:1.05em;margin-bottom:8px">GREEDY FAILS: source = "aab", target = "ab"</div>
 <div style="font-size:.93em">Grabs index 0's 'a', then index 2's 'b'. <strong style="color:var(--red)">Reports 1 way.</strong> Actual answer is 2: skipping index 0's 'a' and using index 1's 'a' instead is an equally valid, different way.</div>
 </div>
@@ -3427,7 +3429,7 @@ Must be spelled exactly, in order.
 </div>
 </div>
 
-<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba2511913608,rgba(251,191,36,.08));border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--gold2);font-weight:700;font-size:1.05em;margin-bottom:6px">What is preventing me from finishing?</div>
 <p style="font-size:.93em">Should I <strong>use</strong> source[i] for target[j], or <strong>skip</strong> it and wait for a later duplicate? Both are legal; I don't know which (or both) contributes to the count.</p>
 </div>
@@ -3439,11 +3441,11 @@ Must be spelled exactly, in order.
 <h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">6</span> What Can I Do?</h3>
 
 <div class="ws">
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
 <strong style="color:var(--green)">Match:</strong> <strong>use</strong> &rarr; <code>count_ways(i+1, j+1)</code>, or <strong>skip</strong> &rarr; <code>count_ways(i+1, j)</code>. Both legal.
 </div>
 
-<div style="background:rgba(245,158,11,.06);border:2px solid var(--amber);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
+<div style="background:var(--lb-rgba2451581106,rgba(245,158,11,.06));border:2px solid var(--amber);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em">
 <strong style="color:var(--amber)">No match:</strong> only option is skip &rarr; <code>count_ways(i+1, j)</code>.
 </div>
 </div>
@@ -3453,13 +3455,13 @@ Must be spelled exactly, in order.
 
 <div class="ws">
 <div style="display:grid;gap:6px;margin:14px 0;font-size:.9em">
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:10px 14px">Skip a character of target? <strong>No</strong>, it's the fixed spelling required.</div>
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:10px 14px">Reorder, or use source out of position? <strong>No</strong>, order must be preserved.</div>
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:10px 14px">Reuse the same source character twice? <strong>No</strong>, each index used at most once.</div>
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:10px 14px">Use source[i] when it doesn't match target[j]? <strong>No</strong>, illegal by definition.</div>
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:10px 14px">Skip a character of target? <strong>No</strong>, it's the fixed spelling required.</div>
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:10px 14px">Reorder, or use source out of position? <strong>No</strong>, order must be preserved.</div>
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:10px 14px">Reuse the same source character twice? <strong>No</strong>, each index used at most once.</div>
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:10px 14px">Use source[i] when it doesn't match target[j]? <strong>No</strong>, illegal by definition.</div>
 </div>
 
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:14px;margin:14px 0;font-size:.93em">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:10px;padding:14px;margin:14px 0;font-size:.93em">
 <strong>Match?</strong> Use OR skip, count both. <strong>No match?</strong> Skip only. <code>j</code> advances only when used; <code>i</code> advances every branch.
 </div>
 </div>
@@ -3501,7 +3503,7 @@ Must be spelled exactly, in order.
 <div style="background:var(--card2);border-radius:6px;padding:8px 14px"><span style="color:var(--red);font-weight:700">&#10007;</span> Which source indices were used, or a running total</div>
 </div>
 
-<div style="background:rgba(139,92,246,.08);border:2px solid var(--purple);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
+<div style="background:var(--lb-rgba1399224608,rgba(139,92,246,.08));border:2px solid var(--purple);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
 <div style="font-size:1.05em;font-weight:700;color:var(--purple)">State = (i, j)</div>
 </div>
 </div>
@@ -3531,7 +3533,7 @@ i=2, j=1 on source="aab", target="ab" asks: "how many ways to spell target[1:]='
 <h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">11</span> What Does the Function Promise?</h3>
 
 <div class="ws">
-<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:12px 0;text-align:center;font-size:1.1em">
+<div style="background:var(--lb-rgba2511913608,rgba(251,191,36,.08));border:2px solid var(--gold2);border-radius:10px;padding:18px;margin:12px 0;text-align:center;font-size:1.1em">
 <strong style="color:var(--gold2)">count_ways(i, j) returns the number of distinct subsequences of source[i:] that equal target[j:].</strong>
 </div>
 <p style="font-size:.9em">Returns an integer count, not the subsequences. Original problem: <code>count_ways(0, 0)</code>.</p>
@@ -3542,11 +3544,11 @@ i=2, j=1 on source="aab", target="ab" asks: "how many ways to spell target[1:]='
 
 <div class="ws">
 <div class="two-col" style="margin:12px 0">
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:8px;padding:14px">
 <div style="color:var(--green);font-weight:700;margin-bottom:6px">j == len(target)</div>
 target fully matched. <strong>Return 1.</strong> Check this first.
 </div>
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <div style="color:var(--red);font-weight:700;margin-bottom:6px">i == len(source)</div>
 source exhausted, target remains. <strong>Return 0.</strong>
 </div>
@@ -3559,7 +3561,7 @@ source exhausted, target remains. <strong>Return 0.</strong>
 <h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">13</span> What Smaller Problem Remains?</h3>
 
 <div class="ws">
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:10px;padding:18px;margin:14px 0">
 <div style="color:var(--green);font-weight:800;font-size:1.05em;margin-bottom:8px">CASE: source[i] == target[j] (Match)</div>
 
 <div style="background:var(--card2);border-radius:8px;padding:10px 14px;margin:8px 0;border-left:3px solid var(--green);font-size:.9em">
@@ -3573,7 +3575,7 @@ source exhausted, target remains. <strong>Return 0.</strong>
 <div style="font-size:.9em">Combine: <code>use + skip</code>, both are distinct sets of positions.</div>
 </div>
 
-<div style="background:rgba(239,68,68,.04);border:2px solid var(--red);border-radius:10px;padding:14px;margin:14px 0;font-size:.9em">
+<div style="background:var(--lb-rgba239686804,rgba(239,68,68,.04));border:2px solid var(--red);border-radius:10px;padding:14px;margin:14px 0;font-size:.9em">
 <div style="color:var(--red);font-weight:800;margin-bottom:6px">CASE: source[i] != target[j] (No Match)</div>
 Only skip is legal &rarr; <code>count_ways(i+1, j)</code>
 </div>
@@ -3635,15 +3637,15 @@ count_ways(i,j)=&#9474; 0                                             if i == le
 <h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">17</span> Why Every Line Exists</h3>
 
 <div class="ws">
-<pre style="line-height:2.2"><code><span style="background:rgba(34,197,94,.15);padding:2px 4px;border-radius:3px">def count_ways(source, target, i, j):</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">    if j == len(target):</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">        return 1</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">    if i == len(source):</span>
-<span style="background:rgba(59,130,246,.15);padding:2px 4px;border-radius:3px">        return 0</span>
+<pre style="line-height:2.2"><code><span style="background:var(--lb-rgba341979415,rgba(34,197,94,.15));padding:2px 4px;border-radius:3px">def count_ways(source, target, i, j):</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">    if j == len(target):</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">        return 1</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">    if i == len(source):</span>
+<span style="background:var(--lb-rgba5913024615,rgba(59,130,246,.15));padding:2px 4px;border-radius:3px">        return 0</span>
 
-<span style="background:rgba(239,68,68,.15);padding:2px 4px;border-radius:3px">    ways = count_ways(source, target, i + 1, j)</span>
-<span style="background:rgba(251,191,36,.15);padding:2px 4px;border-radius:3px">    if source[i] == target[j]:</span>
-<span style="background:rgba(139,92,246,.15);padding:2px 4px;border-radius:3px">        ways += count_ways(source, target, i + 1, j + 1)</span>
+<span style="background:var(--lb-rgba239686815,rgba(239,68,68,.15));padding:2px 4px;border-radius:3px">    ways = count_ways(source, target, i + 1, j)</span>
+<span style="background:var(--lb-rgba2511913615,rgba(251,191,36,.15));padding:2px 4px;border-radius:3px">    if source[i] == target[j]:</span>
+<span style="background:var(--lb-rgba1399224615,rgba(139,92,246,.15));padding:2px 4px;border-radius:3px">        ways += count_ways(source, target, i + 1, j + 1)</span>
 
     return ways</code></pre>
 
@@ -3790,23 +3792,23 @@ count_ways(i,j)=&#9474; 0                                             if i == le
 <div class="ws">
 <div style="display:grid;gap:8px;font-size:.9em">
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:10px 14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:10px 14px">
 <strong style="color:var(--red)">max instead of +:</strong> <code>return max(use, skip)</code> counts ways, not the best one. Detection: count_ways("aaa","a") returns 1 instead of 3.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:10px 14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:10px 14px">
 <strong style="color:var(--red)">Advancing target on mismatch:</strong> a mismatch only moves source, never target.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:10px 14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:10px 14px">
 <strong style="color:var(--red)">Swapped base cases:</strong> target matched = 1 (success), source exhausted = 0 (failure).
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:10px 14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:10px 14px">
 <strong style="color:var(--red)">Missing skip on a match:</strong> the greedy failure from Step 4. Detection: count_ways("aab","ab") returns 1 instead of 2.
 </div>
 
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:10px 14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:10px 14px">
 <strong style="color:var(--red)">Wrong j direction in 1D:</strong> must go increasing, or <code>row[j+1]</code> gets corrupted.
 </div>
 
@@ -3967,9 +3969,9 @@ Given a <code>text</code> and a <code>pattern</code>, decide whether the pattern
 
 <table class="grid-table" style="font-size:.84em">
 <tr><th>text left &darr; &nbsp; pattern left &rarr;</th><th class="c"><code>a*b</code></th><th class="c"><code>*b</code></th><th class="c"><code>b</code></th><th class="c"><code>""</code></th></tr>
-<tr><th class="c"><code>ab</code></th><td class="c" style="background:rgba(34,197,94,.2);color:var(--green);font-weight:800">TRUE</td><td class="c" style="color:var(--red)">false</td><td class="c" style="color:var(--red)">false</td><td class="c" style="color:var(--red)">false</td></tr>
+<tr><th class="c"><code>ab</code></th><td class="c" style="background:var(--lb-rgba34197942,rgba(34,197,94,.2));color:var(--green);font-weight:800">TRUE</td><td class="c" style="color:var(--red)">false</td><td class="c" style="color:var(--red)">false</td><td class="c" style="color:var(--red)">false</td></tr>
 <tr><th class="c"><code>b</code></th><td class="c" style="color:var(--green);font-weight:800">TRUE</td><td class="c" style="color:var(--red)">false</td><td class="c" style="color:var(--green);font-weight:800">TRUE</td><td class="c" style="color:var(--red)">false</td></tr>
-<tr><th class="c"><code>""</code></th><td class="c" style="color:var(--red)">false</td><td class="c" style="color:var(--red)">false</td><td class="c" style="color:var(--red)">false</td><td class="c" style="background:rgba(34,197,94,.2);color:var(--green);font-weight:800">TRUE</td></tr>
+<tr><th class="c"><code>""</code></th><td class="c" style="color:var(--red)">false</td><td class="c" style="color:var(--red)">false</td><td class="c" style="color:var(--red)">false</td><td class="c" style="background:var(--lb-rgba34197942,rgba(34,197,94,.2));color:var(--green);font-weight:800">TRUE</td></tr>
 </table>
 
 <p>The answer sits in the <b>top left</b> box, because that is the state where nothing has been consumed yet. The <b>bottom right</b> box is the easy one: both ran out together, so TRUE.</p>
@@ -4086,5 +4088,6 @@ Given a <code>text</code> and a <code>pattern</code>, decide whether the pattern
 
 </div>
 
+<script src="site.js?v=20261106b" defer></script>
 </body>
 </html>

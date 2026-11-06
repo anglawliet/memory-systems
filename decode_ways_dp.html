@@ -2,43 +2,44 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script>try{var t=localStorage.getItem("ms-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Decode Ways: Conditional Look-backs</title>
 <style>
 :root{--bg:#1a1916;--card:#252320;--card2:#2d2a26;--gold:#d4a843;--gold2:#fbbf24;--amber:#f59e0b;--green:#22c55e;--blue:#3b82f6;--red:#ef4444;--text:#e8e2d6;--muted:#9b9484;--border:#3d3930;--sand:#c2956a}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;padding:0 0 80px;overflow-x:hidden}
-.hdr{background:linear-gradient(135deg,#1f1a0e,#1a1916);border-bottom:3px solid var(--sand);padding:40px 20px;text-align:center}
+.hdr{background:linear-gradient(135deg,var(--lb-1f1a0e,#1f1a0e),var(--lb-1a1916,#1a1916));border-bottom:3px solid var(--sand);padding:40px 20px;text-align:center}
 .hdr h1{font-size:2em;color:var(--sand)}.hdr p{color:var(--muted)}
 .wrap{max-width:920px;margin:0 auto;padding:20px}
 h2{color:var(--sand);font-size:1.4em;margin:32px 0 12px;border-bottom:2px solid var(--border);padding-bottom:8px}
 h3{color:var(--sand);margin:20px 0 8px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin:16px 0}
 .scene-img{width:100%;border-radius:10px;margin:12px 0;border:1px solid var(--border)}
-pre{background:#0d0d0b;border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;font-size:.85em;line-height:1.6;margin:10px 0}
+pre{background:var(--lb-0d0d0b,#0d0d0b);border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;font-size:.85em;line-height:1.6;margin:10px 0}
 code{font-family:'Fira Code','Courier New',monospace}
-.hi{background:rgba(194,149,106,.1);border:1px solid rgba(194,149,106,.3);border-radius:6px;padding:12px 16px;margin:12px 0}
+.hi{background:var(--lb-rgba1941491061,rgba(194,149,106,.1));border:1px solid var(--ld-rgba1941491063,rgba(194,149,106,.3));border-radius:6px;padding:12px 16px;margin:12px 0}
 .ws{background:var(--card);border-radius:12px;padding:20px;margin:20px 0;border-left:4px solid var(--blue)}
 .ws h3{color:var(--blue);margin-top:0}
 .arr{display:flex;gap:0;margin:12px 0;flex-wrap:wrap;justify-content:center}
 .arr-cell{border:2px solid var(--border);padding:10px 14px;min-width:48px;text-align:center;font-weight:700;font-size:1.05em;background:var(--card)}
-.arr-cell.base{border-color:var(--gold2);background:rgba(251,191,36,.08);color:var(--gold2)}
-.arr-cell.filled{border-color:var(--green);background:rgba(34,197,94,.08);color:var(--green)}
-.arr-cell.current{border-color:var(--amber);background:rgba(245,158,11,.15);color:var(--amber);box-shadow:0 0 12px rgba(245,158,11,.3)}
+.arr-cell.base{border-color:var(--gold2);background:var(--lb-rgba2511913608,rgba(251,191,36,.08));color:var(--gold2)}
+.arr-cell.filled{border-color:var(--green);background:var(--lb-rgba341979408,rgba(34,197,94,.08));color:var(--green)}
+.arr-cell.current{border-color:var(--amber);background:var(--lb-rgba2451581115,rgba(245,158,11,.15));color:var(--amber);box-shadow:0 0 12px rgba(245,158,11,.3)}
 .arr-cell.empty{color:var(--muted)}
 .arr-label{display:flex;gap:0;margin:0 0 2px;flex-wrap:wrap;justify-content:center}
 .arr-label span{min-width:48px;text-align:center;font-size:.72em;color:var(--muted);padding:0 14px}
 .cell-walk{border-radius:10px;padding:16px;margin:12px 0;font-size:.95em;line-height:1.8}
-.cell-base{background:rgba(251,191,36,.06);border:2px solid var(--gold2)}
-.cell-fill{background:rgba(34,197,94,.06);border:1px solid var(--green)}
+.cell-base{background:var(--lb-rgba2511913606,rgba(251,191,36,.06));border:2px solid var(--gold2)}
+.cell-fill{background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:1px solid var(--green)}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .code-ann{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:.9em}
 .nav-link{display:inline-block;background:var(--card);border:1px solid var(--border);padding:10px 20px;border-radius:8px;color:var(--sand);text-decoration:none;font-weight:700;margin:8px 4px;transition:.2s}
 .nav-link:hover{background:var(--sand);color:#000;border-color:var(--sand)}
 .door-card{border-radius:8px;padding:14px;font-size:.92em}
-.door-open{background:rgba(34,197,94,.06);border:2px solid var(--green)}
-.door-locked{background:rgba(239,68,68,.06);border:2px solid var(--red)}
-.door-check{background:rgba(245,158,11,.06);border:2px solid var(--amber)}
+.door-open{background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green)}
+.door-locked{background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red)}
+.door-check{background:var(--lb-rgba2451581106,rgba(245,158,11,.06));border:2px solid var(--amber)}
 .digit-box{display:inline-block;border:2px solid var(--border);border-radius:6px;padding:4px 12px;margin:2px;font-weight:700;font-size:1.1em;background:var(--card)}
 .digit-box.valid{border-color:var(--green);color:var(--green)}
 .digit-box.invalid{border-color:var(--red);color:var(--red)}
@@ -63,11 +64,12 @@ a.wshome{color:inherit;text-decoration:none;display:block}
 a.wshome:hover h1{opacity:.82}
 .wsback{display:block;font-size:.62em;letter-spacing:.16em;text-transform:uppercase;font-weight:800;opacity:.75;margin-bottom:6px}
 
-.recallcard{border:2px solid var(--gold2);border-radius:12px;padding:16px 18px;margin:18px 0;background:rgba(245,158,11,.07)}
+.recallcard{border:2px solid var(--gold2);border-radius:12px;padding:16px 18px;margin:18px 0;background:var(--lb-rgba2451581107,rgba(245,158,11,.07))}
 .recallcard .rlbl{font-size:.62em;letter-spacing:.18em;font-weight:800;color:var(--gold2);text-transform:uppercase}
 .recallcard p{margin:6px 0 10px;font-size:.9em;color:var(--muted)}
 </style>
-<link rel="stylesheet" href="site.css?v=20261106a">
+<link rel="stylesheet" href="legacy-colors.css?v=20261106b">
+<link rel="stylesheet" href="site.css?v=20261106b">
 </head>
 <body>
 <header class="ms-topbar"><div class="ms-inner"><a class="ms-home" href="index.html" aria-label="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg><span>Memory Systems</span></a><nav class="ms-links"><a href="shankar_dada_trees.html">Trees</a><a href="graphs.html">Graphs</a><a href="dp_workshop.html" class="on">DP</a><a href="arrays.html">Arrays</a><a href="two_pointers.html">Two Pointers</a><a href="sliding_window.html">Sliding Window</a><a href="stack.html">Stack</a><a href="binary_search.html">Binary Search</a><a href="linked_list.html">Linked List</a><a href="heap.html">Heap</a><a href="tries.html">Tries</a></nav></div></header>
@@ -215,7 +217,7 @@ If this pair of digits is a valid letter (J through Z), open the door and look b
 └── read "26" (Z) &rarr; decode_ways(1)  ─ ─ ─ ─ ─ ┘
     └── read "2" (B)    &rarr; decode_ways(0) = 1</code></pre>
 
-<div style="background:rgba(251,191,36,.12);border:2px solid var(--gold2);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
+<div style="background:var(--lb-rgba2511913612,rgba(251,191,36,.12));border:2px solid var(--gold2);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
 <div style="font-size:1.1em;font-weight:800;color:var(--gold2);margin-bottom:8px">decode_ways(1) appears TWICE</div>
 <div style="font-size:.95em">Same question, same answer. Same overlap pattern as staircase and house robber.</div>
 </div>
@@ -302,7 +304,7 @@ If this pair of digits is a valid letter (J through Z), open the door and look b
 <div style="background:var(--card2);border-radius:8px;padding:12px;margin:8px 0;font-size:.92em">
 <strong>Position 1 (digit "3"):</strong> Door 1 <span style="color:var(--green)">OPEN</span> (C). <strong>ways = 1</strong>
 </div>
-<div style="background:rgba(239,68,68,.08);border:1px solid var(--red);border-radius:8px;padding:12px;margin:8px 0;font-size:.92em">
+<div style="background:var(--lb-rgba239686808,rgba(239,68,68,.08));border:1px solid var(--red);border-radius:8px;padding:12px;margin:8px 0;font-size:.92em">
 <strong>Position 2 (digit "0"):</strong> Door 1 <span style="color:var(--red)">LOCKED</span> (0 invalid). Door 2 <span style="color:var(--red)">LOCKED</span> (30 > 26). <strong style="color:var(--red)">ways = 0</strong>
 </div>
 </div>
@@ -459,7 +461,7 @@ Valid (V, 10 &lt;= 22 &lt;= 26). <span style="color:var(--green)">OPEN.</span><b
 </div>
 
 <!-- CELL: ways[3] -->
-<div class="cell-walk" style="background:rgba(194,149,106,.08);border:2px solid var(--sand)">
+<div class="cell-walk" style="background:var(--lb-rgba19414910608,rgba(194,149,106,.08));border:2px solid var(--sand)">
 <div style="color:var(--sand);font-weight:700;margin-bottom:8px;font-size:1.1em">ways[3]: All three digits "226". THE ANSWER</div>
 
 <div style="margin:12px 0">
@@ -503,14 +505,14 @@ Valid (Z, 10 &lt;= 26 &lt;= 26). <span style="color:var(--green)">OPEN.</span><b
 <div class="arr-cell base">1</div>
 <div class="arr-cell filled">1</div>
 <div class="arr-cell filled">2</div>
-<div class="arr-cell filled" style="border-color:var(--sand);color:var(--sand);font-size:1.3em;background:rgba(194,149,106,.12)">3</div>
+<div class="arr-cell filled" style="border-color:var(--sand);color:var(--sand);font-size:1.3em;background:var(--lb-rgba19414910612,rgba(194,149,106,.12))">3</div>
 </div>
 </div>
 
 <div style="text-align:center;margin:12px 0">
-<span style="display:inline-block;border:2px solid var(--gold2);background:rgba(251,191,36,.08);border-radius:4px;padding:2px 10px;font-size:.82em;color:var(--gold2);margin:2px">base case</span>
-<span style="display:inline-block;border:2px solid var(--green);background:rgba(34,197,94,.08);border-radius:4px;padding:2px 10px;font-size:.82em;color:var(--green);margin:2px">computed</span>
-<span style="display:inline-block;border:2px solid var(--sand);background:rgba(194,149,106,.12);border-radius:4px;padding:2px 10px;font-size:.82em;color:var(--sand);margin:2px">answer</span>
+<span style="display:inline-block;border:2px solid var(--gold2);background:var(--lb-rgba2511913608,rgba(251,191,36,.08));border-radius:4px;padding:2px 10px;font-size:.82em;color:var(--gold2);margin:2px">base case</span>
+<span style="display:inline-block;border:2px solid var(--green);background:var(--lb-rgba341979408,rgba(34,197,94,.08));border-radius:4px;padding:2px 10px;font-size:.82em;color:var(--green);margin:2px">computed</span>
+<span style="display:inline-block;border:2px solid var(--sand);background:var(--lb-rgba19414910612,rgba(194,149,106,.12));border-radius:4px;padding:2px 10px;font-size:.82em;color:var(--sand);margin:2px">answer</span>
 </div>
 
 <p><strong>All three decodings:</strong></p>
@@ -561,7 +563,7 @@ Valid (Z, 10 &lt;= 26 &lt;= 26). <span style="color:var(--green)">OPEN.</span><b
 <h3 style="color:var(--blue)">Same structure, conditional look-backs</h3>
 
 <div class="two-col" style="margin:12px 0">
-<div style="background:rgba(194,149,106,.08);border:2px solid var(--sand);border-radius:10px;padding:16px">
+<div style="background:var(--lb-rgba19414910608,rgba(194,149,106,.08));border:2px solid var(--sand);border-radius:10px;padding:16px">
 <div style="color:var(--sand);font-weight:700;margin-bottom:8px">Climbing Stairs</div>
 <div style="font-size:.9em;line-height:1.8">
 <code>ways[step] = ways[step-1] + ways[step-2]</code><br>
@@ -569,7 +571,7 @@ Valid (Z, 10 &lt;= 26 &lt;= 26). <span style="color:var(--green)">OPEN.</span><b
 <strong>No conditions.</strong> Just add.
 </div>
 </div>
-<div style="background:rgba(34,197,94,.08);border:2px solid var(--green);border-radius:10px;padding:16px">
+<div style="background:var(--lb-rgba341979408,rgba(34,197,94,.08));border:2px solid var(--green);border-radius:10px;padding:16px">
 <div style="color:var(--green);font-weight:700;margin-bottom:8px">Decode Ways</div>
 <div style="font-size:.9em;line-height:1.8">
 <code>ways[pos] = (if valid) + (if valid)</code><br>
@@ -595,5 +597,6 @@ Decode Ways: check each digit before looking back.<br>
 
 </div>
 
+<script src="site.js?v=20261106b" defer></script>
 </body>
 </html>

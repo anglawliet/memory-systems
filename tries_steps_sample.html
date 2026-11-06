@@ -19,8 +19,8 @@ h1{font-size:28px;margin:0 0 4px}
 /* progress and buttons */
 .bar{display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
 .dots{display:flex;gap:6px;flex:1;min-width:180px}
-.dots button{flex:1;height:8px;border:0;border-radius:4px;background:#2a3038;cursor:pointer;padding:0}
-.dots button.done{background:#7a6a45}
+.dots button{flex:1;height:8px;border:0;border-radius:4px;background:var(--lb-2a3038,#2a3038);cursor:pointer;padding:0}
+.dots button.done{background:var(--lb-7a6a45,#7a6a45)}
 .dots button.cur{background:var(--gold)}
 .count{color:var(--muted);font-size:14px;white-space:nowrap}
 .nav{display:flex;gap:10px}
@@ -35,28 +35,28 @@ h1{font-size:28px;margin:0 0 4px}
 .step-title{font-size:21px;font-weight:700;margin:0 0 10px;color:var(--gold)}
 .explain p{margin:0 0 10px;line-height:1.6;font-size:16px}
 .explain p:last-child{margin-bottom:0}
-.explain code{font-family:'JetBrains Mono',monospace;font-size:14px;background:#232a33;padding:1px 6px;border-radius:5px}
+.explain code{font-family:'JetBrains Mono',monospace;font-size:14px;background:var(--lb-232a33,#232a33);padding:1px 6px;border-radius:5px}
 .pic-title{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
 svg{display:block;width:100%;height:auto}
 .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:13px;color:var(--muted)}
 .legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px;background:var(--c)}
 
 /* code box, same look as the site's phone code box */
-.code{border:2px solid #2b2b2b;border-radius:12px;overflow:hidden;background:#1f2633;position:sticky;top:16px}
-.code-label{display:flex;align-items:center;gap:10px;font-weight:800;font-size:15px;padding:9px 12px;background:#fbe7a1;color:#1b1b1b;border-bottom:2px solid #2b2b2b}
+.code{border:2px solid var(--ld-2b2b2b,#2b2b2b);border-radius:12px;overflow:hidden;background:var(--lb-1f2633,#1f2633);position:sticky;top:16px}
+.code-label{display:flex;align-items:center;gap:10px;font-weight:800;font-size:15px;padding:9px 12px;background:#fbe7a1;color:#1b1b1b;border-bottom:2px solid var(--ld-2b2b2b,#2b2b2b)}
 .code-label .d{display:flex;gap:5px}
 .code-label .d i{width:10px;height:10px;border-radius:50%;background:#ff5f57}
 .code-label .d i:nth-child(2){background:#febc2e}
-.code-label .d i:nth-child(3){background:#28c840}
+.code-label .d i:nth-child(3){background:var(--lb-28c840,#28c840)}
 .code-body{padding:12px 0;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:14px;line-height:1.65;color:#e6e9ef;font-variant-ligatures:none}
 .ln{white-space:pre-wrap;word-break:break-word;padding:0 10px;transition:background .3s,opacity .3s}
 /* lines from earlier steps turn plain gray, so only the current lines are in color */
-.ln.old{color:#7f8894}
+.ln.old{color:var(--lc-7f8894,#7f8894)}
 .ln.old span{color:inherit}
-.ln.new{background:rgba(255,216,102,.17);box-shadow:inset 3px 0 #ffd866;opacity:1}
-.ln.run{background:rgba(120,190,255,.13);box-shadow:inset 3px 0 #78bfff;opacity:1}
+.ln.new{background:var(--lb-rgba25521610217,rgba(255,216,102,.17));box-shadow:inset 3px 0 #ffd866;opacity:1}
+.ln.run{background:var(--lb-rgba12019025513,rgba(120,190,255,.13));box-shadow:inset 3px 0 #78bfff;opacity:1}
 .ln.hide{display:none}
-.k-kw{color:#ff79b0}.k-def{color:#ffd866}.k-self{color:#9fb6ff}.k-const{color:#56c8ff}
+.k-kw{color:var(--lc-ff79b0,#ff79b0)}.k-def{color:var(--lc-ffd866,#ffd866)}.k-self{color:var(--lc-9fb6ff,#9fb6ff)}.k-const{color:var(--lc-56c8ff,#56c8ff)}
 .note-row{padding:3px 10px 8px}
 .note{display:inline-block;font-family:'DM Sans',system-ui,sans-serif;font-weight:700;font-size:13.5px;line-height:1.3;padding:5px 11px;border-radius:10px;border:2px solid;color:#1b1b1b}
 .note-yellow{background:#fff1b8;border-color:#f2c230}
@@ -68,7 +68,7 @@ svg{display:block;width:100%;height:auto}
 /* phones: the explanation and picture sit right under the new lines inside the code,
    and Back / Next stay fixed at the bottom of the screen */
 .inline-story{white-space:normal;margin:10px 8px 14px;display:flex;flex-direction:column;gap:10px;font-family:'DM Sans',system-ui,sans-serif;color:var(--text)}
-.inline-story .card{border-color:#3a4350}
+.inline-story .card{border-color:var(--ld-3a4350,#3a4350)}
 @media (max-width:760px){
   .wrap{padding:18px 12px 130px}
   h1{font-size:23px}
@@ -79,7 +79,7 @@ svg{display:block;width:100%;height:auto}
   .explain p{font-size:15.5px}
   .code-body{font-size:13px}
   .bar{position:fixed;left:0;right:0;bottom:0;z-index:10;margin:0;gap:10px;
-       background:rgba(9,10,11,.96);border-top:1px solid var(--border);
+       background:var(--lb-rgba9101196,rgba(9,10,11,.96));border-top:1px solid var(--border);
        padding:10px 12px calc(10px + env(safe-area-inset-bottom))}
   .dots{flex-basis:100%;min-width:0}
   .count{flex:1}
@@ -350,5 +350,6 @@ const start = parseInt(new URLSearchParams(location.search).get("step"));
 if (start >= 1 && start <= STEPS.length) cur = start - 1;
 render();
 </script>
+<script src="site.js?v=20261106b" defer></script>
 </body>
 </html>

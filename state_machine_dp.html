@@ -2,21 +2,22 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script>try{var t=localStorage.getItem("ms-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>State Machine DP: Derive It From Scratch</title>
 <style>
 :root{--bg:#1a1916;--card:#252320;--card2:#2d2a26;--gold:#d4a843;--gold2:#fbbf24;--amber:#f59e0b;--green:#22c55e;--blue:#3b82f6;--red:#ef4444;--text:#e8e2d6;--muted:#9b9484;--border:#3d3930;--sand:#c2956a;--emerald:#10b981;--teal:#14b8a6}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;padding:0 0 80px;overflow-x:hidden}
-.hdr{background:linear-gradient(135deg,#1f1a0e,#1a1916);border-bottom:3px solid var(--emerald);padding:40px 20px;text-align:center}
+.hdr{background:linear-gradient(135deg,var(--lb-1f1a0e,#1f1a0e),var(--lb-1a1916,#1a1916));border-bottom:3px solid var(--emerald);padding:40px 20px;text-align:center}
 .hdr h1{font-size:2em;color:var(--emerald)}.hdr p{color:var(--muted)}
 .wrap{max-width:920px;margin:0 auto;padding:20px}
 h2{color:var(--emerald);font-size:1.4em;margin:32px 0 12px;border-bottom:2px solid var(--border);padding-bottom:8px}
 h3{color:var(--emerald);margin:20px 0 8px}
 .scene-img{width:100%;border-radius:10px;margin:12px 0;border:1px solid var(--border)}
-pre{background:#0d0d0b;border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;font-size:.85em;line-height:1.6;margin:10px 0}
+pre{background:var(--lb-0d0d0b,#0d0d0b);border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;font-size:.85em;line-height:1.6;margin:10px 0}
 code{font-family:'Fira Code','Courier New',monospace}
-.hi{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:6px;padding:12px 16px;margin:12px 0}
+.hi{background:var(--lb-rgba161851291,rgba(16,185,129,.1));border:1px solid var(--ld-rgba161851293,rgba(16,185,129,.3));border-radius:6px;padding:12px 16px;margin:12px 0}
 .ws{background:var(--card);border-radius:12px;padding:20px;margin:20px 0;border-left:4px solid var(--emerald)}
 .ws h3{color:var(--emerald);margin-top:0}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -25,9 +26,9 @@ code{font-family:'Fira Code','Courier New',monospace}
 .nav-link{display:inline-block;background:var(--card);border:1px solid var(--border);padding:10px 20px;border-radius:8px;color:var(--emerald);text-decoration:none;font-weight:700;margin:8px 4px;transition:.2s}
 .nav-link:hover{background:var(--emerald);color:#000;border-color:var(--emerald)}
 .state-card{border-radius:8px;padding:14px;font-size:.92em}
-.state-hold{background:rgba(239,68,68,.06);border:2px solid var(--red)}
-.state-sold{background:rgba(34,197,94,.06);border:2px solid var(--green)}
-.state-rest{background:rgba(59,130,246,.06);border:2px solid var(--blue)}
+.state-hold{background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red)}
+.state-sold{background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green)}
+.state-rest{background:var(--lb-rgba5913024606,rgba(59,130,246,.06));border:2px solid var(--blue)}
 .grid-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
 .grid-table th,.grid-table td{border:1px solid var(--border);padding:8px 12px;text-align:center}
 .grid-table th{background:var(--card2);color:var(--emerald)}
@@ -41,7 +42,7 @@ code{font-family:'Fira Code','Courier New',monospace}
 .sbox{background:var(--card2);border-radius:8px;padding:12px 16px;margin:10px 0}
 .sl{font-size:.7em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
 .cell-walk{border-radius:10px;padding:16px;margin:12px 0;font-size:.95em;line-height:1.8}
-.cell-fill{background:rgba(34,197,94,.06);border:1px solid var(--green)}
+.cell-fill{background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:1px solid var(--green)}
 .step-num{display:inline-flex;align-items:center;justify-content:center;background:var(--emerald);color:#000;width:28px;height:28px;border-radius:50%;font-size:.85em;font-weight:800;margin-right:8px;flex-shrink:0}
 @media(max-width:600px){
   .wrap{padding:12px}
@@ -59,11 +60,12 @@ a.wshome{color:inherit;text-decoration:none;display:block}
 a.wshome:hover h1{opacity:.82}
 .wsback{display:block;font-size:.62em;letter-spacing:.16em;text-transform:uppercase;font-weight:800;opacity:.75;margin-bottom:6px}
 
-.recallcard{border:2px solid var(--gold2);border-radius:12px;padding:16px 18px;margin:18px 0;background:rgba(245,158,11,.07)}
+.recallcard{border:2px solid var(--gold2);border-radius:12px;padding:16px 18px;margin:18px 0;background:var(--lb-rgba2451581107,rgba(245,158,11,.07))}
 .recallcard .rlbl{font-size:.62em;letter-spacing:.18em;font-weight:800;color:var(--gold2);text-transform:uppercase}
 .recallcard p{margin:6px 0 10px;font-size:.9em;color:var(--muted)}
 </style>
-<link rel="stylesheet" href="site.css?v=20261106a">
+<link rel="stylesheet" href="legacy-colors.css?v=20261106b">
+<link rel="stylesheet" href="site.css?v=20261106b">
 </head>
 <body>
 <header class="ms-topbar"><div class="ms-inner"><a class="ms-home" href="index.html" aria-label="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg><span>Memory Systems</span></a><nav class="ms-links"><a href="shankar_dada_trees.html">Trees</a><a href="graphs.html">Graphs</a><a href="dp_workshop.html" class="on">DP</a><a href="arrays.html">Arrays</a><a href="two_pointers.html">Two Pointers</a><a href="sliding_window.html">Sliding Window</a><a href="stack.html">Stack</a><a href="binary_search.html">Binary Search</a><a href="linked_list.html">Linked List</a><a href="heap.html">Heap</a><a href="tries.html">Tries</a></nav></div></header>
@@ -132,10 +134,10 @@ a.wshome:hover h1{opacity:.82}
 <p style="font-size:.93em;margin-bottom:10px">Three rules stack on top of each other: own at most one share at a time, wait one full day after a sale before buying again, and trade as many times as helpful.</p>
 
 <div class="two-col" style="margin:12px 0">
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:8px;padding:14px;font-size:.9em">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:8px;padding:14px;font-size:.9em">
 <strong style="color:var(--green)">Unlimited transactions</strong><br>Buy/sell as many times as profitable, not just once.
 </div>
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px;font-size:.9em">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px;font-size:.9em">
 <strong style="color:var(--red)">Cooldown</strong><br>After selling, day i+1 must be idle. Can't buy until i+2.
 </div>
 </div>
@@ -151,7 +153,7 @@ a.wshome:hover h1{opacity:.82}
 <div class="ws">
 <p style="margin-bottom:10px">Instinct: buy at every local minimum, sell at every local maximum.</p>
 
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:16px;margin:12px 0">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:10px;padding:16px;margin:12px 0">
 <div style="color:var(--green);font-weight:800;margin-bottom:8px">GREEDY ON prices = [1, 2, 4]</div>
 <div style="font-size:.93em">Local min at 1, local max at 4. Buy@1, sell@4. Profit = 3. <strong style="color:var(--gold2)">Correct, and no cooldown conflict.</strong></div>
 </div>
@@ -161,7 +163,7 @@ a.wshome:hover h1{opacity:.82}
 <h2><span class="step-num">3</span> Where Does That Fail?</h2>
 
 <div class="ws">
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:16px;margin:12px 0">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:10px;padding:16px;margin:12px 0">
 <div style="color:var(--red);font-weight:800;margin-bottom:8px">GREEDY FAILS: prices = [1, 2, 3, 0, 2]</div>
 <div style="font-size:.93em">Greedy sees minima at 1 and 0, maxima at 3 and 2: buy@1, sell@3 (+2), then it wants to buy@0 on the very next day, but that's the cooldown day. Illegal.</div>
 </div>
@@ -211,13 +213,13 @@ a.wshome:hover h1{opacity:.82}
 
 <div class="ws">
 <div style="display:grid;gap:10px;font-size:.93em">
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:12px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:12px">
 <strong style="color:var(--red)">Can I sell without holding?</strong> No. Nothing to sell.
 </div>
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:12px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:12px">
 <strong style="color:var(--red)">Can I buy the day right after a sell?</strong> No. That's the cooldown rule, which is exactly why SOLD exists as its own state instead of collapsing into REST.
 </div>
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:12px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:12px">
 <strong style="color:var(--red)">Can I hold two stocks at once?</strong> No. At most one share, so a second buy from HOLD is illegal.
 </div>
 </div>
@@ -251,7 +253,7 @@ a.wshome:hover h1{opacity:.82}
 <div class="sbox"><div class="sl" style="color:var(--emerald)">state_type (hold / sold / rest)</div>Same day, different legal moves depending on this. Needed.</div>
 <div class="sbox"><div class="sl" style="color:var(--red)">purchase price</div>Already spent and subtracted when bought. Doesn't affect future choices, not needed.</div>
 
-<div style="background:rgba(251,191,36,.12);border:2px solid var(--gold2);border-radius:10px;padding:14px;margin:14px 0;text-align:center">
+<div style="background:var(--lb-rgba2511913612,rgba(251,191,36,.12));border:2px solid var(--gold2);border-radius:10px;padding:14px;margin:14px 0;text-align:center">
 <strong style="color:var(--gold2)">State = (day, state_type)</strong>
 </div>
 </div>
@@ -274,7 +276,7 @@ a.wshome:hover h1{opacity:.82}
 <h2><span class="step-num">10</span> What Does the Function Promise?</h2>
 
 <div class="ws">
-<div style="background:rgba(251,191,36,.08);border:2px solid var(--gold2);border-radius:10px;padding:16px;text-align:center;font-size:1.05em">
+<div style="background:var(--lb-rgba2511913608,rgba(251,191,36,.08));border:2px solid var(--gold2);border-radius:10px;padding:16px;text-align:center;font-size:1.05em">
 <strong style="color:var(--gold2)">max_profit(day, state) returns the best profit obtainable from day onward, given I start today already in state.</strong>
 </div>
 <p style="font-size:.9em;margin-top:12px">Original problem: <code>max_profit(0, rest)</code> (day 0, no stock, no cooldown owed).</p>
@@ -292,13 +294,13 @@ a.wshome:hover h1{opacity:.82}
 <h2><span class="step-num">12</span> What Smaller Problem Remains? (Transitions)</h2>
 
 <div class="ws">
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:14px;margin:10px 0;font-size:.93em">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:10px;padding:14px;margin:10px 0;font-size:.93em">
 <strong style="color:var(--red)">HOLD</strong>: sell &rarr; <code>prices[day] + max_profit(day+1, sold)</code>, or keep &rarr; <code>max_profit(day+1, hold)</code>.
 </div>
-<div style="background:rgba(34,197,94,.06);border:2px solid var(--green);border-radius:10px;padding:14px;margin:10px 0;font-size:.93em">
+<div style="background:var(--lb-rgba341979406,rgba(34,197,94,.06));border:2px solid var(--green);border-radius:10px;padding:14px;margin:10px 0;font-size:.93em">
 <strong style="color:var(--green)">SOLD</strong>: only rest &rarr; <code>max_profit(day+1, rest)</code>. No choice, no price change.
 </div>
-<div style="background:rgba(59,130,246,.06);border:2px solid var(--blue);border-radius:10px;padding:14px;margin:10px 0;font-size:.93em">
+<div style="background:var(--lb-rgba5913024606,rgba(59,130,246,.06));border:2px solid var(--blue);border-radius:10px;padding:14px;margin:10px 0;font-size:.93em">
 <strong style="color:var(--blue)">REST</strong>: buy &rarr; <code>-prices[day] + max_profit(day+1, hold)</code>, or keep resting &rarr; <code>max_profit(day+1, rest)</code>.
 </div>
 </div>
@@ -461,13 +463,13 @@ max_profit(prices, 0, "rest")</code></pre>
 
 <div class="ws">
 <div style="display:grid;gap:12px;font-size:.93em">
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <strong style="color:var(--red)">Skipping the SOLD state, going straight sold&rarr;rest</strong><br>Collapses cooldown away. Selling would let you rebuy the very next day.
 </div>
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <strong style="color:var(--red)">Giving SOLD a choice</strong><br><code>max(rest_profit(day+1), ...)</code> in the SOLD branch &larr; wrong. SOLD has exactly one legal move.
 </div>
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:14px">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:14px">
 <strong style="color:var(--red)">Wrong tabulation base row</strong><br><code>hold_profit[0] = 0</code> instead of <code>-prices[0]</code> &larr; wrong. Buying on day 0 costs money immediately.
 </div>
 </div>
@@ -501,21 +503,21 @@ max_profit(prices, 0, "rest")</code></pre>
 <!-- ==================== CHILDREN ==================== -->
 <h2>The State Machine Family</h2>
 
-<div style="background:rgba(16,185,129,.15);border:2px solid var(--emerald);border-radius:8px;padding:14px;text-align:center;margin-bottom:16px">
+<div style="background:var(--lb-rgba1618512915,rgba(16,185,129,.15));border:2px solid var(--emerald);border-radius:8px;padding:14px;text-align:center;margin-bottom:16px">
 <strong style="color:var(--emerald);font-size:1.1em">STOCK WITH COOLDOWN (parent)</strong><br>
 <span style="font-size:.88em;color:var(--muted)">Constraints create discrete states (HOLD, SOLD, REST). Each state's legal moves become the transitions.</span>
 </div>
 
 <div style="display:grid;gap:10px">
 <a href="lis_dp.html" style="text-decoration:none;display:block">
-<div class="deriv" style="border-color:#38bdf8;background:linear-gradient(135deg,rgba(56,189,248,.10),var(--card))">
+<div class="deriv" style="border-color:#38bdf8;background:linear-gradient(135deg,var(--lb-rgba5618924810,rgba(56,189,248,.10)),var(--card))">
 <div class="deriv-h">
 <h3><span class="deriv-n" style="background:#38bdf8">1</span> Longest Increasing Subsequence</h3>
-<span style="color:#38bdf8;font-weight:800;font-size:.85em">FULL GUIDE &rarr;</span>
+<span style="color:var(--lc-38bdf8,#38bdf8);font-weight:800;font-size:.85em">FULL GUIDE &rarr;</span>
 </div>
 <div style="padding:0 20px 16px;font-size:.9em;color:var(--muted)">
 State is a single index, and the promise is "the longest chain <em>ending exactly here</em>". Rewritten as a standalone story-first walkthrough: greedy fails, one call is followed down to the base case and back up, the repeated state is shown explicitly, and the strip is filled cell by cell.
-<div style="margin-top:8px;color:#38bdf8;font-weight:700">Open the full derivation on its own page.</div>
+<div style="margin-top:8px;color:var(--lc-38bdf8,#38bdf8);font-weight:700">Open the full derivation on its own page.</div>
 </div>
 </div>
 </a>
@@ -550,7 +552,7 @@ Burst balloons one at a time to maximize coins. Bursting balloon <code>i</code> 
 
 <!-- 3 -->
 <h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">3</span> Where Does That Fail?</h3>
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:10px;padding:16px;margin:12px 0;font-size:.93em">
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:10px;padding:16px;margin:12px 0;font-size:.93em">
 <div style="color:var(--red);font-weight:800;margin-bottom:8px">GREEDY ON [3, 1, 5, 8]: burst smallest first</div>
 <div>Burst 1 (neighbors 3, 5): 3&times;1&times;5 = 15. Remaining [3, 5, 8]</div>
 <div>Burst 3 (neighbors 1, 5): 1&times;3&times;5 = 15. Remaining [5, 8]</div>
@@ -581,7 +583,7 @@ Burst balloons one at a time to maximize coins. Bursting balloon <code>i</code> 
 <div style="display:grid;gap:6px;margin:10px 0;font-size:.9em">
 <div style="background:var(--card2);border-radius:6px;padding:8px 12px">3 last: 1&times;3&times;1 + (burst 1 alone) = 3 + 15 = 18</div>
 <div style="background:var(--card2);border-radius:6px;padding:8px 12px">1 last: 1&times;1&times;1 + (burst 3) + (burst 5) = 1 + 3 + 5 = 9</div>
-<div style="background:rgba(16,185,129,.08);border:1px solid var(--emerald);border-radius:6px;padding:8px 12px"><strong style="color:var(--emerald)">5 last:</strong> 1&times;5&times;1 + (burst 1, then 3 in [3,1]) = 5 + 30 = <strong>35</strong></div>
+<div style="background:var(--lb-rgba1618512908,rgba(16,185,129,.08));border:1px solid var(--emerald);border-radius:6px;padding:8px 12px"><strong style="color:var(--emerald)">5 last:</strong> 1&times;5&times;1 + (burst 1, then 3 in [3,1]) = 5 + 30 = <strong>35</strong></div>
 </div>
 <p style="font-size:.93em">Best is 5 burst last, order 1&rarr;3&rarr;5 = 15+15+5 = 35, matching the answer above.</p>
 <img src="dp/images/burst_balloons_choices.png" alt="Burst Balloons choice diagram: think LAST not FIRST, interval DP with boundary values" class="scene-img">
@@ -600,11 +602,11 @@ Burst balloons one at a time to maximize coins. Bursting balloon <code>i</code> 
 
 <!-- 11 -->
 <h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">11</span> When Must We Stop? (Base Case)</h3>
-<div style="background:rgba(245,158,11,.06);border:2px solid var(--amber);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em"><strong>left &gt; right:</strong> no balloons left in the range, return 0.</div>
+<div style="background:var(--lb-rgba2451581106,rgba(245,158,11,.06));border:2px solid var(--amber);border-radius:10px;padding:14px;margin:12px 0;font-size:.93em"><strong>left &gt; right:</strong> no balloons left in the range, return 0.</div>
 
 <!-- 12 -->
 <h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">12</span> What Smaller Problem Remains? (Transitions)</h3>
-<div style="background:rgba(16,185,129,.06);border:2px solid var(--emerald);border-radius:10px;padding:16px;margin:12px 0;font-size:.93em">
+<div style="background:var(--lb-rgba1618512906,rgba(16,185,129,.06));border:2px solid var(--emerald);border-radius:10px;padding:16px;margin:12px 0;font-size:.93em">
 <div><strong>Action:</strong> choose balloon <code>k</code> as the last burst in [left, right].</div>
 <div><strong>Reward:</strong> <code>nums[left-1] * nums[k] * nums[right+1]</code></div>
 <div><strong>Left piece:</strong> <code>max_coins(left, k-1)</code>, everything left of k, burst before k.</div>
@@ -652,7 +654,7 @@ def burst_balloons(nums):
 <div style="background:var(--card2);border-radius:6px;padding:8px 12px">burst 1 alone (neighbors 3, 5): 3&times;1&times;5 = <strong>15</strong></div>
 <div style="background:var(--card2);border-radius:6px;padding:8px 12px">then 5 last in [1,5] (neighbors 3, 8): 3&times;5&times;8 = 120, subtotal <strong>135</strong></div>
 <div style="background:var(--card2);border-radius:6px;padding:8px 12px">then 3 last in [3,1,5] (neighbors 1, 8): 1&times;3&times;8 = 24, subtotal <strong>159</strong></div>
-<div style="background:rgba(16,185,129,.08);border:1px solid var(--emerald);border-radius:6px;padding:8px 12px">then 8 last overall (neighbors 1, 1): 1&times;8&times;1 = 8, total <strong style="color:var(--emerald)">167</strong></div>
+<div style="background:var(--lb-rgba1618512908,rgba(16,185,129,.08));border:1px solid var(--emerald);border-radius:6px;padding:8px 12px">then 8 last overall (neighbors 1, 1): 1&times;8&times;1 = 8, total <strong style="color:var(--emerald)">167</strong></div>
 </div>
 <p style="font-size:.93em">Each row is a range choosing its own "last" balloon; the boundary values change depending on what's still standing outside that range.</p>
 <img src="dp/images/burst_trace.png" alt="Execution trace on [3,1,5,8]: building up dp values for ranges of increasing length, ending at 167" class="scene-img">
@@ -711,9 +713,9 @@ def burst_balloons(nums):
 <!-- 22 -->
 <h3><span class="step-num" style="width:22px;height:22px;font-size:.7em">22</span> Common Mistakes</h3>
 <div style="display:grid;gap:8px;margin:10px 0;font-size:.9em">
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:10px 14px">Choosing <code>k</code> as the balloon burst <strong>first</strong> instead of last, which makes neighbors shift mid-computation.</div>
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:10px 14px">Forgetting to pad <code>nums</code> with 1s on both ends before recursing.</div>
-<div style="background:rgba(239,68,68,.06);border:2px solid var(--red);border-radius:8px;padding:10px 14px">Using the original, static neighbors instead of the range's current boundaries.</div>
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:10px 14px">Choosing <code>k</code> as the balloon burst <strong>first</strong> instead of last, which makes neighbors shift mid-computation.</div>
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:10px 14px">Forgetting to pad <code>nums</code> with 1s on both ends before recursing.</div>
+<div style="background:var(--lb-rgba239686806,rgba(239,68,68,.06));border:2px solid var(--red);border-radius:8px;padding:10px 14px">Using the original, static neighbors instead of the range's current boundaries.</div>
 </div>
 <img src="dp/images/burst_mistakes.png" alt="Burst Balloons common mistakes: bursting first not last, missing padding, static neighbors" class="scene-img">
 
@@ -761,5 +763,6 @@ def burst_balloons(nums):
 
 </div>
 
+<script src="site.js?v=20261106b" defer></script>
 </body>
 </html>

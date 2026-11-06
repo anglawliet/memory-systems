@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script>try{var t=localStorage.getItem("ms-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Longest Increasing Subsequence: One Connected Story</title>
 <style>
@@ -17,7 +18,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.75;padding:0 0 80px;overflow-x:hidden}
-.hdr{background:linear-gradient(135deg,#0e2f3f,#0b1f2a);border-bottom:3px solid var(--cyan);padding:44px 20px;text-align:center}
+.hdr{background:linear-gradient(135deg,var(--lb-0e2f3f,#0e2f3f),var(--lb-0b1f2a,#0b1f2a));border-bottom:3px solid var(--cyan);padding:44px 20px;text-align:center}
 .hdr h1{font-size:2em;color:var(--cyan);line-height:1.25}
 .hdr p{color:var(--muted);margin-top:8px}
 .wrap{max-width:940px;margin:0 auto;padding:20px}
@@ -29,25 +30,25 @@ p{margin:10px 0}
 strong{color:var(--gold2)}
 em.q{color:var(--text);font-style:italic}
 
-.prev{border-left:3px solid var(--muted);background:rgba(143,169,184,.07);color:var(--muted);
+.prev{border-left:3px solid var(--muted);background:var(--lb-rgba14316918407,rgba(143,169,184,.07));color:var(--muted);
   padding:8px 14px;margin:18px 0 10px;border-radius:0 6px 6px 0;font-size:.92em;font-style:italic}
-.next{border-left:3px solid var(--cyan);background:rgba(56,189,248,.09);
+.next{border-left:3px solid var(--cyan);background:var(--lb-rgba5618924809,rgba(56,189,248,.09));
   padding:10px 14px;margin:14px 0 26px;border-radius:0 6px 6px 0;font-size:.95em}
 .next b{color:var(--cyan)}
 
 .scene-img{width:100%;border-radius:10px;margin:14px 0;border:1px solid var(--border);display:block}
 .cap{color:var(--muted);font-size:.86em;text-align:center;margin:-6px 0 16px}
 
-pre{background:#061319;border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;font-size:.85em;line-height:1.75;margin:12px 0}
+pre{background:var(--lb-061319,#061319);border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;font-size:.85em;line-height:1.75;margin:12px 0}
 code{font-family:'Fira Code','Consolas','Courier New',monospace}
-p code,li code,td code{background:#061319;border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:.88em;color:var(--cyan);word-break:break-word}
+p code,li code,td code{background:var(--lb-061319,#061319);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:.88em;color:var(--cyan);word-break:break-word}
 
-.hi{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.4);border-radius:6px;padding:12px 16px;margin:14px 0}
+.hi{background:var(--lb-rgba245158111,rgba(245,158,11,.1));border:1px solid var(--ld-rgba245158114,rgba(245,158,11,.4));border-radius:6px;padding:12px 16px;margin:14px 0}
 .hi b{color:var(--gold2)}
-.warn{background:rgba(239,68,68,.09);border:1px solid rgba(239,68,68,.4);border-radius:6px;padding:12px 16px;margin:14px 0}
-.warn b{color:#fca5a5}
-.ok{background:rgba(34,197,94,.09);border:1px solid rgba(34,197,94,.4);border-radius:6px;padding:12px 16px;margin:14px 0}
-.ok b{color:#86efac}
+.warn{background:var(--lb-rgba239686809,rgba(239,68,68,.09));border:1px solid var(--ld-rgba23968684,rgba(239,68,68,.4));border-radius:6px;padding:12px 16px;margin:14px 0}
+.warn b{color:var(--lc-fca5a5,#fca5a5)}
+.ok{background:var(--lb-rgba341979409,rgba(34,197,94,.09));border:1px solid var(--ld-rgba34197944,rgba(34,197,94,.4));border-radius:6px;padding:12px 16px;margin:14px 0}
+.ok b{color:var(--lc-86efac,#86efac)}
 .ws{background:var(--card);border-radius:12px;padding:20px;margin:20px 0;border-left:4px solid var(--cyan)}
 .ws h3{margin-top:0}
 
@@ -60,10 +61,10 @@ p code,li code,td code{background:#061319;border:1px solid var(--border);border-
 .rl{font-size:.6em;color:var(--muted);letter-spacing:.09em;font-weight:800;text-align:right;padding-right:8px;white-space:nowrap}
 .ix{text-align:center;font-size:.82em;color:var(--idx);font-weight:800;font-family:'Fira Code',monospace}
 .vb{text-align:center;padding:7px 2px;border-radius:8px;background:var(--card2);border:2px solid var(--border);font-family:'Fira Code',monospace;font-size:1.25em;font-weight:800}
-.vb.gold{border-color:var(--gold);background:rgba(245,158,11,.16);color:var(--gold2);box-shadow:0 0 12px rgba(245,158,11,.28)}
-.vb.len{border-color:var(--len);background:rgba(34,197,94,.13);color:#86efac}
-.vb.blue{border-color:var(--idx);background:rgba(56,189,248,.13);color:var(--idx)}
-.vb.bad{border-color:var(--bad);background:rgba(239,68,68,.12);color:#fca5a5}
+.vb.gold{border-color:var(--gold);background:var(--lb-rgba2451581116,rgba(245,158,11,.16));color:var(--gold2);box-shadow:0 0 12px rgba(245,158,11,.28)}
+.vb.len{border-color:var(--len);background:var(--lb-rgba341979413,rgba(34,197,94,.13));color:var(--lc-86efac,#86efac)}
+.vb.blue{border-color:var(--idx);background:var(--lb-rgba5618924813,rgba(56,189,248,.13));color:var(--idx)}
+.vb.bad{border-color:var(--bad);background:var(--lb-rgba239686812,rgba(239,68,68,.12));color:var(--lc-fca5a5,#fca5a5)}
 .vb.dim{opacity:.3}
 .snote{grid-column:1/-1;font-size:.8em;color:var(--muted);text-align:center;margin-top:2px}
 
@@ -105,27 +106,27 @@ td.c,th.c{text-align:center}
 .tbl-wrap{overflow-x:auto}
 
 .ln{display:block;padding:2px 8px;border-radius:4px;margin:1px -8px}
-.ln-pink{background:rgba(236,72,153,.18);border-left:3px solid #ec4899}
-.ln-green{background:rgba(34,197,94,.16);border-left:3px solid var(--len)}
-.ln-orange{background:rgba(251,146,60,.16);border-left:3px solid var(--orange)}
-.ln-yellow{background:rgba(250,204,21,.16);border-left:3px solid #facc15}
-.ln-red{background:rgba(239,68,68,.18);border-left:3px solid var(--bad)}
-.ln-purple{background:rgba(167,139,250,.18);border-left:3px solid var(--best)}
-.ln-teal{background:rgba(45,212,191,.16);border-left:3px solid var(--teal)}
-.recflag{color:#fca5a5;font-weight:800}
+.ln-pink{background:var(--lb-rgba2367215318,rgba(236,72,153,.18));border-left:3px solid #ec4899}
+.ln-green{background:var(--lb-rgba341979416,rgba(34,197,94,.16));border-left:3px solid var(--len)}
+.ln-orange{background:var(--lb-rgba2511466016,rgba(251,146,60,.16));border-left:3px solid var(--orange)}
+.ln-yellow{background:var(--lb-rgba2502042116,rgba(250,204,21,.16));border-left:3px solid #facc15}
+.ln-red{background:var(--lb-rgba239686818,rgba(239,68,68,.18));border-left:3px solid var(--bad)}
+.ln-purple{background:var(--lb-rgba16713925018,rgba(167,139,250,.18));border-left:3px solid var(--best)}
+.ln-teal{background:var(--lb-rgba4521219116,rgba(45,212,191,.16));border-left:3px solid var(--teal)}
+.recflag{color:var(--lc-fca5a5,#fca5a5);font-weight:800}
 
 .cards{display:grid;gap:10px;margin:14px 0}
 .cd{border-radius:8px;padding:12px 15px;font-size:.92em;border-left:4px solid var(--border);background:var(--card2)}
 .cd b{display:block;font-family:'Fira Code',monospace;font-size:.9em;margin-bottom:4px;word-break:break-word}
-.cd-pink{border-left-color:#ec4899}.cd-pink b{color:#f9a8d4}
-.cd-green{border-left-color:var(--len)}.cd-green b{color:#86efac}
-.cd-orange{border-left-color:var(--orange)}.cd-orange b{color:#fdba74}
-.cd-yellow{border-left-color:#facc15}.cd-yellow b{color:#fde047}
-.cd-red{border-left-color:var(--bad)}.cd-red b{color:#fca5a5}
-.cd-purple{border-left-color:var(--best)}.cd-purple b{color:#c4b5fd}
-.cd-teal{border-left-color:var(--teal)}.cd-teal b{color:#5eead4}
+.cd-pink{border-left-color:#ec4899}.cd-pink b{color:var(--lc-f9a8d4,#f9a8d4)}
+.cd-green{border-left-color:var(--len)}.cd-green b{color:var(--lc-86efac,#86efac)}
+.cd-orange{border-left-color:var(--orange)}.cd-orange b{color:var(--lc-fdba74,#fdba74)}
+.cd-yellow{border-left-color:#facc15}.cd-yellow b{color:var(--lc-fde047,#fde047)}
+.cd-red{border-left-color:var(--bad)}.cd-red b{color:var(--lc-fca5a5,#fca5a5)}
+.cd-purple{border-left-color:var(--best)}.cd-purple b{color:var(--lc-c4b5fd,#c4b5fd)}
+.cd-teal{border-left-color:var(--teal)}.cd-teal b{color:var(--lc-5eead4,#5eead4)}
 
-.aloud{background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.28);border-radius:8px;
+.aloud{background:var(--lb-rgba5618924807,rgba(56,189,248,.07));border:1px solid var(--ld-rgba5618924828,rgba(56,189,248,.28));border-radius:8px;
   padding:11px 15px;margin:10px 0;font-size:.93em}
 .aloud b{color:var(--cyan);font-size:.72em;letter-spacing:.1em;display:block;margin-bottom:3px;text-transform:uppercase}
 
@@ -139,8 +140,8 @@ td.c,th.c{text-align:center}
 
 .flow{display:grid;gap:0;margin:16px 0}
 .flow .node{background:var(--card2);border:2px solid var(--border);border-radius:8px;padding:11px 15px;font-size:.92em}
-.flow .node.base{border-color:var(--len);background:rgba(34,197,94,.1)}
-.flow .node.top{border-color:var(--gold);background:rgba(245,158,11,.1)}
+.flow .node.base{border-color:var(--len);background:var(--lb-rgba34197941,rgba(34,197,94,.1))}
+.flow .node.top{border-color:var(--gold);background:var(--lb-rgba245158111,rgba(245,158,11,.1))}
 .flow .ar{text-align:center;color:var(--gold);font-size:.84em;padding:7px 0;font-weight:700}
 .flow .ar.up{color:var(--len)}
 .flow .node code{background:none;border:none;padding:0;color:var(--cyan);font-size:1em;font-weight:700}
@@ -177,11 +178,11 @@ td.c,th.c{text-align:center}
 .layer h2{border:none;margin:4px 0 6px;padding:0;font-size:1.6em;color:inherit}
 .layer p{margin:0;font-size:.96em;opacity:.92}
 .layer .promise{display:inline-block;margin-top:10px;font-size:.85em;font-weight:800;
-  background:rgba(0,0,0,.28);border-radius:20px;padding:5px 14px}
+  background:var(--lb-rgba00028,rgba(0,0,0,.28));border-radius:20px;padding:5px 14px}
 
-.layer-1{background:linear-gradient(135deg,#0e5a7a,#0b3245);color:#dff3ff;border:2px solid var(--cyan)}
-.layer-2{background:linear-gradient(135deg,#6b4708,#3a2a0a);color:#ffeed2;border:2px solid var(--gold)}
-.layer-3{background:linear-gradient(135deg,#4a3a75,#2a2140);color:#eee6ff;border:2px solid var(--best)}
+.layer-1{background:linear-gradient(135deg,var(--lb-0e5a7a,#0e5a7a),var(--lb-0b3245,#0b3245));color:var(--lc-dff3ff,#dff3ff);border:2px solid var(--cyan)}
+.layer-2{background:linear-gradient(135deg,var(--lb-6b4708,#6b4708),var(--lb-3a2a0a,#3a2a0a));color:var(--lc-ffeed2,#ffeed2);border:2px solid var(--gold)}
+.layer-3{background:linear-gradient(135deg,var(--lb-4a3a75,#4a3a75),var(--lb-2a2140,#2a2140));color:var(--lc-eee6ff,#eee6ff);border:2px solid var(--best)}
 
 .stop{border:2px dashed var(--border);border-radius:12px;padding:16px 20px;margin:30px 0;
   background:var(--card);text-align:center}
@@ -190,17 +191,17 @@ td.c,th.c{text-align:center}
 
 .badge{display:inline-block;font-size:.6em;letter-spacing:.14em;font-weight:800;
   border-radius:20px;padding:3px 10px;vertical-align:middle;margin-left:8px}
-.b1{background:rgba(56,189,248,.2);color:var(--cyan);border:1px solid var(--cyan)}
-.b2{background:rgba(245,158,11,.2);color:var(--gold2);border:1px solid var(--gold)}
-.b3{background:rgba(167,139,250,.2);color:var(--best);border:1px solid var(--best)}
+.b1{background:var(--lb-rgba561892482,rgba(56,189,248,.2));color:var(--cyan);border:1px solid var(--cyan)}
+.b2{background:var(--lb-rgba245158112,rgba(245,158,11,.2));color:var(--gold2);border:1px solid var(--gold)}
+.b3{background:var(--lb-rgba1671392502,rgba(167,139,250,.2));color:var(--best);border:1px solid var(--best)}
 
 /* ---- layer 0 recall ---- */
 .recall{border:3px solid var(--gold);border-radius:16px;padding:22px 24px;margin:24px 0 10px;
-  background:linear-gradient(135deg,rgba(245,158,11,.13),rgba(245,158,11,.04))}
+  background:linear-gradient(135deg,var(--lb-rgba2451581113,rgba(245,158,11,.13)),var(--lb-rgba2451581104,rgba(245,158,11,.04)))}
 .recall .rl0{font-size:.66em;letter-spacing:.22em;font-weight:800;color:var(--gold2)}
 .recall h2{border:none;margin:4px 0 8px;padding:0;font-size:1.5em;color:var(--gold2)}
 .recall .who{display:grid;gap:8px;margin:12px 0 4px}
-.recall .who div{font-size:.93em;padding:8px 14px;border-radius:8px;background:rgba(0,0,0,.22)}
+.recall .who div{font-size:.93em;padding:8px 14px;border-radius:8px;background:var(--lb-rgba00022,rgba(0,0,0,.22))}
 .recall .who b{color:var(--gold2)}
 .skipto{display:inline-block;background:var(--gold);color:#2b1a00;font-weight:800;
   padding:9px 18px;border-radius:8px;text-decoration:none;margin-top:12px;font-size:.9em}
@@ -210,7 +211,7 @@ td.c,th.c{text-align:center}
 .deriv{background:var(--card);border:2px solid var(--teal);border-radius:12px;margin:26px 0;overflow:hidden}
 .deriv-h{padding:18px 22px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .deriv-h:hover{background:var(--card2)}
-.deriv-h h3{margin:0;display:flex;align-items:center;gap:12px;font-size:1.12em;color:#5eead4}
+.deriv-h h3{margin:0;display:flex;align-items:center;gap:12px;font-size:1.12em;color:var(--lc-5eead4,#5eead4)}
 .deriv-n{background:var(--teal);color:#04202c;width:30px;height:30px;border-radius:50%;display:flex;
   align-items:center;justify-content:center;font-size:.72em;font-weight:800;flex-shrink:0}
 .deriv-a{color:var(--muted);transition:.3s;font-size:1.1em}
@@ -220,7 +221,7 @@ td.c,th.c{text-align:center}
 .deriv.open .deriv-b{display:block}
 .famnav{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:.92em}
 .famnav b{color:var(--gold2)}
-.famnav a{color:#5eead4;text-decoration:none;font-weight:700}
+.famnav a{color:var(--lc-5eead4,#5eead4);text-decoration:none;font-weight:700}
 .famnav a:hover{text-decoration:underline}
 @media(max-width:600px){.deriv-h{padding:14px 15px}.deriv-h h3{font-size:1em}.deriv-b{padding:4px 14px 16px}}
 
@@ -228,7 +229,8 @@ a.wshome{color:inherit;text-decoration:none;display:block}
 a.wshome:hover h1{opacity:.82}
 .wsback{display:block;font-size:.62em;letter-spacing:.16em;text-transform:uppercase;font-weight:800;opacity:.75;margin-bottom:6px}
 </style>
-<link rel="stylesheet" href="site.css?v=20261106a">
+<link rel="stylesheet" href="legacy-colors.css?v=20261106b">
+<link rel="stylesheet" href="site.css?v=20261106b">
 </head>
 <body>
 <header class="ms-topbar"><div class="ms-inner"><a class="ms-home" href="index.html" aria-label="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg><span>Memory Systems</span></a><nav class="ms-links"><a href="shankar_dada_trees.html">Trees</a><a href="graphs.html">Graphs</a><a href="dp_workshop.html" class="on">DP</a><a href="arrays.html">Arrays</a><a href="two_pointers.html">Two Pointers</a><a href="sliding_window.html">Sliding Window</a><a href="stack.html">Stack</a><a href="binary_search.html">Binary Search</a><a href="linked_list.html">Linked List</a><a href="heap.html">Heap</a><a href="tries.html">Tries</a></nav></div></header>
@@ -320,9 +322,9 @@ a.wshome:hover h1{opacity:.82}
 <div class="tbl-wrap">
 <table>
 <tr><th>From <code>[5, 6, 1, 2, 3]</code></th><th class="c">Allowed?</th><th>Why</th></tr>
-<tr><td><code>1 &rarr; 2 &rarr; 3</code></td><td class="c" style="color:#86efac;font-weight:800">yes</td><td>skipped the 5 and the 6, left the rest where they were</td></tr>
-<tr><td><code>1 &rarr; 3 &rarr; 2</code></td><td class="c" style="color:#fca5a5;font-weight:800">no</td><td>the 2 comes first in the list, so this shuffles them</td></tr>
-<tr><td><code>2 &rarr; 2</code></td><td class="c" style="color:#fca5a5;font-weight:800">no</td><td>each one must be <b>bigger</b>. Equal is not bigger.</td></tr>
+<tr><td><code>1 &rarr; 2 &rarr; 3</code></td><td class="c" style="color:var(--lc-86efac,#86efac);font-weight:800">yes</td><td>skipped the 5 and the 6, left the rest where they were</td></tr>
+<tr><td><code>1 &rarr; 3 &rarr; 2</code></td><td class="c" style="color:var(--lc-fca5a5,#fca5a5);font-weight:800">no</td><td>the 2 comes first in the list, so this shuffles them</td></tr>
+<tr><td><code>2 &rarr; 2</code></td><td class="c" style="color:var(--lc-fca5a5,#fca5a5);font-weight:800">no</td><td>each one must be <b>bigger</b>. Equal is not bigger.</td></tr>
 </table>
 </div>
 
@@ -483,10 +485,10 @@ a.wshome:hover h1{opacity:.82}
 
 <div class="tbl-wrap">
 <table>
-<tr><td class="c" style="color:#86efac;font-weight:800">yes</td><td>the number at this spot is <b>always</b> part of the chain</td></tr>
-<tr><td class="c" style="color:#86efac;font-weight:800">yes</td><td>everything picked earlier is <b>smaller</b> than it</td></tr>
-<tr><td class="c" style="color:#fca5a5;font-weight:800">no</td><td>it never looks to the <b>right</b></td></tr>
-<tr><td class="c" style="color:#fca5a5;font-weight:800">no</td><td>it is <b>not</b> the answer for the whole list</td></tr>
+<tr><td class="c" style="color:var(--lc-86efac,#86efac);font-weight:800">yes</td><td>the number at this spot is <b>always</b> part of the chain</td></tr>
+<tr><td class="c" style="color:var(--lc-86efac,#86efac);font-weight:800">yes</td><td>everything picked earlier is <b>smaller</b> than it</td></tr>
+<tr><td class="c" style="color:var(--lc-fca5a5,#fca5a5);font-weight:800">no</td><td>it never looks to the <b>right</b></td></tr>
+<tr><td class="c" style="color:var(--lc-fca5a5,#fca5a5);font-weight:800">no</td><td>it is <b>not</b> the answer for the whole list</td></tr>
 </table>
 </div>
 
@@ -519,7 +521,7 @@ a.wshome:hover h1{opacity:.82}
 <div class="node"><b>INDEX 3</b> &nbsp;<span class="eng">VALUE 2</span></div>
 <div class="ar">&darr;&nbsp; "I need something smaller than 2. Try INDEX 2, which holds 1."</div>
 <div class="node base"><b>INDEX 2</b> &nbsp;<span class="eng">VALUE 1</span><br>
-<b style="color:#86efac">THE BOTTOM</b> <span class="eng">nothing smaller to the left, so nothing left to ask</span></div>
+<b style="color:var(--lc-86efac,#86efac)">THE BOTTOM</b> <span class="eng">nothing smaller to the left, so nothing left to ask</span></div>
 </div>
 
 <p>Each step down shrinks in two ways at once. The spot moves left, and the number of things we could hook onto shrinks with it. That is what guarantees we land.</p>
@@ -636,10 +638,10 @@ a.wshome:hover h1{opacity:.82}
 <div class="tbl-wrap">
 <table>
 <tr><th class="c">Spot</th><th class="c">Is its VALUE smaller than 3?</th><th>If yes, what does it offer?</th></tr>
-<tr><td class="c"><span class="nI">0</span></td><td class="c"><span class="nV">5</span> &nbsp;<b style="color:#fca5a5">no</b></td><td style="color:var(--muted)">nothing. we never even read its LENGTH.</td></tr>
-<tr><td class="c"><span class="nI">1</span></td><td class="c"><span class="nV">6</span> &nbsp;<b style="color:#fca5a5">no</b></td><td style="color:var(--muted)">nothing. we never even read its LENGTH.</td></tr>
-<tr><td class="c"><span class="nI">2</span></td><td class="c"><span class="nV">1</span> &nbsp;<b style="color:#86efac">yes</b></td><td>its LENGTH is <span class="nL">1</span>, so it offers <code>1 + 1</code> = LENGTH <span class="nL">2</span></td></tr>
-<tr><td class="c"><span class="nI">3</span></td><td class="c"><span class="nV">2</span> &nbsp;<b style="color:#86efac">yes</b></td><td>its LENGTH is <span class="nL">2</span>, so it offers <code>1 + 2</code> = LENGTH <span class="nL">3</span></td></tr>
+<tr><td class="c"><span class="nI">0</span></td><td class="c"><span class="nV">5</span> &nbsp;<b style="color:var(--lc-fca5a5,#fca5a5)">no</b></td><td style="color:var(--muted)">nothing. we never even read its LENGTH.</td></tr>
+<tr><td class="c"><span class="nI">1</span></td><td class="c"><span class="nV">6</span> &nbsp;<b style="color:var(--lc-fca5a5,#fca5a5)">no</b></td><td style="color:var(--muted)">nothing. we never even read its LENGTH.</td></tr>
+<tr><td class="c"><span class="nI">2</span></td><td class="c"><span class="nV">1</span> &nbsp;<b style="color:var(--lc-86efac,#86efac)">yes</b></td><td>its LENGTH is <span class="nL">1</span>, so it offers <code>1 + 1</code> = LENGTH <span class="nL">2</span></td></tr>
+<tr><td class="c"><span class="nI">3</span></td><td class="c"><span class="nV">2</span> &nbsp;<b style="color:var(--lc-86efac,#86efac)">yes</b></td><td>its LENGTH is <span class="nL">2</span>, so it offers <code>1 + 2</code> = LENGTH <span class="nL">3</span></td></tr>
 <tr><td class="c">none</td><td class="c">stand alone, always fine</td><td>offers LENGTH <span class="nL">1</span>, just our own number</td></tr>
 </table>
 </div>
@@ -693,10 +695,10 @@ a.wshome:hover h1{opacity:.82}
 <div class="tbl-wrap">
 <table>
 <tr><th>Could go on the note</th><th class="c">Keep?</th><th>Why</th></tr>
-<tr><td>the spot we are at</td><td class="c" style="color:#86efac;font-weight:800">keep</td><td>it says which number our chain ends on, and which spots count as earlier. Change it and the answer changes.</td></tr>
-<tr><td>the value sitting there</td><td class="c" style="color:#fca5a5;font-weight:800">drop</td><td>the spot already tells us the value, so writing it down adds nothing</td></tr>
-<tr><td>the chain built so far</td><td class="c" style="color:#fca5a5;font-weight:800">drop</td><td>we only ever need how long it was, and that comes back as a number</td></tr>
-<tr><td>how many numbers are left</td><td class="c" style="color:#fca5a5;font-weight:800">drop</td><td>that is the spot, counted from the other end. Same fact twice.</td></tr>
+<tr><td>the spot we are at</td><td class="c" style="color:var(--lc-86efac,#86efac);font-weight:800">keep</td><td>it says which number our chain ends on, and which spots count as earlier. Change it and the answer changes.</td></tr>
+<tr><td>the value sitting there</td><td class="c" style="color:var(--lc-fca5a5,#fca5a5);font-weight:800">drop</td><td>the spot already tells us the value, so writing it down adds nothing</td></tr>
+<tr><td>the chain built so far</td><td class="c" style="color:var(--lc-fca5a5,#fca5a5);font-weight:800">drop</td><td>we only ever need how long it was, and that comes back as a number</td></tr>
+<tr><td>how many numbers are left</td><td class="c" style="color:var(--lc-fca5a5,#fca5a5);font-weight:800">drop</td><td>that is the spot, counted from the other end. Same fact twice.</td></tr>
 </table>
 </div>
 
@@ -957,8 +959,8 @@ Outside the function, and not optional. The chain ends somewhere and nobody said
 <div class="tbl-wrap">
 <table>
 <tr><th>Version</th><th class="c">Cost</th><th>On the list 1 to 20</th></tr>
-<tr><td>asking again and again</td><td class="c" style="color:#fca5a5;font-weight:800">explodes</td><td>1,048,575 calls</td></tr>
-<tr><td>storing answers, or the table</td><td class="c" style="color:#86efac;font-weight:800">n &times; n</td><td>about 400 steps</td></tr>
+<tr><td>asking again and again</td><td class="c" style="color:var(--lc-fca5a5,#fca5a5);font-weight:800">explodes</td><td>1,048,575 calls</td></tr>
+<tr><td>storing answers, or the table</td><td class="c" style="color:var(--lc-86efac,#86efac);font-weight:800">n &times; n</td><td>about 400 steps</td></tr>
 </table>
 </div>
 
@@ -969,8 +971,8 @@ Outside the function, and not optional. The chain ends somewhere and nobody said
 <div class="tbl-wrap">
 <table>
 <tr><th>Problem</th><th>A box reads</th><th class="c">Can we drop boxes?</th></tr>
-<tr><td>Climbing Stairs, House Robber</td><td>only the last two boxes</td><td class="c" style="color:#86efac;font-weight:800">yes, keep 2</td></tr>
-<tr><td><b>This problem</b></td><td>possibly <b>every</b> earlier box</td><td class="c" style="color:#fca5a5;font-weight:800">no, keep all</td></tr>
+<tr><td>Climbing Stairs, House Robber</td><td>only the last two boxes</td><td class="c" style="color:var(--lc-86efac,#86efac);font-weight:800">yes, keep 2</td></tr>
+<tr><td><b>This problem</b></td><td>possibly <b>every</b> earlier box</td><td class="c" style="color:var(--lc-fca5a5,#fca5a5);font-weight:800">no, keep all</td></tr>
 </table>
 </div>
 
@@ -991,10 +993,10 @@ Outside the function, and not optional. The chain ends somewhere and nobody said
 <div class="tbl-wrap">
 <table>
 <tr><th>The slip</th><th class="c">Try it on</th><th class="c">Wrong</th><th class="c">Right</th><th>Why it is tempting</th></tr>
-<tr><td>using <code>&lt;=</code></td><td class="c"><code>[2, 2, 2]</code></td><td class="c" style="color:#fca5a5;font-weight:800">3</td><td class="c" style="color:#86efac;font-weight:800">1</td><td>equal feels close enough to bigger. It is not.</td></tr>
-<tr><td>reading the last box</td><td class="c"><code>[1, 2, 3, 1]</code></td><td class="c" style="color:#fca5a5;font-weight:800">1</td><td class="c" style="color:#86efac;font-weight:800">3</td><td>in most problems the last box <em>is</em> the answer. Not this one.</td></tr>
-<tr><td>adding the number, not 1</td><td class="c"><code>[1, 9]</code></td><td class="c" style="color:#fca5a5;font-weight:800">10</td><td class="c" style="color:#86efac;font-weight:800">2</td><td>"I added the 9, so add 9." We count numbers, we do not total them.</td></tr>
-<tr><td>starting boxes at 0</td><td class="c"><code>[9, 8, 7]</code></td><td class="c" style="color:#fca5a5;font-weight:800">0</td><td class="c" style="color:#86efac;font-weight:800">1</td><td>"nothing found yet, so zero." One number is already a chain.</td></tr>
+<tr><td>using <code>&lt;=</code></td><td class="c"><code>[2, 2, 2]</code></td><td class="c" style="color:var(--lc-fca5a5,#fca5a5);font-weight:800">3</td><td class="c" style="color:var(--lc-86efac,#86efac);font-weight:800">1</td><td>equal feels close enough to bigger. It is not.</td></tr>
+<tr><td>reading the last box</td><td class="c"><code>[1, 2, 3, 1]</code></td><td class="c" style="color:var(--lc-fca5a5,#fca5a5);font-weight:800">1</td><td class="c" style="color:var(--lc-86efac,#86efac);font-weight:800">3</td><td>in most problems the last box <em>is</em> the answer. Not this one.</td></tr>
+<tr><td>adding the number, not 1</td><td class="c"><code>[1, 9]</code></td><td class="c" style="color:var(--lc-fca5a5,#fca5a5);font-weight:800">10</td><td class="c" style="color:var(--lc-86efac,#86efac);font-weight:800">2</td><td>"I added the 9, so add 9." We count numbers, we do not total them.</td></tr>
+<tr><td>starting boxes at 0</td><td class="c"><code>[9, 8, 7]</code></td><td class="c" style="color:var(--lc-fca5a5,#fca5a5);font-weight:800">0</td><td class="c" style="color:var(--lc-86efac,#86efac);font-weight:800">1</td><td>"nothing found yet, so zero." One number is already a chain.</td></tr>
 </table>
 </div>
 
@@ -1184,10 +1186,10 @@ Outside the function, and not optional. The chain ends somewhere and nobody said
 <div class="tbl-wrap">
 <table>
 <tr><th>The slip</th><th class="c">Try it on</th><th class="c">Wrong</th><th class="c">Right</th><th>Why</th></tr>
-<tr><td>kept only the best</td><td class="c"><code>[-2, 3, -4]</code></td><td class="c" style="color:#fca5a5;font-weight:800">3</td><td class="c" style="color:#86efac;font-weight:800">24</td><td>the winner came from the worst row</td></tr>
-<tr><td>forgot to start fresh</td><td class="c"><code>[0, 2]</code></td><td class="c" style="color:#fca5a5;font-weight:800">0</td><td class="c" style="color:#86efac;font-weight:800">2</td><td>a zero must be escapable</td></tr>
-<tr><td>read the last box</td><td class="c"><code>[2, 3, -2, 4]</code></td><td class="c" style="color:#fca5a5;font-weight:800">4</td><td class="c" style="color:#86efac;font-weight:800">6</td><td>same trap as LIS. take the biggest ever seen.</td></tr>
-<tr><td>swapped best and worst</td><td class="c"><code>[-1, -2]</code></td><td class="c" style="color:#fca5a5;font-weight:800">-1</td><td class="c" style="color:#86efac;font-weight:800">2</td><td>two negatives make a positive</td></tr>
+<tr><td>kept only the best</td><td class="c"><code>[-2, 3, -4]</code></td><td class="c" style="color:var(--lc-fca5a5,#fca5a5);font-weight:800">3</td><td class="c" style="color:var(--lc-86efac,#86efac);font-weight:800">24</td><td>the winner came from the worst row</td></tr>
+<tr><td>forgot to start fresh</td><td class="c"><code>[0, 2]</code></td><td class="c" style="color:var(--lc-fca5a5,#fca5a5);font-weight:800">0</td><td class="c" style="color:var(--lc-86efac,#86efac);font-weight:800">2</td><td>a zero must be escapable</td></tr>
+<tr><td>read the last box</td><td class="c"><code>[2, 3, -2, 4]</code></td><td class="c" style="color:var(--lc-fca5a5,#fca5a5);font-weight:800">4</td><td class="c" style="color:var(--lc-86efac,#86efac);font-weight:800">6</td><td>same trap as LIS. take the biggest ever seen.</td></tr>
+<tr><td>swapped best and worst</td><td class="c"><code>[-1, -2]</code></td><td class="c" style="color:var(--lc-fca5a5,#fca5a5);font-weight:800">-1</td><td class="c" style="color:var(--lc-86efac,#86efac);font-weight:800">2</td><td>two negatives make a positive</td></tr>
 </table>
 </div>
 
@@ -1221,5 +1223,6 @@ Outside the function, and not optional. The chain ends somewhere and nobody said
 
 </div>
 
+<script src="site.js?v=20261106b" defer></script>
 </body>
 </html>

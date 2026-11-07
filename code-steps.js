@@ -32,7 +32,7 @@
       return s.replace(/`([^`]+)`/g, "<code>$1</code>");
     };
     var label = function (s) {
-      var m = s.match(/^(`?[\w.\[\]()']+`?):\s(.*)$/);
+      var m = s.match(/^([\w.\[\]()'$` ]{1,24}):\s(.*)$/);
       return m ? "<b>" + esc(m[1]) + ":</b> " + esc(m[2]) : esc(s);
     };
     var out = "", list = false;

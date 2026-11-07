@@ -24,14 +24,22 @@
   var wide = window.matchMedia("(min-width: 1000px)");
   function docked() { return sheet.classList.contains("docked"); }
 
-  // plain lines become paragraphs, and lines starting with "* " become a bullet list
+  // plain lines become paragraphs, and lines starting with "* " become a bullet list.
+  // `name` shows as code, and a bullet that starts with "name:" gets that name in bold.
   function format(t) {
-    var esc = function (s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;"); };
+    var esc = function (s) {
+      s = s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+      return s.replace(/`([^`]+)`/g, "<code>$1</code>");
+    };
+    var label = function (s) {
+      var m = s.match(/^(`?[\w.\[\]()']+`?):\s(.*)$/);
+      return m ? "<b>" + esc(m[1]) + ":</b> " + esc(m[2]) : esc(s);
+    };
     var out = "", list = false;
     t.split("\n").forEach(function (line) {
       if (line.indexOf("* ") === 0) {
         if (!list) { out += "<ul>"; list = true; }
-        out += "<li>" + esc(line.slice(2)) + "</li>";
+        out += "<li>" + label(line.slice(2)) + "</li>";
       } else {
         if (list) { out += "</ul>"; list = false; }
         if (line.trim()) out += "<p>" + esc(line) + "</p>";

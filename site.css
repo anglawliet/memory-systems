@@ -351,6 +351,8 @@ a.card.c_tries::before{background-image:url('tries/images/p208_implement_trie.pn
 .build-sheet .bs-text ul{margin:2px 0 0;padding-left:18px}
 .build-sheet .bs-text li{margin:5px 0;padding-left:2px}
 .build-sheet .bs-text li::marker{color:var(--accent-strong)}
+.build-sheet .bs-text code{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.88em;background:var(--surface-2);border:1px solid var(--line);border-radius:5px;padding:1px 5px;color:var(--ink)}
+.build-sheet .bs-text b{font-weight:650;color:var(--ink)}
 .build-sheet .bs-nav{display:grid;grid-template-columns:1fr 1.6fr;gap:10px;margin-top:12px}
 .build-sheet .bs-nav button{font:650 16px 'Inter',system-ui,sans-serif;height:44px;border-radius:12px;cursor:pointer}
 .build-sheet .bs-back{background:transparent;border:1px solid var(--line-strong);color:var(--ink)}

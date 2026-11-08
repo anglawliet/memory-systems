@@ -94,28 +94,75 @@ td{padding:10px 12px;border:1px solid var(--border)}
 <img src="tries/images/p211_add_search_words.png" alt="Design Add and Search Words Data Structure: A dot tries every branch" class="scene-img has-panels">
 <!--ps--><div class="panel-stack"><img src="tries/images/panels/p211_add_search_words_1.png" alt="Design Add and Search Words Data Structure, part 1 of 6" loading="lazy"><img src="tries/images/panels/p211_add_search_words_2.png" alt="Design Add and Search Words Data Structure, part 2 of 6" loading="lazy"><img src="tries/images/panels/p211_add_search_words_3.png" alt="Design Add and Search Words Data Structure, part 3 of 6" loading="lazy"><section class="idea stages">
 <h4>Build it from scratch</h4>
-<p class="idea-sub">Start with code you already know. Find the case that breaks it, and add only what fixes it.</p>
+<p class="idea-sub">One idea per stage. Every dictionary has a name, so you can see the tree.</p>
 
-<div class="stage" data-title="Move into one child">
-<p>Say the current node is this dictionary. Its keys are the letters that can come next.</p>
-<pre class="snip">node = {<span class="k-str">&#x27;a&#x27;</span>: {}, <span class="k-str">&#x27;o&#x27;</span>: {}}</pre>
-<p>To follow the letter "a", I step into that child. If the letter is missing, the word is not stored.</p>
-<pre class="snip"><span class="k-kw">if</span> <span class="k-str">&#x27;a&#x27;</span> <span class="k-kw">not</span> <span class="k-kw">in</span> node:
-  <span class="k-kw">return</span> <span class="k-const">False</span>
-node = node[<span class="k-str">&#x27;a&#x27;</span>]</pre>
+<div class="stage" data-title="The tree, with names">
+<p>We store "cat", "car" and "cot". Each node is a dictionary. Here every dictionary gets a name, so you can see the whole tree.</p>
+<pre class="snip">cat_node = {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}
+car_node = {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}
+cot_node = {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}
+
+ca_node = {<span class="k-str">&#x27;t&#x27;</span>: cat_node,
+           <span class="k-str">&#x27;r&#x27;</span>: car_node}
+co_node = {<span class="k-str">&#x27;t&#x27;</span>: cot_node}
+
+c_node = {<span class="k-str">&#x27;a&#x27;</span>: ca_node,
+          <span class="k-str">&#x27;o&#x27;</span>: co_node}
+
+root = {<span class="k-str">&#x27;c&#x27;</span>: c_node}</pre>
+<p>The name tells you the letters so far. <code>ca_node</code> is the dictionary you reach after "c" and then "a".</p>
 <div class="mcq">
-<pre class="snip">node = {<span class="k-str">&#x27;a&#x27;</span>: {<span class="k-str">&#x27;t&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}},
-        <span class="k-str">&#x27;o&#x27;</span>: {<span class="k-str">&#x27;t&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}}}</pre>
-<p class="q">After <code>node = node['a']</code> runs, what is <code>node</code>?</p>
-<button type="button" class="choice" data-why="Not quite. node['a'] does not give back the key. It gives back the value stored under the key."><code>'a'</code></button>
-<button type="button" class="choice right" data-why="Correct! node['a'] gives back the value stored under 'a', so node moves one step down."><code>{'t': {'$': True}}</code></button>
-<button type="button" class="choice" data-why="Not quite. The line puts a new value into node, the value stored under 'a'.">the same dictionary as before</button>
+<pre class="snip">c_node = {<span class="k-str">&#x27;a&#x27;</span>: ca_node,
+          <span class="k-str">&#x27;o&#x27;</span>: co_node}</pre>
+<p class="q">What is <code>c_node['a']</code>?</p>
+<button type="button" class="choice" data-why="Not quite. Square brackets give back the value stored under the key, not the key itself."><code>'a'</code></button>
+<button type="button" class="choice right" data-why="Correct! The value stored under 'a' is ca_node."><code>ca_node</code></button>
+<button type="button" class="choice" data-why="Not quite. c_node['a'] looks inside c_node and gives back what is stored under 'a'."><code>c_node</code></button>
+<p class="why" aria-live="polite"></p>
+</div>
+<div class="mcq">
+<pre class="snip">c_node = {<span class="k-str">&#x27;a&#x27;</span>: ca_node,
+          <span class="k-str">&#x27;o&#x27;</span>: co_node}</pre>
+<p class="q">Which values does <code>key</code> take in <code>for key in c_node</code>?</p>
+<button type="button" class="choice right" data-why="Correct! Looping over a dictionary gives its keys."><code>'a'</code> and <code>'o'</code></button>
+<button type="button" class="choice" data-why="Not quite. Those are the values. The loop gives the keys, 'a' and 'o'."><code>ca_node</code> and <code>co_node</code></button>
+<button type="button" class="choice" data-why="Not quite. The loop gives only the keys, 'a' and 'o'.">all four</button>
 <p class="why" aria-live="polite"></p>
 </div>
 </div>
 
-<div class="stage" data-title="Repeat it for every letter">
-<p>To search "cat", I do the same step once for each letter. At the end, I check for the <code>'$'</code> marker. This is the search from Implement Trie.</p>
+<div class="stage" data-title="Follow one letter">
+<p>To follow a letter, I replace <code>node</code> with the dictionary stored under that letter. If the letter is missing, no stored word continues this way.</p>
+<pre class="snip"><span class="k-kw">if</span> letter <span class="k-kw">not</span> <span class="k-kw">in</span> node:
+  <span class="k-kw">return</span> <span class="k-const">False</span>
+node = node[letter]</pre>
+<div class="mcq">
+<pre class="snip">node = c_node
+letter = <span class="k-str">&#x27;o&#x27;</span>
+
+c_node = {<span class="k-str">&#x27;a&#x27;</span>: ca_node,
+          <span class="k-str">&#x27;o&#x27;</span>: co_node}</pre>
+<p class="q">After the code runs, what is <code>node</code>?</p>
+<button type="button" class="choice right" data-why="Correct! 'o' is in c_node, so node becomes c_node['o'], which is co_node."><code>co_node</code></button>
+<button type="button" class="choice" data-why="Not quite. node becomes the value stored under 'o', not the letter."><code>'o'</code></button>
+<button type="button" class="choice" data-why="Not quite. The last line replaces node with c_node['o']."><code>c_node</code></button>
+<p class="why" aria-live="polite"></p>
+</div>
+<div class="mcq">
+<pre class="snip">node = co_node
+letter = <span class="k-str">&#x27;r&#x27;</span>
+
+co_node = {<span class="k-str">&#x27;t&#x27;</span>: cot_node}</pre>
+<p class="q">What happens?</p>
+<button type="button" class="choice" data-why="Not quite. car_node is under ca_node, not co_node. co_node only has the key 't'."><code>node</code> becomes <code>car_node</code></button>
+<button type="button" class="choice right" data-why="Correct! co_node has no 'r' key, so no stored word starts with &quot;cor&quot;.">the code returns <code>False</code></button>
+<button type="button" class="choice" data-why="Not quite. The check letter not in node catches the missing letter before node[letter] runs.">the code crashes</button>
+<p class="why" aria-live="polite"></p>
+</div>
+</div>
+
+<div class="stage" data-title="Search a whole word">
+<p>Repeat that for every letter. At the end, the word is stored only if the last dictionary has the <code>'$'</code> key. This is the search from Implement Trie.</p>
 <pre class="snip">node = <span class="k-self">self</span>.root
 <span class="k-kw">for</span> letter <span class="k-kw">in</span> word:
   <span class="k-kw">if</span> letter <span class="k-kw">not</span> <span class="k-kw">in</span> node:
@@ -123,155 +170,146 @@ node = node[<span class="k-str">&#x27;a&#x27;</span>]</pre>
   node = node[letter]
 <span class="k-kw">return</span> <span class="k-str">&#x27;$&#x27;</span> <span class="k-kw">in</span> node</pre>
 <div class="mcq">
-<pre class="snip"><span class="k-com"># only &quot;cat&quot; is stored</span>
-word = <span class="k-str">&#x27;ca&#x27;</span></pre>
-<p class="q">What does searching "ca" return?</p>
-<button type="button" class="choice" data-why="Not quite. The letters c and a are found, but the node after 'a' has no '$' key, so no word ends there."><code>True</code></button>
-<button type="button" class="choice right" data-why="Correct! After 'c' and 'a', node is {'t': {'$': True}}. It has no '$' key, so '$' in node is False."><code>False</code></button>
-<button type="button" class="choice" data-why="Not quite. Both letters are found, so the loop finishes without a problem. Then the '$' check runs.">the code crashes</button>
+<pre class="snip">word = <span class="k-str">&#x27;car&#x27;</span></pre>
+<p class="q">Which dictionary is <code>node</code> at the end, and what is returned?</p>
+<button type="button" class="choice right" data-why="Correct! root, then c_node, then ca_node, then car_node. car_node has '$', so the answer is True."><code>car_node</code>, <code>True</code></button>
+<button type="button" class="choice" data-why="Not quite. The loop runs once per letter, so after 'r' node is car_node."><code>ca_node</code>, <code>True</code></button>
+<button type="button" class="choice" data-why="Not quite. car_node is {'$': True}, so '$' in node is True."><code>car_node</code>, <code>False</code></button>
+<p class="why" aria-live="polite"></p>
+</div>
+<div class="mcq">
+<pre class="snip">word = <span class="k-str">&#x27;ca&#x27;</span></pre>
+<p class="q">What is returned?</p>
+<button type="button" class="choice" data-why="Not quite. node ends at ca_node, and ca_node has only 't' and 'r'. No '$'."><code>True</code></button>
+<button type="button" class="choice right" data-why="Correct! node ends at ca_node, which has no '$' key. &quot;ca&quot; is only the start of longer words."><code>False</code></button>
+<button type="button" class="choice" data-why="Not quite. Both letters are found, so the loop finishes and the '$' check runs.">the code crashes</button>
 <p class="why" aria-live="polite"></p>
 </div>
 </div>
 
-<div class="stage" data-title="The dot breaks it">
-<p>Now I search "c.t". After "c", the node has two children, "a" and "o". The line <code>node = node[letter]</code> can only pick one child, but the dot could mean either one.</p>
-<div class="mcq">
-<p class="q">What do we need?</p>
-<button type="button" class="choice" data-why="Then if only &quot;cot&quot; is stored, the search fails, because I never look under &quot;o&quot;.">Pick only the first child</button>
-<button type="button" class="choice right" data-why="Right. One variable holds one node, so I need a list that can hold several.">Remember every possible child</button>
-<button type="button" class="choice" data-why="That throws away the &quot;c&quot; I already matched, so I would never get past the dot.">Start again from the root</button>
-<p class="why" aria-live="polite"></p>
-</div>
-<div class="after">
-<p>So on a dot, I put every child into a new list named <code>next_nodes</code>. I skip the <code>'$'</code> key, because it is the end marker, not a letter.</p>
+<div class="stage" data-title="The dot needs a list">
+<p>Search "c.t". After "c", <code>node</code> is <code>c_node</code>. The dot could be "a" or "o", so I need both <code>ca_node</code> and <code>co_node</code>. One variable holds one dictionary, so I collect them in a list named <code>next_nodes</code>.</p>
 <pre class="snip">next_nodes = []
 <span class="k-kw">for</span> key <span class="k-kw">in</span> node:
-  <span class="k-kw">if</span> key != <span class="k-str">&#x27;$&#x27;</span>:
-    child = node[key]
-    next_nodes.append(child)</pre>
+  <span class="k-kw">if</span> key == <span class="k-str">&#x27;$&#x27;</span>:
+    <span class="k-kw">continue</span>
+  child = node[key]
+  next_nodes.append(child)</pre>
+<p>The <code>'$'</code> key is skipped because it only marks a word end. It is not a letter.</p>
 <div class="mcq">
-<pre class="snip">node = {<span class="k-str">&#x27;a&#x27;</span>: {<span class="k-str">&#x27;t&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}},
-        <span class="k-str">&#x27;o&#x27;</span>: {<span class="k-str">&#x27;t&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}}}</pre>
-<p class="q">In <code>for key in node</code>, which values does <code>key</code> take?</p>
-<button type="button" class="choice right" data-why="Correct! A for loop over a dictionary goes through its keys."><code>'a'</code>, then <code>'o'</code></button>
-<button type="button" class="choice" data-why="Not quite. The loop gives the keys. To get the inner dictionary, the code writes node[key].">the two inner dictionaries</button>
-<button type="button" class="choice" data-why="Not quite. The loop gives only the keys, 'a' and 'o'."><code>'a'</code>, <code>'o'</code>, then the dictionaries</button>
+<pre class="snip">node = c_node
+
+c_node = {<span class="k-str">&#x27;a&#x27;</span>: ca_node,
+          <span class="k-str">&#x27;o&#x27;</span>: co_node}</pre>
+<p class="q">What is <code>next_nodes</code> at the end?</p>
+<button type="button" class="choice right" data-why="Correct! The keys are 'a' and 'o', so the loop appends c_node['a'] and then c_node['o']."><code>[ca_node, co_node]</code></button>
+<button type="button" class="choice" data-why="Not quite. The code appends child, which is node[key], the dictionary stored under the key."><code>['a', 'o']</code></button>
+<button type="button" class="choice" data-why="Not quite. The loop does not stop after the first key. It appends a child for every key."><code>[ca_node]</code></button>
 <p class="why" aria-live="polite"></p>
 </div>
 <div class="mcq">
-<pre class="snip">node = {<span class="k-str">&#x27;a&#x27;</span>: {<span class="k-str">&#x27;t&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}},
-        <span class="k-str">&#x27;o&#x27;</span>: {<span class="k-str">&#x27;t&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}},
-        <span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}
-next_nodes = []</pre>
-<p class="q">How many dictionaries go into <code>next_nodes</code>?</p>
-<button type="button" class="choice" data-why="Not quite. The dot does not pick one child. It keeps every child except '$'.">1</button>
-<button type="button" class="choice right" data-why="Correct! The keys are 'a', 'o' and '$'. The code skips '$' and appends the dictionaries under 'a' and 'o'.">2</button>
-<button type="button" class="choice" data-why="Not quite. The '$' key is skipped, because it is the end marker, not a letter.">3</button>
+<pre class="snip">node = cat_node
+
+cat_node = {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}</pre>
+<p class="q">What is <code>next_nodes</code> at the end?</p>
+<button type="button" class="choice right" data-why="Correct! The only key is '$', and it is skipped. So a search for &quot;cat.&quot; finds nothing after &quot;cat&quot;."><code>[]</code></button>
+<button type="button" class="choice" data-why="Not quite. That would happen without the '$' check. The continue skips it."><code>[True]</code></button>
+<button type="button" class="choice" data-why="Not quite. The loop appends the children of node, not node itself."><code>[cat_node]</code></button>
 <p class="why" aria-live="polite"></p>
-</div>
-<div class="mcq">
-<pre class="snip">node = {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}
-next_nodes = []</pre>
-<p class="q">This node is the end of "cat", and the next letter is a dot. What is <code>next_nodes</code>?</p>
-<button type="button" class="choice right" data-why="Correct! The only key is '$', and the code skips it. Nothing is added, so a search for &quot;cat.&quot; returns False."><code>[]</code></button>
-<button type="button" class="choice" data-why="Not quite. That would happen without the '$' check. The code skips '$', so True is never added."><code>[True]</code></button>
-<button type="button" class="choice" data-why="Not quite. A dot adds the children of the node, not the node itself."><code>[{'$': True}]</code></button>
-<p class="why" aria-live="polite"></p>
-</div>
 </div>
 </div>
 
-<div class="stage" data-title="Always keep a list">
-<p>Now a normal letter gives one node and a dot gives several. Instead of handling two cases, I always keep a list named <code>current</code>. It starts with only the root.</p>
+<div class="stage" data-title="Keep a list for every letter">
+<p>Now some letters give one dictionary and the dot gives several. So I always keep a list named <code>current</code>. For each letter, every dictionary in <code>current</code> takes one step, and the results become the new <code>current</code>.</p>
 <pre class="snip">current = [<span class="k-self">self</span>.root]
 <span class="k-kw">for</span> letter <span class="k-kw">in</span> word:
   next_nodes = []
   <span class="k-kw">for</span> node <span class="k-kw">in</span> current:
     <span class="k-kw">if</span> letter == <span class="k-str">&#x27;.&#x27;</span>:
-      <span class="k-com"># every child, except &#x27;$&#x27;</span>
-      ...
+      <span class="k-kw">for</span> key <span class="k-kw">in</span> node:
+        <span class="k-kw">if</span> key == <span class="k-str">&#x27;$&#x27;</span>:
+          <span class="k-kw">continue</span>
+        child = node[key]
+        next_nodes.append(child)
     <span class="k-kw">elif</span> letter <span class="k-kw">in</span> node:
       child = node[letter]
       next_nodes.append(child)
   current = next_nodes</pre>
 <div class="mcq">
-<pre class="snip">letter = <span class="k-str">&#x27;t&#x27;</span>
-current = [{<span class="k-str">&#x27;t&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>},
-            <span class="k-str">&#x27;r&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}},
-           {<span class="k-str">&#x27;t&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}}]</pre>
-<p class="q">After one round of the outer loop, what is <code>current</code>?</p>
-<button type="button" class="choice" data-why="Not quite. The inner loop runs once for each node in current, and both nodes have a 't' key. So two dictionaries are appended."><code>[{'$': True}]</code></button>
-<button type="button" class="choice right" data-why="Correct! Both nodes in current have a 't' key, so each one adds its child. next_nodes ends with two dictionaries, and current becomes that list."><code>[{'$': True}, {'$': True}]</code></button>
-<button type="button" class="choice" data-why="Not quite. The code appends child, which is node['t'], not the letter."><code>['t', 't']</code></button>
+<pre class="snip">current = [ca_node, co_node]
+letter = <span class="k-str">&#x27;t&#x27;</span>
+
+ca_node = {<span class="k-str">&#x27;t&#x27;</span>: cat_node,
+           <span class="k-str">&#x27;r&#x27;</span>: car_node}
+co_node = {<span class="k-str">&#x27;t&#x27;</span>: cot_node}</pre>
+<p class="q">What is <code>current</code> after this letter?</p>
+<button type="button" class="choice right" data-why="Correct! ca_node gives cat_node, and co_node gives cot_node."><code>[cat_node, cot_node]</code></button>
+<button type="button" class="choice" data-why="Not quite. The inner loop also visits co_node, and co_node has a 't' too."><code>[cat_node]</code></button>
+<button type="button" class="choice" data-why="Not quite. The code appends the dictionaries stored under 't', not the letter."><code>['t', 't']</code></button>
 <p class="why" aria-live="polite"></p>
 </div>
 <div class="mcq">
-<pre class="snip">letter = <span class="k-str">&#x27;.&#x27;</span>
-current = [{<span class="k-str">&#x27;t&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>},
-            <span class="k-str">&#x27;r&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}},
-           {<span class="k-str">&#x27;t&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}}]</pre>
-<p class="q">After one round, how many dictionaries are in <code>current</code>?</p>
-<button type="button" class="choice" data-why="Not quite. A dot keeps every child of every node. The first node has two children, 't' and 'r'.">2</button>
-<button type="button" class="choice right" data-why="Correct! The first node adds its 't' and 'r' children, and the second node adds its 't' child. That is 3 dictionaries.">3</button>
-<button type="button" class="choice" data-why="Not quite. The second node has only one child, 't'.">4</button>
+<pre class="snip">current = [ca_node, co_node]
+letter = <span class="k-str">&#x27;.&#x27;</span>
+
+ca_node = {<span class="k-str">&#x27;t&#x27;</span>: cat_node,
+           <span class="k-str">&#x27;r&#x27;</span>: car_node}
+co_node = {<span class="k-str">&#x27;t&#x27;</span>: cot_node}</pre>
+<p class="q">What is <code>current</code> after this letter?</p>
+<button type="button" class="choice right" data-why="Correct! ca_node gives its two children, cat_node and car_node. Then co_node gives its one child, cot_node."><code>[cat_node, car_node, cot_node]</code></button>
+<button type="button" class="choice" data-why="Not quite. A dot keeps every child. ca_node also has car_node."><code>[cat_node, cot_node]</code></button>
+<button type="button" class="choice" data-why="Not quite. Every dictionary takes one step down, so the list holds their children."><code>[ca_node, co_node]</code></button>
 <p class="why" aria-live="polite"></p>
 </div>
 <div class="mcq">
-<pre class="snip">letter = <span class="k-str">&#x27;r&#x27;</span>
-current = [{<span class="k-str">&#x27;t&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>},
-            <span class="k-str">&#x27;r&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}},
-           {<span class="k-str">&#x27;t&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}}]</pre>
-<p class="q">After one round, what is <code>current</code>?</p>
-<button type="button" class="choice right" data-why="Correct! Only the first node has an 'r' key. The second node has no 'r', so it adds nothing and that path ends."><code>[{'$': True}]</code></button>
-<button type="button" class="choice" data-why="Not quite. The second node has only a 't' key, so letter in node is False for it, and it adds nothing."><code>[{'$': True}, {'$': True}]</code></button>
-<button type="button" class="choice" data-why="Not quite. The first node does have an 'r' key, so its child is added."><code>[]</code></button>
+<pre class="snip">current = [ca_node, co_node]
+letter = <span class="k-str">&#x27;r&#x27;</span>
+
+ca_node = {<span class="k-str">&#x27;t&#x27;</span>: cat_node,
+           <span class="k-str">&#x27;r&#x27;</span>: car_node}
+co_node = {<span class="k-str">&#x27;t&#x27;</span>: cot_node}</pre>
+<p class="q">What is <code>current</code> after this letter?</p>
+<button type="button" class="choice right" data-why="Correct! Only ca_node has an 'r'. co_node adds nothing, so that path ends."><code>[car_node]</code></button>
+<button type="button" class="choice" data-why="Not quite. co_node has only 't', so it adds nothing for 'r'."><code>[car_node, cot_node]</code></button>
+<button type="button" class="choice" data-why="Not quite. ca_node does have an 'r', so car_node is added."><code>[]</code></button>
 <p class="why" aria-live="polite"></p>
 </div>
-<div class="mcq">
-<pre class="snip">letter = <span class="k-str">&#x27;z&#x27;</span>
-current = [{<span class="k-str">&#x27;t&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}}]</pre>
-<p class="q">After one round of the outer loop, what is <code>current</code>?</p>
-<button type="button" class="choice right" data-why="Correct! 'z' is not a dot, and 'z' is not in the node, so nothing is appended. next_nodes stays empty."><code>[]</code></button>
-<button type="button" class="choice" data-why="Not quite. Nothing is appended, because 'z' is not a key in the node."><code>['z']</code></button>
-<button type="button" class="choice" data-why="Not quite. letter in node is False, so node[letter] never runs.">the code crashes</button>
-<p class="why" aria-live="polite"></p>
-</div>
-<ul>
-<li>The outer loop runs once for each letter of the word.</li>
-<li>The inner loop runs once for each node in <code>current</code>, because an earlier dot may have left several.</li>
-<li><code>next_nodes</code> collects where every node goes. Then it becomes the new <code>current</code>.</li>
-</ul>
 </div>
 
 <div class="stage" data-title="Finish the search">
-<p>Two small pieces finish the code. If <code>current</code> becomes empty, no path matches, so I return <code>False</code> early.</p>
+<p>If <code>current</code> becomes empty, no path matches, so I stop early. At the end, the answer is <code>True</code> if any dictionary in <code>current</code> has the <code>'$'</code> key.</p>
 <pre class="snip"><span class="k-kw">if</span> <span class="k-kw">not</span> current:
   <span class="k-kw">return</span> <span class="k-const">False</span></pre>
-<p>At the end, if any node in <code>current</code> has the <code>'$'</code> marker, a full word ends there.</p>
 <pre class="snip"><span class="k-kw">for</span> node <span class="k-kw">in</span> current:
   <span class="k-kw">if</span> <span class="k-str">&#x27;$&#x27;</span> <span class="k-kw">in</span> node:
     <span class="k-kw">return</span> <span class="k-const">True</span>
 <span class="k-kw">return</span> <span class="k-const">False</span></pre>
 <div class="mcq">
-<pre class="snip">current = [{<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>},
-           {<span class="k-str">&#x27;r&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}}]</pre>
+<pre class="snip">current = [cat_node, cot_node]
+
+cat_node = {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}
+cot_node = {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}</pre>
 <p class="q">What does the final check return?</p>
-<button type="button" class="choice right" data-why="Correct! The first dictionary has the '$' key, so a full word ends there, and the code returns True right away."><code>True</code></button>
-<button type="button" class="choice" data-why="Not quite. Only one dictionary needs '$'. The first one has it."><code>False</code></button>
-<button type="button" class="choice" data-why="Not quite. The code returns True as soon as it finds '$', and the first dictionary has it.">it depends on the second one</button>
+<button type="button" class="choice right" data-why="Correct! cat_node has the '$' key, so the answer is True. That is the search for &quot;c.t&quot;."><code>True</code></button>
+<button type="button" class="choice" data-why="Not quite. cat_node is {'$': True}, so it has the '$' key."><code>False</code></button>
+<button type="button" class="choice" data-why="Not quite. '$' in node is a safe check on a dictionary.">it crashes</button>
 <p class="why" aria-live="polite"></p>
 </div>
 <div class="mcq">
-<pre class="snip">current = [{<span class="k-str">&#x27;r&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}},
-           {<span class="k-str">&#x27;t&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}}]</pre>
-<p class="q">The word is used up. What does the final check return?</p>
-<button type="button" class="choice" data-why="Not quite. The '$' keys here sit one level down, inside the children. The final check only looks at the nodes in current themselves."><code>True</code></button>
-<button type="button" class="choice right" data-why="Correct! Neither node in current has a '$' key of its own. These are the starts of longer words, so no word ends here."><code>False</code></button>
-<button type="button" class="choice" data-why="Not quite. The loop checks '$' in node for each dictionary, which is safe, and then returns False.">it crashes</button>
+<pre class="snip">current = [ca_node, co_node]
+
+ca_node = {<span class="k-str">&#x27;t&#x27;</span>: cat_node,
+           <span class="k-str">&#x27;r&#x27;</span>: car_node}
+co_node = {<span class="k-str">&#x27;t&#x27;</span>: cot_node}</pre>
+<p class="q">What does the final check return?</p>
+<button type="button" class="choice" data-why="Not quite. The '$' keys are one level down, inside cat_node and the others. ca_node and co_node have no '$' of their own."><code>True</code></button>
+<button type="button" class="choice right" data-why="Correct! Neither ca_node nor co_node has a '$' key. This is the search for &quot;c.&quot;, and no two-letter word is stored."><code>False</code></button>
+<button type="button" class="choice" data-why="Not quite. The loop checks each dictionary safely and then returns False.">it crashes</button>
 <p class="why" aria-live="polite"></p>
 </div>
 <p>The full code is below. Press <b>Build it</b> to write it again in interview order.</p>
 </div>
+
 </section>
 <img class="code-img" src="tries/images/panels/p211_add_search_words_4.png" alt="Design Add and Search Words Data Structure, part 4 of 6" loading="lazy"><div class="code-text"><div class="code-label"><span class="dots"><i></i><i></i><i></i></span>Python code<button class="step-btn" type="button">Build it &#9654;</button></div><div class="code-body"><div class="code-inner"><div class="ln" data-l="1" style="padding-left:calc(10px + 2ch);text-indent:-2ch"><span class="k-kw">class</span> <span class="k-def">WordDictionary</span>:</div><div class="ln" data-l="2" style="padding-left:calc(10px + 4ch);text-indent:-4ch">  <span class="k-kw">def</span> <span class="k-def">__init__</span>(<span class="k-self">self</span>):</div><div class="ln" data-l="3" style="padding-left:calc(10px + 6ch);text-indent:-6ch">    <span class="k-com"># each dictionary is one node</span></div><div class="ln" data-l="4" style="padding-left:calc(10px + 6ch);text-indent:-6ch">    <span class="k-self">self</span>.root = {}</div><div class="ln" style="padding-left:calc(10px + 2ch);text-indent:-2ch"> </div><div class="ln" data-l="6" style="padding-left:calc(10px + 4ch);text-indent:-4ch">  <span class="k-kw">def</span> <span class="k-def">addWord</span>(<span class="k-self">self</span>, word):</div><div class="ln" data-l="7" style="padding-left:calc(10px + 6ch);text-indent:-6ch">    node = <span class="k-self">self</span>.root</div><div class="ln" style="padding-left:calc(10px + 2ch);text-indent:-2ch"> </div><div class="ln" data-l="9" style="padding-left:calc(10px + 6ch);text-indent:-6ch">    <span class="k-kw">for</span> letter <span class="k-kw">in</span> word:</div><div class="ln" data-l="10" style="padding-left:calc(10px + 8ch);text-indent:-8ch">      <span class="k-com"># add the letter if it is missing</span></div><div class="ln" data-l="11" style="padding-left:calc(10px + 8ch);text-indent:-8ch">      <span class="k-kw">if</span> letter <span class="k-kw">not</span> <span class="k-kw">in</span> node:</div><div class="ln" data-l="12" style="padding-left:calc(10px + 10ch);text-indent:-10ch">        node[letter] = {}</div><div class="ln" style="padding-left:calc(10px + 2ch);text-indent:-2ch"> </div><div class="ln" data-l="14" style="padding-left:calc(10px + 8ch);text-indent:-8ch">      node = node[letter]</div><div class="ln" style="padding-left:calc(10px + 2ch);text-indent:-2ch"> </div><div class="ln" data-l="16" style="padding-left:calc(10px + 6ch);text-indent:-6ch">    <span class="k-com"># mark that a full word ends here</span></div><div class="ln" data-l="17" style="padding-left:calc(10px + 6ch);text-indent:-6ch">    node[<span class="k-str">&#x27;$&#x27;</span>] = <span class="k-const">True</span></div><div class="ln" style="padding-left:calc(10px + 2ch);text-indent:-2ch"> </div><div class="ln" data-l="19" style="padding-left:calc(10px + 4ch);text-indent:-4ch">  <span class="k-kw">def</span> <span class="k-def">search</span>(<span class="k-self">self</span>, word):</div><div class="ln" data-l="20" style="padding-left:calc(10px + 6ch);text-indent:-6ch">    <span class="k-com"># nodes that match the word so far</span></div><div class="ln" data-l="21" style="padding-left:calc(10px + 6ch);text-indent:-6ch">    current = [<span class="k-self">self</span>.root]</div><div class="ln" style="padding-left:calc(10px + 2ch);text-indent:-2ch"> </div><div class="ln" data-l="23" style="padding-left:calc(10px + 6ch);text-indent:-6ch">    <span class="k-kw">for</span> letter <span class="k-kw">in</span> word:</div><div class="ln" data-l="24" style="padding-left:calc(10px + 8ch);text-indent:-8ch">      next_nodes = []</div><div class="ln" style="padding-left:calc(10px + 2ch);text-indent:-2ch"> </div><div class="ln" data-l="26" style="padding-left:calc(10px + 8ch);text-indent:-8ch">      <span class="k-kw">for</span> node <span class="k-kw">in</span> current:</div><div class="ln" data-l="27" style="padding-left:calc(10px + 10ch);text-indent:-10ch">        <span class="k-kw">if</span> letter == <span class="k-str">&#x27;.&#x27;</span>:</div><div class="ln" data-l="28" style="padding-left:calc(10px + 12ch);text-indent:-12ch">          <span class="k-com"># a dot matches every child</span></div><div class="ln" data-l="29" style="padding-left:calc(10px + 12ch);text-indent:-12ch">          <span class="k-kw">for</span> key <span class="k-kw">in</span> node:</div><div class="ln" data-l="30" style="padding-left:calc(10px + 14ch);text-indent:-14ch">            <span class="k-com"># skip the end marker</span></div><div class="ln" data-l="31" style="padding-left:calc(10px + 14ch);text-indent:-14ch">            <span class="k-kw">if</span> key == <span class="k-str">&#x27;$&#x27;</span>:</div><div class="ln" data-l="32" style="padding-left:calc(10px + 16ch);text-indent:-16ch">              <span class="k-kw">continue</span></div><div class="ln" data-l="33" style="padding-left:calc(10px + 14ch);text-indent:-14ch">            child = node[key]</div><div class="ln" data-l="34" style="padding-left:calc(10px + 14ch);text-indent:-14ch">            next_nodes.append(child)</div><div class="ln" style="padding-left:calc(10px + 2ch);text-indent:-2ch"> </div><div class="ln" data-l="36" style="padding-left:calc(10px + 10ch);text-indent:-10ch">        <span class="k-kw">elif</span> letter <span class="k-kw">in</span> node:</div><div class="ln" data-l="37" style="padding-left:calc(10px + 12ch);text-indent:-12ch">          child = node[letter]</div><div class="ln" data-l="38" style="padding-left:calc(10px + 12ch);text-indent:-12ch">          next_nodes.append(child)</div><div class="ln" style="padding-left:calc(10px + 2ch);text-indent:-2ch"> </div><div class="ln" data-l="40" style="padding-left:calc(10px + 8ch);text-indent:-8ch">      current = next_nodes</div><div class="ln" style="padding-left:calc(10px + 2ch);text-indent:-2ch"> </div><div class="ln" data-l="42" style="padding-left:calc(10px + 8ch);text-indent:-8ch">      <span class="k-com"># no path left, so stop early</span></div><div class="ln" data-l="43" style="padding-left:calc(10px + 8ch);text-indent:-8ch">      <span class="k-kw">if</span> <span class="k-kw">not</span> current:</div><div class="ln" data-l="44" style="padding-left:calc(10px + 10ch);text-indent:-10ch">        <span class="k-kw">return</span> <span class="k-const">False</span></div><div class="ln" style="padding-left:calc(10px + 2ch);text-indent:-2ch"> </div><div class="ln" data-l="46" style="padding-left:calc(10px + 6ch);text-indent:-6ch">    <span class="k-com"># did any path end on a full word?</span></div><div class="ln" data-l="47" style="padding-left:calc(10px + 6ch);text-indent:-6ch">    <span class="k-kw">for</span> node <span class="k-kw">in</span> current:</div><div class="ln" data-l="48" style="padding-left:calc(10px + 8ch);text-indent:-8ch">      <span class="k-kw">if</span> <span class="k-str">&#x27;$&#x27;</span> <span class="k-kw">in</span> node:</div><div class="ln" data-l="49" style="padding-left:calc(10px + 10ch);text-indent:-10ch">        <span class="k-kw">return</span> <span class="k-const">True</span></div><div class="ln" style="padding-left:calc(10px + 2ch);text-indent:-2ch"> </div><div class="ln" data-l="51" style="padding-left:calc(10px + 6ch);text-indent:-6ch">    <span class="k-kw">return</span> <span class="k-const">False</span></div></div></div><script type="application/json" class="steps">[{"lines": "1-4", "say": "I\u2019ll create the `WordDictionary` class. I\u2019ll set `self.root` to an empty dictionary, so every word starts from the same place. Each dictionary is one node, and its keys are the letters that can come next. For example, \"cat\" and \"car\" both start at `self.root`, and then both follow \"c\"."}, {"lines": "6-17", "say": "I\u2019ll define `addWord` to store a word one letter at a time.\n* I\u2019ll set `node` to `self.root`, so I start at the top of the trie.\n* For each `letter` in `word`, I\u2019ll add an empty dictionary at `node[letter]` if that letter is missing. Then I\u2019ll set `node` to `node[letter]` to move one step down.\n* After the last letter, I\u2019ll set `node['$']` to `True`. The `'$'` key is a marker that says a full word ends here, because a path alone could just be the start of a longer word.\n* For example, \"cat\" and \"car\" share \"ca\", then split into \"t\" and \"r\"."}, {"lines": "19-21,23-24,40", "say": "I\u2019ll set up `search` to keep every trie node that matches the part of `word` I have processed so far.\n* `current`: I\u2019ll start it as `[self.root]`, then loop over each `letter` in the search word.\n* `next_nodes`: I\u2019ll build a fresh list of matching nodes for the next letter, then assign it back with `current = next_nodes`. For example, when I search for \"c.t\", after \"c\", `current` holds the node for \"c\". After \".\", it holds the nodes for \"ca\" and \"co\"."}, {"lines": "26-38", "say": "I\u2019ll move every `node` in `current` forward by one step.\n* Dot case: If `letter` is `'.'`, I\u2019ll append every child because the dot can match any single letter. I\u2019ll skip the `'$'` key, because it is the end marker and not a letter.\n* Normal letter case: If `letter` is a key in `node`, I\u2019ll append only that child. For example, in the search \"c.t\", the dot follows both \"a\" and \"o\". The final \"t\" then reaches \"cat\" and \"cot\", while \"car\" is dropped because \"r\" is not \"t\"."}, {"lines": "42-44", "say": "I\u2019ll stop early and return `False` when `current` is empty, because no trie path can match the remaining letters. For example, if I search for \"c.z\", neither \"ca\" nor \"co\" has a child for \"z\", so there is no reason to continue."}, {"lines": "46-51", "say": "I\u2019ll check whether any node left in `current` has the `'$'` marker.\n* If one does, I\u2019ll return `True` because the search matched a complete stored word.\n* If none do, I\u2019ll return `False` because the search matched only a prefix. For example, after searching for \"c.t\", `current` contains the ending nodes for \"cat\" and \"cot\". Both have the `'$'` marker, so the answer is `True`."}, {"lines": "", "say": "I\u2019ll describe the time and space costs using `L` for a word\u2019s length, `N` for the number of trie nodes, and `T` for the total number of letters stored.\n* `addWord` time: It is O(L) because I\u2019ll visit each letter in the word once. For example, adding \"cat\" takes three steps.\n* `search` time: It is O(N) in the worst case because dots may make me explore many paths. Each node sits at one depth and can appear in `current` at most once. Without dots, it is O(L) because `current` never holds more than one node. For example, searching for \"c.t\" can follow both \"ca\" and \"co\", while searching for \"cat\" follows only one path.\n* Trie space: It is O(T) because the trie can create up to one node for every stored letter, while shared prefixes reuse nodes. For example, \"cat\" and \"car\" share the nodes for \"c\" and \"a\".\n* Search space: `current` and `next_nodes` can hold up to the number of nodes at one level. For example, after the dot in \"c.t\", `current` holds the nodes for \"ca\" and \"co\"."}]</script></div><img src="tries/images/panels/p211_add_search_words_5.png" alt="Design Add and Search Words Data Structure, part 5 of 6" loading="lazy"><img src="tries/images/panels/p211_add_search_words_6.png" alt="Design Add and Search Words Data Structure, part 6 of 6" loading="lazy"></div><!--/ps-->
 </div></div>

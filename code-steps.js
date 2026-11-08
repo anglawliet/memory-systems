@@ -185,3 +185,58 @@
     if (e.key === "Escape") stop();
   });
 })();
+
+// "Build it from scratch" sections: show one stage at a time with Back and Next.
+// A stage with a question hides its next idea until the right answer is picked.
+(function () {
+  document.querySelectorAll(".stages").forEach(function (box) {
+    var stages = box.querySelectorAll(".stage");
+    if (!stages.length) return;
+    box.classList.add("js");
+
+    var title = document.createElement("span");
+    title.className = "st-title";
+    var name = document.createElement("h5");
+    name.className = "st-name";
+    var track = document.createElement("div");
+    track.className = "st-track";
+    track.innerHTML = "<i></i>";
+    var nav = document.createElement("div");
+    nav.className = "st-nav";
+    nav.innerHTML = '<button type="button" class="st-back">Back</button>' +
+      '<button type="button" class="st-next">Next</button>';
+    var sub = box.querySelector(".idea-sub");
+    sub.after(track, title, name);
+    box.appendChild(nav);
+    var back = nav.querySelector(".st-back"), next = nav.querySelector(".st-next");
+    var cur = 0;
+
+    function show(i, scroll) {
+      cur = i;
+      stages.forEach(function (s, k) { s.classList.toggle("on", k === i); });
+      title.textContent = "Stage " + (i + 1) + " of " + stages.length;
+      name.textContent = stages[i].getAttribute("data-title");
+      track.firstChild.style.width = ((i + 1) / stages.length * 100) + "%";
+      back.disabled = i === 0;
+      next.textContent = i === stages.length - 1 ? "Start over" : "Next";
+      // keep the top of the section on screen when a stage changes height
+      if (scroll && box.getBoundingClientRect().top < 0) box.scrollIntoView({ block: "start" });
+    }
+    back.addEventListener("click", function () { if (cur > 0) show(cur - 1, true); });
+    next.addEventListener("click", function () { show(cur === stages.length - 1 ? 0 : cur + 1, true); });
+
+    box.querySelectorAll(".quiz").forEach(function (quiz) {
+      var why = quiz.querySelector(".why");
+      var after = quiz.parentNode.querySelector(".after");
+      quiz.querySelectorAll(".choice").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          quiz.querySelectorAll(".choice").forEach(function (b) { b.classList.remove("picked"); });
+          btn.classList.add("picked");
+          why.textContent = btn.getAttribute("data-why");
+          if (btn.classList.contains("right") && after) after.classList.add("on");
+        });
+      });
+    });
+    show(0, false);
+  });
+})();

@@ -414,3 +414,33 @@ a.card.c_tries::before{background-image:url('tries/images/p208_implement_trie.pn
 :root[data-theme="dark"] .idea-svg .p-dot rect{fill:#3b1d0a}
 :root[data-theme="dark"] .idea-svg .n-win{fill:#0f2e1b}
 :root[data-theme="dark"] .idea-svg .end,:root[data-theme="dark"] .idea-svg .word.win{fill:#4ade80}
+
+/* 14. "Build it from scratch": one stage at a time, with a question where the old code breaks.
+   Without the script, every stage simply shows in order. */
+/* the page-wide pre rule uses !important, so these do too, to keep them dark like the code box */
+pre.snip{font-size:13.5px!important;line-height:1.6!important;background:#1b212b!important;color:#e6e9ef!important;border:1px solid #2a313c!important;border-radius:10px!important;padding:10px 12px!important;margin:8px 0 12px!important;overflow-x:auto;white-space:pre;font-variant-ligatures:none}
+.snip .k-kw{color:#ff79b0}.snip .k-def{color:#ffd866}.snip .k-bi{color:#78dce8}.snip .k-const,.snip .k-num{color:#56c8ff}
+.snip .k-self{color:#9fb6ff}.snip .k-str{color:#b8e986}.snip .k-com{color:#8a93a6;font-style:italic}
+.stages .stage p{margin:0 0 8px}
+.stages .stage ul{margin:4px 0 10px;padding-left:22px}
+.stages .stage li{margin:0 0 6px}
+.stages .st-title{display:block;font-size:13px;font-weight:600;letter-spacing:.02em;color:var(--accent-strong);margin:8px 0 2px}
+.stages .st-name{margin:0 0 8px;font-size:17px;color:var(--ink)}
+.stages.js .stage{display:none}
+.stages.js .stage.on{display:block}
+.stages .st-track{height:4px;border-radius:2px;background:var(--surface-2);margin:10px 0 4px;overflow:hidden}
+.stages .st-track i{display:block;height:100%;background:var(--accent-strong);transition:width .2s}
+.stages .st-nav{display:flex;justify-content:space-between;gap:10px;margin-top:12px}
+.stages .st-nav button,.stages .choice{font:600 15px Inter,system-ui,sans-serif;border-radius:10px;padding:10px 14px;cursor:pointer;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink)}
+.stages .st-nav .st-next{background:var(--accent-strong);border-color:var(--accent-strong);color:#fff;min-width:96px}
+.stages .st-nav button:disabled{opacity:.4;cursor:default}
+.stages .quiz{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0}
+.stages .quiz .q{font-weight:600;margin:0 0 8px}
+.stages .choice{display:block;width:100%;text-align:left;margin:0 0 8px}
+.stages .choice.picked{border-color:#dc2626;background:#fee2e2;color:#7f1d1d}
+.stages .choice.picked.right{border-color:#16a34a;background:#dcfce7;color:#14532d}
+.stages .why{margin:4px 0 0;min-height:1em}
+.stages.js .after{display:none}
+.stages.js .after.on{display:block}
+:root[data-theme="dark"] .stages .choice.picked{background:#3b1212;color:#fecaca}
+:root[data-theme="dark"] .stages .choice.picked.right{background:#0f2e1b;color:#bbf7d0}

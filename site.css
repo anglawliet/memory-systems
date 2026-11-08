@@ -444,12 +444,3 @@ pre.snip{font-size:13.5px!important;line-height:1.6!important;background:#1b212b
 .stages.js .after.on{display:block}
 :root[data-theme="dark"] .stages .choice.picked{background:#3b1212;color:#fecaca}
 :root[data-theme="dark"] .stages .choice.picked.right{background:#0f2e1b;color:#bbf7d0}
-/* small tables of real values under a code piece */
-.stages table.vals{width:auto;margin:6px 0 12px!important;font-size:14px}
-.stages table.vals th{text-transform:none!important;letter-spacing:0!important;font-size:13px!important}
-.stages table.vals th,.stages table.vals td{padding:6px 10px!important;border-bottom:1px solid var(--line)}
-.stages table.vals code{white-space:nowrap}
-.idea-svg.kc{max-width:420px}
-.idea-svg .lab{font-size:15px;fill:var(--ink-2)}
-.idea-svg .lab.code{font-family:'JetBrains Mono',monospace;font-weight:600;fill:#15803d}
-:root[data-theme="dark"] .idea-svg .lab.code{fill:#4ade80}

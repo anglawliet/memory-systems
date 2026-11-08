@@ -448,3 +448,9 @@ pre.snip{font-size:13.5px!important;line-height:1.6!important;background:#1b212b
 :root[data-theme="dark"] .stages .choice.picked{background:#3b1212;color:#fecaca}
 :root[data-theme="dark"] .stages .choice.picked.right{background:#0f2e1b;color:#bbf7d0}
 .stages .mcq pre.snip{font-size:12.5px!important;padding:8px 10px!important;margin:0 0 10px!important}
+.stages .mcq-set{border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:16px 0 14px;padding:14px 0}
+.stages .mcq-set .mcq{border-top:0;padding-top:0;margin:0}
+.stages .mcq-nav{display:flex;align-items:center;gap:8px;margin-top:12px}
+.stages .mcq-nav span{flex:1;font-size:13px;color:var(--ink-3)}
+.stages .mcq-nav button{font:600 14px Inter,system-ui,sans-serif;border-radius:9px;padding:7px 12px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);cursor:pointer}
+.stages .mcq-nav button:disabled{opacity:.35;cursor:default}

@@ -225,9 +225,38 @@
     back.addEventListener("click", function () { if (cur > 0) show(cur - 1, true); });
     next.addEventListener("click", function () { show(cur === stages.length - 1 ? 0 : cur + 1, true); });
 
+    // questions that sit next to each other share one spot: one shows at a time, with its own Back and Next
+    box.querySelectorAll(".mcq").forEach(function (q) {
+      var prev = q.previousElementSibling;
+      if (prev && prev.classList.contains("mcq")) return;
+      var run = [q], n = q.nextElementSibling;
+      while (n && n.classList.contains("mcq")) { run.push(n); n = n.nextElementSibling; }
+      if (run.length < 2) return;
+      var set = document.createElement("div");
+      set.className = "mcq-set";
+      q.parentNode.insertBefore(set, q);
+      run.forEach(function (r) { set.appendChild(r); });
+      var bar = document.createElement("div");
+      bar.className = "mcq-nav";
+      bar.innerHTML = '<span></span><button type="button">Back</button><button type="button">Next question</button>';
+      set.appendChild(bar);
+      var label = bar.querySelector("span"), qb = bar.querySelectorAll("button"), at = 0;
+      function showQ(i) {
+        at = i;
+        run.forEach(function (r, k) { r.style.display = k === i ? "" : "none"; });
+        label.textContent = "Question " + (i + 1) + " of " + run.length;
+        qb[0].disabled = i === 0;
+        qb[1].disabled = i === run.length - 1;
+      }
+      qb[0].addEventListener("click", function () { showQ(at - 1); });
+      qb[1].addEventListener("click", function () { showQ(at + 1); });
+      showQ(0);
+    });
+
     box.querySelectorAll(".mcq").forEach(function (quiz) {
       var why = quiz.querySelector(".why");
-      var after = quiz.parentNode.querySelector(".after");
+      var host = quiz.closest(".mcq-set") || quiz;
+      var after = host.parentNode.querySelector(":scope > .after");
       quiz.querySelectorAll(".choice").forEach(function (btn) {
         btn.addEventListener("click", function () {
           quiz.querySelectorAll(".choice").forEach(function (b) { b.classList.remove("picked"); });

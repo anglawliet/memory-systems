@@ -626,22 +626,22 @@ Look <strong>2 left</strong>: <code>ways[4] = 5</code><br><br>
 
 <div style="display:grid;gap:10px">
 <div style="background:var(--card2);border-radius:8px;padding:14px">
-<div style="color:var(--sand);font-weight:700;margin-bottom:4px">Climbing Stairs (#70)</div>
+<div style="color:var(--sand);font-weight:700;margin-bottom:4px">Climbing Stairs</div>
 <div style="font-size:.88em;color:var(--muted)"><code>ways[step] = ways[step - 1] + ways[step - 2]</code></div>
 <div style="font-size:.85em">Cell stores: number of ways. Looks back: 2 cells. Operation: add.</div>
 </div>
 <div style="background:var(--card2);border-radius:8px;padding:14px">
-<div style="color:var(--sand);font-weight:700;margin-bottom:4px"><a href="min_cost_dp.html" style="color:var(--sand)">Min Cost Climbing Stairs (#746)</a></div>
+<div style="color:var(--sand);font-weight:700;margin-bottom:4px"><a href="min_cost_dp.html" style="color:var(--sand)">Min Cost Climbing Stairs</a></div>
 <div style="font-size:.88em;color:var(--muted)"><code>cost_to[step] = min(from_one_below, from_two_below)</code></div>
 <div style="font-size:.85em">Cell stores: minimum cost. Looks back: 2 cells. Operation: min (cheapest path).</div>
 </div>
 <div style="background:var(--card2);border-radius:8px;padding:14px">
-<div style="color:var(--sand);font-weight:700;margin-bottom:4px"><a href="house_robber_dp.html" style="color:var(--sand)">House Robber (#198)</a></div>
+<div style="color:var(--sand);font-weight:700;margin-bottom:4px"><a href="house_robber_dp.html" style="color:var(--sand)">House Robber</a></div>
 <div style="font-size:.88em;color:var(--muted)"><code>best[house] = max(best[house-1], best[house-2] + money[house])</code></div>
 <div style="font-size:.85em">Cell stores: max money. Looks back: 2 cells. Operation: max (skip or take).</div>
 </div>
 <div style="background:var(--card2);border-radius:8px;padding:14px">
-<div style="color:var(--sand);font-weight:700;margin-bottom:4px"><a href="decode_ways_dp.html" style="color:var(--sand)">Decode Ways (#91)</a></div>
+<div style="color:var(--sand);font-weight:700;margin-bottom:4px"><a href="decode_ways_dp.html" style="color:var(--sand)">Decode Ways</a></div>
 <div style="font-size:.88em;color:var(--muted)"><code>ways[i] = (ways[i-1] if valid single) + (ways[i-2] if valid pair)</code></div>
 <div style="font-size:.85em">Cell stores: number of ways. Looks back: 1 or 2 cells (conditional). Operation: add.</div>
 </div>

@@ -500,7 +500,7 @@ if node.right: q.append(node.right)
 <!-- SCENE 1 PROBLEMS -->
 <h3 style="color:var(--green)"><span class="tag t1">Scene 1</span> Circuit Reports UP (8 problems)</h3>
 
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">1</span>#226 Invert Binary Tree<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">1</span>Invert Binary Tree<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">Why this scene</div>Level-by-level? No. Info from above? No &mdash; swapping doesn't need badge. Answer at root? Yes. <strong>&rarr; <span class="tag t1">Scene 1</span></strong></div>
 <div class="sbox"><div class="sl sl-s">The Ritual</div>
 &#10102; Falls in. No vitals? Return None &mdash; nothing to invert.<br>
@@ -522,7 +522,7 @@ if node.right: q.append(node.right)
     <span class="kw">return</span> root</code></pre>
 </div></div>
 
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">2</span>#104 Maximum Depth<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">2</span>Maximum Depth<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">Why this scene</div>Info from above? No. Answer at root? Yes &mdash; total depth. <strong>&rarr; <span class="tag t1">Scene 1</span></strong></div>
 <div class="sbox"><div class="sl sl-s">The Ritual</div>
 &#10102; No vitals? Dead-end &mdash; tell above <strong>0</strong> (zero depth).<br>
@@ -539,7 +539,7 @@ if node.right: q.append(node.right)
     <span class="kw">return</span> 1 + max(maxDepth(root.left), maxDepth(root.right))</code></pre>
 </div></div>
 
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">3</span>#110 Balanced Binary Tree<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">3</span>Balanced Binary Tree<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">Why this scene</div>Info from above? No. Answer at root? Yes. <strong>&rarr; <span class="tag t1">Scene 1</span></strong></div>
 <div class="sbox"><div class="sl sl-s">The Ritual</div>
 &#10102; No vitals? Tell above <strong>(True, 0)</strong> &mdash; empty is balanced with height 0.<br>
@@ -560,7 +560,7 @@ if node.right: q.append(node.right)
     <span class="kw">return</span> dfs(root)[0]</code></pre>
 </div></div>
 
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">4</span>#100 Same Tree<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">4</span>Same Tree<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">Why this scene</div><strong>&rarr; <span class="tag t1">Scene 1</span></strong> &mdash; two Circuits in two bubble trees, comparing bubble by bubble.</div>
 <div class="sbox"><div class="sl sl-s">The Ritual</div>
 &#10102; <strong>Both</strong> no vitals? Identical dead-ends &rarr; True.<br>
@@ -578,7 +578,7 @@ if node.right: q.append(node.right)
     <span class="kw">return</span> p.val == q.val <span class="kw">and</span> isSameTree(p.left, q.left) <span class="kw">and</span> isSameTree(p.right, q.right)</code></pre>
 </div></div>
 
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">5</span>#572 Subtree of Another Tree<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">5</span>Subtree of Another Tree<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">Why this scene</div><strong>&rarr; <span class="tag t1">Scene 1</span></strong> &mdash; Circuit visits every bubble in the main tree, holding a &ldquo;photo&rdquo; of the subtree. At each bubble, he asks: "Does the tree starting HERE match the photo?"</div>
 <div class="sbox"><div class="sl sl-s">The Ritual</div>
 &#10102; No vitals in main tree? Can't match &rarr; False.<br>
@@ -595,7 +595,7 @@ if node.right: q.append(node.right)
     <span class="kw">return</span> isSubtree(root.left, sub) <span class="kw">or</span> isSubtree(root.right, sub)</code></pre>
 </div></div>
 
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">6</span>#230 Kth Smallest in BST<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">6</span>Kth Smallest in BST<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">Why this scene</div><strong>&rarr; <span class="tag t1">Scene 1</span></strong> (in-order variant)</div>
 <div class="sbox"><div class="sl sl-s">The Ritual</div>
 <strong>Key BST trick:</strong> In a BST, if Circuit always goes through the lavender door first, then reads vitals, then goes through the red door &mdash; he visits bubbles in <strong>sorted order</strong> (smallest to largest). This is called <strong>in-order traversal</strong>.<br><br>
@@ -617,7 +617,7 @@ So: just do in-order traversal, count down from K. When count hits 0, that's the
         n = n.right              <span class="cm"># now try red (right)</span></code></pre>
 </div></div>
 
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">7</span>#105 Construct from Preorder+Inorder<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">7</span>Construct from Preorder+Inorder<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">Why this scene</div><strong>&rarr; <span class="tag t1">Scene 1</span></strong> (build mode &mdash; Circuit builds bubbles instead of visiting them)</div>
 <div class="sbox"><div class="sl sl-s">The Ritual</div>
 <strong>Key insight:</strong><br>
@@ -647,7 +647,7 @@ So: just do in-order traversal, count down from K. When count hits 0, that's the
     <span class="kw">return</span> build(0, len(ino) - 1)</code></pre>
 </div></div>
 
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">8</span>#297 Serialize / Deserialize<span class="tag-h">Hard</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">8</span>Serialize / Deserialize<span class="tag-h">Hard</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">Why this scene</div><strong>&rarr; <span class="tag t1">Scene 1</span></strong> &mdash; two separate Scene 1 passes: one to serialize (read tree &rarr; string), one to deserialize (string &rarr; build tree).</div>
 <div class="sbox"><div class="sl sl-s">Serialize (tree &rarr; string)</div>
 Circuit does a preorder walk. At each bubble:<br>
@@ -687,7 +687,7 @@ The preorder ensures tokens come in the right order.
 <!-- SCENE 2 PROBLEMS -->
 <h3 style="color:var(--purple)"><span class="tag t2">Scene 2</span> Circuit + Diary (2 problems)</h3>
 
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">9</span>#543 Diameter<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">9</span>Diameter<span class="tag-e">Easy</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">Why this scene</div>Info from above? No. Answer at root? <strong>NO</strong> &mdash; the longest path could pass through ANY bubble, not necessarily the root. <strong>&rarr; <span class="tag t2">Scene 2</span></strong></div>
 <div class="sbox"><div class="sl sl-s">The Ritual</div>
 &#10102; No vitals? Dead-end &mdash; tell above <strong>0</strong>.<br>
@@ -715,7 +715,7 @@ The preorder ensures tokens come in the right order.
     <span class="kw">return</span> diary</code></pre>
 </div></div>
 
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">10</span>#124 Max Path Sum<span class="tag-h">Hard</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">10</span>Max Path Sum<span class="tag-h">Hard</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">Why this scene</div>"Does NOT need to pass through root" &rarr; answer at ANY bubble &rarr; <strong><span class="tag t2">Scene 2</span></strong>. Exact same pattern as diameter, but with vitals sum instead of edge count.</div>
 <div class="sbox"><div class="sl sl-s">The Ritual</div>
 &#10102; No vitals? Dead-end &mdash; tell above <strong>0</strong>.<br>
@@ -748,7 +748,7 @@ The preorder ensures tokens come in the right order.
 <!-- SCENE 3 PROBLEMS -->
 <h3 style="color:var(--red)"><span class="tag t3">Scene 3</span> Lingam's Badge (3 problems)</h3>
 
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">11</span>#98 Validate BST<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">11</span>Validate BST<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">Why this scene</div>Can Circuit tell if this bubble is valid just by looking below? <strong>NO</strong> &mdash; bubble with vitals 5 could be valid or invalid depending on its ancestors. Needs a range from above. <strong>&rarr; <span class="tag t3">Scene 3</span></strong></div>
 <div class="sbox"><div class="sl sl-s">The Ritual</div>
 &#10102; Badge glows with <strong>(lo, hi)</strong> &mdash; the allowed range for this bubble's vitals.<br>
@@ -771,7 +771,7 @@ The preorder ensures tokens come in the right order.
     <span class="kw">return</span> dfs(root, float(<span class="cm">'-inf'</span>), float(<span class="cm">'inf'</span>))</code></pre>
 </div></div>
 
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">12</span>#1448 Count Good Nodes<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">12</span>Count Good Nodes<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">Why this scene</div>A node is "good" if its value &ge; all ancestors. Circuit can't know this alone &mdash; he needs the <strong>max value seen so far</strong> from above. <strong>&rarr; <span class="tag t3">Scene 3</span></strong></div>
 <div class="sbox"><div class="sl sl-s">The Ritual</div>
 &#10102; Badge glows with <strong>max value seen so far</strong> on the path from root to here.<br>
@@ -794,7 +794,7 @@ The preorder ensures tokens come in the right order.
     <span class="kw">return</span> dfs(root, root.val)</code></pre>
 </div></div>
 
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">13</span>#235 LCA of BST<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">13</span>LCA of BST<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">Why this scene</div>Info from above? YES &mdash; BST ordering tells Circuit which tube to take. <strong>&rarr; <span class="tag t3">Scene 3</span></strong> (simplified &mdash; see below)</div>
 <div class="sbox"><div class="sl sl-s">The Ritual</div>
 Circuit falls into the root bubble with two target values (p and q) in mind.<br><br>
@@ -821,7 +821,7 @@ Think of it this way: Circuit doesn't need to "peek and come back" &mdash; he ju
 <!-- SCENE 4 PROBLEMS -->
 <h3 style="color:var(--blue)"><span class="tag t4">Scene 4</span> Shankar's Truck (2 problems)</h3>
 
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">14</span>#102 Level Order Traversal<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">14</span>Level Order Traversal<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">Why this scene</div>"Return values level by level" &rarr; <strong><span class="tag t4">Scene 4</span> Shankar's Truck!</strong></div>
 <div class="sbox"><div class="sl sl-s">The Ritual</div>
 &#10102; Root bubble falls onto the truck.<br>
@@ -849,7 +849,7 @@ Think of it this way: Circuit doesn't need to "peek and come back" &mdash; he ju
     <span class="kw">return</span> res</code></pre>
 </div></div>
 
-<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">15</span>#199 Right Side View<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
+<div class="deriv"><div class="deriv-h" onclick="this.parentElement.classList.toggle('open')"><h3><span class="deriv-n">15</span>Right Side View<span class="tag-m">Medium</span></h3><span class="deriv-a">&#9654;</span></div><div class="deriv-b">
 <div class="sbox"><div class="sl sl-q">Why this scene</div>"What do you see from the right side?" = the last bubble on each level. Per-level question &rarr; <strong><span class="tag t4">Scene 4</span></strong></div>
 <div class="sbox"><div class="sl sl-s">The Ritual</div>
 Exact same truck ritual as Level Order, with ONE tweak:<br><br>
@@ -876,10 +876,10 @@ Exact same truck ritual as Level Order, with ONE tweak:<br><br>
 <!-- DISTRIBUTION -->
 <div class="hi" style="margin-top:24px">
 <strong>Distribution:</strong><br>
-<span class="tag t1">Scene 1</span> Circuit Reports UP: <strong>8 problems</strong> (#226, #104, #110, #100, #572, #230, #105, #297)<br>
-<span class="tag t2">Scene 2</span> Circuit + Diary: <strong>2 problems</strong> (#543, #124)<br>
-<span class="tag t3">Scene 3</span> Lingam's Badge: <strong>3 problems</strong> (#235, #1448, #98)<br>
-<span class="tag t4">Scene 4</span> Shankar's Truck: <strong>2 problems</strong> (#102, #199)<br><br>
+<span class="tag t1">Scene 1</span> Circuit Reports UP: <strong>8 problems</strong> (Invert Binary Tree, Maximum Depth, Balanced Binary Tree, Same Tree, Subtree of Another Tree, Kth Smallest in BST, Construct from Preorder+Inorder, Serialize / Deserialize)<br>
+<span class="tag t2">Scene 2</span> Circuit + Diary: <strong>2 problems</strong> (Diameter, Max Path Sum)<br>
+<span class="tag t3">Scene 3</span> Lingam's Badge: <strong>3 problems</strong> (LCA of BST, Count Good Nodes, Validate BST)<br>
+<span class="tag t4">Scene 4</span> Shankar's Truck: <strong>2 problems</strong> (Level Order Traversal, Right Side View)<br><br>
 <strong>Scene 1 is the DEFAULT</strong> &mdash; 8 out of 15. If you can't clearly identify badge-from-above, corridor/diary, or level-by-level, it's Circuit.
 </div>
 
@@ -904,10 +904,10 @@ Exact same truck ritual as Level Order, with ONE tweak:<br><br>
 <h3>Scene Summary</h3>
 <table>
 <tr><th>Scene</th><th>Character</th><th>Key Element</th><th>#</th><th>Problems</th></tr>
-<tr><td><span class="tag t1">Scene 1</span></td><td>Circuit</td><td>Peek doors, combine, tell above</td><td>8</td><td>#226, #104, #110, #100, #572, #230, #105, #297</td></tr>
-<tr><td><span class="tag t2">Scene 2</span></td><td>Circuit + Diary</td><td>Same + diary for corridor</td><td>2</td><td>#543, #124</td></tr>
-<tr><td><span class="tag t3">Scene 3</span></td><td>Lingam's Badge</td><td>Badge glows with tighter constraints</td><td>3</td><td>#235, #1448, #98</td></tr>
-<tr><td><span class="tag t4">Scene 4</span></td><td>Shankar + Truck</td><td>Tip truck, crack, yank tubes</td><td>2</td><td>#102, #199</td></tr>
+<tr><td><span class="tag t1">Scene 1</span></td><td>Circuit</td><td>Peek doors, combine, tell above</td><td>8</td><td>Invert Binary Tree, Maximum Depth, Balanced Binary Tree, Same Tree, Subtree of Another Tree, Kth Smallest in BST, Construct from Preorder+Inorder, Serialize / Deserialize</td></tr>
+<tr><td><span class="tag t2">Scene 2</span></td><td>Circuit + Diary</td><td>Same + diary for corridor</td><td>2</td><td>Diameter, Max Path Sum</td></tr>
+<tr><td><span class="tag t3">Scene 3</span></td><td>Lingam's Badge</td><td>Badge glows with tighter constraints</td><td>3</td><td>LCA of BST, Count Good Nodes, Validate BST</td></tr>
+<tr><td><span class="tag t4">Scene 4</span></td><td>Shankar + Truck</td><td>Tip truck, crack, yank tubes</td><td>2</td><td>Level Order Traversal, Right Side View</td></tr>
 </table>
 </div>
 

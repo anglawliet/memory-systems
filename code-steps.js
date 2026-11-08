@@ -225,7 +225,7 @@
     back.addEventListener("click", function () { if (cur > 0) show(cur - 1, true); });
     next.addEventListener("click", function () { show(cur === stages.length - 1 ? 0 : cur + 1, true); });
 
-    box.querySelectorAll(".quiz").forEach(function (quiz) {
+    box.querySelectorAll(".mcq").forEach(function (quiz) {
       var why = quiz.querySelector(".why");
       var after = quiz.parentNode.querySelector(".after");
       quiz.querySelectorAll(".choice").forEach(function (btn) {

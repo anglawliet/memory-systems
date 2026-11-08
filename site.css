@@ -434,17 +434,17 @@ pre.snip{font-size:13.5px!important;line-height:1.6!important;background:#1b212b
 .stages .st-nav button,.stages .choice{font:600 15px Inter,system-ui,sans-serif;border-radius:10px;padding:10px 14px;cursor:pointer;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink)}
 .stages .st-nav .st-next{background:var(--accent-strong);border-color:var(--accent-strong);color:#fff;min-width:96px}
 .stages .st-nav button:disabled{opacity:.4;cursor:default}
-.stages .quiz{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0}
-.stages .quiz .q{font-weight:600;margin:0 0 8px}
-.stages .choice{display:block;width:100%;text-align:left;margin:0 0 8px}
+/* a question is plain: a thin line above, the values, the question, and simple answer rows */
+.stages .mcq{border-top:1px solid var(--line);padding:14px 0 0;margin:16px 0 4px}
+.stages .mcq .q{font-weight:600;margin:0 0 10px}
+.stages .choice{display:block;width:100%;text-align:left;margin:0 0 6px;padding:9px 12px;font-weight:500}
+.stages .choice code{background:none!important;border:0!important;padding:0!important;font-size:.95em;color:inherit}
 .stages .choice.picked{border-color:#dc2626;background:#fee2e2;color:#7f1d1d}
 .stages .choice.picked.right{border-color:#16a34a;background:#dcfce7;color:#14532d}
-.stages .why{margin:4px 0 0;min-height:1em}
+.stages .why{margin:8px 0 0;font-size:14.5px;color:var(--ink-2)}
+.stages .why:empty{display:none}
 .stages.js .after{display:none}
 .stages.js .after.on{display:block}
 :root[data-theme="dark"] .stages .choice.picked{background:#3b1212;color:#fecaca}
 :root[data-theme="dark"] .stages .choice.picked.right{background:#0f2e1b;color:#bbf7d0}
-.stages .quiz.try{border-left:3px solid var(--accent-strong)}
-.stages .q-tag{margin:0 0 4px!important;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-strong)}
-.stages .quiz.try{padding:12px 10px}
-.stages .quiz pre.snip{font-size:12px!important;padding:8px 10px!important}
+.stages .mcq pre.snip{font-size:12.5px!important;padding:8px 10px!important;margin:0 0 10px!important}

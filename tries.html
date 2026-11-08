@@ -169,6 +169,15 @@ next_nodes = []</pre>
 <button type="button" class="choice" data-why="Not quite. The '$' key is skipped, because it is the end marker, not a letter.">3</button>
 <p class="why" aria-live="polite"></p>
 </div>
+<div class="mcq">
+<pre class="snip">node = {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}
+next_nodes = []</pre>
+<p class="q">This node is the end of "cat", and the next letter is a dot. What is <code>next_nodes</code>?</p>
+<button type="button" class="choice right" data-why="Correct! The only key is '$', and the code skips it. Nothing is added, so a search for &quot;cat.&quot; returns False."><code>[]</code></button>
+<button type="button" class="choice" data-why="Not quite. That would happen without the '$' check. The code skips '$', so True is never added."><code>[True]</code></button>
+<button type="button" class="choice" data-why="Not quite. A dot adds the children of the node, not the node itself."><code>[{'$': True}]</code></button>
+<p class="why" aria-live="polite"></p>
+</div>
 </div>
 </div>
 
@@ -188,11 +197,34 @@ next_nodes = []</pre>
 <div class="mcq">
 <pre class="snip">letter = <span class="k-str">&#x27;t&#x27;</span>
 current = [{<span class="k-str">&#x27;t&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>},
-            <span class="k-str">&#x27;r&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}}]</pre>
+            <span class="k-str">&#x27;r&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}},
+           {<span class="k-str">&#x27;t&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}}]</pre>
 <p class="q">After one round of the outer loop, what is <code>current</code>?</p>
-<button type="button" class="choice" data-why="Not quite. The code appends child, and child is node[letter], the value stored under 't'."><code>['t']</code></button>
-<button type="button" class="choice right" data-why="Correct! 't' is in the node, so child is node['t'], which is {'$': True}. Then current = next_nodes."><code>[{'$': True}]</code></button>
-<button type="button" class="choice" data-why="Not quite. At the end of the round, current is replaced by next_nodes.">the same list as before</button>
+<button type="button" class="choice" data-why="Not quite. The inner loop runs once for each node in current, and both nodes have a 't' key. So two dictionaries are appended."><code>[{'$': True}]</code></button>
+<button type="button" class="choice right" data-why="Correct! Both nodes in current have a 't' key, so each one adds its child. next_nodes ends with two dictionaries, and current becomes that list."><code>[{'$': True}, {'$': True}]</code></button>
+<button type="button" class="choice" data-why="Not quite. The code appends child, which is node['t'], not the letter."><code>['t', 't']</code></button>
+<p class="why" aria-live="polite"></p>
+</div>
+<div class="mcq">
+<pre class="snip">letter = <span class="k-str">&#x27;.&#x27;</span>
+current = [{<span class="k-str">&#x27;t&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>},
+            <span class="k-str">&#x27;r&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}},
+           {<span class="k-str">&#x27;t&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}}]</pre>
+<p class="q">After one round, how many dictionaries are in <code>current</code>?</p>
+<button type="button" class="choice" data-why="Not quite. A dot keeps every child of every node. The first node has two children, 't' and 'r'.">2</button>
+<button type="button" class="choice right" data-why="Correct! The first node adds its 't' and 'r' children, and the second node adds its 't' child. That is 3 dictionaries.">3</button>
+<button type="button" class="choice" data-why="Not quite. The second node has only one child, 't'.">4</button>
+<p class="why" aria-live="polite"></p>
+</div>
+<div class="mcq">
+<pre class="snip">letter = <span class="k-str">&#x27;r&#x27;</span>
+current = [{<span class="k-str">&#x27;t&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>},
+            <span class="k-str">&#x27;r&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}},
+           {<span class="k-str">&#x27;t&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}}]</pre>
+<p class="q">After one round, what is <code>current</code>?</p>
+<button type="button" class="choice right" data-why="Correct! Only the first node has an 'r' key. The second node has no 'r', so it adds nothing and that path ends."><code>[{'$': True}]</code></button>
+<button type="button" class="choice" data-why="Not quite. The second node has only a 't' key, so letter in node is False for it, and it adds nothing."><code>[{'$': True}, {'$': True}]</code></button>
+<button type="button" class="choice" data-why="Not quite. The first node does have an 'r' key, so its child is added."><code>[]</code></button>
 <p class="why" aria-live="polite"></p>
 </div>
 <div class="mcq">
@@ -257,6 +289,15 @@ current = [{<span class="k-str">&#x27;t&#x27;</span>: {<span class="k-str">&#x27
 <button type="button" class="choice right" data-why="Correct! The first dictionary has the '$' key, so a full word ends there, and the code returns True right away."><code>True</code></button>
 <button type="button" class="choice" data-why="Not quite. Only one dictionary needs '$'. The first one has it."><code>False</code></button>
 <button type="button" class="choice" data-why="Not quite. The code returns True as soon as it finds '$', and the first dictionary has it.">it depends on the second one</button>
+<p class="why" aria-live="polite"></p>
+</div>
+<div class="mcq">
+<pre class="snip">current = [{<span class="k-str">&#x27;r&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}},
+           {<span class="k-str">&#x27;t&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}}]</pre>
+<p class="q">The word is used up. What does the final check return?</p>
+<button type="button" class="choice" data-why="Not quite. The '$' keys here sit one level down, inside the children. The final check only looks at the nodes in current themselves."><code>True</code></button>
+<button type="button" class="choice right" data-why="Correct! Neither node in current has a '$' key of its own. These are the starts of longer words, so no word ends here."><code>False</code></button>
+<button type="button" class="choice" data-why="Not quite. The loop checks '$' in node for each dictionary, which is safe, and then returns False.">it crashes</button>
 <p class="why" aria-live="polite"></p>
 </div>
 <p>The full code is below. Press <b>Build it</b> to write it again in interview order.</p>

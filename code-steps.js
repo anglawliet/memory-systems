@@ -214,7 +214,7 @@
     function show(i, scroll) {
       cur = i;
       stages.forEach(function (s, k) { s.classList.toggle("on", k === i); });
-      title.textContent = "Stage " + (i + 1) + " of " + stages.length;
+      title.textContent = (box.getAttribute("data-label") || "Stage") + " " + (i + 1) + " of " + stages.length;
       name.textContent = stages[i].getAttribute("data-title");
       track.firstChild.style.width = ((i + 1) / stages.length * 100) + "%";
       back.disabled = i === 0;

@@ -419,6 +419,8 @@ a.card.c_tries::before{background-image:url('tries/images/p208_implement_trie.pn
    Without the script, every stage simply shows in order. */
 /* the page-wide pre rule uses !important, so these do too, to keep them dark like the code box */
 pre.snip{font-size:13.5px!important;line-height:1.6!important;background:#1b212b!important;color:#e6e9ef!important;border:1px solid #2a313c!important;border-radius:10px!important;padding:10px 12px!important;margin:8px 0 12px!important;overflow-x:auto;white-space:pre;font-variant-ligatures:none}
+pre.snip{white-space:pre-wrap!important;word-break:normal!important}
+pre.snip .snl{display:block;min-height:1.6em;overflow-wrap:break-word}
 .snip .k-kw{color:#ff79b0}.snip .k-def{color:#ffd866}.snip .k-bi{color:#78dce8}.snip .k-const,.snip .k-num{color:#56c8ff}
 .snip .k-self{color:#9fb6ff}.snip .k-str{color:#b8e986}.snip .k-com{color:#8a93a6;font-style:italic}
 .stages .stage p{margin:0 0 8px}

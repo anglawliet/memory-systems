@@ -537,6 +537,7 @@ pre.snip .snl{display:block;min-height:1.6em;overflow-wrap:break-word}
 .trie .te.go .te-l{fill:var(--nxt)}
 .trie .tn>circle{fill:var(--surface);stroke:var(--ink-3);stroke-width:2;transition:fill .25s,stroke .25s}
 .trie .tn-l{font:600 14px 'JetBrains Mono',monospace;fill:var(--ink);text-anchor:middle}
+.trie .tn-p{font:italic 500 12.5px 'JetBrains Mono',monospace;fill:var(--ink-3);opacity:.85}
 .trie .tn-root .tn-l{font:600 12px Inter,system-ui,sans-serif}
 .trie .tn-end{display:none}
 .trie .tn.end .tn-end{display:inline}
@@ -584,6 +585,7 @@ pre.snip .snl{display:block;min-height:1.6em;overflow-wrap:break-word}
 .lst-items{display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px;color:var(--ink-3)}
 .lst-none{font:italic 14px Inter,system-ui,sans-serif;color:var(--ink-3)}
 .chip{display:inline-block;font:600 13.5px 'JetBrains Mono',monospace;border-radius:999px;padding:2px 9px;border:1.5px solid}
+.chip.c-let{color:#7c3aed;border-color:#7c3aed;background:color-mix(in srgb,#7c3aed 8%,transparent)}
 .chip.c-cur{color:var(--cur);border-color:var(--cur);background:var(--cur-soft)}
 .chip.c-nxt{color:var(--nxt);border-color:var(--nxt);background:var(--nxt-soft)}
 .viz-res{font-weight:700;margin:8px 0 4px!important}

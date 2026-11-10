@@ -97,7 +97,8 @@
   }
   var T = buildTrie(WORDS);
   function nm(node) { return T.id.get(node); }
-  function said(id) { return id === "root" ? "the root" : "the " + id + " node"; }
+  function lbl(id) { return id === "root" ? "root" : id.slice(-1); }
+  function said(id) { return id === "root" ? "the root" : "the " + lbl(id) + " node"; }
 
   function svg(tag, attrs, parent) {
     var e = document.createElementNS(SVGNS, tag);
@@ -108,7 +109,7 @@
 
   function makeTrie(host, legend) {
     var s = svg("svg", { viewBox: "0 0 340 262", class: "trie", role: "img",
-      "aria-label": "A trie holding cat, car and dog. The root leads to c and d. The c node leads to ca, which leads to cat and car. The d node leads to do, which leads to dog." });
+      "aria-label": "A trie holding cat, car and dog. The root leads to the c node and the d node. The c node leads to the a node, which leads to the t node and the r node. The d node leads to the o node, which leads to the g node." });
     var edges = {}, nodes = {};
     Object.keys(POS).forEach(function (id) {
       if (id === "root") return;
@@ -116,10 +117,6 @@
       var a = POS[parent], b = POS[id];
       var g = svg("g", { class: "te" }, s);
       svg("line", { x1: a[0], y1: a[1], x2: b[0], y2: b[1] }, g);
-      var mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
-      var off = b[0] < a[0] ? -11 : b[0] > a[0] ? 11 : 12;
-      var t = svg("text", { x: mx + off, y: my + 5, class: "te-l" }, g);
-      t.textContent = id[id.length - 1];
       edges[id] = g;
     });
     Object.keys(POS).forEach(function (id) {
@@ -127,7 +124,12 @@
       var g = svg("g", { class: "tn" + (id === "root" ? " tn-root" : "") }, s);
       svg("circle", { cx: p[0], cy: p[1], r: 21 }, g);
       var t = svg("text", { x: p[0], y: p[1] + 5, class: "tn-l" }, g);
-      t.textContent = id;
+      t.textContent = lbl(id);
+      if (id !== "root" && id.length > 1) {
+        var left = id === "ca" || id === "cat";
+        var pt = svg("text", { x: p[0] + (left ? -27 : 27), y: p[1] - 2, class: "tn-p", "text-anchor": left ? "end" : "start" }, g);
+        pt.textContent = id;
+      }
       var e = svg("g", { class: "tn-end" }, g);
       svg("circle", { cx: p[0] + 17, cy: p[1] + 16, r: 9 }, e);
       var et = svg("text", { x: p[0] + 17, y: p[1] + 20 }, e);
@@ -222,7 +224,7 @@
     else {
       b.appendChild(document.createTextNode("["));
       ids.forEach(function (id, i) {
-        b.appendChild(el("span", "chip " + cls, id));
+        b.appendChild(el("span", "chip " + cls, lbl(id)));
         if (i < ids.length - 1) b.appendChild(document.createTextNode(","));
       });
       b.appendChild(document.createTextNode("]"));
@@ -360,6 +362,14 @@
       draw: function (state, s) {
         state.textContent = "";
         drawWord(state, v.word, s.li);
+        var at = Math.min(s.li, v.word.length - 1);
+        if (at < 0) state.appendChild(el("div", "lst lst-none", "The variable letter has not been set yet."));
+        else {
+          var lr = el("div", "lst");
+          lr.appendChild(el("code", "lst-name", "letter = "));
+          lr.appendChild(el("span", "chip c-let", "'" + v.word[at] + "'"));
+          state.appendChild(lr);
+        }
         state.appendChild(chips("current", s.cur, "c-cur"));
         state.appendChild(chips("next_nodes", s.nxt, "c-nxt"));
         if (s.result != null) state.appendChild(el("p", "viz-res " + (s.result ? "yes" : "no"), "search(\"" + v.word + "\") returns " + (s.result ? "True" : "False") + "."));

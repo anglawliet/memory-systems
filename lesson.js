@@ -346,7 +346,7 @@
       }
     }
     var hit = current.filter(function (n) { return "$" in n; });
-    out.push({ line: [14], li: word.length, cur: ids(current), nxt: ids(current), pic: { cur: ids(current), look: hit.length ? nm(hit[0]) : null }, result: hit.length > 0,
+    out.push({ line: hit.length ? [14, 15, 16] : [14, 15, 17], li: word.length, cur: ids(current), nxt: ids(current), pic: { cur: ids(current), look: hit.length ? nm(hit[0]) : null }, result: hit.length > 0,
       msg: "We've read every letter. current holds " + names(current) + ". " +
            (hit.length ? said(nm(hit[0])) .replace(/^t/, "T") + " has the '$' key, so a saved word ends there. We return True."
                        : (current.length === 1 ? "It doesn't" : "None of them") + " have the '$' key. These are only the start of longer words, so we return False.") });
@@ -422,7 +422,7 @@
     { q: "The letter is a normal letter. Where can each node go?", l: "21-22", why: "Only to the child for that letter, if the node has it. Otherwise this path ends." },
     { q: "Every node has taken its step. What now?", l: "23", why: "The new places become the current places. This happens after the inner loop finishes." },
     { q: "What if no places are left?", l: "24-25", why: "No saved word can match, so I return False right away." },
-    { q: "Every letter is read. Is the answer True?", l: "26", why: "Only if some remaining node has '$'. Otherwise the letters were only the start of a word." }
+    { q: "Every letter is read. Is the answer True?", l: "26-29", why: "Only if some remaining node has '$'. Otherwise the letters were only the start of a word." }
   ];
   $$(".gb", lesson).forEach(function (gbox) {
     var pre = $("pre.snip", gbox), ls = lines(pre);

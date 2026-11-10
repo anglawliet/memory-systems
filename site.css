@@ -552,7 +552,7 @@ pre.snip .snl{display:block;min-height:1.6em;overflow-wrap:break-word}
 .trie .tn.mark>circle{stroke:#7c3aed;stroke-width:3.5}
 .trie .tn-mark rect{fill:#7c3aed}
 .trie .tn-mark text{font:700 12px 'JetBrains Mono',monospace;fill:#fff;text-anchor:middle}
-.trie-key{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 14px;font-size:13.5px;color:var(--ink-2);margin:0 0 6px}
+.trie-key{display:grid;justify-content:center;gap:2px;font-size:13.5px;color:var(--ink-2);margin:0 0 6px}
 .tk i{display:inline-block;width:13px;height:13px;border-radius:50%;border:2.5px solid;vertical-align:-2px;margin-right:5px}
 .tk-cur i{border-color:var(--cur);background:var(--cur-soft)}
 .tk-nxt i,.tk-new i{border-color:var(--nxt);background:var(--nxt-soft)}

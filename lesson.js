@@ -42,7 +42,7 @@
           $$("button", row).forEach(function (x) { x.classList.remove("right", "wrong"); });
           b.classList.add(ok ? "right" : "wrong");
           row.classList.add("done");
-          why.textContent = (ok ? "Right. " : "Not quite. The answer is " + (row.dataset.ok === "T" ? "True" : "False") + ". ") + row.dataset.why;
+          why.textContent = (ok ? "That's right. " : "That's not quite right. The answer is " + (row.dataset.ok === "T" ? "True" : "False") + ". ") + row.dataset.why;
           var done = rows.filter(function (r) { return r.classList.contains("done"); });
           if (done.length === rows.length) {
             var right = rows.filter(function (r) { return $("button.right", r); }).length;
@@ -214,10 +214,11 @@
   }
 
   function chips(label, ids, cls) {
+    if (!ids) return el("div", "lst lst-none", "The list " + label + " has not been created yet.");
     var row = el("div", "lst");
     row.appendChild(el("code", "lst-name", label + " = "));
     var b = el("span", "lst-items");
-    if (!ids) { b.appendChild(el("span", "lst-none", "not created yet")); }
+    if (!ids) { b.appendChild(el("span", "lst-none", "It has not been created yet.")); }
     else {
       b.appendChild(document.createTextNode("["));
       ids.forEach(function (id, i) {
@@ -355,13 +356,13 @@
   var searchViz = null;
   $$('.viz[data-mode="search"]', lesson).forEach(function (box) {
     var v = stepper(box, {
-      legend: [["cur", "in current"], ["nxt", "in next_nodes"], ["look", "being checked"], ["dead", "path ended"], ["end", "a saved word ends here"]],
+      legend: [["cur", "A blue node is in current."], ["nxt", "A green node is in next_nodes."], ["look", "A thick ring marks the node being checked."], ["dead", "A red dashed ring marks a path that ended."], ["end", "A green $ marks the end of a saved word."]],
       draw: function (state, s) {
         state.textContent = "";
         drawWord(state, v.word, s.li);
         state.appendChild(chips("current", s.cur, "c-cur"));
         state.appendChild(chips("next_nodes", s.nxt, "c-nxt"));
-        if (s.result != null) state.appendChild(el("p", "viz-res " + (s.result ? "yes" : "no"), "search(\"" + v.word + "\") returns " + (s.result ? "True" : "False")));
+        if (s.result != null) state.appendChild(el("p", "viz-res " + (s.result ? "yes" : "no"), "search(\"" + v.word + "\") returns " + (s.result ? "True" : "False") + "."));
       }
     });
     var picks = el("div", "picks");
@@ -523,11 +524,11 @@
   }
   function runPython(code, status) {
     if (!worker) {
-      status.textContent = "Loading Python. The first time takes a few seconds.";
+      status.textContent = "Python is loading, and the first time takes a few seconds.";
       startWorker();
     }
     return ready.then(function () {
-      status.textContent = "Running the tests...";
+      status.textContent = "The tests are running.";
       return new Promise(function (res, rej) {
         var timer = setTimeout(function () {
           worker.terminate(); worker = null;
@@ -594,7 +595,7 @@
       return;
     }
     out.appendChild(el("p", "ro-sum", pass + " of " + all + " tests pass."));
-    out.appendChild(el("p", "ro-hint", "Something to think about: " + hintFor(res)));
+    out.appendChild(el("p", "ro-hint", "Here is something to think about. " + hintFor(res)));
     var ul = el("ul", "ro-list");
     res.tests.filter(function (r) { return !r.ok; }).slice(0, 4).forEach(function (r) {
       var t = TESTS.filter(function (x) { return x.id === r.id; })[0];
@@ -627,7 +628,7 @@
         out.textContent = "";
         if (err.message === "slow") {
           out.appendChild(el("p", "ro-bad", "Your code ran for more than 6 seconds, so I stopped it."));
-          out.appendChild(el("p", "ro-hint", "Something to think about: a loop may never end. Do you add to a list while looping over that same list? current and next_nodes have to be two different lists."));
+          out.appendChild(el("p", "ro-hint", "Here is something to think about. A loop may never end. Do you add to a list while looping over that same list? current and next_nodes have to be two different lists."));
         } else {
           out.appendChild(el("p", "ro-bad", "Python could not start. Check your internet connection and try again. (" + err.message + ")"));
           worker = null;
@@ -682,7 +683,7 @@
     wireRun(box, function () {
       var empty = blanks.filter(function (b) { return !$("textarea", b).value.trim(); });
       if (empty.length) {
-        $(".run-status", box).textContent = "Fill in every gap first. Press Hint if you are stuck.";
+        $(".run-status", box).textContent = "Please fill in every gap first, and press Hint if you are stuck.";
         return null;
       }
       return parts.map(function (p) {

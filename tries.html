@@ -96,7 +96,7 @@ td{padding:10px 12px;border:1px solid var(--border)}
 <section class="lsn-part lsn-easy">
 <span class="lsn-tag">Part 1 of 7</span>
 <h4>Save words, then search for them, where a dot can be any one letter.</h4>
-<p><code>addWord(word)</code> saves a word. <code>search(word)</code> returns <code>True</code> if a saved word matches. A dot matches exactly one letter, never zero and never two. We save <b>cat</b>, <b>car</b> and <b>dog</b>. Guess the answer to each of these four searches.</p>
+<p><code>addWord(word)</code> saves a word. <code>search(word)</code> returns <code>True</code> if a saved word matches. A dot matches exactly one letter, never zero and never two. We save <b>cat</b>, <b>car</b> and <b>dog</b>, and we use these three words for the whole lesson. Guess the answer to each of these four searches.</p>
 <div class="pr">
 <div class="pr-row" data-ok="T" data-why="The dot can be &quot;a&quot;, which makes &quot;cat&quot;."><code>search("c.t")</code><span class="pr-btns"><button type="button">True</button><button type="button">False</button></span></div>
 <div class="pr-row" data-ok="T" data-why="The two dots can be &quot;at&quot; or &quot;ar&quot;. One match is enough."><code>search("c..")</code><span class="pr-btns"><button type="button">True</button><button type="button">False</button></span></div>
@@ -107,85 +107,98 @@ td{padding:10px 12px;border:1px solid var(--border)}
 
 <section class="lsn-part lsn-easy">
 <span class="lsn-tag">Part 2 of 7</span>
-<h4>Storing words is exactly the same as in Implement Trie.</h4>
+<h4>Saving words works the same way as in Implement Trie.</h4>
 <div class="lt" data-mode="static"></div>
-<p>Each circle is a dictionary, which we call a node. Its keys are the next letters. Each circle shows the letter that leads into it, and we call the node by that letter. So the <b>a node</b> is the one you reach by following c, then a. The grey text beside a circle shows the whole path from the root, so the grey "ca" beside the a node means the path c, a. The green <span class="dollar">$</span> means the node has the key <code>'$'</code>, which marks that a saved word ends there.</p>
+<p>Each circle is a dictionary, which we call a node. The letter in a circle is the key that leads into it, so we call that circle the c node, the a node, the t node, and so on. The grey text beside a circle shows the whole path from the root. A green <span class="dollar">$</span> means the node has the key <code>'$'</code>, which marks the end of a saved word.</p>
 <pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">def</span> <span class="k-def">addWord</span>(<wbr><span class="k-self">self</span>, word):</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  node = <span class="k-self">self</span>.root</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">for</span> letter <span class="k-kw">in</span> word:</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-kw">if</span> letter <span class="k-kw">not</span> <span class="k-kw">in</span> node:</span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      node[letter] = {}</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    node = node[letter]</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  node[<span class="k-str">&#x27;$&#x27;</span>] = <span class="k-const">True</span></span></pre>
-<p>After we add cat, car and dog, <code>self.root</code> is one nested dictionary. It is the same thing as the picture above, written as Python.</p>
+<p>After we add cat, car and dog, <code>self.root</code> is this nested dictionary. It is the picture above, written as Python.</p>
 <pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-self">self</span>.root = {</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-str">&#x27;c&#x27;</span>: {</span><span class="snl" style="padding-left:10ch;text-indent:-10ch">        <span class="k-str">&#x27;a&#x27;</span>: {</span><span class="snl" style="padding-left:14ch;text-indent:-14ch">            <span class="k-str">&#x27;t&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>},</span><span class="snl" style="padding-left:14ch;text-indent:-14ch">            <span class="k-str">&#x27;r&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}</span><span class="snl" style="padding-left:10ch;text-indent:-10ch">        }</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    },</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-str">&#x27;d&#x27;</span>: {</span><span class="snl" style="padding-left:10ch;text-indent:-10ch">        <span class="k-str">&#x27;o&#x27;</span>: {</span><span class="snl" style="padding-left:14ch;text-indent:-14ch">            <span class="k-str">&#x27;g&#x27;</span>: {<span class="k-str">&#x27;$&#x27;</span>: <span class="k-const">True</span>}</span><span class="snl" style="padding-left:10ch;text-indent:-10ch">        }</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    }</span><span class="snl" style="padding-left:2ch;text-indent:-2ch">}</span></pre>
-<p>Each <code>{...}</code> is one node. The root has two keys, <code>'c'</code> and <code>'d'</code>. The a node is <code>self.root['c']['a']</code>, and it has two keys, <code>'t'</code> and <code>'r'</code>, because cat and car share the path c, a. The t node is <code>{'$': True}</code>, because cat ends there and no longer word continues from it.</p>
+<p>Each <code>{...}</code> is one node. The a node is <code>self.root['c']['a']</code>. The a node has two keys, <code>'t'</code> and <code>'r'</code>, because cat and car share the path c, a. The t node is <code>{'$': True}</code>, because cat ends there.</p>
 </section>
 
 <section class="lsn-part lsn-hard">
 <span class="lsn-tag">Part 3 of 7</span>
-<h4>A dot can open more than one path, and one node can only remember one of them.</h4>
-<p>Let's start with the plain search from Implement Trie, which keeps one node. Each step shows the lines that run in blue, and the lines that are skipped are greyed out. The comments under the lines say why. Step through "cat" first, then try ".og".</p>
+<h4>The plain search follows one node, and a dot breaks it.</h4>
+<p>We start with the search from Implement Trie. It keeps one variable, <code>node</code>, and moves it down one letter at a time. In each step, the lines that run are blue, and the lines that are skipped are greyed out. The comments under the lines say why. Step through "cat" first, and then try ".og".</p>
 <div class="viz" data-mode="plain">
 <div class="viz-code"><pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">def</span> <span class="k-def">search</span>(<wbr><span class="k-self">self</span>, word):</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  node = <span class="k-self">self</span>.root</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">for</span> letter <span class="k-kw">in</span> word:</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-kw">if</span> letter <span class="k-kw">not</span> <span class="k-kw">in</span> node:</span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      <span class="k-kw">return</span> <span class="k-const">False</span></span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    node = node[letter]</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">return</span> <span class="k-str">&#x27;$&#x27;</span> <span class="k-kw">in</span> node</span></pre></div>
 </div>
-<p>For ".og", the plain search looks for a real key called '.', so it gives up at the root. The dot should mean "c or d", and the root has both keys.</p>
+<p>In ".og", the dot should match either 'c' or 'd'. The plain search looks for a real key called '.', so it gives up at the root.</p>
 <div class="lq">
-<p class="lq-q">The variable <code>node</code> holds one dictionary. Which one should it move into?</p>
+<p class="lq-q">At the dot, <code>node</code> can hold only one dictionary. Which one should it move into?</p>
 <button type="button" class="lq-opt" data-why="That choice gives the wrong answer. The c node has no &quot;o&quot;, so the search returns False. But &quot;dog&quot; matches &quot;.og&quot;.">It should move into the c node.</button>
 <button type="button" class="lq-opt" data-why="That works for &quot;.og&quot;, but &quot;.at&quot; needs the c node. At the dot, the code can't know which choice the later letters will need.">It should move into the d node.</button>
 <button type="button" class="lq-opt" data-ok="1" data-why="That's right. We don't know yet which path will work, so we keep both and let the later letters decide.">We can't know yet, so we keep both.</button>
 <p class="lq-why"></p>
 </div>
-<div class="lsn-key">One possible path means I only need one node. Several possible paths mean I need to remember several nodes.</div>
-<p>So instead of one variable, I keep a list called <code>current</code>. It holds every node where the search could be right now. Before any letter, that is only the root.</p>
-<pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch">current = [<span class="k-self">self</span>.root]</span></pre>
-<p>It's a list even with one node, so the same code works for one place or many.</p>
+<div class="lsn-key">One possible path needs one node. Several possible paths need a list of nodes.</div>
 </section>
 
 <section class="lsn-part lsn-hard">
 <span class="lsn-tag">Part 4 of 7</span>
-<h4>For each letter, every node in current takes one step, and the results become the new current.</h4>
+<h4>Four changes turn the plain search into the new search.</h4>
+<p>The new search replaces the one variable <code>node</code> with a list called <code>current</code>. The list <code>current</code> holds every node the search could be at right now. Every part of the plain search has a matching part in the new search, so we change them one at a time.</p>
 
-<p class="lsn-step">1. Where can I be after this letter?</p>
-<p>That's a new group of nodes, so I collect them in a second list, <code>next_nodes</code>. The list starts empty at the start of each turn of the letter loop, <code>for letter in word:</code>.</p>
-<pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">for</span> letter <span class="k-kw">in</span> word:</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  next_nodes = []</span></pre>
+<p class="lsn-step">1. The search starts with a list that holds the root.</p>
+<div class="chg">
+<div class="chg-c"><p class="chg-l">The plain search</p><pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch">node = <span class="k-self">self</span>.root</span></pre></div>
+<div class="chg-c"><p class="chg-l">The new search</p><pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch">current = [<span class="k-self">self</span>.root]</span></pre></div>
+</div>
+<p>Before any letter, the search can only be at the root. We still use a list, so the same code works later when there are several nodes.</p>
+
+<p class="lsn-step">2. Every node in current moves one letter forward.</p>
+<div class="chg">
+<div class="chg-c"><p class="chg-l">The plain search</p><pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch">node = node[letter]</span></pre></div>
+<div class="chg-c"><p class="chg-l">The new search</p><pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch">next_nodes = []</span><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">for</span> node <span class="k-kw">in</span> current:</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  ...</span><span class="snl" style="padding-left:2ch;text-indent:-2ch">current = next_nodes</span></pre></div>
+</div>
+<p>This is the hard change. The plain search moves one node. The new search moves every node in <code>current</code>, and it collects where they land in a second list, <code>next_nodes</code>. When every node has moved, <code>current</code> becomes <code>next_nodes</code>.</p>
 <div class="lq">
-<p class="lq-q">Why create <code>next_nodes = []</code> inside the letter loop, and not once before it?</p>
-<button type="button" class="lq-opt" data-ok="1" data-why="That's right. In &quot;.og&quot;, the dot gives [c node, d node]. Without emptying the list, those two would still be there after &quot;o&quot;, mixed in with the o node, even though they are where we were one letter ago.">The list must hold only the places after this letter.</button>
-<button type="button" class="lq-opt" data-why="That's not quite right. Creating a list is very cheap. The reason is about what the list contains.">Creating it inside the loop is faster.</button>
+<p class="lq-q">Why does <code>next_nodes = []</code> run again for every letter, and not once before the letter loop?</p>
+<button type="button" class="lq-opt" data-ok="1" data-why="That's right. In &quot;.og&quot;, the dot gives [c node, d node]. Without emptying the list, those two would still be there after &quot;o&quot;, mixed in with the o node, even though they are where we were one letter ago.">The list must hold only the nodes after this letter.</button>
+<button type="button" class="lq-opt" data-why="That's not quite right. Creating a list is very cheap. The reason is about what the list contains.">Creating it again is faster.</button>
 <p class="lq-why"></p>
 </div>
-
-<p class="lsn-step">2. Every place I might be takes the step.</p>
-<p>That is why there are loops inside loops. Each loop gets a name that comes from what it goes through. The letter loop goes through the letters, the node loop goes through the nodes, and the dot loop runs only for a dot. Here they are for the second letter of "..t", when current holds the c node and the d node.</p>
+<p>The new search has three loops, one inside the other. Each loop is named after what it goes through. Here they are at the second letter of "..t", when <code>current</code> holds the c node and the d node.</p>
 <div class="loops">
 <div class="lp lp1"><span class="lp-n">The letter loop</span><span class="lp-h"><code>for letter in word:</code></span><span class="lp-d">The letter loop reads one letter at a time, and right now the letter is the second dot.</span>
-<div class="lp lp2"><span class="lp-n">The node loop</span><span class="lp-h"><code>for node in current:</code></span><span class="lp-d">The node loop visits every place we might be, first the c node and then the d node.</span>
+<div class="lp lp2"><span class="lp-n">The node loop</span><span class="lp-h"><code>for node in current:</code></span><span class="lp-d">The node loop visits every node in current, first the c node and then the d node.</span>
 <div class="lp lp3"><span class="lp-n">The dot loop</span><span class="lp-h"><code>for key in node:</code></span><span class="lp-d">The dot loop runs only for a dot, and it visits every letter below the node. The c node gives "a", and the d node gives "o".</span></div>
 </div></div>
 </div>
-<p>A normal letter adds only its own child. If the node doesn't have that letter, it adds nothing, and that path ends. A dot adds every child, except the <code>'$'</code> key.</p>
+<p>Inside the node loop, there are two cases. A normal letter adds only the matching child, and if the node has no matching child, that path ends. A dot adds every child, except the <code>'$'</code> key.</p>
 <div class="think">
-<p class="think-q">Try writing the inside of the node loop, <code>for node in current:</code>, before you look.</p>
+<p class="think-q">Try writing the inside of the node loop before you look.</p>
 <textarea class="think-in" rows="5" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="if letter == '.':"></textarea>
 <button type="button" class="lbtn ghost think-btn">Show the lines</button>
 <div class="think-a"><pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">for</span> node <span class="k-kw">in</span> current:</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">if</span> letter == <span class="k-str">&#x27;.&#x27;</span>:</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-kw">for</span> key <span class="k-kw">in</span> node:</span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      <span class="k-kw">if</span> key != <span class="k-str">&#x27;$&#x27;</span>:</span><span class="snl" style="padding-left:10ch;text-indent:-10ch">        next_nodes.append(<wbr>node[key])</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">elif</span> letter <span class="k-kw">in</span> node:</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    next_nodes.append(<wbr>node[letter])</span></pre></div>
 </div>
 <div class="lq">
-<p class="lq-q">Search "cat.". At the dot, current is [t node], and the t node is <code>{'$': True}</code>. What happens if we don't skip <code>'$'</code>?</p>
+<p class="lq-q">Search "cat.". At the dot, current is [t node], and the t node is <code>{'$': True}</code>. What happens if the dot loop doesn't skip <code>'$'</code>?</p>
 <button type="button" class="lq-opt" data-why="That's not quite right. The problem is that the value under '$' is True, not a dictionary.">Nothing goes wrong.</button>
-<button type="button" class="lq-opt" data-ok="1" data-why="That's right. next_nodes becomes [True], and the final check '$' in True crashes with a TypeError. With the skip, next_nodes is empty and the answer is False, which is correct.">True gets added as a place, and the code crashes.</button>
+<button type="button" class="lq-opt" data-ok="1" data-why="That's right. next_nodes becomes [True], and the final check '$' in True crashes with a TypeError. With the skip, next_nodes is empty and the answer is False, which is correct.">True gets added as a node, and the code crashes.</button>
 <p class="lq-why"></p>
 </div>
+<p><code>current = next_nodes</code> runs after the node loop ends, because every node in <code>current</code> has to move first.</p>
 
-<p class="lsn-step">3. Every node has taken its step, so the search moves on.</p>
-<p>The new places become the current places. If none are left, nothing can match, so we stop. These lines go after the node loop ends. Inside the node loop, they would run after checking only the first node. In ".og" at "o", the c node fails first, and we would return <code>False</code> before checking the d node.</p>
-<pre class="snip"><span class="snl" style="padding-left:4ch;text-indent:-4ch">  current = next_nodes</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">if</span> <span class="k-kw">not</span> current:</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-kw">return</span> <span class="k-const">False</span></span></pre>
+<p class="lsn-step">3. The search gives up when no node is left.</p>
+<div class="chg">
+<div class="chg-c"><p class="chg-l">The plain search</p><pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">if</span> letter <span class="k-kw">not</span> <span class="k-kw">in</span> node:</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">return</span> <span class="k-const">False</span></span></pre></div>
+<div class="chg-c"><p class="chg-l">The new search</p><pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">if</span> <span class="k-kw">not</span> current:</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">return</span> <span class="k-const">False</span></span></pre></div>
+</div>
+<p>The plain search gives up when its one node has no matching letter. The new search gives up only when every path has ended, which means <code>current</code> is empty.</p>
 
-<p class="lsn-step">4. Every letter has been read, so the search returns the answer.</p>
-<p>I check each remaining node one at a time. As soon as one of them has <code>'$'</code>, a saved word ends there, so I return <code>True</code>. If the loop finishes and no node had <code>'$'</code>, I return <code>False</code>.</p>
-<pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">for</span> node <span class="k-kw">in</span> current:</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">if</span> <span class="k-str">&#x27;$&#x27;</span> <span class="k-kw">in</span> node:</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-kw">return</span> <span class="k-const">True</span></span><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">return</span> <span class="k-const">False</span></span></pre>
+<p class="lsn-step">4. At the end, the search checks for '$'.</p>
+<div class="chg">
+<div class="chg-c"><p class="chg-l">The plain search</p><pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">return</span> <span class="k-str">&#x27;$&#x27;</span> <span class="k-kw">in</span> node</span></pre></div>
+<div class="chg-c"><p class="chg-l">The new search</p><pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">for</span> node <span class="k-kw">in</span> current:</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">if</span> <span class="k-str">&#x27;$&#x27;</span> <span class="k-kw">in</span> node:</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-kw">return</span> <span class="k-const">True</span></span><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">return</span> <span class="k-const">False</span></span></pre></div>
+</div>
+<p>The plain search checks its one node. The new search checks each node in <code>current</code>. As soon as one node has <code>'$'</code>, a saved word ends there, so the search returns <code>True</code>. If no node has <code>'$'</code>, the search returns <code>False</code>.</p>
 </section>
 
 <section class="lsn-part lsn-hard">
 <span class="lsn-tag">Part 5 of 7</span>
-<h4>Step through a search and see which lines run, which lines are skipped, and why.</h4>
-<p>Try "..t" first, because one path survives and the other one ends. The blue lines run in this step, and the greyed out lines are skipped. The comments under the lines say why.</p>
+<h4>Step through the new search and watch every line.</h4>
+<p>Here are the four changes put together. Try "..t" first, because one path survives and the other one ends. As before, the blue lines run, the greyed out lines are skipped, and the comments say why.</p>
 <div class="viz" data-mode="search">
 <div class="viz-code"><pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">def</span> <span class="k-def">search</span>(<wbr><span class="k-self">self</span>, word):</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  current = [<span class="k-self">self</span>.root]</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">for</span> letter <span class="k-kw">in</span> word:</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    next_nodes = []</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-kw">for</span> node <span class="k-kw">in</span> current:</span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      <span class="k-kw">if</span> letter == <span class="k-str">&#x27;.&#x27;</span>:</span><span class="snl" style="padding-left:10ch;text-indent:-10ch">        <span class="k-kw">for</span> key <span class="k-kw">in</span> node:</span><span class="snl" style="padding-left:12ch;text-indent:-12ch">          <span class="k-kw">if</span> key != <span class="k-str">&#x27;$&#x27;</span>:</span><span class="snl" style="padding-left:14ch;text-indent:-14ch">            next_nodes.append(<wbr>node[key])</span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      <span class="k-kw">elif</span> letter <span class="k-kw">in</span> node:</span><span class="snl" style="padding-left:10ch;text-indent:-10ch">        next_nodes.append(<wbr>node[letter])</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    current = next_nodes</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-kw">if</span> <span class="k-kw">not</span> current:</span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      <span class="k-kw">return</span> <span class="k-const">False</span></span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">for</span> node <span class="k-kw">in</span> current:</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-kw">if</span> <span class="k-str">&#x27;$&#x27;</span> <span class="k-kw">in</span> node:</span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      <span class="k-kw">return</span> <span class="k-const">True</span></span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">return</span> <span class="k-const">False</span></span></pre></div>
 </div>
@@ -193,8 +206,8 @@ td{padding:10px 12px;border:1px solid var(--border)}
 
 <section class="lsn-part">
 <span class="lsn-tag">Part 6 of 7</span>
-<h4>Remember the steps of search, not the lines.</h4>
-<div class="ck-b">Put the root in <code>current</code>. For every letter, start an empty <code>next_nodes</code> and let every node in <code>current</code> add its next places. A dot adds every child, and a normal letter adds the matching child. Then replace <code>current</code>, and stop if it's empty. At the end, check for <code>'$'</code>.</div>
+<h4>Write the search yourself.</h4>
+<div class="ck-b">Remember the four changes, not the lines. The search starts with <code>current = [self.root]</code>. For each letter, every node in <code>current</code> adds its next nodes to <code>next_nodes</code>, and then <code>current</code> becomes <code>next_nodes</code>. The search returns <code>False</code> when <code>current</code> is empty. At the end, the search returns <code>True</code> if a node in <code>current</code> has <code>'$'</code>.</div>
 <div class="lv-tabs" role="tablist">
 <button type="button" class="on" data-lv="2">Fill the gaps</button><button type="button" data-lv="3">From blank</button>
 </div>
@@ -234,11 +247,11 @@ return False"><textarea rows="4" spellcheck="false" autocapitalize="off" autocom
 <h4>In an interview, explain it like this.</h4>
 <p>Tap a sentence to see its code.</p>
 <div class="say">
-<button type="button" class="say-s" data-l="0-10">I'll store the words in a trie, so words that start the same way share a path, and I mark each word's end with a '$' key.</button>
-<button type="button" class="say-s" data-l="17-22">The tricky part is the dot. A normal letter gives me one path, but a dot can give me several.</button>
-<button type="button" class="say-s" data-l="13-22">So I keep a list, current, of every node where the search could be, and for each letter I build next_nodes from it.</button>
+<button type="button" class="say-s" data-l="0-10">I'll store the words in a trie, so words that start the same way share a path, and I mark the end of each word with a '$' key.</button>
+<button type="button" class="say-s" data-l="17-22">A normal trie search follows one node, but a dot can match any letter, so one node isn't enough.</button>
+<button type="button" class="say-s" data-l="13-16">Instead, I keep a list called current with every node the search could be at, and for each letter I build next_nodes from it.</button>
 <button type="button" class="say-s" data-l="23-25">Then current becomes next_nodes, and if it's empty, nothing matches, so I return False.</button>
-<button type="button" class="say-s" data-l="26-29">At the end, I check each remaining node, and I return True if one of them has '$', because a prefix alone isn't a saved word.</button>
+<button type="button" class="say-s" data-l="26-29">At the end, I check each node in current, and I return True if one of them has '$', because a prefix alone isn't a saved word.</button>
 </div>
 <div class="say-code"><pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">class</span> <span class="k-def">WordDictionary</span>:</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">def</span> <span class="k-def">__init__</span>(<wbr><span class="k-self">self</span>):</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-self">self</span>.root = {}</span><span class="snl" style="padding-left:2ch;text-indent:-2ch"></span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">def</span> <span class="k-def">addWord</span>(<wbr><span class="k-self">self</span>, word):</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    node = <span class="k-self">self</span>.root</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-kw">for</span> letter <span class="k-kw">in</span> word:</span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      <span class="k-kw">if</span> letter <span class="k-kw">not</span> <span class="k-kw">in</span> node:</span><span class="snl" style="padding-left:10ch;text-indent:-10ch">        node[letter] = {}</span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      node = node[letter]</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    node[<span class="k-str">&#x27;$&#x27;</span>] = <span class="k-const">True</span></span><span class="snl" style="padding-left:2ch;text-indent:-2ch"></span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">def</span> <span class="k-def">search</span>(<wbr><span class="k-self">self</span>, word):</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    current = [<span class="k-self">self</span>.root]</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-kw">for</span> letter <span class="k-kw">in</span> word:</span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      next_nodes = []</span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      <span class="k-kw">for</span> node <span class="k-kw">in</span> current:</span><span class="snl" style="padding-left:10ch;text-indent:-10ch">        <span class="k-kw">if</span> letter == <span class="k-str">&#x27;.&#x27;</span>:</span><span class="snl" style="padding-left:12ch;text-indent:-12ch">          <span class="k-kw">for</span> key <span class="k-kw">in</span> node:</span><span class="snl" style="padding-left:14ch;text-indent:-14ch">            <span class="k-kw">if</span> key != <span class="k-str">&#x27;$&#x27;</span>:</span><span class="snl" style="padding-left:16ch;text-indent:-16ch">              next_nodes.append(<wbr>node[key])</span><span class="snl" style="padding-left:10ch;text-indent:-10ch">        <span class="k-kw">elif</span> letter <span class="k-kw">in</span> node:</span><span class="snl" style="padding-left:12ch;text-indent:-12ch">          next_nodes.append(<wbr>node[letter])</span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      current = next_nodes</span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      <span class="k-kw">if</span> <span class="k-kw">not</span> current:</span><span class="snl" style="padding-left:10ch;text-indent:-10ch">        <span class="k-kw">return</span> <span class="k-const">False</span></span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-kw">for</span> node <span class="k-kw">in</span> current:</span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      <span class="k-kw">if</span> <span class="k-str">&#x27;$&#x27;</span> <span class="k-kw">in</span> node:</span><span class="snl" style="padding-left:10ch;text-indent:-10ch">        <span class="k-kw">return</span> <span class="k-const">True</span></span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-kw">return</span> <span class="k-const">False</span></span></pre></div>
 <details class="cx"><summary>How fast is this solution?</summary>

@@ -475,6 +475,11 @@ pre.snip .snl{display:block;min-height:1.6em;overflow-wrap:break-word}
 .lsn-tag{display:inline-block;font:700 12px Inter,system-ui,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-strong);margin-bottom:4px}
 .lsn-part h4{margin:0 0 12px;font-size:19px;line-height:1.35;color:var(--ink)}
 .lsn-step{font-weight:650;margin:20px 0 6px!important;color:var(--ink)}
+.chg{display:grid;gap:8px;margin:8px 0 10px}
+@media (min-width:700px){.chg{grid-template-columns:1fr 1fr;align-items:start}}
+.chg-c pre.snip{margin:0!important}
+.chg-l{margin:0 0 4px!important;font-size:13.5px;font-weight:650;color:var(--ink-3)}
+.chg-c:last-child .chg-l{color:var(--accent-strong)}
 .lsn-key{border-left:4px solid var(--accent-strong);background:var(--accent-soft);border-radius:8px;padding:12px 14px;margin:16px 0;font-weight:650;font-size:17px}
 .lsn .dollar{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--ok);color:#fff;font:700 12px 'JetBrains Mono',monospace;vertical-align:1px}
 .lsn .lbtn{font:650 15px Inter,system-ui,sans-serif;border-radius:10px;padding:9px 16px;min-height:42px;cursor:pointer;border:1px solid var(--accent-strong);background:var(--accent-strong);color:#fff}

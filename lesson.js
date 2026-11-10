@@ -420,7 +420,7 @@
     { q: "Which places have to take this step?", l: "16", why: "Every node in current, because I don't know yet which path will work." },
     { q: "The letter is a dot. Where can each node go?", l: "17-20", why: "To every child. I skip '$', because it marks a word end and isn't a letter." },
     { q: "The letter is a normal letter. Where can each node go?", l: "21-22", why: "Only to the child for that letter, if the node has it. Otherwise this path ends." },
-    { q: "Every node has taken its step. What now?", l: "23", why: "The new places become the current places. This happens after the inner loop finishes." },
+    { q: "Every node has taken its step. What now?", l: "23", why: "The new places become the current places. This happens after the node loop finishes." },
     { q: "What if no places are left?", l: "24-25", why: "No saved word can match, so I return False right away." },
     { q: "Every letter is read. Is the answer True?", l: "26-29", why: "Only if some remaining node has '$'. Otherwise the letters were only the start of a word." }
   ];

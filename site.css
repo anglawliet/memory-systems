@@ -519,6 +519,8 @@ pre.snip .snl{display:block;min-height:1.6em;overflow-wrap:break-word}
 /* nested loops picture */
 .loops{margin:8px 0 14px}
 .lp{border:2px solid;border-radius:12px;padding:10px 12px 12px;margin-top:8px}
+.lp-n{display:block;font-weight:700;font-size:15px;margin-bottom:2px}
+.lp1>.lp-n{color:#7c3aed}.lp2>.lp-n{color:var(--cur)}.lp3>.lp-n{color:var(--nxt)}
 .lp-h{display:block}
 .lp-d{display:block;font-size:15px;color:var(--ink-2);margin-top:2px}
 .lp1{border-color:#7c3aed;background:color-mix(in srgb,#7c3aed 6%,transparent)}

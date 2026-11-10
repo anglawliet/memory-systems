@@ -136,7 +136,7 @@ td{padding:10px 12px;border:1px solid var(--border)}
 <h4>For each letter, every node in current takes one step, and the results become the new current.</h4>
 
 <p class="lsn-step">1. Where can I be after this letter?</p>
-<p>That's a new group of nodes, so I collect them in a second list, <code>next_nodes</code>. It starts empty for every letter.</p>
+<p>That's a new group of nodes, so I collect them in a second list, <code>next_nodes</code>. The list starts empty at the start of each turn of the letter loop, <code>for letter in word:</code>.</p>
 <pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">for</span> letter <span class="k-kw">in</span> word:</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  next_nodes = []</span></pre>
 <div class="lq">
 <p class="lq-q">Why create <code>next_nodes = []</code> inside the letter loop, and not once before it?</p>
@@ -146,16 +146,16 @@ td{padding:10px 12px;border:1px solid var(--border)}
 </div>
 
 <p class="lsn-step">2. Every place I might be takes the step.</p>
-<p>That is why there are loops inside loops. Here they are for the second letter of "..t", when current holds the c node and the d node.</p>
+<p>That is why there are loops inside loops. Each loop gets a name that comes from what it goes through. The letter loop goes through the letters, the node loop goes through the nodes, and the dot loop runs only for a dot. Here they are for the second letter of "..t", when current holds the c node and the d node.</p>
 <div class="loops">
-<div class="lp lp1"><span class="lp-h"><code>for letter in word:</code></span><span class="lp-d">This loop reads one letter at a time, and right now the letter is the second dot.</span>
-<div class="lp lp2"><span class="lp-h"><code>for node in current:</code></span><span class="lp-d">This loop visits every place we might be, first the c node and then the d node.</span>
-<div class="lp lp3"><span class="lp-h"><code>for key in node:</code></span><span class="lp-d">This loop runs only for a dot, and it visits every letter below the node. The c node gives "a", and the d node gives "o".</span></div>
+<div class="lp lp1"><span class="lp-n">The letter loop</span><span class="lp-h"><code>for letter in word:</code></span><span class="lp-d">The letter loop reads one letter at a time, and right now the letter is the second dot.</span>
+<div class="lp lp2"><span class="lp-n">The node loop</span><span class="lp-h"><code>for node in current:</code></span><span class="lp-d">The node loop visits every place we might be, first the c node and then the d node.</span>
+<div class="lp lp3"><span class="lp-n">The dot loop</span><span class="lp-h"><code>for key in node:</code></span><span class="lp-d">The dot loop runs only for a dot, and it visits every letter below the node. The c node gives "a", and the d node gives "o".</span></div>
 </div></div>
 </div>
 <p>A normal letter adds only its own child. If the node doesn't have that letter, it adds nothing, and that path ends. A dot adds every child, except the <code>'$'</code> key.</p>
 <div class="think">
-<p class="think-q">Try writing the inside of <code>for node in current:</code> before you look.</p>
+<p class="think-q">Try writing the inside of the node loop, <code>for node in current:</code>, before you look.</p>
 <textarea class="think-in" rows="5" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="if letter == '.':"></textarea>
 <button type="button" class="lbtn ghost think-btn">Show the lines</button>
 <div class="think-a"><pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">for</span> node <span class="k-kw">in</span> current:</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">if</span> letter == <span class="k-str">&#x27;.&#x27;</span>:</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-kw">for</span> key <span class="k-kw">in</span> node:</span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      <span class="k-kw">if</span> key != <span class="k-str">&#x27;$&#x27;</span>:</span><span class="snl" style="padding-left:10ch;text-indent:-10ch">        next_nodes.append(<wbr>node[key])</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">elif</span> letter <span class="k-kw">in</span> node:</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    next_nodes.append(<wbr>node[letter])</span></pre></div>
@@ -168,7 +168,7 @@ td{padding:10px 12px;border:1px solid var(--border)}
 </div>
 
 <p class="lsn-step">3. Every node has taken its step, so the search moves on.</p>
-<p>The new places become the current places. If none are left, nothing can match, so we stop. These lines go after the inner loop. Inside it, they would run after checking only the first node. In ".og" at "o", the c node fails first, and we would return <code>False</code> before checking the d node.</p>
+<p>The new places become the current places. If none are left, nothing can match, so we stop. These lines go after the node loop ends. Inside the node loop, they would run after checking only the first node. In ".og" at "o", the c node fails first, and we would return <code>False</code> before checking the d node.</p>
 <pre class="snip"><span class="snl" style="padding-left:4ch;text-indent:-4ch">  current = next_nodes</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">if</span> <span class="k-kw">not</span> current:</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-kw">return</span> <span class="k-const">False</span></span></pre>
 
 <p class="lsn-step">4. Every letter has been read, so the search returns the answer.</p>

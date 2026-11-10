@@ -571,6 +571,9 @@ pre.snip .snl{display:block;min-height:1.6em;overflow-wrap:break-word}
 .viz-msg{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:5.2em;margin:4px 0 8px!important;font-size:15.5px}
 .viz-code pre.snip{margin:0 0 8px!important;font-size:12.5px!important}
 .lsn pre.snip .snl{transition:background .2s;border-radius:3px}
+.lsn pre.snip .snl.skip{opacity:.35}
+.lsn pre.snip .flow-note{display:block;font:italic 500 12.5px Inter,system-ui,sans-serif;color:#9ecbff;line-height:1.45;margin:0 0 4px;white-space:normal}
+.lsn pre.snip .flow-note.sk{color:#a3aab5;opacity:.85}
 .lsn pre.snip .snl.on{background:rgba(138,180,255,.2);box-shadow:inset 3px 0 #8ab4ff}
 .viz-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px}
 .viz-n,.gb-n{font-size:14px;color:var(--ink-3);text-align:center;white-space:nowrap}
@@ -586,6 +589,7 @@ pre.snip .snl{display:block;min-height:1.6em;overflow-wrap:break-word}
 .lst-none{font:italic 14px Inter,system-ui,sans-serif;color:var(--ink-3)}
 .chip{display:inline-block;font:600 13.5px 'JetBrains Mono',monospace;border-radius:999px;padding:2px 9px;border:1.5px solid}
 .chip.c-let{color:#7c3aed;border-color:#7c3aed;background:color-mix(in srgb,#7c3aed 8%,transparent)}
+.chip.c-node{color:var(--cur);border-color:var(--cur);background:var(--cur-soft)}
 .chip.c-cur{color:var(--cur);border-color:var(--cur);background:var(--cur-soft)}
 .chip.c-nxt{color:var(--nxt);border-color:var(--nxt);background:var(--nxt-soft)}
 .viz-res{font-weight:700;margin:8px 0 4px!important}

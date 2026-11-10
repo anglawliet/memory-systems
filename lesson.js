@@ -202,6 +202,16 @@
       set(s.pic);
       msg.textContent = s.msg;
       light(codePre, s.line || []);
+      light(codePre, s.skip || [], "skip");
+      $$(".flow-note", codePre).forEach(function (n) { n.remove(); });
+      var ls = lines(codePre);
+      (s.notes || []).forEach(function (n) {
+        var ln = ls[n[0]];
+        if (!ln) return;
+        var e = el("span", "flow-note" + ((s.skip || []).indexOf(n[0]) >= 0 ? " sk" : ""), "# " + n[1]);
+        e.style.paddingLeft = ln.style.paddingLeft || "0";
+        ln.parentNode.insertBefore(e, ln.nextSibling);
+      });
       opts.draw(state, s);
       count.textContent = "Step " + (at + 1) + " of " + steps.length;
       back.disabled = at === 0;
@@ -294,89 +304,178 @@
     v.load(addSteps());
   });
 
-  /* 5b. Walkthrough of search */
+  /* 5b. Walkthroughs of search that show which lines run, which lines are skipped, and why */
+  function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+  function q(ch) { return "'" + ch + "'"; }
+  function names(list) {
+    var n = list.map(function (x) { return said(nm(x)); });
+    return n.length <= 1 ? n.join("") : n.slice(0, -1).join(", ") + " and " + n[n.length - 1];
+  }
+  function truth(word) {
+    var current = [T.root];
+    for (var i = 0; i < word.length; i++) {
+      var next = [];
+      current.forEach(function (node) {
+        if (word[i] === ".") Object.keys(node).forEach(function (k) { if (k !== "$") next.push(node[k]); });
+        else if (word[i] in node) next.push(node[word[i]]);
+      });
+      current = next;
+      if (!current.length) return false;
+    }
+    return current.some(function (n) { return "$" in n; });
+  }
+
+  /* The search from Implement Trie, which keeps only one node */
+  function plainSteps(word) {
+    var out = [], node = T.root, here = "root";
+    out.push({ line: [1], li: -1, node: "root", pic: { cur: ["root"] },
+      msg: "The search starts at the root. The variable node can hold only one dictionary, and right now it holds the root." });
+    for (var i = 0; i < word.length; i++) {
+      var letter = word[i];
+      if (!(letter in node)) {
+        var wrong = truth(word);
+        var keys = Object.keys(node).filter(function (k) { return k !== "$"; }).map(q);
+        var m = letter === "."
+          ? "The code looks for a key called '.', but " + said(here) + (keys.length ? " has the keys " + keys.join(" and ") + "." : " has no letters below it.") + " So the search returns False."
+          : cap(said(here)) + " has no " + q(letter) + ", so no saved word can match. The search returns False.";
+        if (wrong) m += " That answer is wrong, because a saved word does match \"" + word + "\". The dot could be " + keys.join(" or ") + ", but node can hold only one of them.";
+        out.push({ line: [2, 3, 4], li: i, node: here, pic: { cur: [here], look: here, dead: [here] }, result: false, wrong: wrong,
+          notes: [[2, "letter is " + q(letter) + "."], [3, cap(said(here)) + " has no " + q(letter) + " key, so this is True."]], msg: m });
+        return out;
+      }
+      var prev = here;
+      node = node[letter]; here = nm(node);
+      out.push({ line: [2, 3, 5], skip: [4], li: i, node: here, pic: { cur: [here], go: [here] },
+        notes: [[2, "letter is " + q(letter) + "."], [3, cap(said(prev)) + " has " + q(letter) + ", so this is False."],
+                [4, "Skipped, because the if above was False."], [5, "node moves into " + said(here) + "."]],
+        msg: "The letter is " + q(letter) + ". " + cap(said(prev)) + " has " + q(letter) + ", so the return is skipped, and node moves into " + said(here) + "." });
+    }
+    var has = "$" in node;
+    out.push({ line: [6], li: word.length, node: here, pic: { cur: [here], look: here }, result: has,
+      notes: [[6, cap(said(here)) + (has ? " has '$', so this returns True." : " has no '$', so this returns False.")]],
+      msg: "Every letter has been read. " + cap(said(here)) + (has ? " has '$', so a saved word ends here, and the search returns True." : " has no '$', so \"" + word + "\" is only the start of a longer word. The search returns False.") });
+    return out;
+  }
+
+  /* The search that keeps a list of nodes */
   function searchSteps(word) {
     var out = [];
     function ids(list) { return list.map(nm); }
-    function names(list) {
-      var n = list.map(function (x) { return said(nm(x)); });
-      return n.length <= 1 ? n.join("") : n.slice(0, -1).join(", ") + " and " + n[n.length - 1];
-    }
     var current = [T.root];
     out.push({ line: [1], li: -1, cur: ids(current), nxt: null, pic: { cur: ids(current) },
+      notes: [[1, "current holds only the root."]],
       msg: "Before reading any letter, the only place the search can be is the root. So current starts as a list with just the root in it." });
     for (var i = 0; i < word.length; i++) {
       var letter = word[i], next = [], dead = [], go = [];
-      var what = letter === "." ? "a dot, which can be any one letter" : "\"" + letter + "\"";
       out.push({ line: [2, 3], li: i, cur: ids(current), nxt: [], pic: { cur: ids(current) },
-        msg: "The next letter is " + what + ". We have " + (current.length === 1 ? "one possible position, " : (["", "", "two", "three", "four"][current.length] || current.length) + " possible positions, ") + names(current) +
-             ". next_nodes starts empty. It will collect every place we can be after this letter." });
+        notes: [[2, "letter is " + q(letter) + "."], [3, "next_nodes starts as an empty list."]],
+        msg: "The next letter is " + (letter === "." ? "a dot, which can be any one letter" : q(letter)) + ". current holds " + names(current) +
+             ". next_nodes starts empty, and it will collect every place we can be after this letter." });
       current.forEach(function (node) {
-        var here = nm(node), m;
+        var here = nm(node), m, st;
+        var base = [[4, "node is " + said(here) + "."]];
         if (letter === ".") {
           var keys = Object.keys(node).filter(function (k) { return k !== "$"; });
           keys.forEach(function (k) { next.push(node[k]); go.push(nm(node[k])); });
+          base.push([5, "letter is '.', so this is True."]);
           if (keys.length) {
-            m = "It's a dot, so from " + said(here) + (keys.length === 1 ? " we follow its only letter, " : " we follow every letter: ") + keys.map(function (k) { return "\"" + k + "\""; }).join(" and ") +
-                ". We add " + names(keys.map(function (k) { return node[k]; })) + " to next_nodes.";
+            base.push([6, "The letter keys are " + keys.map(q).join(" and ") + "."]);
+            if ("$" in node) base.push([7, "The '$' key is skipped here, because it is not a letter."]);
+            base.push([8, "This adds " + names(keys.map(function (k) { return node[k]; })) + "."]);
+            base.push([9, "Skipped, because the if above was True."]);
+            st = { line: [4, 5, 6, 7, 8], skip: [9, 10] };
+            m = "It's a dot, so " + said(here) + " adds every letter below it. That is " + names(keys.map(function (k) { return node[k]; })) + ".";
           } else {
             dead.push(here);
-            m = "It's a dot, but " + said(here) + " has no letters below it. Its only key is '$', the word-end marker, and we skip that because it isn't a letter. Nothing is added, so this path ends here.";
+            base.push([7, "The only key is '$', so this is False."]);
+            base.push([8, "Skipped, so nothing is added."]);
+            base.push([9, "Skipped, because the if above was True."]);
+            st = { line: [4, 5, 6, 7], skip: [8, 9, 10] };
+            m = "It's a dot, but " + said(here) + " has no letters below it. Its only key is '$', and the code skips '$' because it isn't a letter. Nothing is added, so this path ends here.";
           }
-          out.push({ line: [4, 5, 6, 7, 8], li: i, cur: ids(current), nxt: ids(next),
-            pic: { cur: ids(current), nxt: ids(next), look: here, dead: dead.slice(), go: go.slice() }, msg: m });
         } else {
+          base.push([5, "letter is " + q(letter) + ", not '.', so this is False."]);
+          base.push([6, "Skipped, because letter is not a dot."]);
           if (letter in node) {
             next.push(node[letter]); go.push(nm(node[letter]));
-            m = "We're looking for \"" + letter + "\". Does " + said(here) + " have a \"" + letter + "\"? Yes, so we add " + said(nm(node[letter])) + " to next_nodes.";
+            base.push([9, cap(said(here)) + " has " + q(letter) + ", so this is True."]);
+            base.push([10, "This adds " + said(nm(node[letter])) + "."]);
+            st = { line: [4, 5, 9, 10], skip: [6, 7, 8] };
+            m = cap(said(here)) + " has " + q(letter) + ", so " + said(nm(node[letter])) + " is added to next_nodes.";
           } else {
             dead.push(here);
-            m = "We're looking for \"" + letter + "\". Does " + said(here) + " have a \"" + letter + "\"? No, so nothing is added. This path ends here.";
+            base.push([9, cap(said(here)) + " has no " + q(letter) + ", so this is False."]);
+            base.push([10, "Skipped, so nothing is added."]);
+            st = { line: [4, 5, 9], skip: [6, 7, 8, 10] };
+            m = cap(said(here)) + " has no " + q(letter) + ", so nothing is added. This path ends here.";
           }
-          out.push({ line: [4, 9, 10], li: i, cur: ids(current), nxt: ids(next),
-            pic: { cur: ids(current), nxt: ids(next), look: here, dead: dead.slice(), go: go.slice() }, msg: m });
         }
+        out.push({ line: st.line, skip: st.skip, notes: base, li: i, node: here, cur: ids(current), nxt: ids(next),
+          pic: { cur: ids(current), nxt: ids(next), look: here, dead: dead.slice(), go: go.slice() }, msg: m });
       });
       current = next;
       if (current.length) {
-        out.push({ line: [11], li: i, cur: ids(current), nxt: ids(next), pic: { cur: ids(current) },
-          msg: "We checked every position. Now current = next_nodes, so " + (current.length === 1 ? "the only position after \"" + word.slice(0, i + 1) + "\" is " : "the positions after \"" + word.slice(0, i + 1) + "\" are ") + names(current) + "." });
+        out.push({ line: [11, 12], skip: [13], li: i, cur: ids(current), nxt: ids(next), pic: { cur: ids(current) },
+          notes: [[11, "current now holds " + names(current) + "."], [12, "current is not empty, so this is False."], [13, "Skipped, so the search goes on."]],
+          msg: "Every node has taken its step, so current = next_nodes. " + (current.length === 1 ? "The only place after \"" + word.slice(0, i + 1) + "\" is " : "The places after \"" + word.slice(0, i + 1) + "\" are ") + names(current) + "." });
       } else {
         out.push({ line: [11, 12, 13], li: i, cur: [], nxt: [], pic: { dead: dead.slice() }, result: false,
-          msg: "We checked every position, and next_nodes is empty. current becomes empty too. No saved word can match \"" + word + "\", so we return False." });
+          notes: [[11, "current is now empty."], [12, "current is empty, so this is True."]],
+          msg: "Every node has taken its step, and next_nodes is empty. No saved word can match \"" + word + "\", so the search returns False." });
         return out;
       }
     }
     var hit = current.filter(function (n) { return "$" in n; });
-    out.push({ line: hit.length ? [14, 15, 16] : [14, 15, 17], li: word.length, cur: ids(current), nxt: ids(current), pic: { cur: ids(current), look: hit.length ? nm(hit[0]) : null }, result: hit.length > 0,
-      msg: "We've read every letter. current holds " + names(current) + ". " +
-           (hit.length ? said(nm(hit[0])) .replace(/^t/, "T") + " has the '$' key, so a saved word ends there. We return True."
-                       : (current.length === 1 ? "It doesn't" : "None of them") + " have the '$' key. These are only the start of longer words, so we return False.") });
+    var fin;
+    if (hit.length) {
+      var at = current.indexOf(hit[0]);
+      var before = current.slice(0, at);
+      fin = { line: [14, 15, 16], skip: [17], notes: [[14, "node is " + said(nm(hit[0])) + "."],
+        [15, (before.length ? cap(names(before)) + (before.length === 1 ? " has" : " have") + " no '$', so the loop moved on. " : "") + cap(said(nm(hit[0]))) + " has '$', so this is True."],
+        [17, "Skipped, because the search already returned True."]],
+        msg: "Every letter has been read, and current holds " + names(current) + ". " + cap(said(nm(hit[0]))) + " has '$', so a saved word ends there. The search returns True." };
+    } else {
+      fin = { line: [14, 15, 17], skip: [16], notes: [[15, "No node in current has '$', so this is never True."], [16, "Skipped, because no node has '$'."], [17, "The loop ended, so this returns False."]],
+        msg: "Every letter has been read, and current holds " + names(current) + ". " + (current.length === 1 ? "That node doesn't" : "None of them") + " have '$', so these are only the start of longer words. The search returns False." };
+    }
+    fin.li = word.length; fin.cur = ids(current); fin.nxt = ids(current); fin.result = hit.length > 0;
+    fin.node = hit.length ? nm(hit[0]) : null;
+    fin.pic = { cur: ids(current), look: hit.length ? nm(hit[0]) : null };
+    out.push(fin);
     return out;
   }
 
-  var searchViz = null;
-  $$('.viz[data-mode="search"]', lesson).forEach(function (box) {
+  function letterRow(state, word, li) {
+    var at = Math.min(li, word.length - 1);
+    if (at < 0) { state.appendChild(el("div", "lst lst-none", "The variable letter has not been set yet.")); return; }
+    var lr = el("div", "lst");
+    lr.appendChild(el("code", "lst-name", "letter = "));
+    lr.appendChild(el("span", "chip c-let", q(word[at])));
+    state.appendChild(lr);
+  }
+  function nodeRow(state, id) {
+    var r = el("div", "lst");
+    r.appendChild(el("code", "lst-name", "node = "));
+    r.appendChild(el("span", "chip c-node", lbl(id)));
+    state.appendChild(r);
+  }
+
+  function tracer(box, o) {
     var v = stepper(box, {
-      legend: [["cur", "A blue node is in current."], ["nxt", "A green node is in next_nodes."], ["look", "A thick ring marks the node being checked."], ["dead", "A red dashed ring marks a path that ended."], ["end", "A green $ marks the end of a saved word."]],
+      legend: o.legend,
       draw: function (state, s) {
         state.textContent = "";
         drawWord(state, v.word, s.li);
-        var at = Math.min(s.li, v.word.length - 1);
-        if (at < 0) state.appendChild(el("div", "lst lst-none", "The variable letter has not been set yet."));
-        else {
-          var lr = el("div", "lst");
-          lr.appendChild(el("code", "lst-name", "letter = "));
-          lr.appendChild(el("span", "chip c-let", "'" + v.word[at] + "'"));
-          state.appendChild(lr);
+        o.draw(state, s, v.word);
+        if (s.result != null) {
+          var t = "search(\"" + v.word + "\") returns " + (s.result ? "True" : "False") + ".";
+          if (s.wrong) t += " The right answer is True, so this code is wrong.";
+          state.appendChild(el("p", "viz-res " + (s.result ? "yes" : "no"), t));
         }
-        state.appendChild(chips("current", s.cur, "c-cur"));
-        state.appendChild(chips("next_nodes", s.nxt, "c-nxt"));
-        if (s.result != null) state.appendChild(el("p", "viz-res " + (s.result ? "yes" : "no"), "search(\"" + v.word + "\") returns " + (s.result ? "True" : "False") + "."));
       }
     });
     var picks = el("div", "picks");
-    ["c.t", "..t", ".og", "c..", "cab", "ca", "cat."].forEach(function (w) {
+    o.picks.forEach(function (w) {
       var b = el("button", "pick", w);
       b.type = "button";
       b.addEventListener("click", function () { go(w); });
@@ -403,10 +502,35 @@
     function go(w) {
       v.word = w;
       $$(".pick", picks).forEach(function (b) { b.classList.toggle("on", b.textContent === w); });
-      v.load(searchSteps(w));
+      v.load(o.steps(w));
     }
-    searchViz = { go: go, box: box };
-    go("..t");
+    go(o.picks[0]);
+    return { go: go, box: box };
+  }
+
+  $$('.viz[data-mode="plain"]', lesson).forEach(function (box) {
+    tracer(box, {
+      picks: ["cat", "ca", ".og", "c.t"], steps: plainSteps,
+      legend: [["cur", "A blue node is the one the variable node holds."], ["dead", "A red dashed ring marks where the search gave up."], ["end", "A green $ marks the end of a saved word."]],
+      draw: function (state, s, word) {
+        letterRow(state, word, s.li);
+        nodeRow(state, s.node);
+      }
+    });
+  });
+
+  var searchViz = null;
+  $$('.viz[data-mode="search"]', lesson).forEach(function (box) {
+    searchViz = tracer(box, {
+      picks: ["..t", ".og", "c.t", "c..", "cab", "ca", "cat."], steps: searchSteps,
+      legend: [["cur", "A blue node is in current."], ["nxt", "A green node is in next_nodes."], ["look", "A thick ring marks the node being checked."], ["dead", "A red dashed ring marks a path that ended."], ["end", "A green $ marks the end of a saved word."]],
+      draw: function (state, s, word) {
+        letterRow(state, word, s.li);
+        if (s.node) nodeRow(state, s.node);
+        state.appendChild(chips("current", s.cur, "c-cur"));
+        state.appendChild(chips("next_nodes", s.nxt, "c-nxt"));
+      }
+    });
   });
 
   /* 6. Practice levels */

@@ -676,10 +676,8 @@
       });
     });
     var parts = [
-      "class WordDictionary:\n    def __init__(self):\n        self.root = {}\n\n    def addWord(self, word):\n        node = self.root\n        for letter in word:\n",
-      0,
-      "        node['$'] = True\n\n    def search(self, word):\n        current = [self.root]\n        for letter in word:\n            next_nodes = []\n            for node in current:\n",
-      1, 2, 3
+      "class WordDictionary:\n    def __init__(self):\n        self.root = {}\n\n    def addWord(self, word):\n        node = self.root\n        for letter in word:\n            if letter not in node:\n                node[letter] = {}\n            node = node[letter]\n        node['$'] = True\n\n    def search(self, word):\n        current = [self.root]\n        for letter in word:\n            next_nodes = []\n            for node in current:\n",
+      0, 1, 2
     ];
     wireRun(box, function () {
       var empty = blanks.filter(function (b) { return !$("textarea", b).value.trim(); });

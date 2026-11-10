@@ -645,3 +645,10 @@ pre.snip .snl{display:block;min-height:1.6em;overflow-wrap:break-word}
   .viz{padding:10px 8px}
   .lsn-part h4{font-size:18px}
 }
+/* easy parts stay short and quiet, hard parts get the accent edge */
+.lsn-part.lsn-easy{background:var(--surface-2)}
+.lsn-part.lsn-easy h4{font-size:17.5px}
+.lsn-part.lsn-hard{border-left:4px solid var(--accent-strong)}
+.lsn-part.lsn-hard .lsn-tag{color:#7c3aed}
+:root[data-theme="dark"] .lsn-part.lsn-hard .lsn-tag{color:#b49cf0}
+.lsn-part>.ck-b{margin:0 0 14px}

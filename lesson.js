@@ -111,6 +111,7 @@
     var s = svg("svg", { viewBox: "0 0 340 262", class: "trie", role: "img",
       "aria-label": "A trie holding cat, car and dog. The root leads to the c node and the d node. The c node leads to the a node, which leads to the t node and the r node. The d node leads to the o node, which leads to the g node." });
     var edges = {}, nodes = {};
+    var band = svg("rect", { x: 4, y: 0, width: 332, height: 56, rx: 12, class: "row-band" }, s);
     Object.keys(POS).forEach(function (id) {
       if (id === "root") return;
       var parent = id.length === 1 ? "root" : id.slice(0, -1);
@@ -121,7 +122,7 @@
     });
     Object.keys(POS).forEach(function (id) {
       var p = POS[id];
-      var g = svg("g", { class: "tn" + (id === "root" ? " tn-root" : "") }, s);
+      var g = svg("g", { class: "tn" + (id === "root" ? " tn-root" : ""), "data-id": id }, s);
       svg("circle", { cx: p[0], cy: p[1], r: 21 }, g);
       var t = svg("text", { x: p[0], y: p[1] + 5, class: "tn-l" }, g);
       t.textContent = lbl(id);
@@ -140,6 +141,7 @@
       mt.textContent = "node";
       nodes[id] = g;
     });
+    var mkLayer = svg("g", { class: "mk-layer" }, s);
     host.appendChild(s);
     if (legend) {
       var lg = el("div", "trie-key");
@@ -149,11 +151,36 @@
         i.appendChild(document.createTextNode(k[1]));
         lg.appendChild(i);
       });
-      host.appendChild(lg);
+      var kb = el("details", "trie-keybox");
+      var ks = el("summary");
+      ks.textContent = "What the colors mean";
+      kb.appendChild(ks); kb.appendChild(lg);
+      host.appendChild(kb);
     }
     function has(set, id) { return !!set && set.indexOf(id) >= 0; }
+    var ROWS = [30, 96, 162, 228];
+    function spot(id) { var p = POS[id]; return "translate(" + (p[0] - 17) + "px," + (p[1] - 18) + "px)"; }
+    function markers(list) {
+      mkLayer.textContent = "";
+      var made = (list || []).map(function (m) {
+        var g = svg("g", { class: "mk" + (m.kind ? " " + m.kind : "") }, mkLayer);
+        svg("circle", { cx: 0, cy: 0, r: 9 }, g);
+        g.style.transition = "none";
+        g.style.transform = spot(m.from || m.at);
+        return { g: g, to: spot(m.at) };
+      });
+      if (!made.length) return;
+      mkLayer.getBoundingClientRect();
+      requestAnimationFrame(function () {
+        made.forEach(function (m) { m.g.style.transition = ""; m.g.style.transform = m.to; });
+      });
+    }
     return function set(st) {
       st = st || {};
+      var row = st.row != null && st.row < ROWS.length ? st.row : -1;
+      band.classList.toggle("on", row >= 0);
+      if (row >= 0) band.style.transform = "translateY(" + (ROWS[row] - 28) + "px)";
+      markers(st.mk);
       Object.keys(nodes).forEach(function (id) {
         var g = nodes[id];
         var shown = !st.show || has(st.show, id);
@@ -169,6 +196,7 @@
         g.classList.toggle("dead", has(st.dead, id));
         g.classList.toggle("new", has(st.fresh, id));
         g.classList.toggle("mark", st.mark === id);
+        g.classList.toggle("newend", st.newEnd === id);
       });
     };
   }
@@ -179,62 +207,111 @@
   function stepper(box, opts) {
     var codePre = $("pre.snip", box);
     var codeWrap = $(".viz-code", box);
+    box.classList.add("pro");
+    var head = el("div", "vz-head");
+    var titles = el("div", "vz-titles");
+    var eyebrow = el("span", "vz-eyebrow", opts.eyebrow || "Walkthrough");
+    var title = el("span", "vz-title", "");
+    titles.appendChild(eyebrow); titles.appendChild(title);
     var top = el("div", "viz-top");
-    var pic = el("div", "viz-pic");
+    head.appendChild(titles); head.appendChild(top);
+    var stage = el("div", "vz-stage");
     var state = el("div", "viz-state");
-    var msg = el("p", "viz-msg");
-    msg.setAttribute("aria-live", "polite");
-    var nav = el("div", "viz-nav");
-    var back = el("button", "lbtn ghost", "Back"), count = el("span", "viz-n"), next = el("button", "lbtn", "Next");
+    var pic = el("div", "viz-pic");
+    var set = makeTrie(pic);
+    stage.appendChild(state); stage.appendChild(pic);
+    var res = el("p", "vz-res");
+    stage.appendChild(res);
+    var body = el("div", "vz-body");
+    body.appendChild(stage);
+    if (codeWrap) { codeWrap.classList.add("vz-code"); body.appendChild(codeWrap); }
+    var foot = el("div", "vz-foot");
+    var capText = el("p", "vz-cap");
+    capText.setAttribute("aria-live", "polite");
+    var ctrl = el("div", "vz-ctrl");
+    var back = el("button", "vz-btn", "Back"), next = el("button", "vz-btn primary", "Next");
     back.type = next.type = "button";
-    nav.appendChild(back); nav.appendChild(count); nav.appendChild(next);
-    var set = makeTrie(pic, opts.legend);
-    var left = el("div", "viz-left"), right = el("div", "viz-right");
-    left.appendChild(pic); left.appendChild(state);
-    right.appendChild(msg); right.appendChild(nav); right.appendChild(codeWrap);
-    var grid = el("div", "viz-grid");
-    grid.appendChild(left); grid.appendChild(right);
-    box.insertBefore(top, box.firstChild);
-    box.appendChild(grid);
-    var steps = [], at = 0;
-    function show() {
-      var s = steps[at];
-      set(s.pic);
-      msg.textContent = s.msg;
-      light(codePre, s.line || []);
-      light(codePre, s.skip || [], "skip");
-      $$(".flow-note", codePre).forEach(function (n) { n.remove(); });
-      var ls = lines(codePre);
-      (s.notes || []).forEach(function (n) {
-        var ln = ls[n[0]];
-        if (!ln) return;
-        var e = el("span", "flow-note" + ((s.skip || []).indexOf(n[0]) >= 0 ? " sk" : ""), "# " + n[1]);
-        e.style.paddingLeft = ln.style.paddingLeft || "0";
-        ln.parentNode.insertBefore(e, ln.nextSibling);
+    var prog = el("div", "vz-prog"), bar = el("span", "vz-bar"), fill = el("i"), count = el("span", "vz-n");
+    bar.appendChild(fill); prog.appendChild(bar); prog.appendChild(count);
+    ctrl.appendChild(back); ctrl.appendChild(count); ctrl.appendChild(next);
+    foot.appendChild(bar); foot.appendChild(capText); foot.appendChild(ctrl);
+    box.textContent = "";
+    box.appendChild(head); box.appendChild(body); box.appendChild(foot);
+    var steps = [], at = 0, frames = [], shownStep = -1;
+    function storyFor(s, i) {
+      var hit = (s.story || []).filter(function (x) { return x[0] === i; });
+      return hit.length ? hit[0][1] : null;
+    }
+    function build() {
+      frames = [];
+      steps.forEach(function (s, si) {
+        var order = (s.line || []).concat(s.skip || []).filter(function (x, k, a) { return a.indexOf(x) === k; }).sort(function (a, b) { return a - b; });
+        var lastRun = Math.max.apply(null, (s.line || []).concat([-1]));
+        if (!codePre || !order.length) { frames.push({ si: si, at: -1, skip: false, text: s.msg || "", applied: true }); return; }
+        var made = 0, seen = [];
+        order.forEach(function (i) {
+          seen.push(i);
+          var line = storyFor(s, i);
+          if (line) { frames.push({ si: si, at: i, skip: (s.skip || []).indexOf(i) >= 0, text: line, seen: seen.slice() }); made++; }
+        });
+        if (!made) frames.push({ si: si, at: order[order.length - 1], skip: false, text: s.msg || "", seen: seen.slice() });
+        frames.forEach(function (f) {
+          if (f.si === si) f.applied = f.at === -1 || lastRun < 0 || (f.seen || []).indexOf(lastRun) >= 0;
+        });
       });
+    }
+    function paint(si) {
+      if (shownStep === si) return;
+      shownStep = si;
+      if (si < 0) { set({}); state.textContent = ""; res.textContent = ""; res.className = "vz-res"; return; }
+      var s = steps[si], p = {};
+      for (var k in s.pic) if (k !== "mk" && k !== "row") p[k] = s.pic[k];
+      if (s.node) p.mark = s.node;
+      set(p);
       opts.draw(state, s);
-      count.textContent = "Step " + (at + 1) + " of " + steps.length;
+      if (s.result != null && opts.result) {
+        res.textContent = opts.result(s);
+        res.className = "vz-res on " + (s.wrong ? "bad" : s.result ? "yes" : "no");
+      } else { res.textContent = ""; res.className = "vz-res"; }
+    }
+    function show() {
+      var f = frames[at], s = steps[f.si];
+      if (opts.title) title.textContent = opts.title(s);
+      count.textContent = (at + 1) + " / " + frames.length;
+      fill.style.width = ((at + 1) / frames.length * 100) + "%";
+      if (codePre) {
+        lines(codePre).forEach(function (l, i) {
+          l.classList.toggle("ptr", i === f.at);
+          l.classList.toggle("skip", i === f.at && f.skip);
+        });
+      }
+      paint(f.applied ? f.si : f.si - 1);
+      capText.textContent = f.text;
+      capText.classList.remove("in"); capText.getBoundingClientRect(); capText.classList.add("in");
       back.disabled = at === 0;
-      next.textContent = at === steps.length - 1 ? "Start over" : "Next";
+      next.textContent = at === frames.length - 1 ? "Start over" : "Next";
     }
     back.addEventListener("click", function () { if (at > 0) { at--; show(); } });
-    next.addEventListener("click", function () { at = at === steps.length - 1 ? 0 : at + 1; show(); });
+    next.addEventListener("click", function () { at = at === frames.length - 1 ? 0 : at + 1; show(); });
     return {
       top: top,
-      load: function (list) { steps = list; at = 0; show(); }
+      load: function (list) { steps = list; at = 0; shownStep = -2; build(); show(); }
     };
   }
 
   function chips(label, ids, cls) {
     if (!ids) return el("div", "lst lst-none", "The list " + label + " has not been created yet.");
     var row = el("div", "lst");
+    row.dataset.row = label;
     row.appendChild(el("code", "lst-name", label + " = "));
     var b = el("span", "lst-items");
     if (!ids) { b.appendChild(el("span", "lst-none", "It has not been created yet.")); }
     else {
       b.appendChild(document.createTextNode("["));
       ids.forEach(function (id, i) {
-        b.appendChild(el("span", "chip " + cls, lbl(id)));
+        var c = el("span", "chip " + cls, lbl(id));
+        c.dataset.id = id;
+        b.appendChild(c);
         if (i < ids.length - 1) b.appendChild(document.createTextNode(","));
       });
       b.appendChild(document.createTextNode("]"));
@@ -251,31 +328,42 @@
       for (var k in extra) p[k] = extra[k];
       return p;
     }
-    out.push({ line: [], word: "", pic: snap({ mark: null }),
-      msg: "The trie starts as just the root, an empty dictionary. Press Next to add cat, then car, then dog." });
+    out.push({ line: [], word: "", li: -1, pic: snap({}),
+      msg: "The trie starts with only the root. Press Next to add \"cat\", then \"car\", then \"dog\"." });
+    var madeBy = {};
     WORDS.forEach(function (w) {
       var node = root, path = "";
-      out.push({ line: [1], word: w, li: -1, pic: snap({ mark: "root" }),
-        msg: "We're adding \"" + w + "\". We start at the root, so node is the root." });
+      out.push({ line: [1], word: w, li: -1, node: "root", anim: { type: "tree", row: "node" }, pic: snap({ mk: [{ at: "root" }] }),
+        notes: [[1, "node starts at the root."]],
+        story: [[1, "We want to add \"" + w + "\". Start at the root with node = self.root."]],
+        msg: "We're adding \"" + w + "\". Every word starts at the root, so node is the root." });
       for (var i = 0; i < w.length; i++) {
         var ch = w[i], here = id.get(node);
         path += ch;
         if (!(ch in node)) {
-          node[ch] = {}; id.set(node[ch], path); show.push(path);
-          out.push({ line: [2, 3, 4], word: w, li: i, pic: snap({ mark: here, fresh: [path] }),
-            msg: "Is \"" + ch + "\" a key in " + said(here) + "? No. So we create an empty dictionary under \"" + ch + "\". We only created it. node is still " + said(here) + "." });
+          node[ch] = {}; id.set(node[ch], path); show.push(path); madeBy[path] = w;
+          out.push({ line: [2, 3, 4], word: w, li: i, node: here, pic: snap({ fresh: [path], mk: [{ at: here }] }),
+            notes: [[2, "letter is " + q(ch) + "."], [3, cap(said(here)) + " has no " + q(ch) + ", so this is True."], [4, "This creates " + said(path) + ", an empty dictionary."]],
+            story: [[2, "The " + (i === 0 ? "first" : "next") + " letter is " + q(ch) + ". Check whether " + said(here) + " has a child for it."], [3, cap(said(here)) + " has no child for " + q(ch) + "."], [4, "Create the child with node[" + q(ch) + "] = {}. We are still at " + said(here) + "."]],
+            msg: cap(said(here)) + " has no " + q(ch) + ", so addWord creates " + said(path) + ". The variable node is still " + said(here) + ", because creating a node doesn't move into it." });
           node = node[ch];
-          out.push({ line: [5], word: w, li: i, pic: snap({ mark: path }),
-            msg: "Now we move into it. node is now " + said(path) + "." });
+          out.push({ line: [5], word: w, li: i, node: path, anim: { type: "tree", row: "node" }, pic: snap({ mk: [{ at: path, from: here }] }),
+            notes: [[5, "node moves into " + said(path) + "."]],
+            story: [[5, "The " + lbl(path) + " node now exists. Move to it with node = node[" + q(ch) + "]."]],
+            msg: "Now node moves into " + said(path) + "." });
         } else {
           node = node[ch];
-          out.push({ line: [2, 3, 5], word: w, li: i, pic: snap({ mark: path }),
-            msg: "Is \"" + ch + "\" a key in " + said(here) + "? Yes, an earlier word already created it. So we skip creating and just move into it. node is now " + said(path) + "." });
+          out.push({ line: [2, 3, 5], skip: [4], word: w, li: i, node: path, anim: { type: "tree", row: "node" }, pic: snap({ mk: [{ at: path, from: here }] }),
+            notes: [[2, "letter is " + q(ch) + "."], [3, cap(said(here)) + " already has " + q(ch) + ", so this is False."], [4, "Skipped, because the node already exists."], [5, "node moves into " + said(path) + "."]],
+            story: [[2, "The " + (i === 0 ? "first" : "next") + " letter is " + q(ch) + ". Check whether " + said(here) + " has a child for it."], [3, cap(said(here)) + " already has a child for " + q(ch) + " from \"" + madeBy[path] + "\"."], [4, "Do not create another child."], [5, "Move to the existing " + lbl(path) + " node with node = node[" + q(ch) + "]."]],
+            msg: cap(said(here)) + " already has " + q(ch) + ", because an earlier word created it. So addWord skips creating it and only moves into " + said(path) + "." });
         }
       }
       node["$"] = true; ends.push(path);
-      out.push({ line: [6], word: w, li: w.length, pic: snap({ mark: path }),
-        msg: "Every letter of \"" + w + "\" is done. We set node['$'] = True, so " + said(path) + " now marks that a saved word ends here." });
+      out.push({ line: [6], word: w, li: w.length, node: path, pic: snap({ newEnd: path, mk: [{ at: path, kind: "win" }] }),
+        notes: [[6, cap(said(path)) + " gets the key '$'."]],
+        story: [[6, "All letters in \"" + w + "\" are stored. Add '$' to the " + lbl(path) + " node to mark a complete word."]],
+        msg: "Every letter of \"" + w + "\" is done. The last line sets node['$'] = True, so " + said(path) + " now marks the end of a saved word." });
     });
     out[out.length - 1].msg += " All three words are saved.";
     return out;
@@ -290,14 +378,11 @@
   }
   $$('.viz[data-mode="add"]', lesson).forEach(function (box) {
     var v = stepper(box, {
-      legend: [["mark", "node: where the code is standing"], ["new", "just created"], ["end", "a saved word ends here"]],
+      eyebrow: "Watch addWord",
+      title: function (s) { return s.word ? "addWord(\"" + s.word + "\")" : "self.root = {}"; },
       draw: function (state, s) {
         state.textContent = "";
-        if (s.word) {
-          var h = el("p", "wd-h", "addWord(\"" + s.word + "\")");
-          state.appendChild(h);
-          drawWord(state, s.word, s.li);
-        }
+        if (s.word) drawWord(state, s.word, s.li);
       }
     });
     v.top.remove();
@@ -306,6 +391,15 @@
 
   /* 5b. Walkthroughs of search that show which lines run, which lines are skipped, and why */
   function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+  function L(list) { return "[" + list.map(function (n) { return lbl(nm(n)); }).join(", ") + "]"; }
+  function matchOf(word) {
+    var m = WORDS.filter(function (w) {
+      if (w.length !== word.length) return false;
+      for (var i = 0; i < w.length; i++) if (word[i] !== "." && word[i] !== w[i]) return false;
+      return true;
+    });
+    return m[0] || "";
+  }
   function q(ch) { return "'" + ch + "'"; }
   function names(list) {
     var n = list.map(function (x) { return said(nm(x)); });
@@ -328,7 +422,8 @@
   /* The search from Implement Trie, which keeps only one node */
   function plainSteps(word) {
     var out = [], node = T.root, here = "root";
-    out.push({ line: [1], li: -1, node: "root", pic: { cur: ["root"] },
+    out.push({ line: [1], li: -1, node: "root", anim: { type: "tree", row: "node" }, pic: { cur: ["root"], row: 0, mk: [{ at: "root" }] },
+      story: [[1, "The original search keeps only one possible position. Start at the root with node = self.root."]],
       msg: "The search starts at the root. The variable node can hold only one dictionary, and right now it holds the root." });
     for (var i = 0; i < word.length; i++) {
       var letter = word[i];
@@ -339,20 +434,24 @@
           ? "The code looks for a key called '.', but " + said(here) + (keys.length ? " has the keys " + keys.join(" and ") + "." : " has no letters below it.") + " So the search returns False."
           : cap(said(here)) + " has no " + q(letter) + ", so no saved word can match. The search returns False.";
         if (wrong) m += " That answer is wrong, because a saved word does match \"" + word + "\". The dot could be " + keys.join(" or ") + ", but node can hold only one of them.";
-        out.push({ line: [2, 3, 4], li: i, node: here, pic: { cur: [here], look: here, dead: [here] }, result: false, wrong: wrong,
-          notes: [[2, "letter is " + q(letter) + "."], [3, cap(said(here)) + " has no " + q(letter) + " key, so this is True."]], msg: m });
+        out.push({ line: [2, 3, 4], li: i, node: here, pic: { cur: [here], look: here, dead: [here], row: i, mk: [{ at: here, kind: "dead" }] }, result: false, wrong: wrong,
+          notes: [[2, "letter is " + q(letter) + "."], [3, cap(said(here)) + " has no " + q(letter) + " key, so this is True."]],
+          story: [[2, letter === "." ? "The next character is '.'. It could match " + (keys.length ? keys.join(" or ") : "any letter") + ", but this code looks for a child named '.'." : "The next character is " + q(letter) + ". Check whether " + said(here) + " has a child for it."], [3, letter === "." ? cap(said(here)) + " has no child named '.'." : cap(said(here)) + " has no child for " + q(letter) + "."], [4, wrong ? "The code returns False, even though \"" + matchOf(word) + "\" matches. A dot needs several possible positions, so we need a list called current." : "This path cannot match. Return False."]],
+          msg: m });
         return out;
       }
       var prev = here;
       node = node[letter]; here = nm(node);
-      out.push({ line: [2, 3, 5], skip: [4], li: i, node: here, pic: { cur: [here], go: [here] },
+      out.push({ line: [2, 3, 5], skip: [4], li: i, node: here, anim: { type: "tree", row: "node" }, pic: { cur: [here], go: [here], row: i + 1, mk: [{ at: here, from: prev }] },
         notes: [[2, "letter is " + q(letter) + "."], [3, cap(said(prev)) + " has " + q(letter) + ", so this is False."],
                 [4, "Skipped, because the if above was False."], [5, "node moves into " + said(here) + "."]],
+        story: [[2, "The next character is " + q(letter) + ". Check whether " + said(prev) + " has a child for it."], [3, cap(said(prev)) + " has a child for " + q(letter) + "."], [4, "Do not return False."], [5, "Move to that child with node = node[" + q(letter) + "]. The character tells us exactly which child to follow."]],
         msg: "The letter is " + q(letter) + ". " + cap(said(prev)) + " has " + q(letter) + ", so the return is skipped, and node moves into " + said(here) + "." });
     }
     var has = "$" in node;
-    out.push({ line: [6], li: word.length, node: here, pic: { cur: [here], look: here }, result: has,
+    out.push({ line: [6], li: word.length, node: here, pic: { cur: [here], look: here, row: word.length, mk: [{ at: here, kind: has ? "win" : "miss" }] }, result: has,
       notes: [[6, cap(said(here)) + (has ? " has '$', so this returns True." : " has no '$', so this returns False.")]],
+      story: [[6, "We read every character and reached " + said(here) + ". " + (has ? "This position has '$', so return True." : "This position has no '$', so \"" + word + "\" is only a prefix. Return False.")]],
       msg: "Every letter has been read. " + cap(said(here)) + (has ? " has '$', so a saved word ends here, and the search returns True." : " has no '$', so \"" + word + "\" is only the start of a longer word. The search returns False.") });
     return out;
   }
@@ -362,23 +461,31 @@
     var out = [];
     function ids(list) { return list.map(nm); }
     var current = [T.root];
-    out.push({ line: [1], li: -1, cur: ids(current), nxt: null, pic: { cur: ids(current) },
+    out.push({ line: [1], li: -1, cur: ids(current), nxt: null, anim: { type: "tree", row: "current" }, pic: { cur: ids(current), row: 0, mk: [{ at: "root" }] },
       notes: [[1, "current holds only the root."]],
-      msg: "Before reading any letter, the only place the search can be is the root. So current starts as a list with just the root in it." });
+      story: [[1, "We have not read any characters. The root is our only possible position, so current = [root]."]],
+      msg: "Before we read any letter, the root is our only possible position. So current starts as a list that holds only the root." });
     for (var i = 0; i < word.length; i++) {
       var letter = word[i], next = [], dead = [], go = [];
-      out.push({ line: [2, 3], li: i, cur: ids(current), nxt: [], pic: { cur: ids(current) },
+      var landed = [];
+      out.push({ line: [2, 3], li: i, cur: ids(current), nxt: [], anim: { type: "reset", was: i > 0 ? ids(current) : null }, pic: { cur: ids(current), row: i, mk: ids(current).map(function (id) { return { at: id }; }) },
         notes: [[2, "letter is " + q(letter) + "."], [3, "next_nodes starts as an empty list."]],
-        msg: "The next letter is " + (letter === "." ? "a dot, which can be any one letter" : q(letter)) + ". current holds " + names(current) +
-             ". next_nodes starts empty, and it will collect every place we can be after this letter." });
-      current.forEach(function (node) {
-        var here = nm(node), m, st;
+        story: [[2, letter === "." ? "Read '.'. It matches any one letter, so find every position reachable from current = " + L(current) + "." : "Read " + q(letter) + ". Find every position reachable from current = " + L(current) + " using this character."], [3, "Start with next_nodes = []. It collects every position we can reach, so we know where to look for the next character."]],
+        msg: "The next letter is " + (letter === "." ? "a dot, which can be any one letter" : q(letter)) + ". The current list holds " + names(current) +
+             ". The next_nodes list starts empty, because we haven't found any valid next positions yet." });
+      current.forEach(function (node, k) {
+        var here = nm(node), m, st, before = next.length;
         var base = [[4, "node is " + said(here) + "."]];
+        var tale = [[4, current.length === 1 ? "Check " + said(here) + ", the only position in current = " + L(current) + "." : "Check " + said(here) + ", position " + (k + 1) + " of " + current.length + " in current = " + L(current) + "." + (k === 0 ? " Every position might lead to a match." : "")]];
         if (letter === ".") {
           var keys = Object.keys(node).filter(function (k) { return k !== "$"; });
           keys.forEach(function (k) { next.push(node[k]); go.push(nm(node[k])); });
           base.push([5, "letter is '.', so this is True."]);
+          tale.push([5, "The character is '.', so it can match any one letter."]);
           if (keys.length) {
+            tale.push([6, "Follow every letter child of " + said(here) + ", which " + (keys.length === 1 ? "is " : "are ") + keys.map(q).join(" and ") + "."]);
+            if ("$" in node) tale.push([7, "Skip '$'. It marks a word ending, not a letter child."]);
+            tale.push([8, "Add " + (keys.length === 1 ? "that position" : "those positions") + ". Now next_nodes = " + L(next) + "."]);
             base.push([6, "The letter keys are " + keys.map(q).join(" and ") + "."]);
             if ("$" in node) base.push([7, "The '$' key is skipped here, because it is not a letter."]);
             base.push([8, "This adds " + names(keys.map(function (k) { return node[k]; })) + "."]);
@@ -388,6 +495,8 @@
           } else {
             dead.push(here);
             base.push([7, "The only key is '$', so this is False."]);
+            tale.push([7, cap(said(here)) + " has only '$'. It has no letter child to follow."]);
+            tale.push([8, "Add nothing because this path ends. The list stays next_nodes = " + L(next) + "."]);
             base.push([8, "Skipped, so nothing is added."]);
             base.push([9, "Skipped, because the if above was True."]);
             st = { line: [4, 5, 6, 7], skip: [8, 9, 10] };
@@ -396,32 +505,46 @@
         } else {
           base.push([5, "letter is " + q(letter) + ", not '.', so this is False."]);
           base.push([6, "Skipped, because letter is not a dot."]);
+          tale.push([5, "The character is " + q(letter) + ", not a dot."]);
+          tale.push([6, "Skip the dot steps. Check for a child for " + q(letter) + "."]);
           if (letter in node) {
             next.push(node[letter]); go.push(nm(node[letter]));
             base.push([9, cap(said(here)) + " has " + q(letter) + ", so this is True."]);
             base.push([10, "This adds " + said(nm(node[letter])) + "."]);
+            tale.push([9, cap(said(here)) + " has a child for " + q(letter) + "."]);
+            tale.push([10, "Add the " + lbl(nm(node[letter])) + " node. Now next_nodes = " + L(next) + "."]);
             st = { line: [4, 5, 9, 10], skip: [6, 7, 8] };
             m = cap(said(here)) + " has " + q(letter) + ", so " + said(nm(node[letter])) + " is added to next_nodes.";
           } else {
             dead.push(here);
             base.push([9, cap(said(here)) + " has no " + q(letter) + ", so this is False."]);
             base.push([10, "Skipped, so nothing is added."]);
+            tale.push([9, cap(said(here)) + " has no child for " + q(letter) + ". This path cannot match."]);
+            tale.push([10, "Add nothing. The list stays next_nodes = " + L(next) + "."]);
             st = { line: [4, 5, 9], skip: [6, 7, 8, 10] };
             m = cap(said(here)) + " has no " + q(letter) + ", so nothing is added. This path ends here.";
           }
         }
-        out.push({ line: st.line, skip: st.skip, notes: base, li: i, node: here, cur: ids(current), nxt: ids(next),
-          pic: { cur: ids(current), nxt: ids(next), look: here, dead: dead.slice(), go: go.slice() }, msg: m });
+        var kids = ids(next.slice(before));
+        var mk = landed.slice();
+        if (kids.length) kids.forEach(function (id) { mk.push({ at: id, from: here }); });
+        else mk.push({ at: here, kind: "dead" });
+        ids(current.slice(k + 1)).forEach(function (id) { mk.push({ at: id }); });
+        kids.forEach(function (id) { landed.push({ at: id }); });
+        out.push({ line: st.line, skip: st.skip, notes: base, story: tale, li: i, node: here, anim: { type: "add", ids: kids }, cur: ids(current), nxt: ids(next),
+          pic: { cur: ids(current), nxt: ids(next), look: here, dead: dead.slice(), go: go.slice(), row: i + 1, mk: mk }, msg: m });
       });
       current = next;
       if (current.length) {
-        out.push({ line: [11, 12], skip: [13], li: i, cur: ids(current), nxt: ids(next), pic: { cur: ids(current) },
+        out.push({ line: [11, 12], skip: [13], li: i, anim: { type: "move" }, cur: ids(current), nxt: ids(next), pic: { cur: ids(current), row: i + 1, mk: ids(current).map(function (id) { return { at: id }; }) },
           notes: [[11, "current now holds " + names(current) + "."], [12, "current is not empty, so this is False."], [13, "Skipped, so the search goes on."]],
-          msg: "Every node has taken its step, so current = next_nodes. " + (current.length === 1 ? "The only place after \"" + word.slice(0, i + 1) + "\" is " : "The places after \"" + word.slice(0, i + 1) + "\" are ") + names(current) + "." });
+          story: [[11, "We checked every position in current. Set current = next_nodes, so current = " + L(current) + "."], [12, "The current list is not empty, so a path is still possible. " + (i === word.length - 1 ? "That was the last character." : "Read the next character.")]],
+          msg: "We've checked every node in current, so current = next_nodes. " + (current.length === 1 ? "Our only possible position after \"" + word.slice(0, i + 1) + "\" is " : "Our possible positions after \"" + word.slice(0, i + 1) + "\" are ") + names(current) + "." });
       } else {
         out.push({ line: [11, 12, 13], li: i, cur: [], nxt: [], pic: { dead: dead.slice() }, result: false,
           notes: [[11, "current is now empty."], [12, "current is empty, so this is True."]],
-          msg: "Every node has taken its step, and next_nodes is empty. No saved word can match \"" + word + "\", so the search returns False." });
+          story: [[11, "We checked every position, but next_nodes = []. Set current = next_nodes, so current = []."], [13, "The current list is empty, so every path failed. Return False."]],
+          msg: "We've checked every node in current, and next_nodes is empty. There is nowhere left to go, so no saved word can match \"" + word + "\". The search returns False." });
         return out;
       }
     }
@@ -433,14 +556,17 @@
       fin = { line: [14, 15, 16], skip: [17], notes: [[14, "node is " + said(nm(hit[0])) + "."],
         [15, (before.length ? cap(names(before)) + (before.length === 1 ? " has" : " have") + " no '$', so the loop moved on. " : "") + cap(said(nm(hit[0]))) + " has '$', so this is True."],
         [17, "Skipped, because the search already returned True."]],
+        story: [[14, "We read every character, and current = " + L(current) + ". Check each position for '$'."], [15, (before.length ? cap(names(before)) + (before.length === 1 ? " has" : " have") + " no '$'. " : "") + cap(said(nm(hit[0]))) + " has '$', so a complete saved word ends here."], [16, "Return True."]],
         msg: "Every letter has been read, and current holds " + names(current) + ". " + cap(said(nm(hit[0]))) + " has '$', so a saved word ends there. The search returns True." };
     } else {
       fin = { line: [14, 15, 17], skip: [16], notes: [[15, "No node in current has '$', so this is never True."], [16, "Skipped, because no node has '$'."], [17, "The loop ended, so this returns False."]],
+        story: [[14, "We read every character, and current = " + L(current) + ". Check each position for '$'."], [15, "No position in current = " + L(current) + " has '$'."], [17, (current.length === 1 ? "This position is" : "These positions are") + " only a prefix of longer words. Return False."]],
         msg: "Every letter has been read, and current holds " + names(current) + ". " + (current.length === 1 ? "That node doesn't" : "None of them") + " have '$', so these are only the start of longer words. The search returns False." };
     }
     fin.li = word.length; fin.cur = ids(current); fin.nxt = ids(current); fin.result = hit.length > 0;
     fin.node = hit.length ? nm(hit[0]) : null;
-    fin.pic = { cur: ids(current), look: hit.length ? nm(hit[0]) : null };
+    fin.pic = { cur: ids(current), look: hit.length ? nm(hit[0]) : null, row: word.length,
+      mk: current.map(function (n) { return { at: nm(n), kind: "$" in n ? "win" : "miss" }; }) };
     out.push(fin);
     return out;
   }
@@ -448,57 +574,96 @@
   function letterRow(state, word, li) {
     var at = Math.min(li, word.length - 1);
     if (at < 0) { state.appendChild(el("div", "lst lst-none", "The variable letter has not been set yet.")); return; }
-    var lr = el("div", "lst");
+    var lr = el("div", "lst lst-let");
     lr.appendChild(el("code", "lst-name", "letter = "));
     lr.appendChild(el("span", "chip c-let", q(word[at])));
     state.appendChild(lr);
   }
   function nodeRow(state, id) {
     var r = el("div", "lst");
+    r.dataset.row = "node";
     r.appendChild(el("code", "lst-name", "node = "));
-    r.appendChild(el("span", "chip c-node", lbl(id)));
+    var c = el("span", "chip c-node", lbl(id));
+    c.dataset.id = id;
+    r.appendChild(c);
     state.appendChild(r);
+  }
+
+  /* Mark the chip being checked, a path that ended, and the node that wins */
+  function markChips(state, s) {
+    rowChips(state, "current").forEach(function (c) {
+      var id = c.dataset.id, p = s.pic || {};
+      if (s.node && s.result == null && p.look === id) c.classList.add("look");
+      if (s.node && s.result == null && p.look === id && (p.dead || []).indexOf(id) >= 0) c.classList.add("dead");
+      var win = s.hit || (s.result && p.look);
+      if (s.result != null && win === id) c.classList.add("win");
+    });
+  }
+
+  /* Chips that fly between the tree and the variable rows */
+  /* The moving parts are the lesson itself and only move when Next is pressed, so they play even when
+     the phone asks for less motion. The stylesheet turns off only the pulses in that case. */
+  var still = false;
+  function centre(r) { return [r.left + r.width / 2, r.top + r.height / 2]; }
+  function fly(chip, fromRect, delay) {
+    if (still || !fromRect) return;
+    var a = centre(fromRect), b = centre(chip.getBoundingClientRect());
+    chip.style.setProperty("transition", "none", "important");
+    chip.style.transform = "translate(" + (a[0] - b[0]) + "px," + (a[1] - b[1]) + "px) scale(.85)";
+    chip.style.opacity = ".4";
+    chip.getBoundingClientRect();
+    requestAnimationFrame(function () {
+      chip.style.setProperty("transition", "transform .9s cubic-bezier(.45,0,.25,1) " + (delay || 0) + "s, opacity .5s " + (delay || 0) + "s", "important");
+      chip.style.transform = "";
+      chip.style.opacity = "";
+    });
+  }
+  function treeRect(box, id) {
+    var c = $('.tn[data-id="' + id + '"] > circle', box);
+    return c ? c.getBoundingClientRect() : null;
+  }
+  function rowChips(state, name) { return $$('.lst[data-row="' + name + '"] .chip', state); }
+  function animate(box, state, s) {
+    var a = s.anim;
+    if (!a) return;
+    if (a.type === "tree") {
+      rowChips(state, a.row).forEach(function (c, i) { fly(c, treeRect(box, c.dataset.id), i * 0.08); });
+    } else if (a.type === "add") {
+      rowChips(state, "next_nodes").forEach(function (c) {
+        if (a.ids.indexOf(c.dataset.id) >= 0) fly(c, treeRect(box, c.dataset.id), 0.35);
+      });
+    } else if (a.type === "move") {
+      var from = {};
+      rowChips(state, "next_nodes").forEach(function (c) { from[c.dataset.id] = c.getBoundingClientRect(); });
+      rowChips(state, "current").forEach(function (c, i) { fly(c, from[c.dataset.id], i * 0.08); });
+    } else if (a.type === "reset" && a.was && a.was.length) {
+      var row = $('.lst[data-row="next_nodes"]', state);
+      if (!row) return;
+      var ghost = chips("next_nodes", a.was, "c-nxt gone");
+      row.parentNode.replaceChild(ghost, row);
+      setTimeout(function () { if (ghost.isConnected) ghost.parentNode.replaceChild(row, ghost); }, still ? 0 : 750);
+    }
   }
 
   function tracer(box, o) {
     var v = stepper(box, {
-      legend: o.legend,
+      eyebrow: o.eyebrow,
+      title: function () { return "search(\"" + v.word + "\")"; },
+      result: function (s) { return "Returns " + (s.result ? "True" : "False") + (s.wrong ? ", but the right answer is True." : "."); },
       draw: function (state, s) {
         state.textContent = "";
         drawWord(state, v.word, s.li);
-        o.draw(state, s, v.word);
-        if (s.result != null) {
-          var t = "search(\"" + v.word + "\") returns " + (s.result ? "True" : "False") + ".";
-          if (s.wrong) t += " The right answer is True, so this code is wrong.";
-          state.appendChild(el("p", "viz-res " + (s.result ? "yes" : "no"), t));
-        }
       }
     });
-    var picks = el("div", "picks");
+    var picks = el("div", "vz-seg");
+    picks.setAttribute("role", "tablist");
     o.picks.forEach(function (w) {
       var b = el("button", "pick", w);
       b.type = "button";
       b.addEventListener("click", function () { go(w); });
       picks.appendChild(b);
     });
-    var form = el("form", "pick-own");
-    var inp = el("input");
-    inp.type = "text"; inp.maxLength = 6; inp.placeholder = "like d.g";
-    inp.setAttribute("autocapitalize", "off"); inp.setAttribute("autocomplete", "off"); inp.spellcheck = false;
-    inp.setAttribute("aria-label", "Your own search, using letters and dots");
-    var gb = el("button", "lbtn ghost", "Trace it");
-    gb.type = "submit";
-    var bad = el("span", "pick-bad");
-    form.appendChild(inp); form.appendChild(gb); form.appendChild(bad);
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var w = inp.value.trim().toLowerCase();
-      if (!/^[a-z.]{1,6}$/.test(w)) { bad.textContent = "Use 1 to 6 letters or dots."; return; }
-      bad.textContent = "";
-      go(w);
-    });
     v.top.appendChild(picks);
-    v.top.appendChild(form);
     function go(w) {
       v.word = w;
       $$(".pick", picks).forEach(function (b) { b.classList.toggle("on", b.textContent === w); });
@@ -508,16 +673,274 @@
     return { go: go, box: box };
   }
 
-  $$('.viz[data-mode="plain"]', lesson).forEach(function (box) {
+  /* The idea without code: markers that move, split and disappear */
+  function markerSteps(word) {
+    var out = [], current = [T.root];
+    function ids(list) { return list.map(nm); }
+    out.push({ li: -1, cur: ["root"], anim: { type: "tree", row: "current" }, pic: { row: 0, mk: [{ at: "root" }] },
+      msg: "We put one marker on the root. A marker means the search could be at that node. Before any letter, the only place is the root." });
+    for (var i = 0; i < word.length; i++) {
+      var letter = word[i], next = [], mk = [], says = [];
+      current.forEach(function (node) {
+        var here = nm(node);
+        var kids = letter === "." ? Object.keys(node).filter(function (k) { return k !== "$"; }) : (letter in node ? [letter] : []);
+        if (!kids.length) {
+          mk.push({ at: here, kind: "dead" });
+          says.push(letter === "." ? cap(said(here)) + " has no letters below it, so its marker is removed."
+                                   : cap(said(here)) + " has no " + q(letter) + ", so its marker is removed.");
+        }
+        kids.forEach(function (k) { next.push(node[k]); mk.push({ at: nm(node[k]), from: here }); });
+        if (kids.length === 1) says.push("The marker on " + said(here) + " moves to " + said(nm(node[kids[0]])) + ".");
+        if (kids.length > 1) says.push("The marker on " + said(here) + " splits into " + kids.length + " markers, one for " + names(kids.map(function (k) { return node[k]; })) + ".");
+      });
+      var head = letter === "." ? "The letter is a dot, so every marker splits into one marker for each child below it. "
+                                : "The letter is " + q(letter) + ", so every marker moves to its " + q(letter) + " child. ";
+      var st = { li: i, cur: ids(next), anim: { type: "tree", row: "current" }, pic: { row: i + 1, mk: mk }, msg: head + says.join(" ") };
+      if (!next.length) {
+        st.cur = [];
+        st.msg += " No markers are left, so no saved word can match. The answer is False.";
+        st.result = false;
+        out.push(st);
+        return out;
+      }
+      st.msg += " Every marker is now one row lower.";
+      out.push(st);
+      current = next;
+    }
+    var hit = current.filter(function (n) { return "$" in n; });
+    out.push({ li: word.length, result: hit.length > 0, cur: ids(current), hit: hit.length ? nm(hit[0]) : null,
+      pic: { row: word.length, mk: current.map(function (n) { return { at: nm(n), kind: "$" in n ? "win" : "miss" }; }) },
+      msg: "Every letter has been read. " + (hit.length
+        ? "The marker on " + said(nm(hit[0])) + " sits on a node with '$', so a saved word ends there. The answer is True."
+        : (current.length === 1 ? "The marker sits" : "No marker sits") + (current.length === 1 ? " on a node without '$'" : " on a node with '$'") + ", so these are only the start of longer words. The answer is False.") });
+    return out;
+  }
+  $$('.viz[data-mode="markers"]', lesson).forEach(function (box) {
     tracer(box, {
-      picks: ["cat", "ca", ".og", "c.t"], steps: plainSteps,
-      legend: [["cur", "A blue node is the one the variable node holds."], ["dead", "A red dashed ring marks where the search gave up."], ["end", "A green $ marks the end of a saved word."]],
-      draw: function (state, s, word) {
-        letterRow(state, word, s.li);
-        nodeRow(state, s.node);
+      picks: [".og", "..t", "c..", "d.t"], steps: markerSteps,
+      legend: [["mk", "A blue dot is a marker. It means the search could be at that node."], ["row", "The shaded row is where every marker is."], ["end", "A green $ marks the end of a saved word."]],
+      draw: function (state, s) {
+        state.appendChild(chips("current", s.cur, "c-cur"));
+        markChips(state, s);
       }
     });
   });
+
+  $$('.viz[data-mode="plain"]', lesson).forEach(function (box) {
+    tracer(box, { picks: ["cat", ".og"], steps: plainSteps, eyebrow: "Watch the normal search" });
+  });
+
+  /* Three modes for search("..t"): the idea, the lists, then the code */
+  var L3T = {
+    "M1_00": "We start at the root. Blue shows our current position.",
+    "M1_01": "The first character is a dot. A dot can match any one letter.",
+    "M1_02": "The root has c and d children. Green shows both possible moves.",
+    "M1_03": "We move to those children. Our positions are now c and d.",
+    "M1_04": "The second character is another dot. It can match any one letter.",
+    "M1_05": "The c node has only an a child. We can move to the a node.",
+    "M1_06": "The d node has only an o child. We can move to the o node.",
+    "M1_07": "We move to those children. Our positions are now the a node and the o node.",
+    "M1_08": "The third character is t. We need a t child from each position.",
+    "M1_09": "The a node has a t child. We can move to the t node.",
+    "M1_10": "The o node has no t child. That path stops.",
+    "M1_11": "We move forward. Our only position is now the t node.",
+    "M1_12": "No characters remain. The t node marks a complete word, so the answer is True.",
+    "M2_00": "Starting positions contains every possible position. Before reading anything, it contains only the root.",
+    "M2_01": "The first character is a dot. We make an empty Positions reached box for the new positions.",
+    "M2_02": "The root has c and d children. We add both to Positions reached.",
+    "M2_03": "We checked every starting position. Positions reached now becomes Starting positions.",
+    "M2_04": "In Python, we call these boxes current and next_nodes. For this dot, we start a new empty next_nodes.",
+    "M2_05": "The c node has an a child. We add the a node to next_nodes.",
+    "M2_06": "The d node has an o child. We add the o node, so next_nodes is [a, o].",
+    "M2_07": "We checked every position in current. We set current to next_nodes, so current is [a, o].",
+    "M2_08": "The next character is t. We start with a new empty next_nodes list.",
+    "M2_09": "The a node has a t child. We add the t node to next_nodes.",
+    "M2_10": "The o node has no t child. That path stops.",
+    "M2_11": "We checked every position in current. We set current to next_nodes, so current is [t].",
+    "M2_12": "No characters remain. The t node has '$', so a complete word ends there and the answer is True.",
+    "M3_1Q": "Before we read the first character of '..t', which trie node is our only possible position?",
+    "M3_1A": "The line `current = [self.root]` creates the list of positions before reading a character. It sets `current = [root]` because the search must start at the root.",
+    "M3_2Q": "Which Python loop reads '..t' one character at a time, starting with the first dot?",
+    "M3_2A": "The line `for letter in word:` loops through '..t' from left to right. On each loop, `letter` is the character being read, so its values are '.', '.', and then 't'.",
+    "M3_3Q": "Before we check the character we're reading, where should we collect the positions reached after reading it?",
+    "M3_3A": "The line `next_nodes = []` creates an empty list for the positions reached after reading this character. For the first dot, `current = [root]` and `next_nodes` starts as `[]`.",
+    "M3_4Q": "When `current` contains possible positions, which of those positions must the code check?",
+    "M3_4A": "The line `for node in current:` checks every position in `current`, one at a time. Here `current = [root]`, so `node` is the root being ringed in the trie.",
+    "M3_5Q": "The character we're reading is '.', and `node` is the root. Which children of the root should be added to `next_nodes`?",
+    "M3_5A": "The line `if letter == '.':` selects the dot case, and the line `for key in node:` checks every entry at the root. The line `if key != '$':` skips the end mark, while `next_nodes.append(node[key])` adds each letter child. The trie has c and d children at the root, so `next_nodes = [c, d]`.",
+    "M3_6Q": "The character we're reading is 't', and `node` is the a node. Which child should be added to `next_nodes`?",
+    "M3_6A": "The line `elif letter in node:` checks whether the a node has a child named t. Because that child exists, the line `next_nodes.append(node[letter])` adds the t node. The trie therefore shows `next_nodes = [t]` after the a node is checked.",
+    "M3_7Q": "After every position in `current` has been checked, which list should become the positions used for the next character?",
+    "M3_7A": "The line `current = next_nodes` replaces the old positions with the positions just reached. Here `next_nodes = [t]`, so `current` becomes `[t]`.",
+    "M3_8Q": "When searching for 'cab', reading 'b' from the a node reaches no child. What should the code return after `current` becomes empty?",
+    "M3_8A": "The line `if not current:` checks whether there are no positions left after `current = next_nodes`. Here the a node has no b child, so `next_nodes = []` and `current = []`. The line `return False` stops the search because no trie path can match 'cab'.",
+    "M3_9Q": "After every character has been read, `current = [t]`. Which mark must the code find at that node to confirm that a saved word ends there?",
+    "M3_9A": "The line `for node in current:` checks each final position, and the line `if '$' in node:` looks for the end mark at that node. The t node has '$', so `return True` runs. If no final position has '$', the last line `return False` runs."
+  };
+  var L3CODE = [
+    "def search(self, word):",
+    "    current = [self.root]",
+    "    for letter in word:",
+    "        next_nodes = []",
+    "        for node in current:",
+    "            if letter == '.':",
+    "                for key in node:",
+    "                    if key != '$':",
+    "                        next_nodes.append(node[key])",
+    "            elif letter in node:",
+    "                next_nodes.append(node[letter])",
+    "        current = next_nodes",
+    "        if not current:",
+    "            return False",
+    "    for node in current:",
+    "        if '$' in node:",
+    "            return True",
+    "    return False"
+  ];
+  var L3STEPS = [
+    { li: -1, pic: { cur: ["root"] }, start: ["root"], reach: null },
+    { li: 0, pic: { cur: ["root"] }, start: ["root"], reach: [] },
+    { li: 0, pic: { cur: ["root"], look: "root", nxt: ["c", "d"], go: ["c", "d"] }, start: ["root"], reach: ["c", "d"] },
+    { li: 0, pic: { cur: ["c", "d"] }, start: ["c", "d"], reach: null, move: true },
+    { li: 1, pic: { cur: ["c", "d"] }, start: ["c", "d"], reach: [], names: true },
+    { li: 1, pic: { cur: ["c", "d"], look: "c", nxt: ["ca"], go: ["ca"] }, start: ["c", "d"], reach: ["ca"] },
+    { li: 1, pic: { cur: ["c", "d"], look: "d", nxt: ["ca", "do"], go: ["ca", "do"] }, start: ["c", "d"], reach: ["ca", "do"] },
+    { li: 1, pic: { cur: ["ca", "do"] }, start: ["ca", "do"], reach: null, move: true },
+    { li: 2, pic: { cur: ["ca", "do"] }, start: ["ca", "do"], reach: [] },
+    { li: 2, pic: { cur: ["ca", "do"], look: "ca", nxt: ["cat"], go: ["cat"] }, start: ["ca", "do"], reach: ["cat"] },
+    { li: 2, pic: { cur: ["ca", "do"], look: "do", dead: ["do"], nxt: ["cat"], go: ["cat"] }, start: ["ca", "do"], reach: ["cat"] },
+    { li: 2, pic: { cur: ["cat"] }, start: ["cat"], reach: null, move: true },
+    { li: 3, pic: { cur: ["cat"], look: "cat", mk: [{ at: "cat", kind: "win" }] }, start: ["cat"], reach: null }
+  ];
+  var L3BLOCKS = [
+    { lines: [1], li: -1, pic: { cur: ["root"] } },
+    { lines: [2], li: 0, pic: { cur: ["root"] } },
+    { lines: [3], li: 0, pic: { cur: ["root"] } },
+    { lines: [4], li: 0, pic: { cur: ["root"], look: "root" } },
+    { lines: [5, 6, 7, 8], li: 0, ask: { cur: ["root"], look: "root" }, pic: { cur: ["root"], look: "root", nxt: ["c", "d"], go: ["c", "d"] } },
+    { lines: [9, 10], li: 2, ask: { cur: ["ca", "do"], look: "ca" }, pic: { cur: ["ca", "do"], look: "ca", nxt: ["cat"], go: ["cat"] } },
+    { lines: [11], li: 2, ask: { cur: ["ca", "do"], nxt: ["cat"] }, pic: { cur: ["cat"] } },
+    { lines: [12, 13], li: 2, word: "cab", ask: { cur: ["ca"], look: "ca" }, pic: { cur: ["ca"], look: "ca", dead: ["ca"] } },
+    { lines: [14, 15, 16, 17], li: 3, ask: { cur: ["cat"] }, pic: { cur: ["cat"], look: "cat", mk: [{ at: "cat", kind: "win" }] } }
+  ];
+
+  function threeModes(box) {
+    var tabs = el("div", "l3-tabs");
+    tabs.setAttribute("role", "tablist");
+    var MODES = ["1. The idea", "2. The lists", "3. The code"];
+    var mode = 0, at = 0;
+    var tb = MODES.map(function (name, i) {
+      var b = el("button", i === 0 ? "on" : "", name);
+      b.type = "button";
+      b.setAttribute("role", "tab");
+      b.addEventListener("click", function () { mode = i; at = 0; tb.forEach(function (x, j) { x.classList.toggle("on", j === i); }); show(); });
+      tabs.appendChild(b);
+      return b;
+    });
+    var word = el("div", "wd l3-word");
+    var pic = el("div", "l3-pic");
+    var setTrie = makeTrie(pic);
+    var lists = el("div", "l3-lists");
+    var cap = el("p", "l3-cap");
+    cap.setAttribute("aria-live", "polite");
+    var nav = el("div", "viz-nav l3-nav");
+    var back = el("button", "lbtn ghost", "Back"), count = el("span", "viz-count"), next = el("button", "lbtn", "Next");
+    back.type = next.type = "button";
+    nav.appendChild(back); nav.appendChild(count); nav.appendChild(next);
+    var code = el("pre", "snip l3-code");
+    var lineEls = L3CODE.map(function (t) {
+      var n = t.length - t.replace(/^ +/, "").length;
+      var s = el("span", "l3-ln", t.trim());
+      s.style.paddingLeft = (n / 4 * 1.2 + 1.2) + "em";
+      s.style.textIndent = "-1.2em";
+      code.appendChild(s);
+      return s;
+    });
+    [tabs, word, pic, lists, code, cap, nav].forEach(function (x) { box.appendChild(x); });
+
+    function steps() {
+      if (mode < 2) return L3STEPS.map(function (s, i) { return { s: s, text: L3T["M" + (mode + 1) + "_" + (i < 10 ? "0" : "") + i] }; });
+      var out = [];
+      L3BLOCKS.forEach(function (b, i) {
+        out.push({ b: b, k: i, q: true, text: L3T["M3_" + (i + 1) + "Q"] });
+        out.push({ b: b, k: i, q: false, text: L3T["M3_" + (i + 1) + "A"] });
+      });
+      return out;
+    }
+    function drawWord(w, li) {
+      word.textContent = "";
+      for (var i = 0; i < w.length; i++) word.appendChild(el("span", "wd-c" + (i === li ? " on" : i < li ? " done" : ""), w[i]));
+    }
+    function chipBox(kind, label, pyName, ids, showName) {
+      var b = el("div", "l3-box l3-" + kind + (ids ? "" : " idle"));
+      var h = el("p", "l3-bl", label);
+      if (showName) { h.appendChild(document.createTextNode(" ")); h.appendChild(el("code", "", pyName)); }
+      b.appendChild(h);
+      var items = el("div", "l3-items");
+      (ids || []).forEach(function (id) { var c = el("span", "l3-chip", lbl(id)); c.dataset.id = id; items.appendChild(c); });
+      if (ids && !ids.length) items.appendChild(el("span", "l3-empty", "empty"));
+      b.appendChild(items);
+      return b;
+    }
+    function drawLists(s, list, idx) {
+      var was = {};
+      $$(".l3-reach .l3-chip", lists).forEach(function (c) { was[c.dataset.id] = c.getBoundingClientRect(); });
+      var named = list.slice(0, idx + 1).some(function (x) { return x.s.names; });
+      lists.textContent = "";
+      lists.appendChild(chipBox("start", "Starting positions", "current", s.start, named));
+      lists.appendChild(chipBox("reach", "Positions reached", "next_nodes", s.reach, named));
+      if (!s.move || still) return;
+      $$(".l3-start .l3-chip", lists).forEach(function (c) {
+        var r0 = was[c.dataset.id]; if (!r0) return;
+        var r1 = c.getBoundingClientRect();
+        c.style.setProperty("transition", "none", "important");
+        c.style.transform = "translate(" + (r0.left - r1.left) + "px," + (r0.top - r1.top) + "px)";
+        c.getBoundingClientRect();
+        requestAnimationFrame(function () {
+          c.style.setProperty("transition", "transform .7s cubic-bezier(.3,.8,.3,1)", "important");
+          c.style.transform = "";
+        });
+      });
+    }
+    function show() {
+      var list = steps(), st = list[at];
+      box.dataset.mode = mode + 1;
+      lists.hidden = mode !== 1;
+      code.hidden = mode !== 2;
+      cap.className = "l3-cap" + (st.q ? " q" : "") + (mode === 2 ? " long" : "");
+      cap.textContent = "";
+      if (st.q) cap.appendChild(el("span", "l3-think", "Think first"));
+      var ct = el("span", "l3-ct");
+      st.text.split("`").forEach(function (part, i) {
+        if (i % 2) ct.appendChild(el("code", "", part));
+        else ct.appendChild(document.createTextNode(part));
+      });
+      cap.appendChild(ct);
+      if (mode < 2) {
+        drawWord("..t", st.s.li);
+        setTrie(st.s.pic);
+        if (mode === 1) drawLists(st.s, list, at);
+      } else {
+        var b = st.b;
+        drawWord(b.word || "..t", b.li);
+        setTrie(st.q ? (b.ask || b.pic) : b.pic);
+        var shown = [0];
+        L3BLOCKS.slice(0, st.k + (st.q ? 0 : 1)).forEach(function (x) { shown = shown.concat(x.lines); });
+        lineEls.forEach(function (e, i) {
+          e.classList.toggle("hid", shown.indexOf(i) < 0);
+          e.classList.toggle("hl", !st.q && b.lines.indexOf(i) >= 0);
+        });
+      }
+      count.textContent = "Step " + (at + 1) + " of " + list.length;
+      back.disabled = at === 0;
+      next.disabled = at === list.length - 1;
+      next.textContent = st.q ? "Show answer" : "Next";
+    }
+    back.addEventListener("click", function () { if (at > 0) { at--; show(); } });
+    next.addEventListener("click", function () { if (at < steps().length - 1) { at++; show(); } });
+    show();
+  }
+  $$(".l3", lesson).forEach(threeModes);
 
   var searchViz = null;
   $$('.viz[data-mode="search"]', lesson).forEach(function (box) {
@@ -529,6 +952,7 @@
         if (s.node) nodeRow(state, s.node);
         state.appendChild(chips("current", s.cur, "c-cur"));
         state.appendChild(chips("next_nodes", s.nxt, "c-nxt"));
+        markChips(state, s);
       }
     });
   });
@@ -830,8 +1254,8 @@
 
   /* Level 3: a blank editor */
   $$('.lv[data-lv="3"]', lesson).forEach(function (box) {
-    var ta = $(".ed", box), KEY = "lsn-211-editor";
-    var START = "class WordDictionary:\n\n    def __init__(self):\n        \n\n    def addWord(self, word):\n        \n\n    def search(self, word):\n        \n";
+    var ta = $(".ed", box), KEY = "lsn-211-editor-v2";
+    var START = "class WordDictionary:\n\n    def __init__(self):\n        \n\n    def addWord(self, word):\n        \n\n    def search(self, word):\n        # 1. Start at the root.\n\n        # 2. Read one letter at a time.\n\n        # 3. Find every possible next position.\n\n        # 4. Move to those positions.\n\n        # 5. Check whether a complete word matches.\n\n";
     var saved = null;
     try { saved = localStorage.getItem(KEY); } catch (e) { saved = null; }
     ta.value = saved || START;

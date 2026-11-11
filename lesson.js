@@ -1137,7 +1137,7 @@
     if (failed("cab"))
       return "A normal letter should follow only the child for that letter. What should a node add if it doesn't have the letter?";
     if (fails.some(function (r) { return TESTS[r.id] && TESTS[r.id].q.indexOf(".") >= 0; }))
-      return "The searches with dots fail. Trace one of them by hand with the trie from Part 2, and compare it to the walkthrough in Part 7.";
+      return "The searches with dots fail. Trace one of them by hand with the trie from Part 2, and compare it to the walkthrough in Part 4.";
     return "Pick one failing search and trace it by hand with the trie from Part 2. Where does your code first do something different?";
   }
   function showResult(out, res) {

@@ -833,3 +833,6 @@ pre.snip .snl{display:block;min-height:1.6em;overflow-wrap:break-word}
 .l3 .l3-nav .lbtn{padding:0 14px}
 .l3 .l3-nav .lbtn:not(.ghost){min-width:80px}
 .l3 .viz-count{font-size:12px}
+
+/* a hand-drawn panel picture inside a lesson part */
+.lsn .lsn-pic{display:block;width:100%;max-width:823px;height:auto;border-radius:12px;border:1px solid var(--line);filter:var(--img-filter)}

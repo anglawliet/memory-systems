@@ -1,5 +1,5 @@
 /* The interactive parts of the Word Search II lesson (class "lsn", data-lesson="212"):
-   the tap-the-path card, and the practice editor that runs real Python tests. */
+   the walkthrough card, and the practice editor that runs real Python tests. */
 (function () {
   var lesson = document.querySelector('.lsn[data-lesson="212"]');
   if (!lesson) return;
@@ -17,168 +17,209 @@
   function rich(s) { return esc(s).replace(/`([^`]+)`/g, "<code>$1</code>"); }
   function fill(t, v) { return t.replace(/\{(\w+)\}/g, function (m, k) { return v[k] != null ? v[k] : m; }); }
 
-  /* 1. The tap-the-path card: the learner taps the cells that dfs visits */
+  /* 1. The walkthrough card: the board and the trie move together, with an idea tab and a code tab */
   var BOARD = [["o", "a", "a", "n"], ["e", "t", "a", "e"], ["i", "h", "k", "r"], ["i", "f", "l", "v"]];
   var WORDS = ["oath", "pea", "eat", "rain"];
-  var PATHS = { oath: [[0, 0], [0, 1], [1, 1], [2, 1]], eat: [[1, 3], [1, 2], [1, 1]] };
-  var MSG = {
-    ASK_START: "Tap the cell where {word} starts. We will follow only {word}.",
-    START_NONE: "{cell} has {x}. The root has no {x} child, so the call ends.",
-    START_OTHER: "{cell} has {x}. The root has {an} {x} child, but {word} starts with {w0}.",
-    GOOD: "{cell} has {x}. {Node} has {an} {x} child, so `node` moves to the {x} node.",
-    ASK_NEXT: "Tap a cell up, down, left or right of {cur}.",
-    NOT_NEAR: "{cell} is not next to {cur}. The dfs call only moves up, down, left or right.",
-    HASH: "{cell} has '#' because this path already uses it. No node has a '#' child, so the call ends.",
-    NO_CHILD: "{cell} has {x}. The {letter} node has no {x} child, so the call ends.",
-    OTHER: "{cell} has {x}. The {letter} node has {an} {x} child, but we are following {word}.",
-    FOUND: "The {letter} node has '$', so the path spells {word}. Add {word} to `found`, delete '$', and press Go back.",
-    BACK: "Put {x} back in {cell}. This call ends, and we return to {prev}.",
-    BACK_LAST: "Put {x} back in {cell}. The first call ends, and `found` is {found}."
+  // code lines in the card (0-based): 3 letter =, 4 if not in node, 5 return, 6 node = node[letter],
+  // 7 if '$', 8 append, 9 del, 10 mark '#', 11-14 the four calls, 15 restore
+  var SUM_IDEA = "Each call does four jobs. Stop if the cell is off the board or its letter is not a child. Step into the child. Save the word if '$' is there. Mark the cell, try the four neighbors, and put the letter back.";
+  var SUM_CODE = "These four jobs are the whole `dfs` function, from top to bottom. Write it in this order.";
+  var RUNS = {
+    oath: [
+      { cur: [0, 0], path: [], node: "", n: 0, lines: [0],
+        idea: "The search starts at the o cell. In the trie, `node` starts at the root.",
+        code: "The loops call `dfs` on the o cell, with `node` set to the root." },
+      { cur: [0, 0], path: [[0, 0]], node: "o", n: 1, lines: [3, 4, 6],
+        idea: "The root has an o child, so we move to the o node. The board and the trie move together.",
+        code: "The letter is o. The root has an o child, so `node` becomes the o node." },
+      { cur: [0, 0], path: [[0, 0]], hash: true, node: "o", n: 1, lines: [10, 11, 13], marks: [[1, 0, "no"], [0, 1, "ok"]],
+        idea: "Check the cells beside o. The o node has an a child but no e child, so only the a on the right can continue.",
+        code: "Put '#' in the o cell and call `dfs` on each neighbor. The e call stops at the check, but the a call continues." },
+      { cur: [0, 1], path: [[0, 0], [0, 1]], hash: 1, node: "oa", n: 2, lines: [3, 4, 6],
+        idea: "Move to the a cell and the a node.",
+        code: "The o node has an a child, so `node` becomes the a node." },
+      { cur: [0, 1], path: [[0, 0], [0, 1]], hash: true, node: "oa", n: 2, lines: [10, 11, 13, 14], marks: [[1, 1, "ok"], [0, 2, "no"], [0, 0, "used"]],
+        idea: "The a node has only a t child, and t is below. The o cell holds '#', so it cannot be used again.",
+        code: "Put '#' in the a cell and call `dfs` on each neighbor. Only the t call continues." },
+      { cur: [1, 1], path: [[0, 0], [0, 1], [1, 1]], hash: 2, node: "oat", n: 3, lines: [3, 4, 6],
+        idea: "Move to the t cell and the t node.",
+        code: "The a node has a t child, so `node` becomes the t node." },
+      { cur: [1, 1], path: [[0, 0], [0, 1], [1, 1]], hash: true, node: "oat", n: 3, lines: [10, 11, 12, 13, 14], marks: [[2, 1, "ok"], [1, 0, "no"], [1, 2, "no"], [0, 1, "used"]],
+        idea: "The t node has only an h child, and h is right below.",
+        code: "Put '#' in the t cell and call `dfs` on each neighbor. Only the h call continues." },
+      { cur: [2, 1], path: [[0, 0], [0, 1], [1, 1], [2, 1]], hash: 3, node: "oath", n: 4, lines: [6, 7, 8, 9], found: ["oath"],
+        idea: "The h node has '$', so the path from the root spelled oath. Add oath to found. We never compare whole words.",
+        code: "'$' is in `node`, so add `node['$']` to `found` and delete '$'." },
+      { cur: null, path: [], node: "", n: 4, lines: [15], found: ["oath"], back: true,
+        idea: "The h node has no children, so the calls end one by one. On the way back, each cell gets its letter back.",
+        code: "Each call ends with `board[r][c] = letter`, so the cells get their letters back." }
+    ],
+    eat: [
+      { cur: [1, 3], path: [], node: "", n: 0, lines: [0],
+        idea: "The search for eat starts at the e cell on the right. In the trie, `node` starts at the root.",
+        code: "The loops call `dfs` on this e cell, with `node` set to the root." },
+      { cur: [1, 3], path: [[1, 3]], node: "e", n: 1, lines: [3, 4, 6],
+        idea: "The root has an e child, so we move to the e node.",
+        code: "The letter is e. The root has an e child, so `node` becomes the e node." },
+      { cur: [1, 3], path: [[1, 3]], hash: true, node: "e", n: 1, lines: [10, 11, 12, 14], marks: [[2, 3, "no"], [0, 3, "no"], [1, 2, "ok"]],
+        idea: "The e node has only an a child. The r below and the n above do not match. The a on the left does.",
+        code: "Put '#' in the e cell and call `dfs` on each neighbor. Only the a call continues." },
+      { cur: [1, 2], path: [[1, 3], [1, 2]], hash: 1, node: "ea", n: 2, lines: [3, 4, 6],
+        idea: "Move to the a cell and the a node.",
+        code: "The e node has an a child, so `node` becomes the a node." },
+      { cur: [1, 2], path: [[1, 3], [1, 2]], hash: true, node: "ea", n: 2, lines: [10, 11, 12, 13, 14], marks: [[2, 2, "no"], [0, 2, "no"], [1, 3, "used"], [1, 1, "ok"]],
+        idea: "The a node has only a t child, and the t on the left matches. The e cell holds '#', so it cannot be used again.",
+        code: "Put '#' in the a cell and call `dfs` on each neighbor. Only the t call continues." },
+      { cur: [1, 1], path: [[1, 3], [1, 2], [1, 1]], hash: 2, node: "eat", n: 3, lines: [6, 7, 8, 9], found: ["eat"],
+        idea: "Move to t. The t node has '$', so the path spelled eat. Add eat to found.",
+        code: "The t node has '$', so add `node['$']` to `found` and delete '$'." },
+      { cur: null, path: [], node: "", n: 3, lines: [15], found: ["eat"], back: true,
+        idea: "The t node has no children, so the calls end, and each cell gets its letter back.",
+        code: "Each call ends with `board[r][c] = letter`." }
+    ]
   };
-  // the dfs code in the card, one entry per line, so a message can light up its lines
-  var L = { letter: 3, check: 4, ret: 5, move: 6, has: 7, add: 8, del: 9, mark: 10, restore: 15 };
-  function cell(r, c) { return "(" + r + ", " + c + ")"; }
-  function cap1(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
-  function an(x) { return "aefhilmnorsx".indexOf(x) >= 0 ? "an" : "a"; }
-  function nodeName(p) { return p ? "the " + p.slice(-1) + " node" : "the root"; }
-  function list(a) { return "[" + a.map(function (w) { return "'" + w + "'"; }).join(", ") + "]"; }
-  function child(p, x) { return WORDS.some(function (w) { return w.indexOf(p + x) === 0; }); }
+  var ALL = { cur: null, path: [], node: "", n: -1, lines: [3, 4, 5], starts: true,
+    idea: "The loops try every cell like this. Most cells stop right away, because the root has no child for their letter. Only o, e and r can start a word here.",
+    code: "At most cells, `letter not in node` is true at the root, so `dfs` returns at once." };
+  var SUM = { cur: null, path: [], node: "", n: -1, lines: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], sum: true, idea: SUM_IDEA, code: SUM_CODE };
+
+  // where each trie node sits in the drawing
+  var COLX = { o: 30, p: 90, e: 150, r: 210 }, ROWY = [50, 104, 154, 204, 254];
+  var POS = { "": [120, ROWY[0]] };
+  WORDS.forEach(function (w) { for (var i = 1; i <= w.length; i++) POS[w.slice(0, i)] = [COLX[w[0]], ROWY[i]]; });
+  var SVGNS = "http://www.w3.org/2000/svg";
+  function svg(tag, attrs, parent) {
+    var e = document.createElementNS(SVGNS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
 
   $$('.viz[data-mode="board"]', lesson).forEach(function (box) {
     var codePre = $("pre.snip", box), codeWrap = $(".viz-code", box);
     var lines = $$(".snl", codePre);
     box.classList.add("pro", "brd");
     var head = el("div", "vz-head"), titles = el("div", "vz-titles");
-    titles.appendChild(el("span", "vz-eyebrow", "Walk the path"));
+    titles.appendChild(el("span", "vz-eyebrow", "Watch dfs"));
     var title = el("span", "vz-title", "");
     titles.appendChild(title);
     var top = el("div", "viz-top"), picks = el("div", "vz-seg");
     top.appendChild(picks);
     head.appendChild(titles); head.appendChild(top);
 
+    var tabs = el("div", "l3-tabs bt-tabs");
+    var tabBtns = ["1. The idea", "2. The code"].map(function (t, i) {
+      var b = el("button", i ? "" : "on", t);
+      b.type = "button";
+      b.addEventListener("click", function () { mode = i; tabBtns.forEach(function (x, k) { x.classList.toggle("on", k === i); }); show(); });
+      tabs.appendChild(b);
+      return b;
+    });
+
     var stage = el("div", "vz-stage");
+    var strip = el("div", "bt-strip");
+    var stripWrap = el("div", "bt-stripw");
+    stripWrap.appendChild(el("span", "bt-sl", "Path spells"));
+    stripWrap.appendChild(strip);
     var grid = el("div", "bd-grid");
     var cells = [];
-    for (var r = 0; r < 4; r++) for (var c = 0; c < 4; c++) {
-      var d = el("button", "bd-c");
-      d.type = "button";
-      d.addEventListener("click", tap.bind(null, r, c));
-      grid.appendChild(d); cells.push(d);
-    }
-    var trie = el("div", "bd-trie");
-    var rootChip = el("span", "bd-n root", "root");
-    var rootRow = el("div", "bd-row"); rootRow.appendChild(rootChip); trie.appendChild(rootRow);
-    var chips = { "": rootChip }, ends = {};
-    WORDS.forEach(function (w) {
-      var row = el("div", "bd-row");
-      for (var i = 1; i <= w.length; i++) {
-        var n = el("span", "bd-n", w.charAt(i - 1));
-        chips[w.slice(0, i)] = n; row.appendChild(n);
-      }
-      var e = el("span", "bd-end", "'$': '" + w + "'");
-      ends[w] = e; row.appendChild(e);
-      trie.appendChild(row);
+    for (var r = 0; r < 4; r++) for (var c = 0; c < 4; c++) { var d = el("div", "bd-c"); grid.appendChild(d); cells.push(d); }
+
+    var tree = svg("svg", { viewBox: "0 0 240 280", class: "bt-tree", role: "img",
+      "aria-label": "The trie as a tree. The root has four branches: o, a, t, h for oath; p, e, a for pea; e, a, t for eat; and r, a, i, n for rain." });
+    var edges = {}, nodes = {};
+    Object.keys(POS).forEach(function (id) {
+      if (!id) return;
+      var a = POS[id.slice(0, -1)], b = POS[id];
+      edges[id] = svg("line", { x1: a[0], y1: a[1], x2: b[0], y2: b[1], class: "bt-e" }, tree);
     });
-    var tag = el("span", "bd-tag", "node");
-    var stack = el("div", "bd-stack");
-    var foundBox = el("p", "bd-found");
+    Object.keys(POS).forEach(function (id) {
+      var p = POS[id], g = svg("g", { class: "bt-n" + (id ? "" : " root") }, tree);
+      svg("circle", { cx: p[0], cy: p[1], r: id ? 17 : 22 }, g);
+      var t = svg("text", { x: p[0], y: p[1] + 5 }, g);
+      t.textContent = id ? id.slice(-1) : "root";
+      if (WORDS.indexOf(id) >= 0) {
+        var e = svg("g", { class: "bt-end" }, g);
+        svg("circle", { cx: p[0] + 15, cy: p[1] + 14, r: 8 }, e);
+        var et = svg("text", { x: p[0] + 15, y: p[1] + 18 }, e);
+        et.textContent = "$";
+      }
+      nodes[id] = g;
+    });
+    var tagG = svg("g", { class: "bt-tag" }, tree);
+    svg("rect", { x: -22, y: -10, width: 44, height: 19, rx: 9 }, tagG);
+    var tagT = svg("text", { x: 0, y: 4 }, tagG);
+    tagT.textContent = "node";
+
     var pics = el("div", "bd-pics");
-    pics.appendChild(grid); pics.appendChild(trie);
-    stage.appendChild(pics); stage.appendChild(stack); stage.appendChild(foundBox);
+    pics.appendChild(grid); pics.appendChild(tree);
+    var foundBox = el("p", "bd-found");
+    stage.appendChild(stripWrap); stage.appendChild(pics); stage.appendChild(foundBox);
 
     var body = el("div", "vz-body");
     body.appendChild(stage);
     codeWrap.classList.add("vz-code"); body.appendChild(codeWrap);
-    var foot = el("div", "vz-foot");
+    var foot = el("div", "vz-foot"), bar = el("span", "vz-bar"), barFill = el("i");
+    bar.appendChild(barFill);
     var capText = el("p", "vz-cap"); capText.setAttribute("aria-live", "polite");
     var ctrl = el("div", "vz-ctrl");
-    var reset = el("button", "vz-btn", "Start over"), next = el("button", "vz-btn primary", "Go back");
-    reset.type = next.type = "button";
-    ctrl.appendChild(reset); ctrl.appendChild(next);
-    foot.appendChild(capText); foot.appendChild(ctrl);
+    var back = el("button", "vz-btn", "Back"), next = el("button", "vz-btn primary", "Next"), count = el("span", "vz-n");
+    back.type = next.type = "button";
+    ctrl.appendChild(back); ctrl.appendChild(count); ctrl.appendChild(next);
+    foot.appendChild(bar); foot.appendChild(capText); foot.appendChild(ctrl);
     box.textContent = "";
-    box.appendChild(head); box.appendChild(body); box.appendChild(foot);
+    box.appendChild(head); box.appendChild(tabs); box.appendChild(body); box.appendChild(foot);
 
-    var word, path, board, found, phase, flash, msg, lit;
-    function prefix() { return path.map(function (p) { return BOARD[p[0]][p[1]]; }).join(""); }
-    function say(text, on) { msg = text; lit = on || []; }
-
+    var word = "oath", steps = [], at = 0, mode = 0;
     function show() {
-      var p = prefix(), last = path[path.length - 1];
+      var s = steps[at];
+      box.classList.toggle("bt-idea", mode === 0);
+      count.textContent = (at + 1) + " / " + steps.length;
+      barFill.style.width = ((at + 1) / steps.length * 100) + "%";
+      // the word strip: letters matched so far
+      strip.textContent = "";
+      word.split("").forEach(function (ch, i) {
+        strip.appendChild(el("span", "bt-l" + (i < s.n ? " got" : "") + (i === s.n - 1 && !s.back ? " now" : ""), ch));
+      });
+      stripWrap.hidden = s.n < 0;
+      var marks = s.marks || [];
       cells.forEach(function (d, i) {
         var r = Math.floor(i / 4), c = i % 4;
+        var k = s.path.map(function (q) { return q[0] * 4 + q[1]; }).indexOf(i);
+        var marked = k >= 0 && (s.hash === true || k < s.hash);
+        var m = marks.filter(function (q) { return q[0] === r && q[1] === c; })[0];
         d.textContent = BOARD[r][c];
-        if (board[r][c] === "#") d.appendChild(el("i", "bd-hashmark", "#"));
-        var onPath = path.some(function (q) { return q[0] === r && q[1] === c; });
-        var near = phase === "walk" && last && Math.abs(last[0] - r) + Math.abs(last[1] - c) === 1;
-        d.classList.toggle("path", onPath);
-        d.classList.toggle("on", !!last && last[0] === r && last[1] === c);
-        d.classList.toggle("near", !!near);
-        d.classList.toggle("no", !!flash && flash.r === r && flash.c === c && flash.k === "no");
-        d.classList.toggle("maybe", !!flash && flash.r === r && flash.c === c && flash.k === "maybe");
+        if (marked) d.appendChild(el("i", "bd-hashmark", "#"));
+        if (m && m[2] !== "used") d.appendChild(el("i", "bt-mk " + m[2], m[2] === "ok" ? "\u2713" : "\u2717"));
+        d.classList.toggle("path", k >= 0);
+        d.classList.toggle("on", !!s.cur && s.cur[0] === r && s.cur[1] === c);
+        d.classList.toggle("ok", !!m && m[2] === "ok");
+        d.classList.toggle("no", !!m && m[2] === "no");
+        d.classList.toggle("start", !!s.starts && "oper".indexOf(BOARD[r][c]) >= 0);
+        d.classList.toggle("dim", !!s.starts && "oper".indexOf(BOARD[r][c]) < 0);
       });
-      for (var k in chips) {
-        chips[k].classList.toggle("on", k === p);
-        chips[k].classList.toggle("done", k !== "" && p.indexOf(k) === 0 && k !== p);
-      }
-      WORDS.forEach(function (w) { ends[w].classList.toggle("gone", found.indexOf(w) >= 0); });
-      chips[p].appendChild(tag);
-      stack.textContent = "";
-      stack.appendChild(el("span", "bd-stack-h", "Waiting calls"));
-      if (!path.length) stack.appendChild(el("span", "bd-call none", "none yet"));
-      path.forEach(function (q, i) {
-        var e = el("span", "bd-call" + (i === path.length - 1 ? " now" : ""), cell(q[0], q[1]) + " " + BOARD[q[0]][q[1]]);
-        stack.appendChild(e);
+      Object.keys(nodes).forEach(function (id) {
+        var on = s.n >= 0 && !s.sum && id === s.node;
+        var lit = !!id && s.node.indexOf(id) === 0 && id !== s.node;
+        nodes[id].classList.toggle("cur", on);
+        nodes[id].classList.toggle("lit", lit);
+        nodes[id].classList.toggle("first", !!s.starts && id.length === 1);
+        nodes[id].classList.toggle("gone", (s.found || []).indexOf(id) >= 0);
+        if (edges[id]) edges[id].classList.toggle("lit", !!id && s.node.indexOf(id) === 0);
       });
-      foundBox.innerHTML = "found = " + esc(list(found));
-      foundBox.classList.toggle("on", found.length > 0);
-      lines.forEach(function (l, i) { l.classList.toggle("ptr", lit.indexOf(i) >= 0); });
-      capText.innerHTML = rich(msg);
+      var tp = POS[s.node];
+      tagG.style.display = s.n >= 0 && !s.sum ? "" : "none";
+      tagG.setAttribute("transform", "translate(" + tp[0] + "," + (tp[1] - (s.node ? 32 : 36)) + ")");
+      foundBox.innerHTML = "found = " + esc("[" + (s.found || []).map(function (w) { return "'" + w + "'"; }).join(", ") + "]");
+      foundBox.classList.toggle("on", !!(s.found && s.found.length));
+      lines.forEach(function (l, i) { l.classList.toggle("ptr", s.lines.indexOf(i) >= 0); });
+      capText.innerHTML = rich(mode === 0 ? s.idea : s.code);
       capText.classList.remove("in"); capText.getBoundingClientRect(); capText.classList.add("in");
-      next.hidden = phase === "walk";
-      next.textContent = phase === "done" ? "Try again" : "Go back";
+      back.disabled = at === 0;
+      next.textContent = at === steps.length - 1 ? "Start over" : "Next";
     }
-
-    function tap(r, c) {
-      if (phase !== "walk") return;
-      var x = board[r][c], p = prefix(), want = PATHS[word][path.length], last = path[path.length - 1];
-      var v = { cell: cell(r, c), x: x, an: an(x), word: word, w0: word.charAt(0), letter: p.slice(-1), cur: last && cell(last[0], last[1]) };
-      flash = { r: r, c: c, k: "no" };
-      if (last && last[0] === r && last[1] === c) return;
-      if (last && Math.abs(last[0] - r) + Math.abs(last[1] - c) !== 1) {
-        say(fill(MSG.NOT_NEAR, v)); show(); return;
-      }
-      if (x === "#") { say(fill(MSG.HASH, v), [L.letter, L.check, L.ret]); show(); return; }
-      if (r !== want[0] || c !== want[1]) {
-        if (child(p, x)) { flash.k = "maybe"; say(fill(last ? MSG.OTHER : MSG.START_OTHER, v), [L.letter, L.check]); }
-        else say(fill(last ? MSG.NO_CHILD : MSG.START_NONE, v), [L.letter, L.check, L.ret]);
-        show(); return;
-      }
-      flash = null;
-      v.Node = cap1(nodeName(p));
-      path.push([r, c]); board[r][c] = "#";
-      var good = fill(MSG.GOOD, v);
-      if (path.length === word.length) {
-        found.push(word); phase = "found";
-        say(good + " " + fill(MSG.FOUND, { letter: x, word: word }), [L.move, L.has, L.add, L.del]);
-      } else {
-        say(good + " " + fill(MSG.ASK_NEXT, { cur: cell(r, c) }), [L.letter, L.check, L.move, L.mark]);
-      }
-      show();
-    }
-
-    function goBack() {
-      if (phase === "done") { go(word); return; }
-      var q = path.pop(), x = BOARD[q[0]][q[1]];
-      board[q[0]][q[1]] = x; flash = null;
-      var prev = path[path.length - 1];
-      if (prev) say(fill(MSG.BACK, { x: x, cell: cell(q[0], q[1]), prev: cell(prev[0], prev[1]) }), [L.restore]);
-      else { phase = "done"; say(fill(MSG.BACK_LAST, { x: x, cell: cell(q[0], q[1]), found: list(found) }), [L.restore]); }
-      show();
-    }
-    next.addEventListener("click", goBack);
-    reset.addEventListener("click", function () { go(word); });
-
+    back.addEventListener("click", function () { if (at > 0) { at--; show(); } });
+    next.addEventListener("click", function () { at = at === steps.length - 1 ? 0 : at + 1; show(); });
     ["oath", "eat"].forEach(function (w) {
       var b = el("button", "pick", w);
       b.type = "button";
@@ -186,11 +227,9 @@
       picks.appendChild(b);
     });
     function go(w) {
-      word = w; path = []; found = []; phase = "walk"; flash = null;
-      board = BOARD.map(function (row) { return row.slice(); });
+      word = w; steps = RUNS[w].concat([ALL, SUM]); at = 0;
       $$(".pick", picks).forEach(function (b) { b.classList.toggle("on", b.textContent === w); });
       title.textContent = "Find " + w;
-      say(fill(MSG.ASK_START, { word: w }));
       show();
     }
     go("oath");
@@ -428,8 +467,8 @@
   });
 
   $$('.lv[data-lv="3"]', lesson).forEach(function (box) {
-    var ta = $(".ed", box), KEY = "lsn-212-editor-v1";
-    var START = "class Solution:\n    def findWords(self, board, words):\n        # 1. Build the trie and store each full word under '$'.\n\n        # 2. Call dfs from every cell with root.\n\n\n    def dfs(self, board, r, c, node, found):\n        # 3. Stop if (r, c) is off the board.\n\n        # 4. Stop if letter is not in node.\n\n        # 5. Move node down and save the word if one ends here.\n\n        # 6. Mark the cell, try four nearby cells, then put letter back.\n\n";
+    var ta = $(".ed", box), KEY = "lsn-212-editor-v2";
+    var START = "class Solution:\n    def findWords(self, board, words):\n        # 1. Build the trie with '$'.\n\n        # 2. Call dfs on every cell.\n\n\n    def dfs(self, board, r, c, node, found):\n        # 3. Stop if off the board.\n\n        # 4. Stop if letter not in node.\n\n        # 5. Move down, save word at '$'.\n\n        # 6. Mark '#', try 4 cells, undo.\n\n";
     var saved = null;
     try { saved = localStorage.getItem(KEY); } catch (e) { saved = null; }
     ta.value = saved || START;

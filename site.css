@@ -921,3 +921,22 @@ pre.snip .snl{display:block;min-height:1.6em;overflow-wrap:break-word}
 .lsn details.given summary{cursor:pointer;padding:10px 12px;font-weight:600;color:var(--accent-strong)}
 .lsn details.given pre.snip{margin:0 8px 8px!important;font-size:12px!important}
 @media(max-width:759px){.lsn .rc>pre.snip{font-size:12px!important;padding:10px 8px!important}}
+.kbar{display:flex;flex-direction:column;gap:5px;padding:6px;margin:0 0 8px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px}
+.kbar .kb-sym{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:4px}
+.kbar .kb-w{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;padding-bottom:1px}
+.kbar .kb-w::-webkit-scrollbar{display:none}
+.kbar button{height:36px;min-width:0;margin:0;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);color:var(--ink);font:600 16px 'JetBrains Mono',ui-monospace,monospace;padding:0 4px;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.kbar .kb-w button{flex:none;padding:0 10px;font-size:14px;color:var(--accent-strong)}
+.kbar button.kb-act{background:var(--accent-soft);color:var(--accent-strong)}
+.kbar button.down,.kbar button:active{background:var(--accent-strong);color:#fff}
+@media (hover:hover) and (pointer:fine){.kbar{display:none}}
+@media(max-width:759px){.lsn .ed{height:300px}}
+.kbar button.kb-act{font-size:22px;font-family:Inter,system-ui,sans-serif}
+@media(max-width:759px){.lsn .lv[data-lv="3"] .kbar{margin-left:-14px;margin-right:-14px}}
+@media (pointer:coarse){
+.lsn textarea.zf{font-size:16px!important;line-height:1.55!important;width:133.333%!important;max-width:none!important;transform:scale(.75);transform-origin:0 0;resize:none;padding:13px 8px!important}
+.lsn .lv[data-lv="3"] textarea.zf{width:calc((100% + 28px) * 1.33333)!important}
+}
+.kbar.docked{position:fixed;left:0;right:0;z-index:50;margin:0!important;border-radius:0;border-width:1px 0 0;padding:6px max(8px,env(safe-area-inset-left,0px)) 6px max(8px,env(safe-area-inset-right,0px));box-shadow:0 -4px 14px rgba(0,0,0,.12)}
+.kbar .kb-w{flex-wrap:wrap;overflow:visible;gap:4px}
+.kbar .kb-w button{height:32px;padding:0 7px;font-size:13px;flex:1 0 auto}

@@ -2,7 +2,7 @@
    the trie picture, the step-by-step walkthroughs, the three practice levels with a real
    Python runner, and the interview sentences that light up their code. */
 (function () {
-  var lesson = document.querySelector(".lsn");
+  var lesson = document.querySelector(".lsn:not([data-lesson])");
   if (!lesson) return;
 
   function $(sel, root) { return (root || document).querySelector(sel); }

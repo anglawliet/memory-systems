@@ -835,4 +835,40 @@ pre.snip .snl{display:block;min-height:1.6em;overflow-wrap:break-word}
 .l3 .viz-count{font-size:12px}
 
 /* a hand-drawn panel picture inside a lesson part */
-.lsn .lsn-pic{display:block;width:100%;max-width:823px;height:auto;border-radius:12px;border:1px solid var(--line);filter:var(--img-filter)}
+.lsn .lsn-pic{display:block;width:100%;max-width:900px;height:auto;border-radius:12px;border:1px solid var(--line);filter:var(--img-filter)}
+
+/* 16. Word Search II board walkthrough: the board on the left, the trie as one row per word on the
+   right. The current cell and the trie node that node points to are blue, the cells on the path are
+   green, and a cell marked '#' is grey. */
+.viz.pro.brd .bd-pics{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;align-items:flex-start;width:100%}
+.viz.pro.brd .bd-grid{display:grid;grid-template-columns:repeat(4,40px);gap:5px}
+.viz.pro.brd .bd-c{height:40px;display:grid;place-items:center;border:1px solid var(--line-strong);border-radius:9px;background:var(--surface);font:600 17px 'JetBrains Mono',monospace;color:var(--ink);transition:all .25s}
+.viz.pro.brd .bd-c.hash{background:var(--surface-3);border-color:var(--line-strong);color:var(--ink-3)}
+.viz.pro.brd .bd-c.path{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.viz.pro.brd .bd-c.on{border-color:var(--accent-strong);background:var(--accent-soft);color:var(--accent-strong);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent-strong) 18%,transparent);transform:translateY(-2px)}
+.viz.pro.brd .bd-trie{display:flex;flex-direction:column;gap:7px;min-width:0}
+.viz.pro.brd .bd-row{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.viz.pro.brd .bd-row:not(:first-child){padding-left:18px}
+.viz.pro.brd .bd-n{position:relative;min-width:30px;height:30px;padding:0 6px;display:grid;place-items:center;border:1px solid var(--line-strong);border-radius:999px;background:var(--surface);font:600 14px 'JetBrains Mono',monospace;color:var(--ink);transition:all .25s}
+.viz.pro.brd .bd-n.root{font:600 12px 'Inter',system-ui,sans-serif;color:var(--ink-3);background:var(--surface-2)}
+.viz.pro.brd .bd-n.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.viz.pro.brd .bd-n.on{background:var(--accent-soft);border-color:var(--accent-strong);color:var(--accent-strong);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent-strong) 18%,transparent)}
+.viz.pro.brd .bd-end{font:500 12px 'JetBrains Mono',monospace;color:var(--ok);background:var(--ok-soft);border-radius:6px;padding:3px 6px;transition:all .25s}
+.viz.pro.brd .bd-end.gone{opacity:.45;text-decoration:line-through;background:none;color:var(--ink-3)}
+.viz.pro.brd .bd-tag{position:absolute;top:-17px;left:50%;transform:translateX(-50%);font:700 10px/1 'Inter',system-ui,sans-serif;letter-spacing:.04em;color:#fff;background:var(--accent-strong);padding:3px 6px;border-radius:999px;white-space:nowrap}
+.viz.pro.brd .bd-trie{padding-top:14px}
+.viz.pro.brd .bd-found{margin:6px 0 0!important;font:600 14px 'JetBrains Mono',monospace;color:var(--ink-3);padding:5px 12px;border-radius:999px;background:var(--surface-2)}
+.viz.pro.brd .bd-found.on{background:var(--ok-soft);color:var(--ok)}
+.viz.pro.brd .vz-cap code{font-size:.92em}
+.lsn .grow .snl.new{background:color-mix(in srgb,var(--accent-strong) 22%,transparent);box-shadow:inset 3px 0 var(--accent-strong)}
+.viz.pro.brd .bd-c{position:relative;padding:0;margin:0;min-height:0;min-width:0;cursor:pointer;box-shadow:none}
+.viz.pro.brd .bd-c.near{border-style:dashed;border-color:var(--accent-strong)}
+.viz.pro.brd .bd-c.no{background:var(--no-soft);border-color:var(--no);color:var(--no);animation:bdshake .35s}
+.viz.pro.brd .bd-c.maybe{background:color-mix(in srgb,#e8a33d 18%,transparent);border-color:#d48a1f;color:#b8730f}
+.viz.pro.brd .bd-hashmark{position:absolute;top:2px;right:4px;font:700 10px/1 'JetBrains Mono',monospace;font-style:normal;opacity:.85}
+.viz.pro.brd .bd-stack{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:5px;margin-top:8px;max-width:100%}
+.viz.pro.brd .bd-stack-h{flex-basis:100%;text-align:center;font:700 11px Inter,system-ui,sans-serif;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3)}
+.viz.pro.brd .bd-call{font:500 13px 'JetBrains Mono',monospace;color:var(--ink-2);padding:3px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2)}
+.viz.pro.brd .bd-call.now{color:var(--accent-strong);border-color:var(--accent-strong);background:var(--accent-soft);font-weight:700}
+.viz.pro.brd .bd-call.none{border-style:dashed;color:var(--ink-3)}
+@keyframes bdshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}

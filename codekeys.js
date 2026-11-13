@@ -370,12 +370,19 @@
       box.classList.toggle("sys-kb", theirs);
       sizeTa();
     }
+    // the top row says which gap this is, and the code line right above it
     function titleFor(ta) {
       if (ta.classList.contains("ed")) return "Write the whole class";
-      var b = ta.closest(".blank"), pre = b && b.previousElementSibling;
-      while (pre && pre.tagName !== "PRE") pre = pre.previousElementSibling;
-      var lines = pre ? pre.textContent.split("\n").filter(function (l) { return l.trim(); }) : [];
-      return lines.length ? lines[lines.length - 1].trim() : "Fill the gap";
+      var b = ta.closest(".blank");
+      if (!b) return "Fill the gap";
+      var all = $$(".blank", lv), label = "Gap " + (all.indexOf(b) + 1) + " of " + all.length;
+      var pre = b.previousElementSibling;
+      if (!pre || pre.tagName !== "PRE") return label;
+      // a lesson code block keeps each line in its own .snl piece, without line breaks
+      var parts = $$(".snl", pre);
+      var lines = (parts.length ? parts.map(function (x) { return x.textContent; }) : pre.textContent.split("\n"))
+        .filter(function (l) { return l.trim(); });
+      return lines.length ? label + "\n" + lines[lines.length - 1].trim() : label;
     }
     function show(ta) {
       clearTimeout(closing);

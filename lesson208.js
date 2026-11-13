@@ -112,7 +112,8 @@
   };
   var ORDER = ["insert", "search", "startsWith", "cow"];
   // where each trie node sits in the drawing; "co" is the missing o child
-  var POS = { "": [120, 50], c: [120, 110], ca: [120, 170], car: [70, 230], cart: [70, 290], cat: [170, 230], co: [185, 170] };
+  // The tree grows left to right, so it fits the width of a phone and leaves room for the code.
+  var POS = { "": [34, 100], c: [96, 100], ca: [158, 100], car: [220, 62], cart: [282, 62], cat: [220, 140], co: [158, 158] };
   var ENDS = ["car", "cart", "cat"];
   var SVGNS = "http://www.w3.org/2000/svg";
   function svg(tag, attrs, parent) {
@@ -144,7 +145,7 @@
     });
 
     var stage = el("div", "vz-stage");
-    var tree = svg("svg", { viewBox: "0 6 240 312", class: "bt-tree", role: "img",
+    var tree = svg("svg", { viewBox: "6 14 306 170", class: "bt-tree", role: "img",
       "aria-label": "The trie with car, cart and cat. The root has a c child, c has an a child, and a has r and t children. The r node has '$' and a t child." });
     var edges = {}, nodes = {};
     Object.keys(POS).forEach(function (id) {

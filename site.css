@@ -983,3 +983,84 @@ pre.snip .snl{display:block;min-height:1.6em;overflow-wrap:break-word}
 .kbar.docked button{height:32px}
 .kbar.docked .kb-w button{height:30px;padding:0 5px;font-size:12.5px}
 .kbar.docked::after{content:"";position:absolute;left:0;right:0;top:100%;height:160px;background:var(--surface-2)}
+
+/* 17. Walkthrough cards fit on one phone screen, so reading a step never needs scrolling.
+   Order on a phone: the method buttons, the picture, the code, then the words and the buttons.
+   Long code sits in a short window that scrolls itself to the highlighted line (see site.js). */
+.viz.pro.trc .bt-tree{max-width:340px}
+@media(max-width:759px){
+  .viz.pro .vz-head .vz-titles{display:none}
+  .viz.pro .vz-head:not(:has(.viz-top)){display:none}
+  .viz.pro .vz-head{padding:10px 12px;justify-content:center}
+  .viz.pro .vz-stage{order:1;padding:10px 12px 6px}
+  .viz.pro .vz-code{order:2;border-top:1px solid var(--line);padding:8px 10px}
+  .viz.pro .vz-foot{order:3;padding:0 14px 12px;gap:10px}
+  .viz.pro .vz-code pre.snip{font-size:12px!important;line-height:1.5!important;padding:8px 10px!important;max-height:142px;overflow-y:auto;scroll-behavior:smooth}
+  .viz.pro .vz-cap{font-size:15.5px;line-height:1.5;min-height:3em}
+  .viz.pro .trie{margin:4px auto 0}
+  .viz.pro.trc .tr-picks{display:flex;margin:10px 12px 0}
+  .viz.pro.trc .tr-picks .pick{flex:1 1 auto;padding:6px 4px;font-size:12px}
+  .viz.pro.trc .bt-tree{max-width:340px}
+  .viz.pro .bt-tabs{margin:8px 12px 0}
+  .viz.pro .bt-tabs button{min-height:36px;padding:6px 2px}
+}
+@media(max-width:759px){
+  .viz.pro.trc .tr-picks{margin:8px 12px 0}
+  .viz.pro .bt-tabs{margin:6px 12px 0}
+  .viz.pro .vz-stage{padding:6px 12px 4px}
+  .viz.pro .trie{max-height:170px}
+  /* Word Search II: the oath / eat switch and the idea / code tabs share one row */
+  .viz.pro.brd:not(.trc){flex-flow:row wrap;align-items:center}
+  .viz.pro.brd:not(.trc)>*{flex:0 0 100%;min-width:0}
+  .viz.pro.brd:not(.trc)>.vz-head{flex:0 0 auto;border-bottom:0;padding:8px 0 0 10px}
+  .viz.pro.brd:not(.trc)>.bt-tabs{flex:1 1 0;margin:8px 10px 0 8px}
+  .viz.pro.brd:not(.trc) .vz-seg .pick{padding:6px 11px;font-size:13px}
+  .viz.pro.brd:not(.trc) .bt-tabs button{font-size:12.5px}
+  .viz.pro.brd:not(.trc)>.vz-stage{border-top:0}
+  /* the step-by-step code in the three-tab card */
+  .l3 pre.l3-code{max-height:150px;overflow-y:auto;scroll-behavior:smooth}
+}
+@media(max-width:759px){
+  .viz.pro.trc .tr-picks .pick{min-height:36px}
+  .viz.pro.brd .bt-tabs{margin-top:6px}
+  .viz.pro.brd .vz-stage{padding:4px 10px 4px}
+  .viz.pro.brd:not(.trc) .bd-grid{grid-template-columns:repeat(4,28px);gap:4px}
+  .viz.pro.brd:not(.trc) .bd-c{height:28px;font-size:15px;border-radius:7px}
+  .viz.pro.brd:not(.trc) .bt-tree{max-height:140px}
+}
+@media(max-width:759px){
+  .lsn .l3{padding:12px 14px 14px;gap:10px}
+  .l3 .l3-tabs button{min-height:36px}
+  .l3 .wd-c{width:32px;height:34px}
+  .l3-pic svg{max-height:165px}
+  .l3 .l3-bl{font-size:13px;line-height:1.3;margin:0 0 4px}
+  .l3 .l3-cap,.l3 .l3-cap.long{font-size:15px;line-height:1.5;padding-top:10px;min-height:3em}
+}
+@media(max-width:759px){
+  .l3[data-mode="3"] .l3-pic svg{max-height:125px}
+  .lsn .l3 pre.l3-code{font-size:12px!important;line-height:1.5!important;padding:8px 10px!important;max-height:128px}
+  .l3[data-mode="3"] .l3-cap{font-size:14.5px}
+  /* if a step is still taller than the screen, Back and Next stay at the bottom of the screen */
+  .l3 .l3-nav,.viz.pro .vz-ctrl{position:sticky;bottom:0;z-index:2;background:var(--surface);padding:8px 0;margin-bottom:-8px}
+}
+@media(max-width:759px){
+  .l3 .l3-nav,.viz.pro .vz-ctrl{padding:4px 0;margin:-4px 0}
+  .viz.pro.brd .bt-stripw{margin-bottom:6px}
+  .viz.pro.brd:not(.trc) .bd-found{margin-top:2px!important}
+}
+@media(max-width:759px){
+  .viz.pro.brd:not(.trc) .bt-tree{max-height:132px}
+}
+/* short phone screens, like the iPhone SE: smaller pictures and code windows */
+@media(max-width:759px) and (max-height:600px){
+  .viz.pro.trc .bt-tree{max-height:120px}
+  .viz.pro .vz-code pre.snip{max-height:106px}
+  .viz.pro .trie{max-height:130px}
+  .viz.pro.brd:not(.trc) .bt-tree{max-height:112px}
+  .viz.pro.brd:not(.trc) .bd-grid{grid-template-columns:repeat(4,24px)}
+  .viz.pro.brd:not(.trc) .bd-c{height:24px;font-size:13px}
+  .l3-pic svg{max-height:130px}
+  .l3[data-mode="3"] .l3-pic svg{max-height:100px}
+  .lsn .l3 pre.l3-code{max-height:106px}
+  .viz.pro .vz-cap,.l3 .l3-cap{font-size:14.5px}
+}

@@ -1075,3 +1075,21 @@ pre.snip .snl{display:block;min-height:1.6em;overflow-wrap:break-word}
   .viz.pro.trc .bt-tree{width:100%;max-width:280px;height:auto;max-height:clamp(170px,calc(100svh - 470px),330px)}
   .viz.pro.trc.bt-idea .bt-tree{max-height:clamp(220px,calc(100svh - 400px),330px)}
 }
+
+/* 19. The full-screen code editor on phones (see codekeys.js).
+   A top row with the task, Run the tests and Done; the code fills the middle; the key bar sits on the keyboard. */
+.code-full{position:fixed;left:0;right:0;top:0;height:100%;z-index:10001;display:flex;flex-direction:column;background:var(--surface);font-size:16px}
+.code-full[hidden]{display:none}
+.cf-top{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--line);flex:none}
+.cf-title{flex:1;min-width:0;margin:0!important;font:600 13px/1.3 'JetBrains Mono',monospace;color:var(--ink-2);overflow-wrap:anywhere}
+.cf-btn{flex:none;min-height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);font:600 14.5px Inter,system-ui,sans-serif}
+.cf-btn.cf-go{background:var(--accent-strong);border-color:var(--accent-strong);color:#fff}
+.cf-mid{flex:1 1 0;min-height:0;overflow:hidden;background:#1b212b}
+.code-full textarea{display:block;box-sizing:border-box;margin:0!important;border:0!important;border-radius:0!important;background:#1b212b;color:#e6e9ef;font-family:'JetBrains Mono',ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere;outline:none}
+.code-full .kbar{display:flex!important;flex:none;margin:0!important;border-radius:0;border-width:1px 0 0;padding:6px max(8px,env(safe-area-inset-left,0px)) 6px max(8px,env(safe-area-inset-right,0px))}
+.code-full .kbar button{height:32px}
+.code-full .kbar .kb-w button{height:30px;padding:0 5px;font-size:12.5px}
+html.cf-lock,html.cf-lock body{overflow:hidden}
+html.cf-lock body{position:fixed;left:0;right:0}
+/* in the page, a code box on a phone is a button that opens the full screen */
+@media (pointer:coarse){.lsn .lv textarea[readonly]{cursor:pointer}}

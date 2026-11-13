@@ -133,15 +133,11 @@
       fixTa(ta);
       ta.addEventListener("focus", function () {
         cur = ta;
-        if (bar.nextSibling !== ta) {
-          var sp = bar.previousSibling;
-          if (sp && sp.className === "kb-space") ta.parentNode.insertBefore(sp, ta);
-          ta.parentNode.insertBefore(bar, ta);
-        }
+        if (!TOUCH && bar.nextSibling !== ta) ta.parentNode.insertBefore(bar, ta);
       });
     });
-    tas[0].parentNode.insertBefore(bar, tas[0]);
-    if (TOUCH) dock(bar, tas);
+    if (TOUCH) fullScreen(bar, tas, lv);
+    else tas[0].parentNode.insertBefore(bar, tas[0]);
   }
   // Where the typing cursor is inside a code box, in pixels from the box's top.
   // A hidden copy of the box with the same font and width shows where the line wraps.
@@ -164,91 +160,110 @@
     var scale = ta.classList.contains("zf") ? 0.75 : 1;
     return { top: mark.offsetTop * scale, bottom: (mark.offsetTop + mark.offsetHeight) * scale };
   }
-  // While the phone keyboard is open, pin the key bar right on top of it.
-  // A spacer keeps the page from jumping when the bar leaves its place.
-  // The code box you type in shrinks to the space between the top of the screen and
-  // the key bar, and scrolls inside itself. The phone then never hides the typing line
-  // behind the bar, because the line is always inside the box, and the box is above the bar.
-  function dock(bar, tas) {
-    var vv = window.visualViewport, spacer = el("div", "kb-space"), on = false, timer = 0, follow = 0, fitted = null;
-    if (!vv) return;
+  // On a phone, tapping a code box opens it full screen: a top row with Done and
+  // Run the tests, the code in the middle, and the key bar right on the keyboard.
+  // The page behind is locked, so nothing on the page can jump while you type.
+  // The same text box moves into the full screen and back, so the saved code,
+  // Hint, Show answer and the tests all keep working as before.
+  function fullScreen(bar, tas, lv) {
+    var vv = window.visualViewport;
+    var box = el("div", "code-full lsn"), top = el("div", "cf-top"), title = el("p", "cf-title");
+    var done = el("button", "cf-btn", "Done"), go = el("button", "cf-btn cf-go", "Run the tests");
+    var runBtn = lv.querySelector(".run-btn");
+    done.type = go.type = "button";
+    top.appendChild(title);
+    if (runBtn) top.appendChild(go);
+    top.appendChild(done);
+    var mid = el("div", "cf-mid");
+    box.appendChild(top); box.appendChild(mid); box.appendChild(bar);
+    box.hidden = true;
+    box.setAttribute("role", "dialog");
+    document.body.appendChild(box);
+    var open = null, holder = el("div", "cf-hold"), y = 0, closing = 0;
+
+    function sizeTa() {
+      if (!open) return;
+      // the text is 16px drawn at 75% size, so the box is a third taller than the space
+      open.style.height = (mid.clientHeight / 0.75) + "px";
+      open.style.marginBottom = "0px";
+    }
     function place() {
-      if (!on) return;
-      bar.style.top = Math.round(vv.offsetTop + vv.height - bar.offsetHeight) + "px";
+      if (!open) return;
+      box.style.top = (vv ? vv.offsetTop : 0) + "px";
+      box.style.height = (vv ? vv.height : window.innerHeight) + "px";
+      sizeTa();
     }
-    function scale(ta) { return ta.classList.contains("zf") ? 0.75 : 1; }
-    function room() { return vv.height - bar.offsetHeight - 20; }
-    // the box's full height, or the space on screen if the code is longer
-    function fit(ta) {
-      // measure the code without resizing the box: a resize would make the page jump
-      var k = scale(ta);
-      var min = ta.classList.contains("ed") ? 0 : Math.round(ta.rows * (TOUCH ? 16 : 12) * 1.55 + 22);
-      var full = Math.max(min, ta.scrollHeight + 4), most = Math.max(120, room() / k);
-      var h = Math.min(full, most);
-      ta.style.height = h + "px";
-      ta.style.overflowY = full > most ? "auto" : "hidden";
-      if (TOUCH) ta.style.marginBottom = Math.round(-h * 0.25 + 8) + "px";
+    function titleFor(ta) {
+      if (ta.classList.contains("ed")) return "Write the whole class";
+      var b = ta.closest(".blank"), pre = b && b.previousElementSibling;
+      while (pre && pre.tagName !== "PRE") pre = pre.previousElementSibling;
+      var lines = pre ? pre.textContent.split("\n").filter(function (l) { return l.trim(); }) : [];
+      return lines.length ? lines[lines.length - 1].trim() : "Fill the gap";
     }
-    function unfit() {
-      if (!fitted) return;
-      var ta = fitted; fitted = null;
-      ta._fit = null; ta.style.overflowY = "hidden"; ta.scrollTop = 0; grow(ta);
-    }
-    // keep the typing line inside the box's own scroll window, with a line of room
-    function caretInBox(ta) {
-      if (ta.scrollHeight <= ta.clientHeight + 1) return;
-      var c = caretY(ta), k = scale(ta), top = c.top / k, bottom = c.bottom / k, line = bottom - top;
-      if (bottom + line > ta.scrollTop + ta.clientHeight) ta.scrollTop = bottom + line - ta.clientHeight;
-      else if (top - line < ta.scrollTop) ta.scrollTop = Math.max(0, top - line);
-    }
-    // move the page so the whole box is between the top of the screen and the key bar
-    function boxInView(ta) {
-      var r = ta.getBoundingClientRect(), h = r.height * 1;
-      var seeTop = vv.offsetTop + 8, seeBottom = vv.offsetTop + vv.height - bar.offsetHeight - 8;
-      var shown = r.top + parseFloat(ta.style.height) * scale(ta);
-      if (r.top < seeTop || shown > seeBottom) window.scrollBy({ top: r.top - seeTop, behavior: "instant" });
-    }
-    function follow1() {
-      var ta = document.activeElement;
-      if (!on || tas.indexOf(ta) < 0) return;
-      if (fitted !== ta) { unfit(); fitted = ta; ta._fit = fit; }
-      fit(ta);
-      caretInBox(ta);
-      boxInView(ta);
-    }
-    function soon() { clearTimeout(follow); follow = setTimeout(follow1, 30); }
-    function check() {
-      var open = tas.indexOf(document.activeElement) >= 0 && vv.height < window.innerHeight - 120;
-      if (open && !on) {
-        spacer.style.height = bar.offsetHeight + "px";
-        bar.parentNode.insertBefore(spacer, bar);
-        bar.classList.add("docked"); on = true;
-        // the browser must not move the page on its own while the box changes size
-        document.documentElement.style.overflowAnchor = "none";
-        document.documentElement.style.scrollBehavior = "auto";
-      } else if (!open && on) {
-        bar.classList.remove("docked"); bar.style.top = "";
-        if (spacer.parentNode) spacer.parentNode.removeChild(spacer);
-        on = false;
-        unfit();
-        document.documentElement.style.overflowAnchor = "";
-        document.documentElement.style.scrollBehavior = "";
-      }
+    function show(ta) {
+      clearTimeout(closing);
+      if (open === ta) return;
+      if (open) hide();
+      open = ta;
+      y = window.scrollY;
+      holder.style.height = ta.getBoundingClientRect().height + "px";
+      ta.parentNode.insertBefore(holder, ta);
+      title.textContent = titleFor(ta);
+      box.hidden = false;
+      mid.appendChild(ta);
+      ta._fit = sizeTa;
+      ta.style.overflowY = "auto";
+      // lock the page where it is
+      document.documentElement.classList.add("cf-lock");
+      document.body.style.top = -y + "px";
       place();
-      soon();
+      ta.readOnly = false;
+      ta.focus({ preventScroll: true });
     }
-    function later() { clearTimeout(timer); timer = setTimeout(check, 60); }
-    vv.addEventListener("resize", later);
-    vv.addEventListener("scroll", place);
+    function hide() {
+      clearTimeout(closing);
+      if (!open) return;
+      var ta = open;
+      open = null;
+      ta._fit = null;
+      ta.readOnly = true;
+      ta.style.overflowY = "hidden";
+      ta.scrollTop = 0;
+      if (holder.parentNode) holder.parentNode.replaceChild(ta, holder);
+      box.hidden = true;
+      document.documentElement.classList.remove("cf-lock");
+      document.body.style.top = "";
+      grow(ta);
+      window.scrollTo({ top: y, behavior: "instant" });
+    }
+    // keep a line of space under the typing line inside the code area
+    function caretRoom() {
+      if (!open) return;
+      var ta = open, c = caretY(ta), top = c.top / 0.75, bottom = c.bottom / 0.75, line = bottom - top;
+      if (bottom + line > ta.scrollTop + ta.clientHeight) ta.scrollTop = bottom + line - ta.clientHeight;
+      else if (top < ta.scrollTop) ta.scrollTop = Math.max(0, top - line);
+    }
     tas.forEach(function (ta) {
-      ta.addEventListener("focus", function () { setTimeout(check, 350); soon(); });
-      ta.addEventListener("blur", function () { setTimeout(check, 150); });
-      ta.addEventListener("input", function () { follow1(); soon(); });
-      ta.addEventListener("click", soon);
-      ta.addEventListener("keyup", soon);
+      // in the page the box only opens the full screen; the keyboard opens there
+      ta.readOnly = true;
+      ta.addEventListener("click", function () { if (open !== ta) show(ta); });
+      ta.addEventListener("focus", function () { clearTimeout(closing); });
+      ta.addEventListener("input", function () { if (open === ta) requestAnimationFrame(caretRoom); });
+      // the keyboard's own Done button closes the full screen too
+      ta.addEventListener("blur", function () {
+        clearTimeout(closing);
+        closing = setTimeout(function () { if (open === ta && document.activeElement !== ta) hide(); }, 350);
+      });
     });
-    bar.addEventListener("click", soon);
-    bar.addEventListener("touchend", soon);
+    done.addEventListener("click", hide);
+    go.addEventListener("click", function () {
+      hide();
+      runBtn.click();
+      var out = lv.querySelector(".run-out");
+      if (out) setTimeout(function () { out.scrollIntoView({ block: "center" }); }, 50);
+    });
+    if (vv) { vv.addEventListener("resize", place); vv.addEventListener("scroll", place); }
+    window.addEventListener("resize", place);
   }
   // the code font changes line heights once it loads, so measure every box again then
   function growAll() { $$(".lsn textarea").forEach(grow); }

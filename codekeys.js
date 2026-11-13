@@ -142,31 +142,64 @@
     tas[0].parentNode.insertBefore(bar, tas[0]);
     if (TOUCH) dock(bar, tas);
   }
+  // Where the typing cursor is inside a code box, in pixels from the box's top.
+  // A hidden copy of the box with the same font and width shows where the line wraps.
+  var mirror = null;
+  function caretY(ta) {
+    if (!mirror) {
+      mirror = el("div");
+      mirror.setAttribute("aria-hidden", "true");
+      mirror.style.cssText = "position:absolute;top:0;left:-9999px;visibility:hidden;white-space:pre-wrap;overflow-wrap:break-word;";
+      document.body.appendChild(mirror);
+    }
+    var cs = getComputedStyle(ta);
+    ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "tabSize",
+     "paddingTop", "paddingRight", "paddingBottom", "paddingLeft", "borderTopWidth",
+     "borderLeftWidth", "borderRightWidth", "boxSizing"].forEach(function (k) { mirror.style[k] = cs[k]; });
+    mirror.style.width = ta.offsetWidth + "px";
+    mirror.textContent = ta.value.slice(0, ta.selectionEnd);
+    var mark = el("span", null, "​");
+    mirror.appendChild(mark);
+    var scale = ta.classList.contains("zf") ? 0.75 : 1;
+    return { top: mark.offsetTop * scale, bottom: (mark.offsetTop + mark.offsetHeight) * scale };
+  }
   // While the phone keyboard is open, pin the key bar right on top of it.
   // A spacer keeps the page from jumping when the bar leaves its place.
   function dock(bar, tas) {
-    var vv = window.visualViewport, spacer = el("div", "kb-space"), on = false, timer = 0;
+    var vv = window.visualViewport, spacer = el("div", "kb-space"), on = false, timer = 0, follow = 0;
     if (!vv) return;
     function place() {
       if (!on) return;
       bar.style.top = Math.round(vv.offsetTop + vv.height - bar.offsetHeight) + "px";
     }
+    // Keep the line you are typing on visible: below the top of the screen
+    // and above the key bar. The code box grows, so the page scrolls, not the box.
+    function keepCaret() {
+      var ta = document.activeElement;
+      if (!on || tas.indexOf(ta) < 0) return;
+      var r = ta.getBoundingClientRect(), c = caretY(ta);
+      var top = r.top + c.top, bottom = r.top + c.bottom;
+      var seeTop = vv.offsetTop + 12, seeBottom = vv.offsetTop + vv.height - bar.offsetHeight - 12;
+      // leave two lines of room, so the next line is visible too
+      var room = (c.bottom - c.top) * 2;
+      // jump at once: the page's smooth scrolling would lag behind fast typing
+      if (bottom + room > seeBottom) window.scrollBy({ top: bottom + room - seeBottom, behavior: "instant" });
+      else if (top < seeTop) window.scrollBy({ top: top - seeTop - room, behavior: "instant" });
+    }
+    function soon() { clearTimeout(follow); follow = setTimeout(keepCaret, 30); }
     function check() {
       var open = tas.indexOf(document.activeElement) >= 0 && vv.height < window.innerHeight - 120;
       if (open && !on) {
         spacer.style.height = bar.offsetHeight + "px";
         bar.parentNode.insertBefore(spacer, bar);
         bar.classList.add("docked"); on = true;
-        // bring the top of the code box just under the top of the screen,
-        // so the lines you type are not hidden behind the bar
-        var r = document.activeElement.getBoundingClientRect();
-        window.scrollBy(0, r.top - vv.offsetTop - 8);
       } else if (!open && on) {
         bar.classList.remove("docked"); bar.style.top = "";
         if (spacer.parentNode) spacer.parentNode.removeChild(spacer);
         on = false;
       }
       place();
+      soon();
     }
     function later() { clearTimeout(timer); timer = setTimeout(check, 60); }
     vv.addEventListener("resize", later);
@@ -174,7 +207,12 @@
     tas.forEach(function (ta) {
       ta.addEventListener("focus", function () { setTimeout(check, 350); });
       ta.addEventListener("blur", function () { setTimeout(check, 150); });
+      ta.addEventListener("input", soon);
+      ta.addEventListener("click", soon);
+      ta.addEventListener("keyup", soon);
     });
+    bar.addEventListener("click", soon);
+    bar.addEventListener("touchend", soon);
   }
   // the code font changes line heights once it loads, so measure every box again then
   function growAll() { $$(".lsn textarea").forEach(grow); }
@@ -183,5 +221,5 @@
   if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener("loadingdone", growAll);
   document.addEventListener("focusin", function (e) { if (e.target.matches && e.target.matches(".lsn textarea")) grow(e.target); });
   window.addEventListener("load", growAll);
-  window.CodeKeys = { attach: keyBar, grow: grow };
+  window.CodeKeys = { attach: keyBar, grow: grow, caretY: caretY };
 })();

@@ -1290,8 +1290,8 @@
   });
 
   /* 9. The code key bar on phones (see codekeys.js) */
-  var WORDS_KEYS = [["if", "if "], ["not in", "not in "], ["for", "for "], ["in", "in "], ["return", "return "],
-                    ["node"], ["letter"], ["current"], ["next_nodes"], [".append(", ".append()", 1],
-                    ["'$'"], ["'.'"], ["True"], ["False"]];
+  // two rows on a phone: the first row is the common words, the second is this problem's names
+  var WORDS_KEYS = [["if", "if "], ["not in", "not in "], ["for", "for "], ["return", "return "], ["node"], ["letter"], ["'$'"],
+                    ["current"], ["next_nodes"], [".append(", ".append()", 1], ["True"], ["False"]];
   if (window.CodeKeys) $$(".lv", lesson).forEach(function (lv) { window.CodeKeys.attach(lv, WORDS_KEYS); });
 })();

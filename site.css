@@ -976,3 +976,10 @@ pre.snip .snl{display:block;min-height:1.6em;overflow-wrap:break-word}
 .pic-zoom .pz-close{position:fixed;top:max(12px,env(safe-area-inset-top,0px));right:12px;width:44px;height:44px;border-radius:999px;border:0;background:#fff;color:#111;font:600 26px/1 Inter,system-ui,sans-serif;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.4)}
 .pic-zoom .pz-hint{position:fixed;left:0;right:0;bottom:max(14px,env(safe-area-inset-bottom,0px));text-align:center;color:#e6e9ef;font:500 14px Inter,system-ui,sans-serif;pointer-events:none}
 @media (min-width:1000px){.pic-zoom img{width:min(1400px,96vw)}.pic-zoom .pz-hint{display:none}}
+
+/* 16. The key bar while it sits on the phone keyboard: shorter keys, so more code fits on screen,
+   and a strip of the bar's color below it, so no page shows through the gap above the keyboard. */
+.kbar.docked{gap:4px;padding-top:5px;padding-bottom:5px}
+.kbar.docked button{height:32px}
+.kbar.docked .kb-w button{height:30px;padding:0 5px;font-size:12.5px}
+.kbar.docked::after{content:"";position:absolute;left:0;right:0;top:100%;height:160px;background:var(--surface-2)}

@@ -1064,3 +1064,14 @@ pre.snip .snl{display:block;min-height:1.6em;overflow-wrap:break-word}
   .lsn .l3 pre.l3-code{max-height:106px}
   .viz.pro .vz-cap,.l3 .l3-cap{font-size:14.5px}
 }
+
+/* 18. Implement Trie card on phones: the tree is drawn top to bottom again, and the
+   method buttons sit two by two so their names are never cut off.
+   The tree takes the screen height that is left after the buttons, code and words. */
+.viz.pro.trc .bt-tree{max-width:280px}
+@media(max-width:759px){
+  .viz.pro.trc .tr-picks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .viz.pro.trc .tr-picks .pick{white-space:nowrap;overflow:visible;text-overflow:clip;font-size:13px;padding:6px 4px}
+  .viz.pro.trc .bt-tree{width:100%;max-width:280px;height:auto;max-height:clamp(170px,calc(100svh - 470px),330px)}
+  .viz.pro.trc.bt-idea .bt-tree{max-height:clamp(220px,calc(100svh - 400px),330px)}
+}

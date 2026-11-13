@@ -433,29 +433,29 @@ pre.snip .snl{display:block;min-height:1.6em;overflow-wrap:break-word}
 .stages .st-track{height:4px;border-radius:2px;background:var(--surface-2);margin:10px 0 4px;overflow:hidden}
 .stages .st-track i{display:block;height:100%;background:var(--accent-strong);transition:width .2s}
 .stages .st-nav{display:flex;justify-content:space-between;gap:10px;margin-top:12px}
-.stages .st-nav button,.stages .choice{font:600 15px Inter,system-ui,sans-serif;border-radius:10px;padding:10px 14px;cursor:pointer;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink)}
+.stages .st-nav button,:is(.stages,.lsn) .choice{font:600 15px Inter,system-ui,sans-serif;border-radius:10px;padding:10px 14px;cursor:pointer;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink)}
 .stages .st-nav .st-next{background:var(--accent-strong);border-color:var(--accent-strong);color:#fff;min-width:96px}
 .stages .st-nav button:disabled{opacity:.4;cursor:default}
 /* a question is plain: a thin line above, the values, the question, and simple answer rows */
-.stages .mcq{border-top:1px solid var(--line);padding:14px 0 0;margin:16px 0 4px}
-.stages .mcq .q{font-weight:600;margin:0 0 10px}
-.stages .choice{display:block;width:100%;text-align:left;margin:0 0 6px;padding:9px 12px;font-weight:500}
-.stages .choice code{background:none!important;border:0!important;padding:0!important;font-size:.95em;color:inherit}
-.stages .choice.picked{border-color:#dc2626;background:#fee2e2;color:#7f1d1d}
-.stages .choice.picked.right{border-color:#16a34a;background:#dcfce7;color:#14532d}
-.stages .why{margin:8px 0 0;font-size:14.5px;color:var(--ink-2)}
-.stages .why:empty{display:none}
+:is(.stages,.lsn) .mcq{border-top:1px solid var(--line);padding:14px 0 0;margin:16px 0 4px}
+:is(.stages,.lsn) .mcq .q{font-weight:600;margin:0 0 10px}
+:is(.stages,.lsn) .choice{display:block;width:100%;text-align:left;margin:0 0 6px;padding:9px 12px;font-weight:500}
+:is(.stages,.lsn) .choice code{background:none!important;border:0!important;padding:0!important;font-size:.95em;color:inherit}
+:is(.stages,.lsn) .choice.picked{border-color:#dc2626;background:#fee2e2;color:#7f1d1d}
+:is(.stages,.lsn) .choice.picked.right{border-color:#16a34a;background:#dcfce7;color:#14532d}
+:is(.stages,.lsn) .why{margin:8px 0 0;font-size:14.5px;color:var(--ink-2)}
+:is(.stages,.lsn) .why:empty{display:none}
 .stages.js .after{display:none}
 .stages.js .after.on{display:block}
-:root[data-theme="dark"] .stages .choice.picked{background:#3b1212;color:#fecaca}
-:root[data-theme="dark"] .stages .choice.picked.right{background:#0f2e1b;color:#bbf7d0}
-.stages .mcq pre.snip{font-size:12.5px!important;padding:8px 10px!important;margin:0 0 10px!important}
-.stages .mcq-set{border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:16px 0 14px;padding:14px 0}
-.stages .mcq-set .mcq{border-top:0;padding-top:0;margin:0}
-.stages .mcq-nav{display:flex;align-items:center;gap:8px;margin-top:12px}
-.stages .mcq-nav span{flex:1;font-size:13px;color:var(--ink-3)}
-.stages .mcq-nav button{font:600 14px Inter,system-ui,sans-serif;border-radius:9px;padding:7px 12px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);cursor:pointer}
-.stages .mcq-nav button:disabled{opacity:.35;cursor:default}
+:root[data-theme="dark"] :is(.stages,.lsn) .choice.picked{background:#3b1212;color:#fecaca}
+:root[data-theme="dark"] :is(.stages,.lsn) .choice.picked.right{background:#0f2e1b;color:#bbf7d0}
+:is(.stages,.lsn) .mcq pre.snip{font-size:12.5px!important;padding:8px 10px!important;margin:0 0 10px!important}
+:is(.stages,.lsn) .mcq-set{border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:16px 0 14px;padding:14px 0}
+:is(.stages,.lsn) .mcq-set .mcq{border-top:0;padding-top:0;margin:0}
+:is(.stages,.lsn) .mcq-nav{display:flex;align-items:center;gap:8px;margin-top:12px}
+:is(.stages,.lsn) .mcq-nav span{flex:1;font-size:13px;color:var(--ink-3)}
+:is(.stages,.lsn) .mcq-nav button{font:600 14px Inter,system-ui,sans-serif;border-radius:9px;padding:7px 12px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);cursor:pointer}
+:is(.stages,.lsn) .mcq-nav button:disabled{opacity:.35;cursor:default}
 
 /* 15. A full lesson page section (class "lsn"): parts, questions, the trie picture,
    walkthroughs, practice levels and the Python runner. lesson.js adds the behavior. */

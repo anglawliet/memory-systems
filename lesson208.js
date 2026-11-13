@@ -401,13 +401,13 @@
       var s = ta.selectionStart, v = ta.value;
       if (e.key === "Tab" && !e.shiftKey) {
         e.preventDefault();
-        ta.setRangeText("    ", s, ta.selectionEnd, "end");
+        ta.setRangeText("    ", s, ta.selectionEnd, "end"); ta.dispatchEvent(new Event("input", { bubbles: true }));
       } else if (e.key === "Enter") {
         var line = v.slice(v.lastIndexOf("\n", s - 1) + 1, s);
         var ind = line.match(/^ */)[0];
         if (/:\s*$/.test(line)) ind += "    ";
         e.preventDefault();
-        ta.setRangeText("\n" + ind, s, ta.selectionEnd, "end");
+        ta.setRangeText("\n" + ind, s, ta.selectionEnd, "end"); ta.dispatchEvent(new Event("input", { bubbles: true }));
       }
     });
   }
@@ -479,149 +479,7 @@
     wireRun(box, function () { return ta.value; });
   });
 
-  /* The code key bar: one tap for each symbol and common name, so typing
-     code on a phone needs no Shift and no symbol pages. */
-  var SYM = [["\u21e5", "tab"], ["\u21e4", "untab"], [":"], ["("], [")"], ["["], ["]"], ["'"], ["="],
-             [","], ["."], ["#"], ["<"], [">"], ["+"], ["-"], ["0"], ["1"]];
   var WORDS_KEYS = [["if", "if "], ["not in", "not in "], ["return", "return "], ["node"], ["letter"], ["word"],
                     ["self.root"], ["'$'"], ["True"], ["False"], ["for", "for "], ["in", "in "]];
-  var PAIRS = { "(": ")", "[": "]", "'": "'" };
-
-  function put(ta, text, back) {
-    ta.focus({ preventScroll: true });
-    var ok = false;
-    try { ok = document.execCommand("insertText", false, text); } catch (x) { ok = false; }
-    if (!ok) {
-      ta.setRangeText(text, ta.selectionStart, ta.selectionEnd, "end");
-      ta.dispatchEvent(new Event("input", { bubbles: true }));
-    }
-    if (back) { var p = ta.selectionStart - back; ta.setSelectionRange(p, p); }
-  }
-  function shiftLine(ta, add) {
-    ta.focus({ preventScroll: true });
-    var v = ta.value, s = ta.selectionStart, e = ta.selectionEnd;
-    var ls = v.lastIndexOf("\n", s - 1) + 1;
-    if (add) {
-      ta.setRangeText("    ", ls, ls);
-      ta.setSelectionRange(s + 4, e + 4);
-    } else {
-      var n = Math.min(4, v.slice(ls).match(/^ */)[0].length);
-      if (!n) return;
-      ta.setRangeText("", ls, ls + n);
-      ta.setSelectionRange(Math.max(ls, s - n), Math.max(ls, e - n));
-    }
-    ta.dispatchEvent(new Event("input", { bubbles: true }));
-  }
-  function press(ta, k) {
-    var s = ta.selectionStart, e = ta.selectionEnd, ch = k[0];
-    if (k[1] === "tab") return shiftLine(ta, true);
-    if (k[1] === "untab") return shiftLine(ta, false);
-    // a closing ) ] or ' that is already there: step over it
-    if ((ch === ")" || ch === "]" || ch === "'") && s === e && ta.value[s] === ch) {
-      ta.focus({ preventScroll: true }); ta.setSelectionRange(s + 1, s + 1); return;
-    }
-    if (PAIRS[ch] && k.length === 1) return put(ta, ch + PAIRS[ch], 1);
-    put(ta, k[1] || ch, k[2] || 0);
-  }
-  // iPhones zoom the whole page when a text box has text smaller than 16px.
-  // On touch screens the text box uses 16px text and is drawn at 75% size,
-  // so it looks like 12px but the phone does not zoom.
-  var TOUCH = window.matchMedia && matchMedia("(pointer: coarse)").matches;
-  function noZoom(ta) {
-    if (!TOUCH) return;
-    var h = ta.classList.contains("ed") ? 400 : Math.round(ta.rows * 16 * 1.55 + 22);
-    ta.classList.add("zf");
-    ta.style.height = h + "px";
-    ta.style.marginBottom = Math.round(-h * 0.25 + 8) + "px";
-  }
-  function fixTa(ta) {
-    noZoom(ta);
-    ta.setAttribute("autocorrect", "off");
-    ta.setAttribute("autocapitalize", "off");
-    ta.setAttribute("spellcheck", "false");
-    // phone keyboards may type curly quotes, which Python cannot read
-    ta.addEventListener("input", function () {
-      if (!/[\u2018\u2019\u201c\u201d]/.test(ta.value)) return;
-      var s = ta.selectionStart, e = ta.selectionEnd;
-      ta.value = ta.value.replace(/[\u2018\u2019]/g, "'").replace(/[\u201c\u201d]/g, '"');
-      ta.setSelectionRange(s, e);
-    });
-    // typing ) or ] next to the same closing bracket steps over it
-    ta.addEventListener("beforeinput", function (ev) {
-      var s = ta.selectionStart;
-      if (ev.inputType === "insertText" && (ev.data === ")" || ev.data === "]") && s === ta.selectionEnd && ta.value[s] === ev.data) {
-        ev.preventDefault(); ta.setSelectionRange(s + 1, s + 1);
-      }
-    });
-  }
-  function keyBar(lv) {
-    var tas = $$("textarea", lv);
-    if (!tas.length) return;
-    var bar = el("div", "kbar"), sym = el("div", "kb-sym"), words = el("div", "kb-w");
-    var cur = tas[0];
-    function key(row, k, isWord) {
-      var b = el("button", isWord ? "" : (k[1] ? "kb-act" : ""), k[0]);
-      b.type = "button";
-      b.setAttribute("aria-label", k[1] === "tab" ? "Indent" : k[1] === "untab" ? "Outdent" : "Type " + (k[1] || k[0]));
-      {
-        // keep the phone keyboard open: do not let the tap take focus
-        b.addEventListener("touchstart", function (ev) { ev.preventDefault(); b.classList.add("down"); }, { passive: false });
-        b.addEventListener("touchend", function (ev) { ev.preventDefault(); b.classList.remove("down"); press(cur, k); });
-      }
-      b.addEventListener("mousedown", function (ev) { ev.preventDefault(); });
-      b.addEventListener("click", function () { press(cur, k); });
-      row.appendChild(b);
-    }
-    SYM.forEach(function (k) { key(sym, k, false); });
-    WORDS_KEYS.forEach(function (k) { key(words, k, true); });
-    bar.appendChild(sym); bar.appendChild(words);
-    tas.forEach(function (ta) {
-      fixTa(ta);
-      ta.addEventListener("focus", function () {
-        cur = ta;
-        if (bar.nextSibling !== ta) {
-          var sp = bar.previousSibling;
-          if (sp && sp.className === "kb-space") ta.parentNode.insertBefore(sp, ta);
-          ta.parentNode.insertBefore(bar, ta);
-        }
-      });
-    });
-    tas[0].parentNode.insertBefore(bar, tas[0]);
-    if (TOUCH) dock(bar, tas);
-  }
-  // While the phone keyboard is open, pin the key bar right on top of it.
-  // A spacer keeps the page from jumping when the bar leaves its place.
-  function dock(bar, tas) {
-    var vv = window.visualViewport, spacer = el("div", "kb-space"), on = false, timer = 0;
-    if (!vv) return;
-    function place() {
-      if (!on) return;
-      bar.style.top = Math.round(vv.offsetTop + vv.height - bar.offsetHeight) + "px";
-    }
-    function check() {
-      var open = tas.indexOf(document.activeElement) >= 0 && vv.height < window.innerHeight - 120;
-      if (open && !on) {
-        spacer.style.height = bar.offsetHeight + "px";
-        bar.parentNode.insertBefore(spacer, bar);
-        bar.classList.add("docked"); on = true;
-        // bring the top of the code box just under the top of the screen,
-        // so the lines you type are not hidden behind the bar
-        var r = document.activeElement.getBoundingClientRect();
-        window.scrollBy(0, r.top - vv.offsetTop - 8);
-      } else if (!open && on) {
-        bar.classList.remove("docked"); bar.style.top = "";
-        if (spacer.parentNode) spacer.parentNode.removeChild(spacer);
-        on = false;
-      }
-      place();
-    }
-    function later() { clearTimeout(timer); timer = setTimeout(check, 60); }
-    vv.addEventListener("resize", later);
-    vv.addEventListener("scroll", place);
-    tas.forEach(function (ta) {
-      ta.addEventListener("focus", function () { setTimeout(check, 350); });
-      ta.addEventListener("blur", function () { setTimeout(check, 150); });
-    });
-  }
-  $$(".lv", lesson).forEach(keyBar);
+  $$(".lv", lesson).forEach(function (lv) { window.CodeKeys.attach(lv, WORDS_KEYS); });
 })();

@@ -32,8 +32,51 @@
 
   var links = document.querySelector(".ms-links");
   var on = links && links.querySelector("a.on");
-  if (on && links.scrollWidth > links.clientWidth) {
+  function showOn() {
+    if (!on || links.scrollWidth <= links.clientWidth) return;
     var a = on.getBoundingClientRect(), n = links.getBoundingClientRect();
     links.scrollLeft += (a.left + a.width / 2) - (n.left + n.width / 2);
   }
+  showOn();
+  // fonts change the link widths, so center the link again once the page has loaded
+  window.addEventListener("load", showOn);
+
+  // 3. Tap a lesson picture to see it bigger. The picture opens over the page,
+  //    wider than the screen, so the small words are readable. Drag to move around.
+  document.addEventListener("click", function (ev) {
+    var img = ev.target.closest && ev.target.closest(".lsn .lsn-pic");
+    if (!img) return;
+    var box = document.createElement("div");
+    box.className = "pic-zoom";
+    box.setAttribute("role", "dialog");
+    box.setAttribute("aria-label", "Bigger picture");
+    var big = document.createElement("img");
+    big.src = img.currentSrc || img.src;
+    big.alt = img.alt;
+    var close = document.createElement("button");
+    close.type = "button";
+    close.className = "pz-close";
+    close.setAttribute("aria-label", "Close the bigger picture");
+    close.textContent = "×";
+    var hint = document.createElement("p");
+    hint.className = "pz-hint";
+    hint.textContent = "Drag to see the rest of the picture";
+    box.appendChild(big); box.appendChild(close); box.appendChild(hint);
+    var y = window.scrollY;
+    document.body.appendChild(box);
+    document.documentElement.style.overflow = "hidden";
+    function shut() {
+      if (!box.parentNode) return;
+      box.parentNode.removeChild(box);
+      document.documentElement.style.overflow = "";
+      window.scrollTo(0, y);
+      document.removeEventListener("keydown", onKey);
+    }
+    function onKey(e) { if (e.key === "Escape") shut(); }
+    close.addEventListener("click", shut);
+    // a tap on the dark area around the picture also closes it
+    box.addEventListener("click", function (e) { if (e.target === box) shut(); });
+    document.addEventListener("keydown", onKey);
+    close.focus({ preventScroll: true });
+  });
 })();

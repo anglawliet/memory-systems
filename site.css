@@ -951,3 +951,28 @@ pre.snip .snl{display:block;min-height:1.6em;overflow-wrap:break-word}
 .viz.pro.trc .bd-found[hidden]{display:none}
 @media(max-width:759px){.viz.pro.trc .tr-picks{margin:10px 12px 0;grid-template-columns:repeat(2,minmax(0,1fr))}.viz.pro.trc .bt-tree{max-width:250px}}
 .viz.pro.trc .tr-picks{border-radius:14px}
+
+/* 14. Phone polish: every button is big enough for a thumb, and no label is cut off. */
+.viz.pro .vz-eyebrow,.viz.pro.brd .bt-sl{font-size:12px}
+.lsn .stages{margin-bottom:20px}
+@media (max-width:760px){
+  .ms-home{padding:10px;margin:-10px -4px -10px -10px}
+  .ms-links{padding-right:14px;justify-content:flex-start}
+  .tag-e,.tag-m,.tag-h{margin-right:6px}
+  :is(.stages,.lsn) .choice{min-height:44px}
+  :is(.stages,.lsn) .mcq-nav button{min-height:40px;padding:8px 14px}
+  .viz.pro .vz-seg .pick{min-height:40px}
+  .l3-tabs button{min-height:40px}
+  .l3 .l3-tabs button{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.2;padding:6px 2px}
+  .cx summary,.lsn details.given summary{display:list-item;padding:10px 0;min-height:44px;box-sizing:border-box}
+  .code-text .step-btn{padding:13px 16px}
+  .lsn p>code,.lsn li>code{white-space:nowrap}
+}
+
+/* 15. Tap a lesson picture to see it bigger. Drag to move around it, tap the close button to go back. */
+.lsn .lsn-pic{cursor:zoom-in}
+.pic-zoom{position:fixed;inset:0;z-index:10000;background:#0c0e12;overflow:auto;-webkit-overflow-scrolling:touch;display:flex;align-items:center}
+.pic-zoom img{display:block;width:max(100vw,820px);max-width:none;height:auto;margin:auto;background:#fff}
+.pic-zoom .pz-close{position:fixed;top:max(12px,env(safe-area-inset-top,0px));right:12px;width:44px;height:44px;border-radius:999px;border:0;background:#fff;color:#111;font:600 26px/1 Inter,system-ui,sans-serif;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.4)}
+.pic-zoom .pz-hint{position:fixed;left:0;right:0;bottom:max(14px,env(safe-area-inset-bottom,0px));text-align:center;color:#e6e9ef;font:500 14px Inter,system-ui,sans-serif;pointer-events:none}
+@media (min-width:1000px){.pic-zoom img{width:min(1400px,96vw)}.pic-zoom .pz-hint{display:none}}

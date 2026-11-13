@@ -1201,14 +1201,14 @@
       var s = ta.selectionStart, v = ta.value;
       if (e.key === "Tab" && !e.shiftKey) {
         e.preventDefault();
-        ta.setRangeText("    ", s, ta.selectionEnd, "end");
+        ta.setRangeText("    ", s, ta.selectionEnd, "end"); ta.dispatchEvent(new Event("input", { bubbles: true }));
       } else if (e.key === "Enter") {
         var lineStart = v.lastIndexOf("\n", s - 1) + 1;
         var line = v.slice(lineStart, s);
         var ind = line.match(/^ */)[0];
         if (/:\s*$/.test(line)) ind += "    ";
         e.preventDefault();
-        ta.setRangeText("\n" + ind, s, ta.selectionEnd, "end");
+        ta.setRangeText("\n" + ind, s, ta.selectionEnd, "end"); ta.dispatchEvent(new Event("input", { bubbles: true }));
       }
     });
   }
@@ -1288,4 +1288,10 @@
       });
     });
   });
+
+  /* 9. The code key bar on phones (see codekeys.js) */
+  var WORDS_KEYS = [["if", "if "], ["not in", "not in "], ["for", "for "], ["in", "in "], ["return", "return "],
+                    ["node"], ["letter"], ["current"], ["next_nodes"], [".append(", ".append()", 1],
+                    ["'$'"], ["'.'"], ["True"], ["False"]];
+  if (window.CodeKeys) $$(".lv", lesson).forEach(function (lv) { window.CodeKeys.attach(lv, WORDS_KEYS); });
 })();

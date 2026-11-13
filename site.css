@@ -1093,3 +1093,30 @@ html.cf-lock,html.cf-lock body{overflow:hidden}
 html.cf-lock body{position:fixed;left:0;right:0}
 /* in the page, a code box on a phone is a button that opens the full screen */
 @media (pointer:coarse){.lsn .lv textarea[readonly]{cursor:pointer}}
+
+/* 20. Our code keyboard in the full-screen editor on phones (see codekeys.js).
+   Suggestions on top, then the symbols, then the letters. It replaces the phone's keyboard. */
+.code-full{--ck-bg:#d4d6dc;--ck-key:#fff;--ck-act:#b4b8c1}
+:root[data-theme="dark"] .code-full{--ck-bg:#16191e;--ck-key:#3b4049;--ck-act:#2a2e35}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .code-full{--ck-bg:#16191e;--ck-key:#3b4049;--ck-act:#2a2e35}}
+.cf-top{padding:6px 8px;gap:6px}
+.cf-btn{min-height:38px;padding:0 12px;font-size:14px}
+.cf-btn.cf-sys{padding:0 10px;font-size:18px}
+.cf-title{font-size:12px}
+.ck{flex:none;display:flex;flex-direction:column;gap:6px;padding:6px 3px calc(6px + env(safe-area-inset-bottom,0px));background:var(--ck-bg);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.ck-sug{display:flex;align-items:center;gap:6px;height:36px;overflow:hidden;padding:0 3px}
+.ck-k{flex:1 1 0;min-width:0;height:44px;margin:0;padding:0;border:0;border-radius:7px;background:var(--ck-key);color:var(--ink);font:500 20px Inter,system-ui,sans-serif;box-shadow:0 1px 0 rgba(0,0,0,.28);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.ck-k.ck-chip{flex:none;height:34px;padding:0 13px;border-radius:999px;font:600 14.5px 'JetBrains Mono',monospace;color:var(--accent-strong);white-space:nowrap}
+.ck-none{font:13px Inter,system-ui,sans-serif;color:var(--ink-3);padding:0 8px;white-space:nowrap}
+.ck-row{display:flex;gap:5px}
+.ck-sym .ck-k{height:40px;font:600 19px 'JetBrains Mono',monospace}
+.ck-keys{display:flex;flex-direction:column;gap:8px}
+.ck-keys .ck-row:nth-child(2){padding:0 5%}
+.ck-k.ck-act{background:var(--ck-act);font-size:18px}
+.ck-k.ck-wide{flex:1.45 1 0;font-size:16px}
+.ck-k.ck-space{flex:4 1 0;font-size:15px;color:var(--ink-2)}
+.ck-k.ck-enter{background:var(--accent-strong);color:#fff;font-size:20px}
+.ck-k.down{background:var(--accent-soft);color:var(--accent-strong)}
+.ck-k.ck-act.on{background:var(--ck-key);color:var(--accent-strong)}
+/* when the phone's own keyboard is showing, only the suggestions and symbols stay */
+.code-full.sys-kb .ck-keys{display:none}

@@ -1098,7 +1098,6 @@ html.cf-lock body{position:fixed;left:0;right:0}
    Suggestions on top, then the symbols, then the letters. It replaces the phone's keyboard. */
 .code-full{--ck-bg:#d4d6dc;--ck-key:#fff;--ck-act:#b4b8c1}
 :root[data-theme="dark"] .code-full{--ck-bg:#16191e;--ck-key:#3b4049;--ck-act:#2a2e35}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .code-full{--ck-bg:#16191e;--ck-key:#3b4049;--ck-act:#2a2e35}}
 .cf-top{padding:6px 8px;gap:6px}
 .cf-btn{min-height:38px;padding:0 12px;font-size:14px}
 .cf-btn.cf-sys{padding:0 10px;font-size:18px}

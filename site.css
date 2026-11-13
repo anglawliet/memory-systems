@@ -940,3 +940,14 @@ pre.snip .snl{display:block;min-height:1.6em;overflow-wrap:break-word}
 .kbar.docked{position:fixed;left:0;right:0;z-index:50;margin:0!important;border-radius:0;border-width:1px 0 0;padding:6px max(8px,env(safe-area-inset-left,0px)) 6px max(8px,env(safe-area-inset-right,0px));box-shadow:0 -4px 14px rgba(0,0,0,.12)}
 .kbar .kb-w{flex-wrap:wrap;overflow:visible;gap:4px}
 .kbar .kb-w button{height:32px;padding:0 7px;font-size:13px;flex:1 0 auto}
+.viz.pro.trc .tr-picks{margin:12px 18px 0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+.viz.pro.trc .tr-picks .pick{padding:7px 4px;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.viz.pro.trc .bt-tree{max-width:280px;width:100%;flex:none}
+.viz.pro.trc .bt-n.new>circle{stroke:var(--accent-strong);stroke-dasharray:5 3;stroke-width:2.5}
+.viz.pro.trc .bt-n.ghost>circle{fill:var(--surface);stroke:var(--no);stroke-dasharray:5 3;stroke-width:2}
+.viz.pro.trc .bt-n.ghost>text{fill:var(--no)}
+.viz.pro.trc .bt-e.ghost{stroke:var(--no);stroke-dasharray:5 3}
+.viz.pro.trc .bd-found.no{background:color-mix(in srgb,var(--no) 14%,transparent);color:var(--no)}
+.viz.pro.trc .bd-found[hidden]{display:none}
+@media(max-width:759px){.viz.pro.trc .tr-picks{margin:10px 12px 0;grid-template-columns:repeat(2,minmax(0,1fr))}.viz.pro.trc .bt-tree{max-width:250px}}
+.viz.pro.trc .tr-picks{border-radius:14px}

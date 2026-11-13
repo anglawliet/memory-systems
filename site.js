@@ -47,7 +47,9 @@
   function centerLine(pre) {
     var all = pre.querySelectorAll(".snl.ptr, .l3-ln.hl"), on = all[all.length - 1];
     if (!on || pre.scrollHeight <= pre.clientHeight + 2) return;
-    pre.scrollTop = on.offsetTop - (pre.clientHeight - on.offsetHeight) / 2;
+    // measure on screen, because the line's offsetTop may count from the card, not the code box
+    var gap = on.getBoundingClientRect().top - pre.getBoundingClientRect().top;
+    pre.scrollTop += gap - (pre.clientHeight - on.offsetHeight) / 2;
   }
   if (window.MutationObserver) {
     new MutationObserver(function (list) {

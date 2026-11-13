@@ -1119,3 +1119,23 @@ html.cf-lock body{position:fixed;left:0;right:0}
 .ck-k.ck-act.on{background:var(--ck-key);color:var(--accent-strong)}
 /* when the phone's own keyboard is showing, only the suggestions and symbols stay */
 .code-full.sys-kb .ck-keys{display:none}
+/* 21. The walkthrough card in the newer lessons (see practice.js): rows of cells with
+   labels such as left and right above them, the window in blue, and the variables as chips. */
+.wk-card .wk-title{margin:0;padding:14px 18px 0;font-size:15px}
+.wk-card .wk-stage{align-items:stretch;gap:10px}
+.wk-row{display:flex;flex-direction:column;gap:2px;min-width:0}
+.wk-label{font:600 12.5px 'JetBrains Mono',monospace;color:var(--ink-3)}
+.wk-cells{display:flex;flex-wrap:wrap;gap:4px;justify-content:center}
+.wk-c{display:flex;flex-direction:column;align-items:center;min-width:34px}
+.wk-p{font:700 11px 'JetBrains Mono',monospace;color:var(--accent-strong);min-height:15px;white-space:nowrap;text-align:center;line-height:15px}
+.wk-v{min-width:34px;height:38px;padding:0 4px;display:flex;align-items:center;justify-content:center;border-radius:9px;border:1px solid var(--line-strong);background:var(--surface);font:600 16px 'JetBrains Mono',monospace;color:var(--ink);transition:all .2s;box-sizing:border-box}
+.wk-v.in{background:var(--accent-soft);border-color:var(--accent-strong);color:var(--accent-strong)}
+.wk-v.hit{box-shadow:0 0 0 3px color-mix(in srgb,var(--accent-strong) 35%,transparent);transform:translateY(-2px)}
+.wk-v.bad{background:var(--no-soft);border-color:var(--no);color:var(--no)}
+.wk-v.dim{opacity:.35}
+.wk-i{font:500 10.5px 'JetBrains Mono',monospace;color:var(--ink-3);line-height:14px}
+.wk-vars{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.wk-var{font:500 13.5px 'JetBrains Mono',monospace;padding:4px 10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink)}
+.wk-var b{color:var(--accent-strong);font-weight:700}
+.wk-card .vz-res{align-self:center}
+@media(max-width:759px){.wk-c{min-width:30px}.wk-v{min-width:30px;height:34px;font-size:15px}}

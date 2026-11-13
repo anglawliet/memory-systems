@@ -922,7 +922,7 @@ pre.snip .snl{display:block;min-height:1.6em;overflow-wrap:break-word}
 .lsn details.given pre.snip{margin:0 8px 8px!important;font-size:12px!important}
 @media(max-width:759px){.lsn .rc>pre.snip{font-size:12px!important;padding:10px 8px!important}}
 .kbar{display:flex;flex-direction:column;gap:5px;padding:6px;margin:0 0 8px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px}
-.kbar .kb-sym{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:4px}
+.kbar .kb-sym{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px}
 .kbar .kb-w{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;padding-bottom:1px}
 .kbar .kb-w::-webkit-scrollbar{display:none}
 .kbar button{height:36px;min-width:0;margin:0;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);color:var(--ink);font:600 16px 'JetBrains Mono',ui-monospace,monospace;padding:0 4px;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}

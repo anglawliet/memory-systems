@@ -10,9 +10,9 @@
   }
   /* The code key bar: one tap for each symbol and common name, so typing
      code on a phone needs no Shift and no symbol pages. */
-  var SYM = [["\u21e5", "tab"], ["\u21e4", "untab"], [":"], ["("], [")"], ["["], ["]"], ["'"], ["="],
-             [","], ["."], ["#"], ["<"], [">"], ["+"], ["-"], ["0"], ["1"]];
-  var PAIRS = { "(": ")", "[": "]", "'": "'" };
+  var SYM = [["\u21e5", "tab"], ["\u21e4", "untab"], [":"], ["("], [")"], ["["], ["]"], ["{"], ["}"], ["'"],
+             ["="], [","], ["."], ["#"], ["<"], [">"], ["+"], ["-"], ["0"], ["1"]];
+  var PAIRS = { "(": ")", "[": "]", "{": "}", "'": "'" };
 
   function put(ta, text, back) {
     ta.focus({ preventScroll: true });
@@ -44,7 +44,7 @@
     if (k[1] === "tab") return shiftLine(ta, true);
     if (k[1] === "untab") return shiftLine(ta, false);
     // a closing ) ] or ' that is already there: step over it
-    if ((ch === ")" || ch === "]" || ch === "'") && s === e && ta.value[s] === ch) {
+    if ((ch === ")" || ch === "]" || ch === "}" || ch === "'") && s === e && ta.value[s] === ch) {
       ta.focus({ preventScroll: true }); ta.setSelectionRange(s + 1, s + 1); return;
     }
     if (PAIRS[ch] && k.length === 1) return put(ta, ch + PAIRS[ch], 1);
@@ -58,6 +58,7 @@
   // its own scrolling. On touch screens the text is 16px drawn at 75% size,
   // and a negative bottom margin removes the empty space the scaling leaves.
   function grow(ta) {
+    if (ta._fit) return ta._fit(ta);
     var min = ta.classList.contains("ed") ? (TOUCH ? 400 : 300) : Math.round(ta.rows * (TOUCH ? 16 : 12) * 1.55 + 22);
     ta.style.height = min + "px";
     var h = Math.max(min, ta.scrollHeight + 4);
@@ -102,7 +103,7 @@
     // typing ) or ] next to the same closing bracket steps over it
     ta.addEventListener("beforeinput", function (ev) {
       var s = ta.selectionStart;
-      if (ev.inputType === "insertText" && (ev.data === ")" || ev.data === "]") && s === ta.selectionEnd && ta.value[s] === ev.data) {
+      if (ev.inputType === "insertText" && (ev.data === ")" || ev.data === "]" || ev.data === "}") && s === ta.selectionEnd && ta.value[s] === ev.data) {
         ev.preventDefault(); ta.setSelectionRange(s + 1, s + 1);
       }
     });
@@ -158,45 +159,80 @@
      "borderLeftWidth", "borderRightWidth", "boxSizing"].forEach(function (k) { mirror.style[k] = cs[k]; });
     mirror.style.width = ta.offsetWidth + "px";
     mirror.textContent = ta.value.slice(0, ta.selectionEnd);
-    var mark = el("span", null, "​");
+    var mark = el("span", null, "\u200b");
     mirror.appendChild(mark);
     var scale = ta.classList.contains("zf") ? 0.75 : 1;
     return { top: mark.offsetTop * scale, bottom: (mark.offsetTop + mark.offsetHeight) * scale };
   }
   // While the phone keyboard is open, pin the key bar right on top of it.
   // A spacer keeps the page from jumping when the bar leaves its place.
+  // The code box you type in shrinks to the space between the top of the screen and
+  // the key bar, and scrolls inside itself. The phone then never hides the typing line
+  // behind the bar, because the line is always inside the box, and the box is above the bar.
   function dock(bar, tas) {
-    var vv = window.visualViewport, spacer = el("div", "kb-space"), on = false, timer = 0, follow = 0;
+    var vv = window.visualViewport, spacer = el("div", "kb-space"), on = false, timer = 0, follow = 0, fitted = null;
     if (!vv) return;
     function place() {
       if (!on) return;
       bar.style.top = Math.round(vv.offsetTop + vv.height - bar.offsetHeight) + "px";
     }
-    // Keep the line you are typing on visible: below the top of the screen
-    // and above the key bar. The code box grows, so the page scrolls, not the box.
-    function keepCaret() {
+    function scale(ta) { return ta.classList.contains("zf") ? 0.75 : 1; }
+    function room() { return vv.height - bar.offsetHeight - 20; }
+    // the box's full height, or the space on screen if the code is longer
+    function fit(ta) {
+      // measure the code without resizing the box: a resize would make the page jump
+      var k = scale(ta);
+      var min = ta.classList.contains("ed") ? 0 : Math.round(ta.rows * (TOUCH ? 16 : 12) * 1.55 + 22);
+      var full = Math.max(min, ta.scrollHeight + 4), most = Math.max(120, room() / k);
+      var h = Math.min(full, most);
+      ta.style.height = h + "px";
+      ta.style.overflowY = full > most ? "auto" : "hidden";
+      if (TOUCH) ta.style.marginBottom = Math.round(-h * 0.25 + 8) + "px";
+    }
+    function unfit() {
+      if (!fitted) return;
+      var ta = fitted; fitted = null;
+      ta._fit = null; ta.style.overflowY = "hidden"; ta.scrollTop = 0; grow(ta);
+    }
+    // keep the typing line inside the box's own scroll window, with a line of room
+    function caretInBox(ta) {
+      if (ta.scrollHeight <= ta.clientHeight + 1) return;
+      var c = caretY(ta), k = scale(ta), top = c.top / k, bottom = c.bottom / k, line = bottom - top;
+      if (bottom + line > ta.scrollTop + ta.clientHeight) ta.scrollTop = bottom + line - ta.clientHeight;
+      else if (top - line < ta.scrollTop) ta.scrollTop = Math.max(0, top - line);
+    }
+    // move the page so the whole box is between the top of the screen and the key bar
+    function boxInView(ta) {
+      var r = ta.getBoundingClientRect(), h = r.height * 1;
+      var seeTop = vv.offsetTop + 8, seeBottom = vv.offsetTop + vv.height - bar.offsetHeight - 8;
+      var shown = r.top + parseFloat(ta.style.height) * scale(ta);
+      if (r.top < seeTop || shown > seeBottom) window.scrollBy({ top: r.top - seeTop, behavior: "instant" });
+    }
+    function follow1() {
       var ta = document.activeElement;
       if (!on || tas.indexOf(ta) < 0) return;
-      var r = ta.getBoundingClientRect(), c = caretY(ta);
-      var top = r.top + c.top, bottom = r.top + c.bottom;
-      var seeTop = vv.offsetTop + 12, seeBottom = vv.offsetTop + vv.height - bar.offsetHeight - 12;
-      // leave two lines of room, so the next line is visible too
-      var room = (c.bottom - c.top) * 2;
-      // jump at once: the page's smooth scrolling would lag behind fast typing
-      if (bottom + room > seeBottom) window.scrollBy({ top: bottom + room - seeBottom, behavior: "instant" });
-      else if (top < seeTop) window.scrollBy({ top: top - seeTop - room, behavior: "instant" });
+      if (fitted !== ta) { unfit(); fitted = ta; ta._fit = fit; }
+      fit(ta);
+      caretInBox(ta);
+      boxInView(ta);
     }
-    function soon() { clearTimeout(follow); follow = setTimeout(keepCaret, 30); }
+    function soon() { clearTimeout(follow); follow = setTimeout(follow1, 30); }
     function check() {
       var open = tas.indexOf(document.activeElement) >= 0 && vv.height < window.innerHeight - 120;
       if (open && !on) {
         spacer.style.height = bar.offsetHeight + "px";
         bar.parentNode.insertBefore(spacer, bar);
         bar.classList.add("docked"); on = true;
+        // the browser must not move the page on its own while the box changes size
+        document.documentElement.style.overflowAnchor = "none";
+        document.documentElement.style.scrollBehavior = "auto";
       } else if (!open && on) {
         bar.classList.remove("docked"); bar.style.top = "";
         if (spacer.parentNode) spacer.parentNode.removeChild(spacer);
         on = false;
+        unfit();
+        document.documentElement.style.overflowAnchor = "";
+        document.documentElement.style.scrollBehavior = "";
       }
       place();
       soon();
@@ -205,9 +241,9 @@
     vv.addEventListener("resize", later);
     vv.addEventListener("scroll", place);
     tas.forEach(function (ta) {
-      ta.addEventListener("focus", function () { setTimeout(check, 350); });
+      ta.addEventListener("focus", function () { setTimeout(check, 350); soon(); });
       ta.addEventListener("blur", function () { setTimeout(check, 150); });
-      ta.addEventListener("input", soon);
+      ta.addEventListener("input", function () { follow1(); soon(); });
       ta.addEventListener("click", soon);
       ta.addEventListener("keyup", soon);
     });

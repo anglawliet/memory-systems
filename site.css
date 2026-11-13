@@ -227,7 +227,7 @@ a.card::before{
 }
 a.card:hover{transform:translateY(-3px)!important;box-shadow:var(--shadow-2)!important;border-color:var(--line-strong)!important}
 a.card.trees::before{background-image:url('trees/images/scene_1.png')}
-a.card.graphs::before{background-image:url('graphs/images/scene_1.png')}
+a.card.graphs::before{background-image:url('graphs/images/dfs_arundhati_palace.png')}
 a.card.dp::before{background-image:url('dp/images/family1_A.png')}
 a.card.arrays::before{background-image:url('arrays/images/p1_two_sum.png')}
 a.card.twoptr::before{background-image:url('two_pointers/images/p11_container_water.png')}

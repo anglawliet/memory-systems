@@ -1175,3 +1175,10 @@ html.cf-lock body{position:fixed;left:0;right:0}
 .dv-q[open]>summary::after{content:"\2212"}
 .dv-q[open]>summary{border-bottom:1px solid var(--line)}
 .dv-q>p{margin:0!important;padding:10px 14px 12px;font-size:15.5px;line-height:1.5;color:var(--ink-2)}
+
+/* 24. Code boxes: a colored copy behind the box fades the comments */
+.hl-back{position:absolute;margin:0;box-sizing:border-box;overflow:hidden;pointer-events:none;background:#1b212b;color:#e6e9ef;z-index:0}
+.hl-back .hl-c{color:#6f7a8a}
+textarea.hl-on{position:relative;z-index:1;background:transparent!important;color:transparent!important;-webkit-text-fill-color:transparent;caret-color:#e6e9ef}
+textarea.hl-on::placeholder{color:#7d8696;-webkit-text-fill-color:#7d8696}
+textarea.hl-on::selection{background:rgba(138,180,255,.35);-webkit-text-fill-color:transparent}

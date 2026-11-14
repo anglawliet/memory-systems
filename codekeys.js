@@ -372,7 +372,7 @@
     }
     // the top row says which gap this is, and the code line right above it
     function titleFor(ta) {
-      if (ta.classList.contains("ed")) return "Write the whole class";
+      if (ta.classList.contains("ed")) return "Write the whole solution";
       var b = ta.closest(".blank");
       if (!b) return "Fill the gap";
       var all = $$(".blank", lv), label = "Gap " + (all.indexOf(b) + 1) + " of " + all.length;
@@ -496,5 +496,69 @@
   if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener("loadingdone", growAll);
   document.addEventListener("focusin", function (e) { if (e.target.matches && e.target.matches(".lsn textarea")) grow(e.target); });
   window.addEventListener("load", growAll);
+
+  /* Faded comments. A text box can only show one color, so a colored copy of the code
+     sits right behind each code box, and the box's own text is see-through.
+     The copy follows the box when it moves into the full-screen editor. */
+  var COPY = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "tabSize", "whiteSpace", "overflowWrap", "wordBreak",
+    "paddingTop", "paddingRight", "paddingBottom", "paddingLeft", "borderTopWidth", "borderRightWidth", "borderBottomWidth", "borderLeftWidth",
+    "borderRadius", "transform", "transformOrigin", "fontVariantLigatures", "textIndent"];
+  function shade(text) {
+    // each line: the code part as it is, and the part from a # outside a string, faded
+    return text.split("\n").map(function (line) {
+      var q = null, i;
+      for (i = 0; i < line.length; i++) {
+        var c = line.charAt(i);
+        if (q) { if (c === "\\") i++; else if (c === q) q = null; }
+        else if (c === '"' || c === "'") q = c;
+        else if (c === "#") break;
+      }
+      var code = esc(line.slice(0, i)), note = line.slice(i);
+      return note ? code + '<span class="hl-c">' + esc(note) + "</span>" : code;
+    }).join("\n") + "\n";
+  }
+  function esc(t) { return t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function paint(ta) {
+    var back = ta._hl;
+    if (!back) {
+      back = ta._hl = document.createElement("div");
+      back.className = "hl-back";
+      back.setAttribute("aria-hidden", "true");
+      ta.classList.add("hl-on");
+    }
+    var parent = ta.parentNode;
+    if (!parent) return;
+    if (back.parentNode !== parent || back.nextSibling !== ta) parent.insertBefore(back, ta);
+    if (getComputedStyle(parent).position === "static") parent.style.position = "relative";
+    var cs = getComputedStyle(ta);
+    COPY.forEach(function (k) { back.style[k] = cs[k]; });
+    back.style.borderStyle = "solid";
+    back.style.borderColor = "transparent";
+    back.style.left = ta.offsetLeft + "px";
+    back.style.top = ta.offsetTop + "px";
+    back.style.width = ta.offsetWidth + "px";
+    back.style.height = ta.offsetHeight + "px";
+    back.style.display = ta.offsetParent === null && !ta.offsetWidth ? "none" : "";
+    if (back._v !== ta.value) { back._v = ta.value; back.innerHTML = shade(ta.value); }
+    back.scrollTop = ta.scrollTop;
+    back.scrollLeft = ta.scrollLeft;
+  }
+  function paintAll() { $$(".lsn textarea, .code-full textarea").forEach(paint); }
+  ["input", "scroll", "focusin", "focusout", "keyup"].forEach(function (ev) {
+    document.addEventListener(ev, function (e) {
+      if (e.target && e.target.matches && e.target.matches(".lsn textarea, .code-full textarea")) paint(e.target);
+    }, true);
+  });
+  window.addEventListener("resize", paintAll);
+  window.addEventListener("load", paintAll);
+  document.addEventListener("click", function () { setTimeout(paintAll, 60); }, true);
+  if (window.ResizeObserver) {
+    var ro = new ResizeObserver(paintAll), seenTa = [];
+    setInterval(function () {
+      $$(".lsn textarea, .code-full textarea").forEach(function (t) { if (seenTa.indexOf(t) < 0) { seenTa.push(t); ro.observe(t); } paint(t); });
+    }, 500);
+  } else setInterval(paintAll, 500);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(paintAll);
+
   window.CodeKeys = { attach: keyBar, grow: grow, caretY: caretY, suggest: suggest, buildCorpus: buildCorpus };
 })();

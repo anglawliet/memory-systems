@@ -373,13 +373,20 @@
      A frame only lists what changes; everything else stays as it was in the frame before. */
   function walk(box) {
     // one json script is one list of steps; several scripts with data-tab become tabs
-    var tabs = [];
+    // data-ex names an example string; each example has the same tabs
+    var tabs = [], exs = [], data = {};
     try {
       $$('script[type="application/json"]', box).forEach(function (sc) {
-        tabs.push({ name: sc.dataset.tab || "", code: sc.dataset.code !== "0", frames: JSON.parse(sc.textContent) });
+        var ex = sc.dataset.ex || "", tab = sc.dataset.tab || "";
+        if (exs.indexOf(ex) < 0) exs.push(ex);
+        var t = null;
+        tabs.forEach(function (x) { if (x.name === tab) t = x; });
+        if (!t) { t = { name: tab, code: sc.dataset.code !== "0" }; tabs.push(t); }
+        data[ex + "|" + tab] = JSON.parse(sc.textContent);
       });
     } catch (e) { return; }
     if (!tabs.length) return;
+    var curTab = 0, curEx = 0;
     var pre = $("pre.snip", box);
     var card = el("div", "viz pro wk-card");
     var head = el("div", "vz-head");
@@ -390,11 +397,25 @@
         var b = el("button", i === 0 ? "on" : "", t.name);
         b.type = "button";
         b.setAttribute("role", "tab");
-        b.addEventListener("click", function () { pick(i); });
+        b.addEventListener("click", function () { curTab = i; pick(); });
         t.btn = b;
         tb.appendChild(b);
       });
       head.appendChild(tb);
+      if (exs.length > 1) {
+        var eb = el("div", "wk-exs");
+        exs.forEach(function (x, i) {
+          var b = el("button", i === 0 ? "on" : "", x);
+          b.type = "button";
+          b.addEventListener("click", function () {
+            curEx = i;
+            $$("button", eb).forEach(function (y, j) { y.classList.toggle("on", j === i); });
+            pick();
+          });
+          eb.appendChild(b);
+        });
+        head.appendChild(eb);
+      }
     } else head.appendChild(el("h5", "wk-title", box.dataset.title || "Watch the code run"));
     var body = el("div", "vz-body"), stage = el("div", "vz-stage wk-stage"), code = el("div", "vz-code");
     code.appendChild(pre);
@@ -412,9 +433,9 @@
     box.appendChild(card);
 
     // fill in what each frame did not list from the frame before it
-    tabs.forEach(function (t) {
+    function expand(frames) {
       var last = {};
-      t.full = t.frames.map(function (f) {
+      return frames.map(function (f) {
         var s = {};
         Object.keys(last).forEach(function (k) { s[k] = last[k]; });
         ["line", "skip", "say", "res", "ask"].forEach(function (k) { delete s[k]; });
@@ -423,12 +444,13 @@
         last = s;
         return s;
       });
-    });
-    var full = tabs[0].full, at = 0;
-    function pick(i) {
-      full = tabs[i].full; at = 0;
-      code.hidden = !tabs[i].code;
-      tabs.forEach(function (t, j) { t.btn.classList.toggle("on", j === i); });
+    }
+    Object.keys(data).forEach(function (key) { data[key] = expand(data[key]); });
+    var full = data[exs[0] + "|" + tabs[0].name], at = 0;
+    function pick() {
+      full = data[exs[curEx] + "|" + tabs[curTab].name] || full; at = 0;
+      code.hidden = !tabs[curTab].code;
+      tabs.forEach(function (t, j) { if (t.btn) t.btn.classList.toggle("on", j === curTab); });
       show();
     }
     code.hidden = !tabs[0].code;

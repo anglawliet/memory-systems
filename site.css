@@ -1201,3 +1201,6 @@ textarea.hl-on::selection{background:rgba(138,180,255,.35);-webkit-text-fill-col
 .code-label .cp-btn{float:none;position:static;margin:0;flex:none}
 .code-text .code-label:has(.cp-btn){white-space:nowrap;gap:8px}
 .cp-txt.ok{color:#1f7a3d!important;border-color:#1f7a3d!important}
+.viz.pro .vz-head .wk-exs{flex:1 1 100%;display:flex;flex-wrap:wrap;justify-content:center;gap:5px}
+.wk-exs button{padding:3px 7px;border-radius:999px;border:1.5px solid var(--line-strong);background:var(--surface);color:var(--ink-2,#555);font:600 12px 'JetBrains Mono',monospace;cursor:pointer}
+.wk-exs button.on{border-color:var(--accent-strong,#2563eb);color:var(--accent-strong,#2563eb);background:rgba(37,99,235,.08)}

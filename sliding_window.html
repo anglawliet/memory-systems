@@ -69,8 +69,8 @@ td{padding:10px 12px;border:1px solid var(--border)}
 .scene-img{width:100%;border-radius:10px;border:1px solid var(--border);margin-bottom:16px;cursor:pointer;transition:transform .2s}
 .scene-img:hover{transform:scale(1.02)}
 </style>
-<link rel="stylesheet" href="legacy-colors.css?v=20261114h">
-<link rel="stylesheet" href="site.css?v=20261114h">
+<link rel="stylesheet" href="legacy-colors.css?v=20261114i">
+<link rel="stylesheet" href="site.css?v=20261114i">
 </head>
 <body>
 <header class="ms-topbar"><div class="ms-inner"><a class="ms-home" href="index.html" aria-label="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg><span>Memory Systems</span></a><nav class="ms-links"><a href="shankar_dada_trees.html">Trees</a><a href="graphs.html">Graphs</a><a href="dp_workshop.html">DP</a><a href="arrays.html">Arrays</a><a href="two_pointers.html">Two Pointers</a><a href="sliding_window.html" class="on">Sliding Window</a><a href="stack.html">Stack</a><a href="binary_search.html">Binary Search</a><a href="linked_list.html">Linked List</a><a href="heap.html">Heap</a><a href="tries.html">Tries</a></nav></div></header>
@@ -214,18 +214,37 @@ best = max(best, size)"><textarea rows="3" spellcheck="false" autocapitalize="of
 <script type="application/json" class="lsn-cfg">{"need": ["characterReplacement"], "tests": [{"steps": [["characterReplacement('ABAB', 2)", 4]]}, {"steps": [["characterReplacement('AABABBA', 1)", 4]]}, {"steps": [["characterReplacement('A', 0)", 1]]}, {"steps": [["characterReplacement('ABC', 0)", 1]], "hint": "With k = 0, we cannot make changes. Only runs of the same letter work."}, {"steps": [["characterReplacement('AAAA', 2)", 4]], "hint": "The window cannot be longer than the string."}, {"steps": [["characterReplacement('AABAB', 1)", 4]], "hint": "After dropping a letter, find size and most again before checking the loop."}, {"steps": [["characterReplacement('BAAAB', 2)", 5]]}, {"steps": [["characterReplacement('ABCDE', 1)", 2]]}, {"steps": [["characterReplacement('ABBB', 2)", 4]]}], "start": "def characterReplacement(s, k):\n    # 1. Make an empty count, left and best.\n\n    # 2. Move right over every letter.\n        # 3. Add s[right] to count.\n\n        # 4. Find size and most.\n\n        # 5. While size - most > k, drop\n        #    s[left] and find size and most.\n\n        # 6. Update best.\n\n    # 7. Return best.\n", "before": ["def characterReplacement(s, k):\n    count = {}\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        letter = s[right]\n        if letter not in count:\n            count[letter] = 0\n        count[letter] += 1\n\n", ""], "after": "        best = max(best, size)\n    return best\n", "keys": [["while", "while "], ["count"], ["left"], ["right"], ["size"], ["most"], ["best"], ["s[left]"], ["max(", "max("], ["count.values()"], ["+= 1", " += 1"], ["-= 1", " -= 1"]]}</script>
 
 <section class="lsn-part lsn-easy">
-<span class="lsn-tag">Part 1 of 3</span>
+<span class="lsn-tag">Part 1 of 4</span>
 <h4>What are we trying to find?</h4>
 <img class="lsn-pic" src="sliding_window/images/panels/p424_char_replacement_question.webp" alt="The string is AABABBA and k is 1. The window AABA becomes AAAA by changing one B to A. Its size is 4." width="1400" height="700" loading="lazy">
-<p>We may make at most <code>k</code> changes. We want the longest window that can become one repeated letter.</p>
+<p>You can change up to <code>k</code> letters. You can change each letter to any other letter. Find the longest group of matching letters in a row.</p>
+<p>For example, s = &quot;AABABBA&quot; and k = 1. Change the B in &quot;AABA&quot; to A. Then we get &quot;AAAA&quot;, four A letters in a row. The answer is 4.</p>
+</section>
+
+<section class="lsn-part lsn-easy">
+<span class="lsn-tag">Part 2 of 4</span>
+<h4>How many changes does a window need?</h4>
+<img class="lsn-pic" src="sliding_window/images/panels/p424_char_replacement_changes.webp" alt="The number of changes is the size minus the count of the most common letter. AABA has size 4 and three A, so it needs 1 change. AABAB has size 5 and three A, so it needs 2 changes." width="1400" height="700" loading="lazy">
+<p>A window is a group of letters next to each other. We want every letter in a window to match. We keep the most common letter and change all the other letters. That uses the fewest changes.</p>
+<ul>
+<li>&quot;AABA&quot; has 4 letters. Three letters are A. We only change the B, so the window needs 1 change.</li>
+<li>&quot;ABAB&quot; has 4 letters. The most common letter appears 2 times. We change the other 2 letters, so the window needs 2 changes.</li>
+</ul>
+<div class="lsn-key">A window needs size minus most changes. The window is good when this number is at most k.</div>
 </section>
 
 <section class="lsn-part lsn-hard">
-<span class="lsn-tag">Part 2 of 3</span>
-<h4>How many changes does a window need?</h4>
-<img class="lsn-pic" src="sliding_window/images/panels/p424_char_replacement_changes.webp" alt="The number of changes is the size minus the count of the most common letter. AABA has size 4 and three A, so it needs 1 change. AABAB has size 5 and three A, so it needs 2 changes." width="1400" height="700" loading="lazy">
-<p>We keep the most common letter and change the rest. The window needs <code>size - most</code> changes. The dictionary <code>count</code> stores each letter&#x27;s count in the window.</p>
-<p>If the window needs more than <code>k</code> changes, we drop letters from the left. Watch the code run on &quot;AABAB&quot; with k = 1. Press Next for each step.</p>
+<span class="lsn-tag">Part 3 of 4</span>
+<h4>What do we need to remember?</h4>
+<div class="dv">
+<p>Now let's choose the variables. Each question needs one thing to remember. Tap each question to see the answer.</p>
+<details class="dv-q"><summary>How do we know if a window is good?</summary><p>We need two numbers. The variable <code>size</code> is the number of letters in the window. The variable <code>most</code> is the number of times the most common letter appears.</p></details>
+<details class="dv-q"><summary>How do we know where the window is?</summary><p>The variable <code>left</code> marks the start of the window. The variable <code>right</code> marks the end. The value of <code>size</code> is <code>right - left + 1</code>.</p></details>
+<details class="dv-q"><summary>How do we find most?</summary><p>We count each letter in the window. The dictionary <code>count</code> stores each letter&#x27;s count. The value of <code>most</code> is <code>max(count.values())</code>.</p></details>
+<details class="dv-q"><summary>Do we count every window from the start?</summary><p>No. Windows beside each other share most letters. When <code>right</code> moves, one letter enters the window, so we add 1 to its count. When the window needs too many changes, <code>left</code> moves. The letter <code>s[left]</code> leaves the window, so we subtract 1 from its count.</p></details>
+<details class="dv-q"><summary>What do we return?</summary><p>We store the biggest good window in <code>best</code>.</p></details>
+</div>
+<p>Let&#x27;s run the code on &quot;AABAB&quot; with k = 1. Press Next to see each step.</p>
 <div class="wk" data-title="characterReplacement(&quot;AABAB&quot;, 1)">
 <pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">def</span> <span class="k-def">characterReplacement</span>(<wbr>s, k):</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  count = {}</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  left = <span class="k-num">0</span></span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  best = <span class="k-num">0</span></span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">for</span> right <span class="k-kw">in</span> <span class="k-bi">range</span>(<wbr><span class="k-bi">len</span>(<wbr>s)):</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    letter = s[right]</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-kw">if</span> letter <span class="k-kw">not</span> <span class="k-kw">in</span> count:</span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      count[letter] = <span class="k-num">0</span></span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    count[letter] += <span class="k-num">1</span></span><span class="snl" style="padding-left:2ch;text-indent:-2ch"></span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    size = right - left + <span class="k-num">1</span></span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    most = <span class="k-bi">max</span>(<wbr>count.values(<wbr>))</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-com"># too many changes: shrink</span></span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-kw">while</span> size - most &gt; k:</span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      count[s[left]] -= <span class="k-num">1</span></span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      left += <span class="k-num">1</span></span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      size = size - <span class="k-num">1</span></span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      most = <span class="k-bi">max</span>(<wbr>count.values(<wbr>))</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    best = <span class="k-bi">max</span>(<wbr>best, size)</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">return</span> best</span></pre>
 <script type="application/json">[{"arr": "AABAB", "line": "2-4", "win": [], "ptr": {}, "vars": [["count", "{}"], ["left", "0"], ["best", "0"]], "say": "The window starts empty. The dictionary `count` is empty, and `left` and `best` are 0."}, {"ptr": {"left": 0, "right": 0}, "win": [0, 0], "hit": [0], "bad": [], "dim": [], "line": "6-12,19", "vars": [["count", "{A: 1}"], ["size", "1"], ["most", "1"], ["best", "1"]], "say": "We add A. The size is 1, and the biggest count is 1. The window needs 0 changes, so `best` is 1."}, {"ptr": {"left": 0, "right": 1}, "win": [0, 1], "hit": [1], "bad": [], "dim": [], "line": "6-12,19", "vars": [["count", "{A: 2}"], ["size", "2"], ["most", "2"], ["best", "2"]], "say": "We add A. The size is 2, and the biggest count is 2. The window needs 0 changes, so `best` is 2."}, {"ptr": {"left": 0, "right": 2}, "win": [0, 2], "hit": [2], "bad": [], "dim": [], "line": "6-12,19", "vars": [["count", "{A: 2, B: 1}"], ["size", "3"], ["most", "2"], ["best", "3"]], "say": "We add B. The size is 3, and the biggest count is 2. The window needs 1 change, so `best` is 3."}, {"ptr": {"left": 0, "right": 3}, "win": [0, 3], "hit": [3], "bad": [], "dim": [], "line": "6-12,19", "vars": [["count", "{A: 3, B: 1}"], ["size", "4"], ["most", "3"], ["best", "4"]], "say": "We add A. The size is 4, and the biggest count is 3. The window needs 1 change, so `best` is 4."}, {"ptr": {"left": 0, "right": 4}, "win": [0, 4], "hit": [4], "bad": [], "dim": [], "line": "6-12", "vars": [["count", "{A: 3, B: 2}"], ["size", "5"], ["most", "3"], ["best", "4"]], "say": "We add B. The size is 5, and the biggest count is 3. The window needs 2 changes."}, {"line": "14", "hit": [], "bad": [4], "say": "The window needs 2 changes. This is more than `k`, which is 1, so we drop letters from the left."}, {"line": "15-18", "ptr": {"left": 1, "right": 4}, "win": [1, 4], "bad": [4], "dim": [0], "vars": [["count", "{A: 2, B: 2}"], ["size", "4"], ["most", "2"], ["best", "4"]], "say": "We drop A from the left. The window is ABAB. It still needs 2 changes, so we shrink again."}, {"line": "15-18", "ptr": {"left": 2, "right": 4}, "win": [2, 4], "bad": [], "dim": [0, 1], "vars": [["count", "{A: 1, B: 2}"], ["size", "3"], ["most", "2"], ["best", "4"]], "say": "We drop A from the left. The window BAB needs 1 change, so we stop shrinking."}, {"line": "19", "say": "The size 3 is not bigger than `best`. The value of `best` stays 4."}, {"line": "20", "hit": [], "ptr": {}, "say": "The loop is done. We return `best`, which is 4.", "res": "best = 4"}]</script>
@@ -237,7 +256,7 @@ best = max(best, size)"><textarea rows="3" spellcheck="false" autocapitalize="of
 </section>
 
 <section class="lsn-part">
-<span class="lsn-tag">Part 3 of 3</span>
+<span class="lsn-tag">Part 4 of 4</span>
 <h4>Can you write it without looking?</h4>
 <div class="lv-tabs" role="tablist">
 <button type="button" class="on" data-lv="3">From blank</button><button type="button" data-lv="2">Fill the gaps</button>
@@ -503,9 +522,9 @@ left += 1"><textarea rows="5" spellcheck="false" autocapitalize="off" autocomple
 </div></div>
 
 </div>
-<script src="site.js?v=20261114h" defer></script>
-<script src="code-steps.js?v=20261114h" defer></script>
-<script src="codekeys.js?v=20261114h" defer></script>
-<script src="practice.js?v=20261114h" defer></script>
+<script src="site.js?v=20261114i" defer></script>
+<script src="code-steps.js?v=20261114i" defer></script>
+<script src="codekeys.js?v=20261114i" defer></script>
+<script src="practice.js?v=20261114i" defer></script>
 </body>
 </html>

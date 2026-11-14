@@ -452,6 +452,7 @@
       code.hidden = !tabs[curTab].code;
       tabs.forEach(function (t, j) { if (t.btn) t.btn.classList.toggle("on", j === curTab); });
       show();
+      steady();
     }
     code.hidden = !tabs[0].code;
     function drawRow(row, s) {
@@ -469,11 +470,19 @@
       var bad = row.bad || (row === s.rows[0] ? s.bad : null) || [];
       var dim = row.dim || (row === s.rows[0] ? s.dim : null) || [];
       var ptr = row.ptr || (row === s.rows[0] ? s.ptr : null) || {};
-      var lastTag = -2, lastLow = false;
+      var lastTag = -2, lastLow = false, prevTag = null;
       cells.forEach(function (c, i) {
         var cell = el("div", "wk-c");
         var tags = Object.keys(ptr).filter(function (k) { return ptr[k] === i; });
         var tag = el("span", "wk-p" + (tags.length > 1 ? " multi" : ""), tags.join(", "));
+        if (String(c).length > 1) cell.classList.add("wide");
+        // labels on neighbouring cells would touch, so the second one moves up a line
+        if (tags.length && !cellsBox.classList.contains("many")) {
+          var txt = tags.join(", ");
+          if (prevTag && prevTag.i === i - 1 && !prevTag.hi && (prevTag.len + txt.length) * 3.4 + 4 > 34) {
+            tag.classList.add("up"); cellsBox.classList.add("lanes"); prevTag = { i: i, len: txt.length, hi: true };
+          } else prevTag = { i: i, len: txt.length, hi: false };
+        }
         // in a long row, a label right next to another label drops to a lower line
         if (tags.length && cellsBox.classList.contains("many")) {
           var low = lastTag === i - 1 && !lastLow;
@@ -525,9 +534,33 @@
       back.disabled = at === 0;
       next.textContent = at === full.length - 1 ? "Start over" : s.ask ? "Answer" : "Next";
     }
+    // draw every step once and keep the tallest picture and text, so Back and Next stay in one place
+    function steady() {
+      var keep = at, hs = 0, hc = 0;
+      stage.style.minHeight = cap.style.minHeight = "";
+      if (!card.offsetWidth) return;
+      card.classList.add("measuring");
+      for (var i = 0; i < full.length; i++) {
+        at = i; show();
+        hs = Math.max(hs, Math.ceil(stage.getBoundingClientRect().height));
+        hc = Math.max(hc, Math.ceil(cap.getBoundingClientRect().height));
+      }
+      card.classList.remove("measuring");
+      at = keep; show();
+      stage.style.minHeight = (hs + 8) + "px"; cap.style.minHeight = hc + "px";
+    }
+    var lastW = 0;
+    function resteady() { if (card.offsetWidth && card.offsetWidth !== lastW) { lastW = card.offsetWidth; steady(); } }
+    window.addEventListener("resize", resteady);
+    if (window.ResizeObserver) new ResizeObserver(function () { requestAnimationFrame(resteady); }).observe(card);
     back.addEventListener("click", function () { if (at > 0) { at--; show(); } });
     next.addEventListener("click", function () { at = at === full.length - 1 ? 0 : at + 1; show(); });
     show();
+    resteady();
+    // fonts change text heights, so measure again once they have loaded
+    function again() { lastW = 0; resteady(); }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(again);
+    window.addEventListener("load", again);
   }
 
   $$(".lsn[data-lesson]").forEach(function (lesson) {

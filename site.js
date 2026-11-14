@@ -172,7 +172,7 @@
       label.appendChild(iconBtn(function () { return box.dataset.src || box.innerText; }));
     });
     document.querySelectorAll("pre").forEach(function (pre) {
-      if (pre.querySelector(".cp-btn") || pre.closest(".code-text") || pre.closest(".rc") || pre.classList.contains("hl-back")) return;
+      if (pre.querySelector(".cp-btn") || pre.closest(".code-text") || pre.closest(".rc") || pre.closest(".vz-code") || pre.closest(".wk") || pre.classList.contains("l3-code") || pre.classList.contains("hl-back")) return;
       if (!pre.textContent.trim()) return;
       pre.insertBefore(iconBtn(function () { return preText(pre); }), pre.firstChild);
       pre.classList.add("has-cp");
@@ -201,4 +201,14 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", addAll);
   else addAll();
   window.addEventListener("load", addAll);
+})();
+
+/* A topic page heading that repeats the banner title is hidden */
+(function () {
+  var h1 = document.querySelector("h1");
+  if (!h1) return;
+  var t = h1.textContent.trim().toLowerCase();
+  document.querySelectorAll("h2").forEach(function (h2) {
+    if (h2.textContent.trim().toLowerCase() === t) h2.classList.add("dup-title");
+  });
 })();

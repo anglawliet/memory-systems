@@ -372,12 +372,30 @@
   /* The walkthrough card. Each frame lights one code line and draws one or more rows of cells.
      A frame only lists what changes; everything else stays as it was in the frame before. */
   function walk(box) {
-    var frames;
-    try { frames = JSON.parse($("script", box).textContent); } catch (e) { return; }
+    // one json script is one list of steps; several scripts with data-tab become tabs
+    var tabs = [];
+    try {
+      $$('script[type="application/json"]', box).forEach(function (sc) {
+        tabs.push({ name: sc.dataset.tab || "", code: sc.dataset.code !== "0", frames: JSON.parse(sc.textContent) });
+      });
+    } catch (e) { return; }
+    if (!tabs.length) return;
     var pre = $("pre.snip", box);
     var card = el("div", "viz pro wk-card");
     var head = el("div", "vz-head");
-    head.appendChild(el("h5", "wk-title", box.dataset.title || "Watch the code run"));
+    if (tabs.length > 1) {
+      var tb = el("div", "l3-tabs wk-tabs");
+      tb.setAttribute("role", "tablist");
+      tabs.forEach(function (t, i) {
+        var b = el("button", i === 0 ? "on" : "", t.name);
+        b.type = "button";
+        b.setAttribute("role", "tab");
+        b.addEventListener("click", function () { pick(i); });
+        t.btn = b;
+        tb.appendChild(b);
+      });
+      head.appendChild(tb);
+    } else head.appendChild(el("h5", "wk-title", box.dataset.title || "Watch the code run"));
     var body = el("div", "vz-body"), stage = el("div", "vz-stage wk-stage"), code = el("div", "vz-code");
     code.appendChild(pre);
     body.appendChild(stage); body.appendChild(code);
@@ -394,17 +412,26 @@
     box.appendChild(card);
 
     // fill in what each frame did not list from the frame before it
-    var full = [], last = {};
-    frames.forEach(function (f) {
-      var s = {};
-      Object.keys(last).forEach(function (k) { s[k] = last[k]; });
-      ["line", "skip", "say", "res"].forEach(function (k) { delete s[k]; });
-      Object.keys(f).forEach(function (k) { s[k] = f[k]; });
-      if (s.arr && !s.rows) s.rows = [{ cells: s.arr }];
-      full.push(s);
-      last = s;
+    tabs.forEach(function (t) {
+      var last = {};
+      t.full = t.frames.map(function (f) {
+        var s = {};
+        Object.keys(last).forEach(function (k) { s[k] = last[k]; });
+        ["line", "skip", "say", "res", "ask"].forEach(function (k) { delete s[k]; });
+        Object.keys(f).forEach(function (k) { s[k] = f[k]; });
+        if (s.arr && !s.rows) s.rows = [{ cells: s.arr }];
+        last = s;
+        return s;
+      });
     });
-    var at = 0;
+    var full = tabs[0].full, at = 0;
+    function pick(i) {
+      full = tabs[i].full; at = 0;
+      code.hidden = !tabs[i].code;
+      tabs.forEach(function (t, j) { t.btn.classList.toggle("on", j === i); });
+      show();
+    }
+    code.hidden = !tabs[0].code;
     function drawRow(row, s) {
       var wrap = el("div", "wk-row");
       if (row.label) wrap.appendChild(el("div", "wk-label", row.label));
@@ -467,12 +494,14 @@
         l.classList.toggle("ptr", on);
         l.classList.toggle("skip", on && !!s.skip);
       });
-      cap.innerHTML = rich(s.say || "");
+      // an "ask" step poses a question first, and Next shows the answer
+      cap.innerHTML = (s.ask ? '<span class="wk-think">Think first</span>' : "") + rich(s.say || "");
+      cap.classList.toggle("q", !!s.ask);
       cap.classList.remove("in"); void cap.offsetWidth; cap.classList.add("in");
-      n.textContent = "Step " + (at + 1) + " of " + full.length;
+      n.textContent = (at + 1) + " of " + full.length;
       bar.firstChild.style.width = ((at + 1) / full.length * 100) + "%";
       back.disabled = at === 0;
-      next.textContent = at === full.length - 1 ? "Start over" : "Next";
+      next.textContent = at === full.length - 1 ? "Start over" : s.ask ? "Answer" : "Next";
     }
     back.addEventListener("click", function () { if (at > 0) { at--; show(); } });
     next.addEventListener("click", function () { at = at === full.length - 1 ? 0 : at + 1; show(); });

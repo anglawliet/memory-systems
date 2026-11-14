@@ -1182,3 +1182,12 @@ html.cf-lock body{position:fixed;left:0;right:0}
 textarea.hl-on{position:relative;z-index:1;background:transparent!important;color:transparent!important;-webkit-text-fill-color:transparent;caret-color:#e6e9ef}
 textarea.hl-on::placeholder{color:#7d8696;-webkit-text-fill-color:#7d8696}
 textarea.hl-on::selection{background:rgba(138,180,255,.35);-webkit-text-fill-color:transparent}
+
+/* 25. Walkthrough tabs: the idea, the variables, then the code */
+.viz.pro .vz-head .wk-tabs{flex:1 1 100%}
+.viz.pro .vz-cap .wk-think{display:block;width:max-content;margin:0 0 4px;padding:1px 9px;border-radius:999px;background:#7c3aed;color:#fff;font:700 12px Inter,system-ui,sans-serif;letter-spacing:.02em}
+.viz.pro .vz-cap.q{border-left:3px dashed #7c3aed;padding-left:10px}
+.viz.pro .vz-head:has(.wk-tabs){display:flex!important}
+.viz.pro .vz-code[hidden]{display:none!important}
+.viz.pro .wk-tabs button{font-size:13px;padding:8px 0}
+@media(max-width:420px){.viz.pro .vz-btn{padding:0 12px}}

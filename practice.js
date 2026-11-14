@@ -155,6 +155,12 @@
     }
     var fails = res.tests.filter(function (r) { return !r.ok; });
     var crash = fails.filter(function (r) { return r.err; })[0];
+    // common mix-ups between list, dict and set methods get their own hint
+    var msg = crash ? String(crash.err) : "";
+    if (/set\.pop\(\) takes no arguments/.test(msg)) return "A set has no order, so pop() cannot take a value. To remove one exact item from a set, use remove(item).";
+    if (/'set' object has no attribute 'append'/.test(msg)) return "A set has no append. To put an item into a set, use add(item).";
+    if (/'list' object has no attribute 'add'/.test(msg)) return "A list has no add. To put an item at the end of a list, use append(item).";
+    if (/'set' object is not subscriptable/.test(msg)) return "A set has no positions, so it cannot use [ ]. Check whether this should be a list or a dict.";
     if (crash && CRASH[crash.kind]) return CRASH[crash.kind];
     if (fails.some(function (r) { return r.none; })) return "Your code returned None. Make sure the function ends with a return line on every path.";
     var own = fails.filter(function (r) { return cfg.tests[r.id].hint; })[0];

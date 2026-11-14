@@ -114,3 +114,91 @@
     close.focus({ preventScroll: true });
   });
 })();
+
+/* Copy buttons: every code box, and the practice editors, get a button that copies the code */
+(function () {
+  function fallback(t) {
+    var a = document.createElement("textarea");
+    a.value = t; a.setAttribute("readonly", "");
+    a.style.position = "fixed"; a.style.top = "-1000px";
+    document.body.appendChild(a); a.select(); a.setSelectionRange(0, t.length);
+    try { document.execCommand("copy"); } catch (e) {}
+    a.remove();
+  }
+  function copy(t, btn) {
+    function done() {
+      btn.classList.add("ok");
+      var old = btn.dataset.label;
+      if (old) btn.textContent = "Copied";
+      setTimeout(function () { btn.classList.remove("ok"); if (old) btn.textContent = old; }, 1400);
+    }
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(t).then(done, function () { fallback(t); done(); });
+    else { fallback(t); done(); }
+  }
+  var ICON = '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
+  function iconBtn(getText) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "cp-btn"; b.innerHTML = ICON;
+    b.setAttribute("aria-label", "Copy code"); b.title = "Copy code";
+    b.addEventListener("click", function (e) { e.stopPropagation(); copy(getText(), b); });
+    return b;
+  }
+  function textBtn(label, getText) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "lbtn ghost cp-txt"; b.textContent = label; b.dataset.label = label;
+    b.addEventListener("click", function () { copy(getText(), b); });
+    return b;
+  }
+  // a pre's code: the .snl lines if it has them, otherwise its text without the button
+  function preText(pre) {
+    var lines = pre.querySelectorAll(".snl");
+    if (lines.length) // the page halves each indent to fit a phone, so double it back for real Python
+      return Array.prototype.map.call(lines, function (l) {
+        var t = l.textContent, n = t.length - t.replace(/^ +/, "").length;
+        return t.slice(0, n) + t;
+      }).join("\n") + "\n";
+    var c = pre.cloneNode(true);
+    Array.prototype.forEach.call(c.querySelectorAll(".cp-btn"), function (x) { x.remove(); });
+    return c.textContent.replace(/\s+$/, "") + "\n";
+  }
+  function indent(t, n) {
+    var pad = new Array(n + 1).join(" ");
+    return t.split("\n").map(function (l) { return l ? pad + l : l; }).join("\n");
+  }
+  function addAll() {
+    document.querySelectorAll(".code-text").forEach(function (box) {
+      if (box.querySelector(".cp-btn")) return;
+      var label = box.querySelector(".code-label") || box;
+      label.appendChild(iconBtn(function () { return box.dataset.src || box.innerText; }));
+    });
+    document.querySelectorAll("pre").forEach(function (pre) {
+      if (pre.querySelector(".cp-btn") || pre.closest(".code-text") || pre.closest(".rc") || pre.classList.contains("hl-back")) return;
+      if (!pre.textContent.trim()) return;
+      pre.insertBefore(iconBtn(function () { return preText(pre); }), pre.firstChild);
+      pre.classList.add("has-cp");
+    });
+    // From blank: copy what is in the editor now
+    document.querySelectorAll(".lv .run").forEach(function (run) {
+      if (run.querySelector(".cp-txt")) return;
+      var lv = run.closest(".lv");
+      var ed = lv.querySelector("textarea.ed");
+      var rc = lv.querySelector(".rc");
+      if (ed) run.insertBefore(textBtn("Copy", function () { return ed.value; }), run.querySelector(".run-status"));
+      // Fill the gaps: copy the written lines with each gap filled in
+      else if (rc) run.insertBefore(textBtn("Copy", function () {
+        var out = [];
+        Array.prototype.forEach.call(rc.children, function (k) {
+          if (k.tagName === "PRE") out.push(preText(k).replace(/\n$/, ""));
+          else if (k.classList.contains("blank")) {
+            var ta = k.querySelector("textarea");
+            out.push(indent(ta.value || ta.placeholder, +k.dataset.indent || 0));
+          }
+        });
+        return out.join("\n") + "\n";
+      }), run.querySelector(".run-status"));
+    });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", addAll);
+  else addAll();
+  window.addEventListener("load", addAll);
+})();

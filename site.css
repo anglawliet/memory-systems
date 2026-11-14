@@ -1191,3 +1191,13 @@ textarea.hl-on::selection{background:rgba(138,180,255,.35);-webkit-text-fill-col
 .viz.pro .vz-code[hidden]{display:none!important}
 .viz.pro .wk-tabs button{font-size:13px;padding:8px 0}
 @media(max-width:420px){.viz.pro .vz-btn{padding:0 12px}}
+
+/* 26. Copy buttons */
+.cp-btn{float:right;position:sticky;top:4px;z-index:2;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;margin:-4px -4px 4px 8px;padding:0;border-radius:8px;border:1px solid rgba(128,128,128,.45);background:rgba(128,128,128,.14);color:inherit;opacity:.85;cursor:pointer;white-space:normal;line-height:1}
+.cp-btn:hover{opacity:1;background:rgba(128,128,128,.26)}
+.cp-btn.ok{background:#1f7a3d;border-color:#1f7a3d;color:#fff}
+.cp-btn.ok svg{display:none}
+.cp-btn.ok::after{content:"\2713";font:700 15px Inter,system-ui,sans-serif}
+.code-label .cp-btn{float:none;position:static;margin:0;flex:none}
+.code-text .code-label:has(.cp-btn){white-space:nowrap;gap:8px}
+.cp-txt.ok{color:#1f7a3d!important;border-color:#1f7a3d!important}

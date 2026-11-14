@@ -184,6 +184,130 @@
     res.tests.filter(function (r) { return !r.ok; }).slice(0, 3).forEach(function (r) { ul.appendChild(el("li", null, testText(cfg, r))); });
     out.appendChild(ul);
   }
+  /* Compare the learner's code with one answer, line by line.
+     Their code stays as it is. Answer lines they do not have are marked,
+     and lines that only they have are listed, so they can fix their own code. */
+  function codeLines(text) {
+    return String(text).replace(/\t/g, "    ").split("\n").map(function (raw) {
+      var t = raw.trim();
+      var key = !t || t.charAt(0) === "#" ? "" : t.replace(/'/g, '"').replace(/\s+/g, "");
+      return { raw: raw.replace(/\s+$/, ""), key: key };
+    });
+  }
+  function matchLines(a, b) {
+    // longest common run of lines, so the order of the lines matters too
+    var n = a.length, m = b.length, L = [], i, j;
+    for (i = 0; i <= n; i++) { L.push([]); for (j = 0; j <= m; j++) L[i].push(0); }
+    for (i = n - 1; i >= 0; i--) for (j = m - 1; j >= 0; j--) {
+      L[i][j] = a[i].key && a[i].key === b[j].key ? L[i + 1][j + 1] + 1 : Math.max(L[i + 1][j], L[i][j + 1]);
+    }
+    var inA = {}, inB = {};
+    i = 0; j = 0;
+    while (i < n && j < m) {
+      if (a[i].key && a[i].key === b[j].key) { inA[i] = 1; inB[j] = 1; i++; j++; }
+      else if (L[i + 1][j] >= L[i][j + 1]) i++;
+      else j++;
+    }
+    return { inA: inA, inB: inB };
+  }
+  function comparePanel(mine, answer) {
+    var a = codeLines(mine), b = codeLines(answer), m = matchLines(a, b);
+    var missing = b.filter(function (l, j) { return l.key && !m.inB[j]; }).length;
+    var extra = a.filter(function (l, i) { return l.key && !m.inA[i]; });
+    var box = el("div", "cmp");
+    var head = missing || extra.length
+      ? "Your code stays as you wrote it. Below is one answer. The marked lines are ones your code does not have in the same form."
+      : "Every line of your code matches this answer.";
+    box.appendChild(el("p", "cmp-h", head));
+    var pre = el("pre", "cmp-code");
+    // drop the shared indent, so the lines start at the left edge
+    var ind = Math.min.apply(null, b.filter(function (l) { return l.key; }).map(function (l) { return l.raw.match(/^ */)[0].length; }).concat([99]));
+    b.forEach(function (l, j) {
+      var row = el("span", "cmp-l" + (l.key && !m.inB[j] ? " miss" : ""), l.raw.slice(Math.min(ind, l.raw.match(/^ */)[0].length)) || " ");
+      pre.appendChild(row);
+    });
+    box.appendChild(pre);
+    if (extra.length) {
+      box.appendChild(el("p", "cmp-h", "These lines are only in your code. Check whether each one is needed or written differently."));
+      var mineBox = el("pre", "cmp-code");
+      extra.forEach(function (l) { mineBox.appendChild(el("span", "cmp-l extra", l.raw.trim())); });
+      box.appendChild(mineBox);
+    }
+    if (missing || extra.length) box.appendChild(el("p", "cmp-note", "Different names or a different order can still be right. The tests are the real check."));
+    return { box: box, missing: b.filter(function (l, j) { return l.key && !m.inB[j]; }).map(function (l) { return l.raw.trim(); }), extra: extra.map(function (l) { return l.raw.trim(); }) };
+  }
+
+  /* The practice log: every run and every look at an answer is kept on this phone,
+     so the learner can copy it and ask Claude which habits to fix. */
+  var LOG = "practice-log-v1";
+  function readLog() {
+    try { return JSON.parse(localStorage.getItem(LOG) || "[]"); } catch (e) { return []; }
+  }
+  function addLog(entry) {
+    var all = readLog();
+    entry.t = new Date().toISOString();
+    entry.page = (location.pathname.split("/").pop() || "index.html").replace(/\.html$/, "");
+    all.push(entry);
+    if (all.length > 400) all = all.slice(-400);
+    try { localStorage.setItem(LOG, JSON.stringify(all)); } catch (e) { /* storage may be full or blocked */ }
+    $$(".log-n").forEach(function (n) { n.textContent = logCount(); });
+  }
+  function logCount() {
+    var n = readLog().length;
+    return n === 1 ? "1 entry saved on this phone." : n + " entries saved on this phone.";
+  }
+  function logText() {
+    var all = readLog();
+    var out = ["My practice log from the memory-systems site, with " + all.length + " entries.",
+      "Please look at my mistakes. Tell me which thinking habits cause them, and how to fix those habits for other problems.", ""];
+    all.forEach(function (e) {
+      var when = e.t.slice(0, 16).replace("T", " ");
+      out.push("== " + when + " | " + e.problem + " (" + e.page + ") | " + e.mode);
+      if (e.kind === "answer") {
+        out.push("I looked at the answer" + (e.gap ? " for gap " + e.gap : "") + ".");
+        if (e.missing && e.missing.length) out.push("Answer lines I did not have:\n  " + e.missing.join("\n  "));
+        if (e.extra && e.extra.length) out.push("Lines only in my code:\n  " + e.extra.join("\n  "));
+      } else {
+        out.push("Result: " + e.result);
+        (e.fails || []).forEach(function (f) { out.push("Failed: " + f); });
+      }
+      if (e.code) out.push("My code:\n" + e.code);
+      out.push("");
+    });
+    return out.join("\n");
+  }
+  function logRow(box) {
+    var row = el("div", "log-row");
+    var copy = el("button", "lbtn ghost log-copy", "Copy my practice log");
+    copy.type = "button";
+    var n = el("span", "log-n", logCount()), msg = el("p", "log-msg");
+    row.appendChild(copy); row.appendChild(n);
+    box.appendChild(row); box.appendChild(msg);
+    copy.addEventListener("click", function () {
+      var text = logText();
+      function done() { msg.textContent = "Copied. Paste it into a chat with Claude and ask what to work on."; }
+      function manual() {
+        // the phone did not allow copying, so show the text to copy by hand
+        msg.textContent = "Select this text and copy it.";
+        var ta = el("textarea", "log-text"); ta.value = text; ta.readOnly = true;
+        msg.appendChild(ta); ta.focus(); ta.select();
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, manual);
+      else manual();
+    });
+  }
+  function problemName(lesson) {
+    var h = lesson.closest(".deriv");
+    h = h && $("h3", h);
+    if (!h) return lesson.dataset.lesson;
+    var c = h.cloneNode(true);
+    $$(".deriv-n, .tag-m, .tag-e, .tag-h, [class^='tag']", c).forEach(function (x) { x.remove(); });
+    return c.textContent.trim() || lesson.dataset.lesson;
+  }
+  // only what the learner typed in each gap, for the log
+  function gapText(box) {
+    return $$(".blank textarea", box).map(function (t, i) { return "# gap " + (i + 1) + "\n" + t.value.replace(/\s+$/, ""); }).join("\n");
+  }
   function wireRun(cfg, box, getCode) {
     var btn = $(".run-btn", box), status = $(".run-status", box), out = $(".run-out", box);
     btn.addEventListener("click", function () {
@@ -194,10 +318,20 @@
       runPython(code, cfg, status).then(function (res) {
         status.textContent = "";
         showResult(cfg, out, res);
+        var lesson = box.closest(".lsn");
+        var entry = { kind: "run", problem: problemName(lesson), mode: box.dataset.lv === "2" ? "Fill the gaps" : "From blank", code: box.dataset.lv === "2" ? gapText(box) : code };
+        if (res.load) { entry.result = "my code did not run: " + res.load + (res.line ? " (line " + res.line + ")" : ""); }
+        else {
+          var pass = res.tests.filter(function (r) { return r.ok; }).length;
+          entry.result = pass + " of " + res.tests.length + " tests pass.";
+          entry.fails = res.tests.filter(function (r) { return !r.ok; }).slice(0, 3).map(function (r) { return testText(cfg, r); });
+        }
+        addLog(entry);
       }, function (err) {
         status.textContent = "";
         if (err.message === "slow") {
           out.appendChild(el("p", "ro-bad", "Your code ran for more than 8 seconds, so I stopped it."));
+          addLog({ kind: "run", problem: problemName(box.closest(".lsn")), mode: box.dataset.lv === "2" ? "Fill the gaps" : "From blank", code: box.dataset.lv === "2" ? gapText(box) : code, result: "my code ran for more than 8 seconds, so it was stopped." });
           out.appendChild(el("p", "ro-hint", "Here is something to think about. A loop may never end. Check that every while loop moves a pointer or changes its condition."));
         } else {
           out.appendChild(el("p", "ro-bad", "Python could not start. Check your internet connection and try again. (" + err.message + ")"));
@@ -411,10 +545,13 @@
             msg.className = "b-msg hint";
             return;
           }
-          ta.value = b.dataset.answer;
-          ta.dispatchEvent(new Event("input", { bubbles: true }));
-          msg.textContent = "Here is one answer. Read it, then clear the box and type it again from memory.";
-          msg.className = "b-msg";
+          var old = $(".cmp", b), btn = $(".b-show", b);
+          if (old) { old.remove(); btn.textContent = "Show answer"; return; }
+          var c = comparePanel(ta.value, b.dataset.answer);
+          b.appendChild(c.box);
+          btn.textContent = "Hide answer";
+          msg.textContent = "";
+          addLog({ kind: "answer", problem: problemName(lesson), mode: "Fill the gaps", gap: blanks.indexOf(b) + 1, code: ta.value.replace(/\s+$/, ""), missing: c.missing, extra: c.extra });
         });
       });
       wireRun(cfg, box, function () {
@@ -427,6 +564,7 @@
           return (cfg.before[i] || "") + dedent($("textarea", b).value).map(function (l) { return l.trim() ? pad + l : ""; }).join("\n") + "\n";
         }).join("") + (cfg.after || "");
       });
+      logRow(box);
     });
 
     $$('.lv[data-lv="3"]', lesson).forEach(function (box) {
@@ -437,12 +575,57 @@
       codeKeys(ta);
       ta.addEventListener("input", function () { try { localStorage.setItem(KEY, ta.value); } catch (e) { /* storage may be blocked */ } });
       $(".ed-reset", box).addEventListener("click", function () {
+        var before = ta.value, out = $(".run-out", box);
         ta.value = cfg.start;
         ta.dispatchEvent(new Event("input", { bubbles: true }));
         try { localStorage.removeItem(KEY); } catch (e) { /* ignore */ }
-        $(".run-out", box).textContent = "";
+        out.textContent = "";
+        var co = $(".cmp-out", box), cb = $(".ed-cmp", box);
+        if (co) co.textContent = "";
+        if (cb) cb.textContent = "Compare with the answer";
+        // one tap clears the code, so give a way back
+        if (before.trim() && before !== cfg.start) {
+          var p = el("p", "ro-hint", "Your code was cleared. ");
+          var undo = el("button", "lbtn ghost ed-undo", "Undo");
+          undo.type = "button";
+          undo.addEventListener("click", function () {
+            ta.value = before;
+            ta.dispatchEvent(new Event("input", { bubbles: true }));
+            out.textContent = "";
+          });
+          p.appendChild(undo);
+          out.appendChild(p);
+        }
       });
       wireRun(cfg, box, function () { return ta.value; });
+
+      // compare with one answer, built from the fixed code and the gap answers
+      var gapsBox = $('.lv[data-lv="2"]', lesson);
+      if (gapsBox && cfg.before) {
+        var answer = $$(".blank", gapsBox).map(function (b, i) {
+          var pad = new Array(+b.dataset.indent + 1).join(" ");
+          return (cfg.before[i] || "") + b.dataset.answer.split("\n").map(function (l) { return l.trim() ? pad + l : ""; }).join("\n") + "\n";
+        }).join("") + (cfg.after || "");
+        var cmpBtn = el("button", "lbtn ghost ed-cmp", "Compare with the answer");
+        cmpBtn.type = "button";
+        $(".run", box).insertBefore(cmpBtn, $(".run-status", box));
+        var cmpOut = el("div", "cmp-out");
+        $(".run-out", box).after(cmpOut);
+        var asked = false;
+        cmpBtn.addEventListener("click", function () {
+          if (cmpOut.firstChild) { cmpOut.textContent = ""; cmpBtn.textContent = "Compare with the answer"; return; }
+          if (ta.value.trim() === cfg.start.trim() && !asked) {
+            asked = true;
+            cmpOut.appendChild(el("p", "ro-hint", "Try writing something first. A wrong guess teaches more than reading the answer. Press the button again to see it anyway."));
+            return;
+          }
+          var c = comparePanel(ta.value, answer);
+          cmpOut.appendChild(c.box);
+          cmpBtn.textContent = "Hide the answer";
+          addLog({ kind: "answer", problem: problemName(lesson), mode: "From blank", code: ta.value.replace(/\s+$/, ""), missing: c.missing, extra: c.extra });
+        });
+      }
+      logRow(box);
     });
 
     var keys = (cfg.keys || []).concat([["return", "return "], ["for", "for "], ["in", "in "], ["if", "if "]]);

@@ -1142,3 +1142,23 @@ html.cf-lock body{position:fixed;left:0;right:0}
 .wk-card .vz-res{align-self:center}
 @media(max-width:759px){.wk-c{min-width:30px}.wk-v{min-width:30px;height:34px;font-size:15px}}
 @media(max-width:759px){.wk-cells.many{display:grid;gap:3px}.wk-cells.many .wk-c,.wk-cells.many .wk-v{min-width:0;width:100%}.wk-cells.many .wk-v{padding:0;font-size:13px;border-radius:7px}.wk-cells.many .wk-p{width:100%;display:flex;justify-content:center;font-size:9.5px;letter-spacing:-.3px}.wk-cells.two .wk-p{min-height:26px;line-height:13px;align-items:flex-start}.wk-cells.two .wk-p.lo{align-items:flex-end}}
+
+/* 22. Compare with the answer, and the practice log */
+.cmp{margin:8px 0 4px;display:grid;gap:6px}
+.cmp-h{margin:0!important;font-size:14.5px;line-height:1.45;color:var(--ink)}
+.blank .cmp-h,.blank .cmp-note{color:#c9d1dc}
+.cmp-note{margin:0!important;font-size:13.5px;color:var(--ink-3)}
+.cmp-code{margin:0!important;padding:8px 0!important;background:#141920!important;border:1px solid #2a313c;border-radius:10px;font:500 13px/1.55 'JetBrains Mono',monospace!important;color:#e6e9ef;white-space:pre-wrap;overflow-x:auto}
+.cmp-l{display:block;padding:0 10px;border-left:3px solid transparent}
+.cmp pre.cmp-code,.cmp pre.cmp-code .cmp-l{color:#e6e9ef!important;border-color:#2a313c}
+.cmp pre.cmp-code .cmp-l.miss{border-left-color:#48bb78}
+.cmp pre.cmp-code .cmp-l.extra{border-left-color:#f56565}
+.cmp pre.cmp-code .cmp-l:not(.miss):not(.extra){color:#9aa4b2!important}
+.cmp-l.miss{background:rgba(72,187,120,.16);border-left-color:#48bb78}
+.cmp-l.extra{background:rgba(245,101,101,.16);border-left-color:#f56565}
+.ed-undo{min-height:30px!important;padding:3px 12px!important;font-size:14px!important;margin-left:6px}
+.log-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:14px 0 0;padding-top:12px;border-top:1px dashed var(--line)}
+.log-n{font-size:13.5px;color:var(--ink-3)}
+.log-msg{margin:6px 0 0!important;font-size:14px;color:var(--ink-2)}
+.log-msg:empty{display:none}
+.log-text{display:block;width:100%;min-height:140px;margin-top:6px;font:12px 'JetBrains Mono',monospace}

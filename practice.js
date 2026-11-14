@@ -244,11 +244,11 @@
     var foot = el("div", "vz-foot"), cap = el("p", "vz-cap"), ctrl = el("div", "vz-ctrl");
     var back = el("button", "vz-btn", "Back"), next = el("button", "vz-btn primary", "Next");
     back.type = next.type = "button";
-    var prog = el("div", "vz-prog"), bar = el("div", "vz-bar"), n = el("span", "vz-n");
+    // the bar runs across the top of the footer, and the step count sits between the buttons
+    var bar = el("div", "vz-bar"), n = el("span", "vz-n");
     bar.appendChild(el("i"));
-    prog.appendChild(bar); prog.appendChild(n);
-    ctrl.appendChild(back); ctrl.appendChild(prog); ctrl.appendChild(next);
-    foot.appendChild(cap); foot.appendChild(ctrl);
+    ctrl.appendChild(back); ctrl.appendChild(n); ctrl.appendChild(next);
+    foot.appendChild(bar); foot.appendChild(cap); foot.appendChild(ctrl);
     card.appendChild(head); card.appendChild(body); card.appendChild(foot);
     box.textContent = "";
     box.appendChild(card);
@@ -270,15 +270,28 @@
       if (row.label) wrap.appendChild(el("div", "wk-label", row.label));
       var cellsBox = el("div", "wk-cells");
       var cells = typeof row.cells === "string" ? row.cells.split("") : row.cells;
+      // a long row gets smaller cells, so it stays on one line on a phone
+      if (cells.length >= 10) {
+        cellsBox.classList.add("many");
+        cellsBox.style.gridTemplateColumns = "repeat(" + cells.length + ", minmax(0, 34px))";
+      }
       var win = row.win || (row === s.rows[0] ? s.win : null);
       var hit = row.hit || (row === s.rows[0] ? s.hit : null) || [];
       var bad = row.bad || (row === s.rows[0] ? s.bad : null) || [];
       var dim = row.dim || (row === s.rows[0] ? s.dim : null) || [];
       var ptr = row.ptr || (row === s.rows[0] ? s.ptr : null) || {};
+      var lastTag = -2, lastLow = false;
       cells.forEach(function (c, i) {
         var cell = el("div", "wk-c");
         var tags = Object.keys(ptr).filter(function (k) { return ptr[k] === i; });
-        cell.appendChild(el("span", "wk-p", tags.join(", ")));
+        var tag = el("span", "wk-p", tags.join(", "));
+        // in a long row, a label right next to another label drops to a lower line
+        if (tags.length && cellsBox.classList.contains("many")) {
+          var low = lastTag === i - 1 && !lastLow;
+          if (low) { tag.classList.add("lo"); cellsBox.classList.add("two"); }
+          lastTag = i; lastLow = low;
+        }
+        cell.appendChild(tag);
         var v = el("span", "wk-v", String(c));
         if (win && i >= win[0] && i <= win[1]) v.classList.add("in");
         if (hit.indexOf(i) >= 0) v.classList.add("hit");

@@ -796,6 +796,8 @@ pre.snip .snl{display:block;min-height:1.6em;overflow-wrap:break-word}
 .viz.pro .vz-cap.in{animation:notein .3s ease}
 .viz.pro .vz-ctrl{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .viz.pro .vz-btn{height:42px;padding:0 18px;border-radius:12px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);font:600 14.5px Inter,system-ui,sans-serif;cursor:pointer;transition:background .15s,transform .1s}
+.viz.pro .vz-btn{white-space:nowrap;flex:none}
+@media(max-width:420px){.viz.pro .vz-btn{padding:0 14px}.viz.pro .vz-ctrl{gap:8px}}
 .viz.pro .vz-btn:active{transform:scale(.97)}
 .viz.pro .vz-btn:disabled{opacity:.4;cursor:default}
 .viz.pro .vz-btn.primary{background:var(--accent-strong);border-color:var(--accent-strong);color:#fff;min-width:92px}
@@ -1139,3 +1141,4 @@ html.cf-lock body{position:fixed;left:0;right:0}
 .wk-var b{color:var(--accent-strong);font-weight:700}
 .wk-card .vz-res{align-self:center}
 @media(max-width:759px){.wk-c{min-width:30px}.wk-v{min-width:30px;height:34px;font-size:15px}}
+@media(max-width:759px){.wk-cells.many{display:grid;gap:3px}.wk-cells.many .wk-c,.wk-cells.many .wk-v{min-width:0;width:100%}.wk-cells.many .wk-v{padding:0;font-size:13px;border-radius:7px}.wk-cells.many .wk-p{width:100%;display:flex;justify-content:center;font-size:9.5px;letter-spacing:-.3px}.wk-cells.two .wk-p{min-height:26px;line-height:13px;align-items:flex-start}.wk-cells.two .wk-p.lo{align-items:flex-end}}

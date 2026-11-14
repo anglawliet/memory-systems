@@ -473,7 +473,7 @@
       cells.forEach(function (c, i) {
         var cell = el("div", "wk-c");
         var tags = Object.keys(ptr).filter(function (k) { return ptr[k] === i; });
-        var tag = el("span", "wk-p", tags.join(", "));
+        var tag = el("span", "wk-p" + (tags.length > 1 ? " multi" : ""), tags.join(", "));
         // in a long row, a label right next to another label drops to a lower line
         if (tags.length && cellsBox.classList.contains("many")) {
           var low = lastTag === i - 1 && !lastLow;

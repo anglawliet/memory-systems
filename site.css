@@ -1204,3 +1204,11 @@ textarea.hl-on::selection{background:rgba(138,180,255,.35);-webkit-text-fill-col
 .viz.pro .vz-head .wk-exs{flex:1 1 100%;display:flex;flex-wrap:wrap;justify-content:center;gap:5px}
 .wk-exs button{padding:3px 7px;border-radius:999px;border:1.5px solid var(--line-strong);background:var(--surface);color:var(--ink-2,#555);font:600 12px 'JetBrains Mono',monospace;cursor:pointer}
 .wk-exs button.on{border-color:var(--accent-strong,#2563eb);color:var(--accent-strong,#2563eb);background:rgba(37,99,235,.08)}
+
+/* 27. Pointer labels float above their cell, so a long label like "left, right" never widens the cell */
+.wk-cells:not(.many) .wk-c{position:relative;padding-top:15px}
+.wk-cells:not(.many) .wk-p{position:absolute;top:0;left:50%;transform:translateX(-50%);min-height:0;z-index:1}
+.wk-cells:not(.many) .wk-p.multi{font-size:10px;letter-spacing:-.2px}
+/* a row never wraps: on a narrow phone the cells shrink a little instead, so indexes stay in line */
+@media(max-width:759px){.wk-cells:not(.many){flex-wrap:nowrap;width:100%;box-sizing:border-box}.wk-cells:not(.many) .wk-c{flex:0 1 30px;min-width:0}.wk-cells:not(.many) .wk-v{width:100%;min-width:0;padding:0}}
+@media(max-width:759px){.wk-stage .wk-row{align-self:stretch;justify-content:center;min-width:0}.wk-stage .wk-row .wk-cells:not(.many){flex:1 1 auto;width:auto;min-width:0}}

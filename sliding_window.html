@@ -69,8 +69,8 @@ td{padding:10px 12px;border:1px solid var(--border)}
 .scene-img{width:100%;border-radius:10px;border:1px solid var(--border);margin-bottom:16px;cursor:pointer;transition:transform .2s}
 .scene-img:hover{transform:scale(1.02)}
 </style>
-<link rel="stylesheet" href="legacy-colors.css?v=20261114c">
-<link rel="stylesheet" href="site.css?v=20261114c">
+<link rel="stylesheet" href="legacy-colors.css?v=20261114d">
+<link rel="stylesheet" href="site.css?v=20261114d">
 </head>
 <body>
 <header class="ms-topbar"><div class="ms-inner"><a class="ms-home" href="index.html" aria-label="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg><span>Memory Systems</span></a><nav class="ms-links"><a href="shankar_dada_trees.html">Trees</a><a href="graphs.html">Graphs</a><a href="dp_workshop.html">DP</a><a href="arrays.html">Arrays</a><a href="two_pointers.html">Two Pointers</a><a href="sliding_window.html" class="on">Sliding Window</a><a href="stack.html">Stack</a><a href="binary_search.html">Binary Search</a><a href="linked_list.html">Linked List</a><a href="heap.html">Heap</a><a href="tries.html">Tries</a></nav></div></header>
@@ -155,7 +155,13 @@ best = max(best, profit)"><textarea rows="2" spellcheck="false" autocapitalize="
 <span class="lsn-tag">Part 2 of 3</span>
 <h4>How does the window move?</h4>
 <img class="lsn-pic" src="sliding_window/images/panels/p3_longest_substring_window.webp" alt="How does the window move? 1. Move right. No repeats, size 3. 2. The new b repeats. 3. Move left past the repeat, so the window is c and b. The size is right minus left plus 1." width="1400" height="700" loading="lazy">
-<p>The window contains the letters from <code>left</code> to <code>right</code>. The set <code>seen</code> holds the letters in the window.</p>
+<div class="dv">
+<p class="lsn-step">What do we need to remember?</p>
+<p>First, let's choose the variables. Tap each question to see the answer.</p>
+<details class="dv-q"><summary>How do we know if the new letter is a repeat?</summary><p>We remember the letters in the window. The set <code>seen</code> holds them and is fast to check.</p></details>
+<details class="dv-q"><summary>How do we remove letters from the left?</summary><p>The variable <code>left</code> shows where the window starts. The variable <code>right</code> shows where the window ends.</p></details>
+<details class="dv-q"><summary>What do we return?</summary><p>We use <code>best</code> to remember the longest window. The current window length is <code>right - left + 1</code>.</p></details>
+</div>
 <p>Let's run the code with the short string "abcb". Press Next to see each step.</p>
 <div class="wk" data-title="lengthOfLongestSubstring(&quot;abcb&quot;)">
 <pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">def</span> <span class="k-def">lengthOfLongestSubstring</span>(<wbr>s):</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  seen = <span class="k-bi">set</span>(<wbr>)</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  left = <span class="k-num">0</span></span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  best = <span class="k-num">0</span></span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">for</span> right <span class="k-kw">in</span> <span class="k-bi">range</span>(<wbr><span class="k-bi">len</span>(<wbr>s)):</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-com"># a repeat: drop from the left</span></span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-kw">while</span> s[right] <span class="k-kw">in</span> seen:</span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      seen.remove(<wbr>s[left])</span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      left += <span class="k-num">1</span></span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    seen.add(<wbr>s[right])</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    size = right - left + <span class="k-num">1</span></span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    best = <span class="k-bi">max</span>(<wbr>best, size)</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">return</span> best</span></pre>
@@ -497,9 +503,9 @@ left += 1"><textarea rows="5" spellcheck="false" autocapitalize="off" autocomple
 </div></div>
 
 </div>
-<script src="site.js?v=20261114c" defer></script>
-<script src="code-steps.js?v=20261114c" defer></script>
-<script src="codekeys.js?v=20261114c" defer></script>
-<script src="practice.js?v=20261114c" defer></script>
+<script src="site.js?v=20261114d" defer></script>
+<script src="code-steps.js?v=20261114d" defer></script>
+<script src="codekeys.js?v=20261114d" defer></script>
+<script src="practice.js?v=20261114d" defer></script>
 </body>
 </html>

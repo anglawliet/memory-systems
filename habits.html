@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>try{var t=localStorage.getItem("ms-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How I Write Any Solution</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Memory">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="theme-color" content="#f8f7f4">
+<style>
+body{margin:0}
+.hb{max-width:720px;margin:0 auto;padding:20px 16px 60px;box-sizing:border-box}
+.hb h1{font-size:1.7em;margin:10px 0 8px;color:var(--ink)}
+.hb .hb-why{color:var(--ink-2)}
+.hb-list ol{margin:8px 0 0;padding-left:22px}
+.hb-list li{margin:8px 0;line-height:1.5}
+</style>
+<link rel="stylesheet" href="legacy-colors.css?v=20261114g">
+<link rel="stylesheet" href="site.css?v=20261114g">
+</head>
+<body>
+<header class="ms-topbar"><div class="ms-inner"><a class="ms-home" href="index.html" aria-label="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg><span>Memory Systems</span></a><nav class="ms-links"><a href="shankar_dada_trees.html">Trees</a><a href="graphs.html">Graphs</a><a href="dp_workshop.html">DP</a><a href="arrays.html">Arrays</a><a href="two_pointers.html">Two Pointers</a><a href="sliding_window.html">Sliding Window</a><a href="stack.html">Stack</a><a href="binary_search.html">Binary Search</a><a href="linked_list.html">Linked List</a><a href="heap.html">Heap</a><a href="tries.html">Tries</a></nav></div></header>
+<main class="hb lsn">
+<h1>How I write any solution</h1>
+<p>These six habits stop mistakes early. Each habit comes from a real mistake. Use them in this order for every problem.</p>
+<section class="lsn-part hb-list">
+<span class="lsn-tag">The six checks</span>
+<p>Read the six habits before you practice. After a failed test, find the habit you skipped.</p>
+<ol><li><b>Say what each variable means.</b> Can I explain what each variable holds in one sentence?</li><li><b>Write the jobs as comments first.</b> Does every comment have a line of code?</li><li><b>Name the type before the method.</b> Is this a list, dict or set?</li><li><b>Every loop must move forward.</b> What changes inside this loop so it can stop?</li><li><b>Check the small cases.</b> What does my code return for an empty input?</li><li><b>Trace a tiny example by hand.</b> After each loop, do my variables have the values I expect?</li></ol>
+</section>
+<section class="lsn-part">
+<span class="lsn-tag">Habit 1 of 6</span>
+<h4>Say what each variable means</h4>
+<p class="hb-why">We may swap <code>left</code> and <code>right</code> when we know their names but forget what they hold.</p>
+<p>Before you code, describe each variable in one sentence. Say what it holds and when it changes.</p>
+<p>For the longest substring, the variable <code>left</code> marks the window start. It moves only after a repeat. The variable <code>right</code> marks the window end. It moves in every loop.</p>
+</section><section class="lsn-part">
+<span class="lsn-tag">Habit 2 of 6</span>
+<h4>Write the jobs as comments first</h4>
+<p class="hb-why">We miss lines when we remember the code shape but forget its jobs.</p>
+<p>Write each job as a short comment. Then add code for each comment.</p>
+<pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">def</span> <span class="k-def">lengthOfLongestSubstring</span>(<wbr>s):</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-com"># 1. the letters in the window</span></span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-com"># 2. move right over every letter</span></span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-com"># 3. while repeat, shrink left</span></span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-com"># 4. add it, keep the best size</span></span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-com"># 5. return the best size</span></span></pre>
+</section><section class="lsn-part">
+<span class="lsn-tag">Habit 3 of 6</span>
+<h4>Name the type before the method</h4>
+<p class="hb-why">The code <code>seen.pop(s[left])</code> crashed because a set's pop takes no value. The method was chosen before checking the type.</p>
+<p>Before you add or remove something, name the type. It may be a list, dict, set, deque or heap. Then use the right method for that type.</p>
+<p><a href="#ops">The basic moves for each type</a></p>
+</section><section class="lsn-part">
+<span class="lsn-tag">Habit 4 of 6</span>
+<h4>Every loop must move forward</h4>
+<p class="hb-why">A while loop runs forever if its condition never changes. A window may also never shrink.</p>
+<p>For every while loop, find the line that moves it closer to the end.</p>
+<pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">while</span> s[right] <span class="k-kw">in</span> seen:</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  seen.remove(<wbr>s[left])</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-com"># this makes the loop stop</span></span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  left += <span class="k-num">1</span></span></pre>
+</section><section class="lsn-part">
+<span class="lsn-tag">Habit 5 of 6</span>
+<h4>Check the small cases</h4>
+<p class="hb-why">Code may work on the main example but fail with no input, one item or all items the same.</p>
+<p>Before you run the code, picture "", "a" and "bbbbb". Say what the code returns for each one.</p>
+
+</section><section class="lsn-part">
+<span class="lsn-tag">Habit 6 of 6</span>
+<h4>Trace a tiny example by hand</h4>
+<p class="hb-why">An interview has no tests or hints. Tracing helps us find our own mistakes.</p>
+<p>Choose an example with 4 items. After each loop, say the value of every variable.</p>
+
+</section>
+<section class="lsn-part" id="ops">
+<span class="lsn-tag">Reference</span>
+<h4>The basic moves for each type</h4>
+<p>Learn these without looking. Write them from memory once a day until they feel automatic.</p>
+<pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-com"># list</span></span><span class="snl" style="padding-left:2ch;text-indent:-2ch">nums.append(<wbr>x)  <span class="k-com"># add at end</span></span><span class="snl" style="padding-left:2ch;text-indent:-2ch">nums.pop(<wbr>)      <span class="k-com"># remove last</span></span><span class="snl" style="padding-left:2ch;text-indent:-2ch">nums.pop(<wbr>i)     <span class="k-com"># remove at i</span></span><span class="snl" style="padding-left:2ch;text-indent:-2ch">nums[-<span class="k-num">1</span>]        <span class="k-com"># last item</span></span></pre><pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-com"># dict</span></span><span class="snl" style="padding-left:2ch;text-indent:-2ch">count[key] = <span class="k-num">1</span>  <span class="k-com"># add or change</span></span><span class="snl" style="padding-left:2ch;text-indent:-2ch">count.pop(<wbr>key)  <span class="k-com"># remove key</span></span><span class="snl" style="padding-left:2ch;text-indent:-2ch">key <span class="k-kw">in</span> count    <span class="k-com"># check</span></span><span class="snl" style="padding-left:2ch;text-indent:-2ch">count.get(<wbr>key, <span class="k-num">0</span>)  <span class="k-com"># 0 if none</span></span></pre><pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-com"># set</span></span><span class="snl" style="padding-left:2ch;text-indent:-2ch">seen.add(<wbr>x)     <span class="k-com"># add</span></span><span class="snl" style="padding-left:2ch;text-indent:-2ch">seen.remove(<wbr>x)  <span class="k-com"># remove x</span></span><span class="snl" style="padding-left:2ch;text-indent:-2ch">x <span class="k-kw">in</span> seen       <span class="k-com"># check</span></span></pre><pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-com"># deque</span></span><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">from</span> collections <span class="k-kw">import</span> deque</span><span class="snl" style="padding-left:2ch;text-indent:-2ch">queue.append(<wbr>x)  <span class="k-com"># add at back</span></span><span class="snl" style="padding-left:2ch;text-indent:-2ch">queue.popleft(<wbr>)  <span class="k-com"># remove front</span></span><span class="snl" style="padding-left:2ch;text-indent:-2ch">queue[<span class="k-num">0</span>]         <span class="k-com"># front item</span></span></pre><pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-com"># heap, smallest first</span></span><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">import</span> heapq</span><span class="snl" style="padding-left:2ch;text-indent:-2ch">heapq.heappush(<wbr>heap, x)  <span class="k-com"># add</span></span><span class="snl" style="padding-left:2ch;text-indent:-2ch">heapq.heappop(<wbr>heap)  <span class="k-com"># pop min</span></span><span class="snl" style="padding-left:2ch;text-indent:-2ch">heap[<span class="k-num">0</span>]  <span class="k-com"># smallest item</span></span></pre>
+</section>
+</main>
+<script src="site.js?v=20261114g" defer></script>
+</body>
+</html>

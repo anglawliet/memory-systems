@@ -237,6 +237,8 @@ a.card.c_binary_search::before{background-image:url('binary_search/images/p875_k
 a.card.c_linked_list::before{background-image:url('linked_list/images/p141_cycle.png')}
 a.card.c_heap::before{background-image:url('heap/images/p295_median_stream.png')}
 a.card.c_tries::before{background-image:url('tries/images/panels/p208_implement_trie_question.webp')}
+a.card.c_habits{grid-column:1/-1;border-color:var(--accent-strong)!important}
+a.card.c_habits::before{display:none}
 .card .icon{display:none}
 .card .title{margin:18px 20px 6px!important;color:var(--ink)!important;font-size:1.15rem!important;font-weight:700!important;letter-spacing:-.015em}
 .card .desc{margin:0 20px 20px!important;color:var(--ink-2)!important;font-size:.93rem!important;line-height:1.55!important}

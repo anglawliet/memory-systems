@@ -1241,3 +1241,6 @@ pre:not(.snip):not(.hl-back){font-variant-ligatures:none;font-feature-settings:"
 @media(max-width:759px){.ms-links{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);padding-left:12px;padding-right:12px}}
 .sec>p{margin-bottom:16px}
 .wk-card.measuring *{transition:none!important;animation:none!important}
+
+/* 29. "The one idea to remember" picture: a little space after the code box above it */
+.lsn-pic[src*="_key."]{margin-top:16px}

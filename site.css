@@ -1244,3 +1244,12 @@ pre:not(.snip):not(.hl-back){font-variant-ligatures:none;font-feature-settings:"
 
 /* 29. "The one idea to remember" picture: a little space after the code box above it */
 .lsn-pic[src*="_key."]{margin-top:16px}
+
+/* 30. step card tabs: on the narrowest phones, the "2. Variables" label must fit inside its button */
+@media(max-width:350px){.viz.pro .wk-tabs button{font-size:12px;padding:8px 0;letter-spacing:-.2px}}
+/* 31. a two-name label on the first or last letter would run past the card edge, so it lines up with that edge instead */
+.wk-cells:not(.many) .wk-c:first-child .wk-p.multi{left:0;transform:none;text-align:left}
+.wk-cells:not(.many) .wk-c:last-child .wk-p.multi{left:auto;right:0;transform:none;text-align:right}
+/* 32. on phones the step card reaches the edges of its lesson box, like the editor, so the tabs and buttons have room */
+@media(max-width:759px){.lsn .wk-card{margin-left:-12px;margin-right:-12px;width:calc(100% + 24px)}}
+@media(max-width:380px){.deriv-b{padding-left:8px!important;padding-right:8px!important}}

@@ -446,6 +446,19 @@
       });
     }
     Object.keys(data).forEach(function (key) { data[key] = expand(data[key]); });
+    // every variable keeps one fixed spot for the whole tab, across all examples,
+    // so the eye always finds it in the same place
+    var slots = {};
+    Object.keys(data).forEach(function (key) {
+      var tab = key.slice(key.indexOf("|") + 1);
+      var sl = slots[tab] || (slots[tab] = { order: [], len: {} });
+      data[key].forEach(function (f) {
+        (f.vars || []).forEach(function (p) {
+          if (sl.order.indexOf(p[0]) < 0) sl.order.push(p[0]);
+          sl.len[p[0]] = Math.max(sl.len[p[0]] || 0, (p[0] + " = " + p[1]).length);
+        });
+      });
+    });
     var full = data[exs[0] + "|" + tabs[0].name], at = 0;
     function pick() {
       full = data[exs[curEx] + "|" + tabs[curTab].name] || full; at = 0;
@@ -499,19 +512,31 @@
         if (row.idx !== false && s.idx !== false) cell.appendChild(el("span", "wk-i", String(i)));
         cellsBox.appendChild(cell);
       });
+      if (lanesAll && !cellsBox.classList.contains("many")) cellsBox.classList.add("lanes");
       wrap.appendChild(cellsBox);
       return wrap;
     }
     function show() {
       var s = full[at];
       stage.textContent = "";
-      (s.rows || []).forEach(function (row) { stage.appendChild(drawRow(row, s)); });
-      if (s.vars && s.vars.length) {
-        var vs = el("div", "wk-vars");
-        s.vars.forEach(function (pair) {
-          var chip = el("span", "wk-var");
-          chip.appendChild(el("b", null, pair[0]));
-          chip.appendChild(document.createTextNode(" = " + pair[1]));
+      (s.rows || []).forEach(function (row, k) {
+        var w = drawRow(row, s);
+        if (rowMin[k] && !card.classList.contains("measuring")) w.style.minHeight = rowMin[k] + "px";
+        stage.appendChild(w);
+      });
+      var sl = slots[tabs[curTab].name];
+      if (sl && sl.order.length) {
+        // a variable not in use yet keeps its spot but stays hidden, so nothing shifts
+        // once a variable has appeared, it stays with its latest value, like a real Python variable
+        var now = {};
+        for (var k = 0; k <= at; k++) (full[k].vars || []).forEach(function (p) { now[p[0]] = p[1]; });
+        var vs = el("div", "wk-vars fixed");
+        sl.order.forEach(function (name) {
+          var chip = el("span", "wk-var" + (sl.len[name] > 14 ? " wide" : ""));
+          chip.appendChild(el("b", null, name));
+          chip.appendChild(document.createTextNode("= " + (name in now ? now[name] : "")));
+          if (!(name in now)) chip.classList.add("off");
+          if (chipMin[name] && !card.classList.contains("measuring")) chip.style.minHeight = chipMin[name] + "px";
           vs.appendChild(chip);
         });
         stage.appendChild(vs);
@@ -536,12 +561,20 @@
     }
     // draw every step once and keep the tallest picture and text, so Back and Next stay in one place
     function steady() {
-      var keep = at, hs = 0, hc = 0;
+      var keep = at, hs = 0, hc = 0, lanes = false;
       stage.style.minHeight = cap.style.minHeight = "";
       if (!card.offsetWidth) return;
       card.classList.add("measuring");
+      // if any step needs two label lines, every step keeps both lines, so the rows below never move
+      lanesAll = false;
+      for (var j = 0; j < full.length; j++) { at = j; show(); if (stage.querySelector(".wk-cells.lanes")) lanes = true; }
+      lanesAll = lanes;
+      // the tallest version of each row and each variable chip becomes its fixed height
+      rowMin = []; chipMin = {};
       for (var i = 0; i < full.length; i++) {
         at = i; show();
+        $$(".wk-row", stage).forEach(function (r, k) { rowMin[k] = Math.max(rowMin[k] || 0, Math.ceil(r.getBoundingClientRect().height)); });
+        $$(".wk-var", stage).forEach(function (c) { var nm = c.firstChild.textContent; chipMin[nm] = Math.max(chipMin[nm] || 0, Math.ceil(c.getBoundingClientRect().height)); });
         hs = Math.max(hs, Math.ceil(stage.getBoundingClientRect().height));
         hc = Math.max(hc, Math.ceil(cap.getBoundingClientRect().height));
       }
@@ -549,7 +582,7 @@
       at = keep; show();
       stage.style.minHeight = (hs + 8) + "px"; cap.style.minHeight = hc + "px";
     }
-    var lastW = 0;
+    var lastW = 0, lanesAll = false, rowMin = [], chipMin = {};
     function resteady() { if (card.offsetWidth && card.offsetWidth !== lastW) { lastW = card.offsetWidth; steady(); } }
     window.addEventListener("resize", resteady);
     if (window.ResizeObserver) new ResizeObserver(function () { requestAnimationFrame(resteady); }).observe(card);

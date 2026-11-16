@@ -1253,3 +1253,10 @@ pre:not(.snip):not(.hl-back){font-variant-ligatures:none;font-feature-settings:"
 /* 32. on phones the step card reaches the edges of its lesson box, like the editor, so the tabs and buttons have room */
 @media(max-width:759px){.lsn .wk-card{margin-left:-12px;margin-right:-12px;width:calc(100% + 24px)}}
 @media(max-width:380px){.deriv-b{padding-left:8px!important;padding-right:8px!important}}
+/* 33. variable chips sit in a fixed grid: each variable keeps the same spot on every step */
+.wk-vars.fixed{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%;max-width:420px;margin:0 auto}
+.wk-vars.fixed .wk-var{min-width:0;min-height:30px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;line-height:20px;text-align:center;border-radius:12px;overflow-wrap:anywhere;font-size:13px}
+.wk-vars.fixed .wk-var b{margin-right:.5ch}
+.wk-vars.fixed .wk-var.wide{grid-column:1/-1}
+.wk-vars.fixed .wk-var.off{color:transparent;background:transparent;border-style:dashed;opacity:.55}
+.wk-vars.fixed .wk-var.off b{color:transparent}

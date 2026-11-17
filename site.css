@@ -1260,3 +1260,8 @@ pre:not(.snip):not(.hl-back){font-variant-ligatures:none;font-feature-settings:"
 .wk-vars.fixed .wk-var.wide{grid-column:1/-1}
 .wk-vars.fixed .wk-var.off{color:transparent;background:transparent;border-style:dashed;opacity:.55}
 .wk-vars.fixed .wk-var.off b{color:transparent}
+/* 34. step card variables in labelled groups ("What we need", "Current window", "Best so far") that never move */
+.wk-grp{width:100%;max-width:440px;margin:0 auto;box-sizing:border-box;border:1px solid var(--line);border-radius:12px;padding:6px 8px 8px;background:var(--surface)}
+.wk-grp.bare{border:0;padding:0;background:transparent}
+.wk-gt{font:700 11px Inter,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--muted,#6b6b6b);margin:0 0 6px 2px;text-align:left}
+.wk-grp .wk-vars.fixed{max-width:none}

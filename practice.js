@@ -372,6 +372,8 @@
   /* The walkthrough card. Each frame lights one code line and draws one or more rows of cells.
      A frame only lists what changes; everything else stays as it was in the frame before. */
   function walk(box) {
+    var groups = null;
+    try { groups = box.dataset.groups ? JSON.parse(box.dataset.groups) : null; } catch (e) { groups = null; }
     // one json script is one list of steps; several scripts with data-tab become tabs
     // data-ex names an example string; each example has the same tabs
     var tabs = [], exs = [], data = {};
@@ -530,16 +532,30 @@
         // once a variable has appeared, it stays with its latest value, like a real Python variable
         var now = {};
         for (var k = 0; k <= at; k++) (full[k].vars || []).forEach(function (p) { now[p[0]] = p[1]; });
-        var vs = el("div", "wk-vars fixed");
-        sl.order.forEach(function (name) {
+        function chipFor(name) {
           var chip = el("span", "wk-var" + (sl.len[name] > 14 ? " wide" : ""));
           chip.appendChild(el("b", null, name));
           chip.appendChild(document.createTextNode("= " + (name in now ? now[name] : "")));
           if (!(name in now)) chip.classList.add("off");
           if (chipMin[name] && !card.classList.contains("measuring")) chip.style.minHeight = chipMin[name] + "px";
-          vs.appendChild(chip);
+          return chip;
+        }
+        // a card can sort its variables into labelled groups (data-groups), such as
+        // "What we need", "Current window" and "Best so far"; each group keeps its place
+        var used = {}, list = groups ? groups.slice() : [];
+        list.forEach(function (g) { g[1].forEach(function (n) { used[n] = 1; }); });
+        var rest = sl.order.filter(function (n) { return !used[n]; });
+        if (rest.length) list.push(["", rest]);
+        list.forEach(function (g) {
+          var names = g[1].filter(function (n) { return sl.order.indexOf(n) >= 0; });
+          if (!names.length) return;
+          var box = el("div", groups ? "wk-grp" : "wk-grp bare");
+          if (g[0]) box.appendChild(el("div", "wk-gt", g[0]));
+          var vs = el("div", "wk-vars fixed");
+          names.forEach(function (n) { vs.appendChild(chipFor(n)); });
+          box.appendChild(vs);
+          stage.appendChild(box);
         });
-        stage.appendChild(vs);
       }
       var res = el("p", "vz-res");
       if (s.res) { res.textContent = s.res; res.className = "vz-res on " + (s.bad_res ? "no" : "yes"); }

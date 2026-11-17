@@ -1282,3 +1282,6 @@ pre:not(.snip):not(.hl-back){font-variant-ligatures:none;font-feature-settings:"
 .wk-card.code-only .wk-stage{display:none!important}
 @media(min-width:760px){.wk-card.code-only .vz-body{grid-template-columns:minmax(0,1fr)}.wk-card.code-only .vz-code{border-left:0}.viz.pro.wk-card.code-only .vz-code pre.snip{max-height:none!important}}
 @media(max-width:759px){.viz.pro.wk-card.code-only .vz-code pre.snip{max-height:52vh!important}}
+/* 39. one-line-at-a-time steps: the new value is a quiet grey comment at the end of the same line */
+.vz-code .snl .inl.note{display:inline-block;white-space:nowrap;background:transparent;padding:0;margin-left:1.2ch;color:#9ca3af;font-weight:500;font-style:italic;border-radius:0}
+@media(max-width:759px){.vz-code .snl .inl.note{display:inline-block;margin:0 0 0 1ch;white-space:nowrap}}

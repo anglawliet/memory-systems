@@ -440,7 +440,7 @@
       return frames.map(function (f) {
         var s = {};
         Object.keys(last).forEach(function (k) { s[k] = last[k]; });
-        ["line", "skip", "say", "res", "ask"].forEach(function (k) { delete s[k]; });
+        ["line", "skip", "say", "res", "ask", "note"].forEach(function (k) { delete s[k]; });
         Object.keys(f).forEach(function (k) { s[k] = f[k]; });
         if (s.arr && !s.rows) s.rows = [{ cells: s.arr }];
         last = s;
@@ -594,6 +594,11 @@
         // or, for an if, while or return line, the values it reads
         $$(".inl", l).forEach(function (x) { x.remove(); });
         if (!on || !inlineVals) return;
+        // a step recorded by running the code carries its own note: a quiet comment at the end of the line
+        if ("note" in s) {
+          if (s.note) l.appendChild(el("span", "inl note", "# " + s.note));
+          return;
+        }
         var src = l.textContent, names = [], vals = now;
         var tg = target(src);
         if (tg) { setHere[tg] = 1; if (lastSet[tg] === i) names = [tg]; }

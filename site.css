@@ -1134,7 +1134,7 @@ html.cf-lock body{position:fixed;left:0;right:0}
 .wk-p{font:700 11px 'JetBrains Mono',monospace;color:var(--accent-strong);min-height:15px;white-space:nowrap;text-align:center;line-height:15px}
 .wk-v{min-width:34px;height:38px;padding:0 4px;display:flex;align-items:center;justify-content:center;border-radius:9px;border:1px solid var(--line-strong);background:var(--surface);font:600 16px 'JetBrains Mono',monospace;color:var(--ink);transition:all .2s;box-sizing:border-box}
 .wk-v.in{background:var(--accent-soft);border-color:var(--accent-strong);color:var(--accent-strong)}
-.wk-v.hit{box-shadow:0 0 0 3px color-mix(in srgb,var(--accent-strong) 35%,transparent);transform:translateY(-2px)}
+.wk-v.hit{box-shadow:0 0 0 3px color-mix(in srgb,var(--accent-strong) 35%,transparent)}
 .wk-v.bad{background:var(--no-soft);border-color:var(--no);color:var(--no)}
 .wk-v.dim{opacity:.35}
 .wk-i{font:500 10.5px 'JetBrains Mono',monospace;color:var(--ink-3);line-height:14px}
@@ -1253,13 +1253,12 @@ pre:not(.snip):not(.hl-back){font-variant-ligatures:none;font-feature-settings:"
 /* 32. on phones the step card reaches the edges of its lesson box, like the editor, so the tabs and buttons have room */
 @media(max-width:759px){.lsn .wk-card{margin-left:-12px;margin-right:-12px;width:calc(100% + 24px)}}
 @media(max-width:380px){.deriv-b{padding-left:8px!important;padding-right:8px!important}}
-/* 33. variable chips sit in a fixed grid: each variable keeps the same spot on every step */
-.wk-vars.fixed{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%;max-width:420px;margin:0 auto}
-.wk-vars.fixed .wk-var{min-width:0;min-height:30px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;line-height:20px;text-align:center;border-radius:12px;overflow-wrap:anywhere;font-size:13px}
-.wk-vars.fixed .wk-var b{margin-right:.5ch}
-.wk-vars.fixed .wk-var.wide{grid-column:1/-1}
-.wk-vars.fixed .wk-var.off{color:transparent;background:transparent;border-style:dashed;opacity:.55}
-.wk-vars.fixed .wk-var.off b{color:transparent}
+/* 33. variables sit in a small table: names in one column, values lined up beside them, each on its own fixed line */
+.wk-vars.fixed{font:500 14px 'JetBrains Mono',monospace;display:grid;grid-template-columns:var(--nw,max-content) minmax(0,1fr);column-gap:10px;row-gap:2px;width:100%;max-width:440px;margin:0 auto;align-items:baseline;text-align:left}
+.wk-vars.fixed .wk-var{display:contents}
+.wk-vars.fixed .wk-var b{font:700 14px 'JetBrains Mono',monospace;color:var(--accent-strong);text-align:left;line-height:24px;padding-left:4px;white-space:nowrap}
+.wk-vars.fixed .wk-val{font:500 14px 'JetBrains Mono',monospace;color:var(--ink);line-height:24px;overflow-wrap:break-word;min-width:0}
+.wk-vars.fixed .wk-var.off b,.wk-vars.fixed .wk-var.off .wk-val{color:transparent}
 /* 34. step card variables in labelled groups ("What we need", "Current window", "Best so far") that never move */
 .wk-grp{width:100%;max-width:440px;margin:0 auto;box-sizing:border-box;border:1px solid var(--line);border-radius:12px;padding:6px 8px 8px;background:var(--surface)}
 .wk-grp.bare{border:0;padding:0;background:transparent}

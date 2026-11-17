@@ -533,11 +533,13 @@
         var now = {};
         for (var k = 0; k <= at; k++) (full[k].vars || []).forEach(function (p) { now[p[0]] = p[1]; });
         function chipFor(name) {
-          var chip = el("span", "wk-var" + (sl.len[name] > 14 ? " wide" : ""));
+          var chip = el("span", "wk-var");
           chip.appendChild(el("b", null, name));
-          chip.appendChild(document.createTextNode("= " + (name in now ? now[name] : "")));
+          // keep each "A: 1" pair together, so a long dictionary only wraps between pairs
+          var val = el("span", "wk-val", "= " + (name in now ? String(now[name]).replace(/: /g, ":\u00a0") : ""));
+          chip.appendChild(val);
           if (!(name in now)) chip.classList.add("off");
-          if (chipMin[name] && !card.classList.contains("measuring")) chip.style.minHeight = chipMin[name] + "px";
+          if (chipMin[name] && !card.classList.contains("measuring")) val.style.minHeight = chipMin[name] + "px";
           return chip;
         }
         // a card can sort its variables into labelled groups (data-groups), such as
@@ -545,6 +547,10 @@
         var used = {}, list = groups ? groups.slice() : [];
         list.forEach(function (g) { g[1].forEach(function (n) { used[n] = 1; }); });
         var rest = sl.order.filter(function (n) { return !used[n]; });
+        // every group uses the same name column, so all the "=" signs line up down the card
+        var nw = 0;
+        sl.order.forEach(function (n) { nw = Math.max(nw, n.length); });
+        stage.style.setProperty("--nw", "calc(" + nw + "ch + 4px)");
         if (rest.length) list.push(["", rest]);
         list.forEach(function (g) {
           var names = g[1].filter(function (n) { return sl.order.indexOf(n) >= 0; });
@@ -590,7 +596,7 @@
       for (var i = 0; i < full.length; i++) {
         at = i; show();
         $$(".wk-row", stage).forEach(function (r, k) { rowMin[k] = Math.max(rowMin[k] || 0, Math.ceil(r.getBoundingClientRect().height)); });
-        $$(".wk-var", stage).forEach(function (c) { var nm = c.firstChild.textContent; chipMin[nm] = Math.max(chipMin[nm] || 0, Math.ceil(c.getBoundingClientRect().height)); });
+        $$(".wk-var", stage).forEach(function (c) { var nm = c.firstChild.textContent, v = c.querySelector(".wk-val"); if (v) chipMin[nm] = Math.max(chipMin[nm] || 0, Math.ceil(v.getBoundingClientRect().height)); });
         hs = Math.max(hs, Math.ceil(stage.getBoundingClientRect().height));
         hc = Math.max(hc, Math.ceil(cap.getBoundingClientRect().height));
       }

@@ -1277,4 +1277,8 @@ pre:not(.snip):not(.hl-back){font-variant-ligatures:none;font-feature-settings:"
 /* 37. like a debugger: the value of a variable shows right next to the highlighted code line that changes or reads it */
 .vz-code .snl .inl{display:inline-block;margin-left:10px;padding:0 7px;border-radius:6px;background:#14532d;color:#bbf7d0;font:600 .92em 'JetBrains Mono',monospace;text-indent:0;white-space:normal;vertical-align:baseline;line-height:1.5}
 /* on phones there is no room beside a line, so the value sits on its own line, starting right under the code it belongs to */
-@media(max-width:759px){.vz-code .snl .inl{display:table;margin:1px 0 2px -2ch}}
+@media(max-width:759px){.vz-code .snl .inl{display:table;margin:0 0 0 -2ch}}
+/* 38. in a tabbed card, the Code tab is only the code block: no letter area, and the code gets the room */
+.wk-card.code-only .wk-stage{display:none!important}
+@media(min-width:760px){.wk-card.code-only .vz-body{grid-template-columns:minmax(0,1fr)}.wk-card.code-only .vz-code{border-left:0}.viz.pro.wk-card.code-only .vz-code pre.snip{max-height:none!important}}
+@media(max-width:759px){.viz.pro.wk-card.code-only .vz-code pre.snip{max-height:52vh!important}}

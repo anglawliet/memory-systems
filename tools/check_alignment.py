@@ -16,6 +16,7 @@ CHECK = r"""
   const cr = card.getBoundingClientRect();
   // 1. letter boxes in one row sit on one line
   card.querySelectorAll('.wk-cells').forEach(cb => {
+    if (!cb.getClientRects().length) return;   // hidden (for example the Code tab hides the letters)
     const tops = [...cb.querySelectorAll('.wk-v')].map(v => Math.round(v.getBoundingClientRect().top));
     if (tops.length && Math.max(...tops) - Math.min(...tops) > 1) out.push('letter boxes not on one line');
     // 2. pointer labels: no overlap, and a label is lifted only when it must be

@@ -465,11 +465,14 @@
     function pick() {
       full = data[exs[curEx] + "|" + tabs[curTab].name] || full; at = 0;
       code.hidden = !tabs[curTab].code;
+      // a code tab shows only the code, with the values on its lines
+      card.classList.toggle("code-only", tabs.length > 1 && tabs[curTab].code);
       tabs.forEach(function (t, j) { if (t.btn) t.btn.classList.toggle("on", j === curTab); });
       show();
       steady();
     }
     code.hidden = !tabs[0].code;
+    card.classList.toggle("code-only", tabs.length > 1 && tabs[0].code);
     function drawRow(row, s) {
       var wrap = el("div", "wk-row");
       if (row.label) wrap.appendChild(el("div", "wk-label", row.label));

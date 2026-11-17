@@ -491,13 +491,6 @@
         var tags = Object.keys(ptr).filter(function (k) { return ptr[k] === i; });
         var tag = el("span", "wk-p" + (tags.length > 1 ? " multi" : ""), tags.join(", "));
         if (String(c).length > 1) cell.classList.add("wide");
-        // labels on neighbouring cells would touch, so the second one moves up a line
-        if (tags.length && !cellsBox.classList.contains("many")) {
-          var txt = tags.join(", ");
-          if (prevTag && prevTag.i === i - 1 && !prevTag.hi && (prevTag.len + txt.length) * 3.4 + 4 > 34) {
-            tag.classList.add("up"); cellsBox.classList.add("lanes"); prevTag = { i: i, len: txt.length, hi: true };
-          } else prevTag = { i: i, len: txt.length, hi: false };
-        }
         // in a long row, a label right next to another label drops to a lower line
         if (tags.length && cellsBox.classList.contains("many")) {
           var low = lastTag === i - 1 && !lastLow;
@@ -525,6 +518,16 @@
         var w = drawRow(row, s);
         if (rowMin[k] && useMins) w.style.minHeight = rowMin[k] + "px";
         stage.appendChild(w);
+      });
+      // pointer labels share one line; a label moves up a line only when it really overlaps the label before it
+      $$(".wk-cells:not(.many)", stage).forEach(function (cb) {
+        var prev = null;
+        $$(".wk-p", cb).forEach(function (p) {
+          if (!p.textContent) return;
+          var r = p.getBoundingClientRect();
+          if (prev && !prev.up && r.left < prev.r.right + 2) { p.classList.add("up"); cb.classList.add("lanes"); prev = { r: r, up: true }; }
+          else prev = { r: r, up: false };
+        });
       });
       var sl = slots[tabs[curTab].name];
       if (sl && sl.order.length) {

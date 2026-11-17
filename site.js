@@ -60,20 +60,8 @@
       });
     }).observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class", "hidden"] });
   }
-  document.addEventListener("click", function (ev) {
-    var btn = ev.target.closest && ev.target.closest("button");
-    var card = btn && btn.closest(".lsn .viz.pro, .lsn .l3");
-    if (!card || window.innerWidth >= 760) return;
-    setTimeout(function () {
-      var bar = document.querySelector(".ms-topbar");
-      var top = (bar ? bar.getBoundingClientRect().bottom : 0) + 8;
-      var r = card.getBoundingClientRect();
-      if (r.height > window.innerHeight - top - 8) return;
-      if (r.top < top || r.bottom > window.innerHeight - 8) {
-        window.scrollBy({ top: r.top - top, behavior: "smooth" });
-      }
-    }, 60);
-  });
+  // (Tapping a button inside a card used to scroll the page to fit the card on screen.
+  //  That made the page jump on every Next, so the page now stays where the reader put it.)
 
   // 3. Tap a lesson picture to see it bigger. The picture opens over the page,
   //    wider than the screen, so the small words are readable. Drag to move around.

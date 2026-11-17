@@ -523,7 +523,7 @@
       stage.textContent = "";
       (s.rows || []).forEach(function (row, k) {
         var w = drawRow(row, s);
-        if (rowMin[k] && !card.classList.contains("measuring")) w.style.minHeight = rowMin[k] + "px";
+        if (rowMin[k] && useMins) w.style.minHeight = rowMin[k] + "px";
         stage.appendChild(w);
       });
       var sl = slots[tabs[curTab].name];
@@ -539,7 +539,7 @@
           var val = el("span", "wk-val", "= " + (name in now ? String(now[name]).replace(/: /g, ":\u00a0") : ""));
           chip.appendChild(val);
           if (!(name in now)) chip.classList.add("off");
-          if (chipMin[name] && !card.classList.contains("measuring")) val.style.minHeight = chipMin[name] + "px";
+          if (chipMin[name] && useMins) val.style.minHeight = chipMin[name] + "px";
           return chip;
         }
         // a card can sort its variables into labelled groups (data-groups), such as
@@ -592,11 +592,16 @@
       for (var j = 0; j < full.length; j++) { at = j; show(); if (stage.querySelector(".wk-cells.lanes")) lanes = true; }
       lanesAll = lanes;
       // the tallest version of each row and each variable chip becomes its fixed height
-      rowMin = []; chipMin = {};
+      rowMin = []; chipMin = {}; useMins = false;
       for (var i = 0; i < full.length; i++) {
         at = i; show();
         $$(".wk-row", stage).forEach(function (r, k) { rowMin[k] = Math.max(rowMin[k] || 0, Math.ceil(r.getBoundingClientRect().height)); });
         $$(".wk-var", stage).forEach(function (c) { var nm = c.firstChild.textContent, v = c.querySelector(".wk-val"); if (v) chipMin[nm] = Math.max(chipMin[nm] || 0, Math.ceil(v.getBoundingClientRect().height)); });
+      }
+      // measure the card heights again with those fixed heights in place
+      useMins = true;
+      for (var q = 0; q < full.length; q++) {
+        at = q; show();
         hs = Math.max(hs, Math.ceil(stage.getBoundingClientRect().height));
         hc = Math.max(hc, Math.ceil(cap.getBoundingClientRect().height));
       }
@@ -604,7 +609,7 @@
       at = keep; show();
       stage.style.minHeight = (hs + 8) + "px"; cap.style.minHeight = hc + "px";
     }
-    var lastW = 0, lanesAll = false, rowMin = [], chipMin = {};
+    var lastW = 0, lanesAll = false, rowMin = [], chipMin = {}, useMins = true;
     function resteady() { if (card.offsetWidth && card.offsetWidth !== lastW) { lastW = card.offsetWidth; steady(); } }
     window.addEventListener("resize", resteady);
     if (window.ResizeObserver) new ResizeObserver(function () { requestAnimationFrame(resteady); }).observe(card);

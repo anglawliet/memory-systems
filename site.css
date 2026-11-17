@@ -1285,3 +1285,9 @@ pre:not(.snip):not(.hl-back){font-variant-ligatures:none;font-feature-settings:"
 /* 39. one-line-at-a-time steps: the new value is a quiet grey comment at the end of the same line */
 .vz-code .snl .inl.note{display:inline-block;white-space:nowrap;background:transparent;padding:0;margin-left:1.2ch;color:#9ca3af;font-weight:500;font-style:italic;border-radius:0}
 @media(max-width:759px){.vz-code .snl .inl.note{display:inline-block;margin:0 0 0 1ch;white-space:nowrap}}
+/* 40. reading text is justified everywhere (user rule). Hyphenation keeps justified lines on a narrow phone from getting wide gaps.
+   :where() has no weight, so anything that is meant to be centered (titles, labels, buttons) keeps its own alignment. */
+:where(p, li, dd, blockquote, figcaption, .vz-cap, .bs-text, .lsn-key){text-align:justify;text-justify:inter-word;-webkit-hyphens:auto;hyphens:auto;hyphenate-limit-chars:6 3 3}
+:where(p, li, .vz-cap, .bs-text) code{-webkit-hyphens:none;hyphens:none}
+/* a subtitle right after a page title follows the title: centered under a centered title, left under a left one */
+h1 + p:not([class]), .hdr > p:not([class]){text-align:inherit;-webkit-hyphens:manual;hyphens:manual}

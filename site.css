@@ -1274,3 +1274,7 @@ pre:not(.snip):not(.hl-back){font-variant-ligatures:none;font-feature-settings:"
 @media(max-width:759px){.deriv,.lsn .viz.pro.wk-card{overflow:clip!important}}
 /* 36. tapping Next rebuilds the card; without this the browser scrolls the page to keep a rebuilt piece in place, so the page jumped up and down */
 .wk-card,.wk-card *{overflow-anchor:none}
+/* 37. like a debugger: the value of a variable shows right next to the highlighted code line that changes or reads it */
+.vz-code .snl .inl{display:inline-block;margin-left:10px;padding:0 7px;border-radius:6px;background:#14532d;color:#bbf7d0;font:600 .92em 'JetBrains Mono',monospace;text-indent:0;white-space:normal;vertical-align:baseline;line-height:1.5}
+/* on phones there is no room beside a line, so the value sits on its own line, starting right under the code it belongs to */
+@media(max-width:759px){.vz-code .snl .inl{display:table;margin:1px 0 2px -2ch}}

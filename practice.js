@@ -530,11 +530,13 @@
         });
       });
       var sl = slots[tabs[curTab].name];
-      if (sl && sl.order.length) {
+      // once a variable has appeared, it stays with its latest value, like a real Python variable
+      var now = {}, before = {};
+      for (var k = 0; k <= at; k++) (full[k].vars || []).forEach(function (p) { now[p[0]] = p[1]; if (k < at) before[p[0]] = p[1]; });
+      // in a tab that shows code, the values sit next to the code lines instead of in a separate panel
+      var inlineVals = tabs.length > 1 && tabs[curTab].code;
+      if (sl && sl.order.length && !inlineVals) {
         // a variable not in use yet keeps its spot but stays hidden, so nothing shifts
-        // once a variable has appeared, it stays with its latest value, like a real Python variable
-        var now = {};
-        for (var k = 0; k <= at; k++) (full[k].vars || []).forEach(function (p) { now[p[0]] = p[1]; });
         function chipFor(name) {
           var chip = el("span", "wk-var");
           chip.appendChild(el("b", null, name));
@@ -569,11 +571,42 @@
       var res = el("p", "vz-res");
       if (s.res) { res.textContent = s.res; res.className = "vz-res on " + (s.bad_res ? "no" : "yes"); }
       stage.appendChild(res);
-      var lit = range(s.line);
+      var lit = range(s.line), setHere = {}, lastSet = {};
+      var target = function (src) {
+        var m = /^\s*for\s+(\w+)\s+in\b/.exec(src) || /^\s*([A-Za-z_]\w*)(?:\[[^\]]*\])?\s*(?:\+=|-=|=(?!=))/.exec(src) ||
+          /^\s*([A-Za-z_]\w*)\.(?:add|append|appendleft|remove|discard|pop|popleft|extend|clear)\(/.exec(src);
+        return m ? m[1] : null;
+      };
+      // a variable's value is shown only on the last highlighted line that changes it, where the value is true
+      $$(".snl", pre).forEach(function (l, i) {
+        if (lit.indexOf(i + 1) < 0) return;
+        var tg = target(l.textContent);
+        if (tg) lastSet[tg] = i;
+      });
       $$(".snl", pre).forEach(function (l, i) {
         var on = lit.indexOf(i + 1) >= 0;
         l.classList.toggle("ptr", on);
         l.classList.toggle("skip", on && !!s.skip);
+        // like a debugger: a highlighted line shows the value of the variable it changes,
+        // or, for an if, while or return line, the values it reads
+        $$(".inl", l).forEach(function (x) { x.remove(); });
+        if (!on || !inlineVals) return;
+        var src = l.textContent, names = [], vals = now;
+        var tg = target(src);
+        if (tg) { setHere[tg] = 1; if (lastSet[tg] === i) names = [tg]; }
+        else if (/^\s*(if|elif|while|return)\b/.test(src)) {
+          // a check reads each value as it is at that line: the new value if a line above in this
+          // step set it, otherwise the value from before this step
+          vals = {};
+          (src.match(/[A-Za-z_]\w*/g) || []).forEach(function (w) {
+            var v = setHere[w] ? now[w] : before[w];
+            if (v !== undefined && names.indexOf(w) < 0) { names.push(w); vals[w] = v; }
+          });
+          names = names.slice(0, 3);
+        }
+        names = names.filter(function (n) { return n in vals; });
+        if (!names.length) return;
+        l.appendChild(el("span", "inl", names.map(function (n) { return n + " = " + vals[n]; }).join(", ")));
       });
       // the code box scrolls itself so the highlighted lines sit in its middle
       var hl = $$(".snl.ptr", pre);
@@ -612,11 +645,16 @@
       }
       // measure the card heights again with those fixed heights in place
       useMins = true;
+      // the code box also keeps its tallest height, because values shown next to lines can add height
+      pre.style.minHeight = "";
+      var hp = 0;
       for (var q = 0; q < full.length; q++) {
         at = q; show();
         hs = Math.max(hs, Math.ceil(stage.getBoundingClientRect().height));
         hc = Math.max(hc, Math.ceil(cap.getBoundingClientRect().height));
+        if (!code.hidden) hp = Math.max(hp, Math.ceil(pre.getBoundingClientRect().height));
       }
+      if (hp) pre.style.minHeight = hp + "px";
       card.classList.remove("measuring");
       at = keep; show();
       stage.style.minHeight = (hs + 8) + "px"; cap.style.minHeight = hc + "px";

@@ -1264,3 +1264,5 @@ pre:not(.snip):not(.hl-back){font-variant-ligatures:none;font-feature-settings:"
 .wk-grp.bare{border:0;padding:0;background:transparent}
 .wk-gt{font:700 11px Inter,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--muted,#6b6b6b);margin:0 0 6px 2px;text-align:left}
 .wk-grp .wk-vars.fixed{max-width:none}
+/* 35. step cards show the whole function in the code box, so the highlighted lines are always seen inside the full code */
+.viz.pro.wk-card .vz-code pre.snip{max-height:none!important;overflow-y:visible!important}

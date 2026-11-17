@@ -28,6 +28,23 @@
     });
     label();
     inner.appendChild(btn);
+    // On phones the topic links do not fit in one row. Instead of a row you swipe sideways,
+    // a "Topics" button opens a panel that shows every topic at once.
+    var links = inner.querySelector(".ms-links");
+    if (links) {
+      var here = links.querySelector("a.on");
+      var tb = document.createElement("button");
+      tb.type = "button";
+      tb.className = "ms-topics";
+      tb.setAttribute("aria-expanded", "false");
+      tb.innerHTML = "<span>" + (here ? here.textContent : "Topics") + '</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+      inner.insertBefore(tb, links);
+      var bar = inner.closest(".ms-topbar");
+      var setOpen = function (on) { bar.classList.toggle("menu-open", on); tb.setAttribute("aria-expanded", on ? "true" : "false"); };
+      tb.addEventListener("click", function (e) { e.stopPropagation(); setOpen(!bar.classList.contains("menu-open")); });
+      document.addEventListener("click", function (e) { if (!bar.contains(e.target)) setOpen(false); });
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape") setOpen(false); });
+    }
   }
 
   var links = document.querySelector(".ms-links");

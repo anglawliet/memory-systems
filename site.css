@@ -1347,3 +1347,16 @@ div:has(> a.nav-link)>a.nav-link{margin:0!important;flex:1 1 auto;text-align:cen
 button.choice,.choice{min-height:40px!important}
 /* code shows == and != exactly as typed, never joined into one symbol */
 .vz-code pre,.vz-code .snl,.vz-code .inl{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+/* 44. phones: no sideways-scrolling topic row. A "Topics" button opens a panel with every topic in a grid. */
+.ms-topics{display:none}
+@media(max-width:759px){
+  .ms-topbar .ms-links{display:none}
+  .ms-topics{display:inline-flex;align-items:center;justify-content:center;gap:6px;flex:1 1 auto;min-width:0;min-height:40px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font:650 15px Inter,system-ui,sans-serif;cursor:pointer}
+  .ms-topics span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ms-topics svg{width:16px;height:16px;flex:none;transition:transform .2s}
+  .ms-topbar.menu-open .ms-topics svg{transform:rotate(180deg)}
+  .ms-topbar.menu-open .ms-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;position:fixed;top:var(--ms-bar);left:0;right:0;height:auto;padding:12px 16px 16px;background:var(--bg);border-bottom:1px solid var(--line);box-shadow:0 18px 30px -18px rgba(0,0,0,.35);overflow:visible;-webkit-mask-image:none;mask-image:none;z-index:1001}
+  .ms-topbar.menu-open .ms-links a{display:flex;align-items:center;justify-content:center;min-height:44px;padding:0 10px;border:1px solid var(--line);border-radius:12px;background:var(--surface);font-size:15px;text-align:center}
+  .ms-topbar.menu-open .ms-links a.on{border-color:var(--accent-strong);color:var(--accent-strong)!important}
+  .ms-topbar.menu-open .ms-links a.on::after{display:none}
+}

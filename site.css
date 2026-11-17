@@ -1291,3 +1291,51 @@ pre:not(.snip):not(.hl-back){font-variant-ligatures:none;font-feature-settings:"
 :where(p, li, .vz-cap, .bs-text) code{-webkit-hyphens:none;hyphens:none}
 /* a subtitle right after a page title follows the title: centered under a centered title, left under a left one */
 h1 + p:not([class]), .hdr > p:not([class]){text-align:inherit;-webkit-hyphens:manual;hyphens:manual}
+/* 41. professional pass (site-wide audit, 2026-11-17) */
+/* a. nothing wider than the screen: grid children may shrink, and the phone one-column rule uses minmax(0,1fr) */
+[style*="display:grid"]>*,[style*="display: grid"]>*,.grid>*,.deriv{min-width:0}
+pre{max-width:100%;box-sizing:border-box}
+@media(max-width:759px){
+  [style*="grid-template-columns:1fr 1fr"],[style*="grid-template-columns: 1fr 1fr"],
+  [style*="grid-template-columns:1fr 1fr 1fr"],[style*="grid-template-columns: 1fr 1fr 1fr"],
+  [style*="grid-template-columns:1fr auto 1fr"],[style*="grid-template-columns:auto 1fr auto"]{grid-template-columns:minmax(0,1fr)!important}
+  .ritual-step{grid-template-columns:minmax(0,1fr)!important}
+  .grid{grid-template-columns:minmax(0,1fr)!important}
+}
+/* b. step cards and the practice editor line up with the text column, no bleed past it */
+@media(max-width:759px){.lsn .wk-card{margin-left:0!important;margin-right:0!important;width:auto!important}}
+.lsn .ed{width:100%!important;margin-left:0!important;margin-right:0!important}
+@media(max-width:759px){.lsn .lv[data-lv="3"] .kbar{margin-left:0!important;margin-right:0!important}}
+/* c. more reading text is justified (boxes of explanation, not display boxes) */
+:where(.hi,.sbox,.why-box,.choice-detail,.two-col>div,.prev,.ans,.next,.ok,.warn,.snote,.cap,.term,.eng,.card p,.ws>div){text-align:justify;-webkit-hyphens:auto;hyphens:auto}
+/* d. a numbered heading that wraps keeps its second line under the words, not under the number */
+h2:has(> .num),h2:has(> .step-num){display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:10px;align-items:start}
+h2:has(> .num) > .num,h2:has(> .step-num) > .step-num{grid-column:1;grid-row:1 / span 2;margin:0!important}
+h2:has(> .num) > .badge,h2:has(> .step-num) > .badge{grid-column:2;justify-self:start;margin:6px 0 0!important}
+/* e. code boxes: even padding; the copy button sits in the top right corner without pushing the code down */
+pre.has-cp{padding-top:46px!important;padding-bottom:16px!important}
+/* f. bordered boxes get inner space and rounded corners like the boxes around them */
+.state-hold,.state-sold,.state-rest,.path-orange,.path-green,.door-open,.door-check,.door-locked{padding:10px 12px;border-radius:10px}
+/* g. difficulty chips always sit at the right end of the problem title row */
+.deriv-h h3{flex:1;min-width:0}
+.deriv-h h3 .tag-e,.deriv-h h3 .tag-m,.deriv-h h3 .tag-h{margin-left:auto!important;flex:none}
+/* h. previous/next lesson buttons: one even row that starts at the text edge */
+a.nav-link{margin:0 8px 8px 0!important}
+/* i. cards with a coloured left border keep the same inner space on both sides */
+.ws{padding-right:calc(20px + 4px)!important}
+@media(max-width:759px){.ws{padding:16px 20px 16px 16px!important}.lsn-part.lsn-hard,.lsn-part.lsn-easy{padding-right:15px}}
+/* j. a closed problem never shows an empty strip */
+.deriv:not(.open) .deriv-b{display:none!important}
+/* k. small labels readers need are at least 11px */
+.wk-i{font-size:11px!important}
+.rl,.rlbl,.arr-label{font-size:max(11px,1em)}
+/* l. tap targets at least 40px */
+.cp-btn{width:40px!important;height:40px!important}
+.wk-tabs button,.l3-tabs button{min-height:40px}
+.ms-links a{min-height:40px;display:inline-flex;align-items:center}
+.theme-toggle,.ms-theme,[aria-label*="theme" i]{min-width:40px;min-height:40px}
+div:has(> a.nav-link){display:flex;flex-wrap:wrap;gap:8px}
+div:has(> a.nav-link)>a.nav-link{margin:0!important;flex:1 1 auto;text-align:center}
+.ms-inner{min-width:0;max-width:100%}
+.ms-links{min-width:0;overflow-x:auto}
+:not(pre)>code{overflow-wrap:anywhere}

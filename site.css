@@ -1339,3 +1339,9 @@ div:has(> a.nav-link)>a.nav-link{margin:0!important;flex:1 1 auto;text-align:cen
 .ms-inner{min-width:0;max-width:100%}
 .ms-links{min-width:0;overflow-x:auto}
 :not(pre)>code{overflow-wrap:anywhere}
+/* 42. on a wide screen, a step card tab without code uses the full width, so the letters and variables are centered in the card */
+@media(min-width:760px){.viz.pro.wk-card .vz-body:has(> .vz-code[hidden]){grid-template-columns:minmax(0,1fr)}}
+/* 43. tap targets at least 40px everywhere: example chips, Build it, quiz answers */
+.viz.pro .wk-exs button,.wk-exs button{min-height:40px!important}
+.step-btn{min-height:40px!important;display:inline-flex;align-items:center}
+button.choice,.choice{min-height:40px!important}

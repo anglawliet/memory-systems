@@ -1256,13 +1256,21 @@ pre:not(.snip):not(.hl-back){font-variant-ligatures:none;font-feature-settings:"
 /* 33. variables sit in a small table: names in one column, values lined up beside them, each on its own fixed line */
 .wk-vars.fixed{font:500 14px 'JetBrains Mono',monospace;display:grid;grid-template-columns:var(--nw,max-content) minmax(0,1fr);column-gap:10px;row-gap:2px;width:100%;max-width:440px;margin:0 auto;align-items:baseline;text-align:left}
 .wk-vars.fixed .wk-var{display:contents}
-.wk-vars.fixed .wk-var b{font:700 14px 'JetBrains Mono',monospace;color:var(--accent-strong);text-align:left;line-height:24px;padding-left:4px;white-space:nowrap}
-.wk-vars.fixed .wk-val{font:500 14px 'JetBrains Mono',monospace;color:var(--ink);line-height:24px;overflow-wrap:break-word;min-width:0}
+.wk-vars.fixed .wk-var b{font:700 14px 'JetBrains Mono',monospace;color:var(--accent-strong);text-align:left;line-height:21px;padding-left:4px;white-space:nowrap}
+.wk-vars.fixed .wk-val{font:500 14px 'JetBrains Mono',monospace;color:var(--ink);line-height:21px;overflow-wrap:break-word;min-width:0}
 .wk-vars.fixed .wk-var.off b,.wk-vars.fixed .wk-var.off .wk-val{color:transparent}
 /* 34. step card variables in labelled groups ("What we need", "Current window", "Best so far") that never move */
-.wk-grp{width:100%;max-width:440px;margin:0 auto;box-sizing:border-box;border:1px solid var(--line);border-radius:12px;padding:6px 8px 8px;background:var(--surface)}
+.wk-grp{width:100%;max-width:440px;margin:0 auto;box-sizing:border-box;border:1px solid var(--line);border-radius:12px;padding:5px 8px 6px;background:var(--surface)}
 .wk-grp.bare{border:0;padding:0;background:transparent}
-.wk-gt{font:700 11px Inter,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--muted,#6b6b6b);margin:0 0 6px 2px;text-align:left}
+.wk-gt{font:700 11px Inter,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--muted,#6b6b6b);margin:0 0 3px 2px;text-align:left}
 .wk-grp .wk-vars.fixed{max-width:none}
-/* 35. step cards show the whole function in the code box, so the highlighted lines are always seen inside the full code */
-.viz.pro.wk-card .vz-code pre.snip{max-height:none!important;overflow-y:visible!important}
+/* 35. step cards: the code box is about 40% of the screen and scrolls itself to the highlighted lines,
+   and on phones the caption with Back and Next stays at the bottom of the screen, so you never scroll the page while stepping */
+.viz.pro.wk-card .vz-code pre.snip{max-height:34vh!important;overflow-y:auto!important}
+@media(max-width:759px){
+  .lsn .viz.pro.wk-card{overflow:clip}
+  .viz.pro.wk-card .vz-foot{position:sticky;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -10px 18px -12px rgba(0,0,0,.25)}
+}
+@media(max-width:759px){.deriv,.lsn .viz.pro.wk-card{overflow:clip!important}}
+/* 36. tapping Next rebuilds the card; without this the browser scrolls the page to keep a rebuilt piece in place, so the page jumped up and down */
+.wk-card,.wk-card *{overflow-anchor:none}

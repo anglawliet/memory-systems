@@ -572,6 +572,15 @@
         l.classList.toggle("ptr", on);
         l.classList.toggle("skip", on && !!s.skip);
       });
+      // the code box scrolls itself so the highlighted lines sit in its middle
+      var hl = $$(".snl.ptr", pre);
+      if (hl.length && pre.scrollHeight > pre.clientHeight + 2 && !code.hidden) {
+        var pr = pre.getBoundingClientRect();
+        var mid = (hl[0].getBoundingClientRect().top + hl[hl.length - 1].getBoundingClientRect().bottom) / 2 - pr.top + pre.scrollTop;
+        var goal = Math.max(0, Math.round(mid - pre.clientHeight / 2));
+        if (card.classList.contains("measuring") || !pre.scrollTo) pre.scrollTop = goal;
+        else pre.scrollTo({ top: goal, behavior: "smooth" });
+      }
       // an "ask" step poses a question first, and Next shows the answer
       cap.innerHTML = (s.ask ? '<span class="wk-think">Think first</span>' : "") + rich(s.say || "");
       cap.classList.toggle("q", !!s.ask);

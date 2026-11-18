@@ -1365,7 +1365,7 @@ html{touch-action:manipulation}
 button,a,.deriv-h,.wk-card{touch-action:manipulation}
 /* 46. one font. Everything uses Inter. Only code boxes and the typing editor use one code font,
    because code needs every letter the same width so indents line up. */
-body, body *:not(pre):not(pre *):not(.code-text *):not(.vz-code *):not(textarea):not(svg *):not(.hl-back):not(.hl-back *){font-family:Inter,system-ui,-apple-system,sans-serif!important}
+body, body *:not(pre):not(pre *):not(.code-text *):not(.vz-code *):not(textarea):not(svg *):not(.hl-back):not(.hl-back *):not(.trace-code *){font-family:Inter,system-ui,-apple-system,sans-serif!important}
 pre, pre *, .code-text *, .vz-code *, textarea, .lsn .ed, .hl-back, .hl-back *{font-family:'JetBrains Mono',ui-monospace,monospace!important}
 .vz-n,.wk-i,.wk-v,.wk-val{font-variant-numeric:tabular-nums}
 .wk-v{font-weight:650}
@@ -1385,3 +1385,23 @@ blockquote{border-left:0!important}
 /* test results: no accent line on the hint, and long code calls may break anywhere so justified lines keep even gaps */
 .ro-hint{border-left:1px solid var(--line)!important}
 .ro-list li,.run-out p{overflow-wrap:anywhere}
+/* 49. "Trace my code": the learner's own code, one line at a time, with a quiet note of what changed */
+.trace{margin:12px 0 4px;border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:12px}
+.trace-head{margin:0 0 8px;font-weight:600;text-align:left!important;-webkit-hyphens:manual;hyphens:manual}
+.trace-head code{overflow-wrap:anywhere}
+.trace-code{margin:0;max-height:45vh;overflow-y:auto;overflow-x:hidden;background:#1b212b;color:#c9d1dc;border-radius:10px;padding:8px 8px 8px 0;font:13px/1.55 'JetBrains Mono',ui-monospace,monospace!important;scroll-behavior:smooth;font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.trace-code *{font-family:'JetBrains Mono',ui-monospace,monospace!important}
+.trace-code .tl{display:grid;grid-template-columns:34px minmax(0,1fr);align-items:start;opacity:.55}
+.trace-code .tl.mine{background:rgba(138,180,255,.07)}
+.trace-code .tl.on{opacity:1;background:rgba(96,150,255,.24)}
+.trace-code .tl.bad{background:rgba(239,68,68,.28)}
+.trace-code .tn{text-align:right;padding-right:10px;color:#64748b;user-select:none}
+.trace-code .tc{white-space:pre-wrap;overflow-wrap:anywhere;min-width:0}
+.trace-code .tl .inl.note{grid-column:2;display:block;margin:0;color:#9ca3af;font-style:italic;white-space:normal;overflow-wrap:anywhere}
+.trace-info{margin:10px 0;min-height:3em}
+.trace-nav{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.trace-nav .lbtn{min-width:92px;min-height:44px}
+.trace-n{font-variant-numeric:tabular-nums;color:var(--ink-2);white-space:nowrap}
+.trace-btn{margin-top:10px}
+.trace-code .tc,.trace-code .tn,.trace-code .tl{margin:0!important}
+.trace-code *{font-variant-ligatures:none!important;font-feature-settings:"liga" 0,"calt" 0!important}

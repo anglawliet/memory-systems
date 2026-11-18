@@ -101,6 +101,90 @@
     "    return {'tests': out}",
     "json.dumps(_run())"
   ].join("\n");
+  // Runs the learner's own code on one test, one line at a time, and records each line with a short note
+  // of what changed (like the Code tab of a step card). Kept in sync with tools/practice_trace.py.
+  var TRACE_HARNESS = "# Python that runs inside the page's Python worker to trace the learner's own code.\n# Globals given by the worker: SRC (the learner's code), CFG (json with tests, need, trace = test index).\nimport json, sys, re\nfrom collections import Counter, deque\n\n_SAFE = {'len', 'max', 'min', 'abs', 'float', 'int', 'str', 'sorted', 'sum', 'range', 'set', 'list', 'dict', 'tuple', 'Counter', 'isinstance', 'ord', 'chr'}\n_LIMIT = 400\n\n\nclass _Stop(Exception):\n    pass\n\n\ndef _show(v, depth=0):\n    if depth > 3:\n        return '\u2026'\n    if isinstance(v, (Counter, dict)):\n        items = list(v.items())\n        s = ', '.join(f'{_key(k)}: {_show(x, depth + 1)}' for k, x in items[:12])\n        return '{' + s + (', \u2026' if len(items) > 12 else '') + '}'\n    if isinstance(v, (set, frozenset)):\n        return '{' + ', '.join(_key(k) for k in list(v)[:12]) + '}' if v else 'set()'\n    if isinstance(v, (list, deque, tuple)):\n        s = ', '.join(_show(x, depth + 1) for x in list(v)[:12])\n        return '[' + s + (', \u2026' if len(v) > 12 else '') + ']'\n    if isinstance(v, float) and v == float('inf'):\n        return 'inf'\n    if isinstance(v, str):\n        return v if len(v) == 1 else '\"' + (v if len(v) <= 30 else v[:30] + '\u2026') + '\"'\n    if callable(v) or type(v).__module__ not in ('builtins', 'collections'):\n        return None\n    return str(v)\n\n\ndef _key(k):\n    return k if isinstance(k, str) else _show(k)\n\n\ndef _snap(loc):\n    out = {}\n    for k, v in loc.items():\n        if k.startswith('__') or k == 'self':\n            continue\n        s = _show(v)\n        if s is not None:\n            out[k] = s\n    return out\n\n\ndef _names(expr):\n    return [n for n in dict.fromkeys(re.findall(r'[A-Za-z_]\\w*', expr)) if n not in _SAFE and n not in ('and', 'or', 'not', 'in', 'is', 'None', 'True', 'False')]\n\n\ndef _cond_note(cond, frame):\n    # never run a check that calls something that could change data (like pop), only plain reads\n    calls = re.findall(r'([A-Za-z_][\\w.]*)\\s*\\(', cond)\n    if any(c.split('.')[-1] not in _SAFE for c in calls):\n        return ''\n    env = dict(frame.f_globals); env.update(frame.f_locals)\n    try:\n        val = bool(eval(cond, env))\n    except Exception:\n        return ''\n    parts = re.split(r'\\s+(==|!=|<=|>=|<|>|not in|in)\\s+', cond)\n    if len(parts) == 3 and ' and ' not in cond and ' or ' not in cond:\n        try:\n            left, right = _show(eval(parts[0], env)), _show(eval(parts[2], env))\n            if left is not None and right is not None:\n                return f'{left} {parts[1]} {right} \u2192 {val}'\n        except Exception:\n            pass\n    return f'\u2192 {val}'\n\n\ndef _change_note(code, before, after):\n    s = code.strip()\n    changed = [n for n in after if before.get(n) != after[n]]\n    m = re.match(r'([A-Za-z_]\\w*)\\s*=\\s*(.*)$', s)\n    if m and m.group(1) in after:\n        if not _names(m.group(2)):\n            changed = [n for n in changed if n != m.group(1)]\n        elif m.group(1) not in changed:\n            changed = [m.group(1)] + changed\n    return ', '.join(f'{n} = {after[n]}' for n in changed[:3])\n\n\ndef _trace():\n    cfg = json.loads(CFG)\n    ns = {'__name__': 'user'}\n    exec(compile(SRC, 'your code', 'exec'), ns)\n    for name in cfg.get('need', []):\n        if name not in ns and ns.get('Solution') is not None and hasattr(ns['Solution'], name):\n            ns[name] = getattr(ns['Solution'](), name)\n    lines = SRC.split('\\n')\n    test = cfg['tests'][cfg['trace']]\n    steps = []\n    open_ = {}   # frame -> (line, locals before, note decided before the line ran)\n\n    def close(frame, after, ret=None, returned=False):\n        line, before, pre = open_.pop(frame)\n        code = lines[line - 1] if 0 < line <= len(lines) else ''\n        if pre is not None:\n            note = pre\n        elif code.strip().startswith('return') and returned:\n            note = '\u2192 ' + (_show(ret) or '')\n        else:\n            note = _change_note(code, before, after)\n        steps.append({'line': line, 'note': note})\n        if len(steps) >= _LIMIT:\n            raise _Stop()\n\n    def tracer(frame, event, arg):\n        if frame.f_code.co_filename != 'your code':\n            return None\n        if event == 'line':\n            if frame in open_:\n                close(frame, _snap(frame.f_locals))\n            code = lines[frame.f_lineno - 1].strip() if frame.f_lineno <= len(lines) else ''\n            m = re.match(r'(?:if|elif|while)\\s+(.*):\\s*(#.*)?$', code)\n            open_[frame] = (frame.f_lineno, _snap(frame.f_locals), _cond_note(m.group(1), frame) if m else None)\n        elif event == 'exception':\n            # the line that was running raised an error: that is the last step, marked with the error\n            if frame in open_:\n                line, before, pre = open_.pop(frame)\n                steps.append({'line': line, 'note': '\u2717 ' + arg[0].__name__, 'err': True})\n        elif event == 'return':\n            if frame in open_:\n                close(frame, _snap(frame.f_locals), arg, True)\n        return tracer\n\n    result = {'steps': steps, 'call': None}\n    env = dict(ns)\n    sys.settrace(tracer)\n    try:\n        for code, want in test['steps']:\n            result['call'] = code\n            if want is None:\n                exec(code, env)\n            else:\n                result['got'] = _show(eval(code, env))\n    except _Stop:\n        result['stopped'] = True\n    except Exception as e:\n        result['err'] = type(e).__name__ + ': ' + str(e)\n        open_.clear()\n    finally:\n        sys.settrace(None)\n    return result\n\n\njson.dumps(_trace())\n";
+  function traceNow(code, cfg, idx) {
+    if (!worker) startWorker();
+    return ready.then(function () {
+      return new Promise(function (res, rej) {
+        var timer = setTimeout(function () { worker.terminate(); worker = null; rej(new Error("slow")); }, 8000);
+        worker.onmessage = function (e) {
+          clearTimeout(timer);
+          if (e.data.err) rej(new Error(e.data.err)); else res(JSON.parse(e.data.out));
+        };
+        var c = JSON.parse(JSON.stringify(cfg)); c.trace = idx;
+        worker.postMessage({ src: code, cfg: JSON.stringify(c), harness: TRACE_HARNESS });
+      });
+    });
+  }
+  function tracePython(code, cfg, idx) {
+    var job = queue.then(function () { return traceNow(code, cfg, idx); });
+    queue = job.catch(function () {});
+    return job;
+  }
+  // the step-by-step view of the learner's own code
+  function showTrace(out, code, box, tr) {
+    var old = $(".trace", out); if (old) old.remove();
+    var panel = el("div", "trace");
+    var lines = code.replace(/\s+$/, "").split("\n");
+    var mine = {};
+    if (box && box._gaps && box.dataset.lv === "2") box._gaps.forEach(function (g, gi) { for (var n = g[0]; n <= g[1]; n++) mine[n] = gi + 1; });
+    var head = el("p", "trace-head");
+    head.appendChild(document.createTextNode("Tracing "));
+    head.appendChild(el("code", null, tr.call || "your code"));
+    head.appendChild(document.createTextNode(" one line at a time."));
+    var pre = el("div", "trace-code"), rows = [];
+    lines.forEach(function (l, i) {
+      var row = el("span", "tl" + (mine[i + 1] ? " mine" : ""));
+      row.appendChild(el("span", "tn", String(i + 1)));
+      row.appendChild(el("span", "tc", l || " "));
+      pre.appendChild(row); rows.push(row);
+    });
+    var info = el("p", "trace-info");
+    var nav = el("div", "trace-nav");
+    var back = el("button", "lbtn ghost", "Back"), n = el("span", "trace-n"), next = el("button", "lbtn", "Next");
+    back.type = next.type = "button";
+    nav.appendChild(back); nav.appendChild(n); nav.appendChild(next);
+    panel.appendChild(head); panel.appendChild(pre); panel.appendChild(info); panel.appendChild(nav);
+    out.appendChild(panel);
+    var steps = tr.steps || [], at = 0;
+    function show() {
+      rows.forEach(function (r) { r.classList.remove("on", "bad"); var x = $(".inl", r); if (x) x.remove(); });
+      if (!steps.length) { info.textContent = "No line of your function ran."; n.textContent = ""; return; }
+      var s = steps[at], r = rows[s.line - 1];
+      if (r) {
+        r.classList.add("on"); if (s.err) r.classList.add("bad");
+        if (s.note) r.appendChild(el("span", "inl note", "# " + s.note));
+        var pr = pre.getBoundingClientRect(), rr = r.getBoundingClientRect();
+        pre.scrollTop += (rr.top + rr.bottom) / 2 - (pr.top + pr.bottom) / 2;
+      }
+      n.textContent = (at + 1) + " of " + steps.length;
+      var last = at === steps.length - 1, msg = "Line " + s.line + (mine[s.line] ? ", in gap " + mine[s.line] : "") + ".";
+      if (last && tr.err) msg = "Your code crashed on line " + s.line + (mine[s.line] ? " (in gap " + mine[s.line] + ")" : "") + " with " + tr.err + ".";
+      else if (last && tr.stopped) msg = "I stopped after " + steps.length + " lines. A loop may never end, so check what changes each time around it.";
+      else if (last && tr.got != null) msg = "Your function returned " + tr.got + ".";
+      info.textContent = msg;
+      back.disabled = at === 0; next.disabled = last;
+    }
+    back.addEventListener("click", function () { if (at > 0) { at--; show(); } });
+    next.addEventListener("click", function () { if (at < steps.length - 1) { at++; show(); } });
+    show();
+  }
+  function traceButton(cfg, out, res) {
+    if (!lastCode || !res.tests) return;
+    var fail = res.tests.filter(function (r) { return !r.ok; })[0];
+    var idx = fail ? fail.id : 0, code = lastCode, box = lastBox;
+    var b = el("button", "lbtn trace-btn", fail ? "Trace my code on the first failing test" : "Trace my code on the first test");
+    b.type = "button";
+    b.addEventListener("click", function () {
+      b.disabled = true; b.textContent = "Tracing…";
+      tracePython(code, cfg, idx).then(function (tr) {
+        b.remove(); showTrace(out, code, box, tr);
+      }, function () { b.disabled = false; b.textContent = "Tracing took too long. Try again"; });
+    });
+    out.appendChild(b);
+  }
   // runs wait in line, because the worker answers one run at a time
   var queue = Promise.resolve();
   function runPython(code, cfg, status) {
@@ -192,12 +276,13 @@
       return;
     }
     var pass = res.tests.filter(function (r) { return r.ok; }).length, all = res.tests.length;
-    if (pass === all) { out.appendChild(el("p", "ro-good", "All " + all + " tests pass. You wrote the whole solution yourself.")); return; }
+    if (pass === all) { out.appendChild(el("p", "ro-good", "All " + all + " tests pass. You wrote the whole solution yourself.")); traceButton(cfg, out, res); return; }
     out.appendChild(el("p", "ro-sum", pass + " of " + all + " tests pass."));
     out.appendChild(el("p", "ro-hint", "Here is something to think about. " + hintFor(cfg, res)));
     var ul = el("ul", "ro-list");
     res.tests.filter(function (r) { return !r.ok; }).slice(0, 3).forEach(function (r) { ul.appendChild(el("li", null, testText(cfg, r))); });
     out.appendChild(ul);
+    traceButton(cfg, out, res);
   }
   /* Compare the learner's code with one answer, line by line.
      Their code stays as it is. Answer lines they do not have are marked,

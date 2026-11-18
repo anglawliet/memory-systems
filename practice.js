@@ -556,9 +556,8 @@
         list.forEach(function (g) { g[1].forEach(function (n) { used[n] = 1; }); });
         var rest = sl.order.filter(function (n) { return !used[n]; });
         // every group uses the same name column, so all the "=" signs line up down the card
-        var nw = 0;
-        sl.order.forEach(function (n) { nw = Math.max(nw, n.length); });
-        stage.style.setProperty("--nw", "calc(" + nw + "ch + 4px)");
+        // the name column is as wide as the widest name, measured in the real font
+        stage.style.removeProperty("--nw");
         if (rest.length) list.push(["", rest]);
         list.forEach(function (g) {
           var names = g[1].filter(function (n) { return sl.order.indexOf(n) >= 0; });
@@ -571,6 +570,10 @@
           stage.appendChild(box);
         });
       }
+      // every group shares one name column, so all the "=" signs line up down the card
+      var bs = $$(".wk-vars.fixed .wk-var b", stage), nwpx = 0;
+      bs.forEach(function (x) { nwpx = Math.max(nwpx, x.scrollWidth); });
+      if (nwpx) stage.style.setProperty("--nw", Math.ceil(nwpx + 6) + "px");
       var res = el("p", "vz-res");
       if (s.res) { res.textContent = s.res; res.className = "vz-res on " + (s.bad_res ? "no" : "yes"); }
       stage.appendChild(res);

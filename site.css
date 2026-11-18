@@ -1363,3 +1363,16 @@ button.choice,.choice{min-height:40px!important}
 /* 45. no surprise zooming on iPhone: a quick double tap (like tapping Next twice) no longer zooms; pinch-to-zoom still works */
 html{touch-action:manipulation}
 button,a,.deriv-h,.wk-card{touch-action:manipulation}
+/* 46. one font. Everything uses Inter. Only code boxes and the typing editor use one code font,
+   because code needs every letter the same width so indents line up. */
+body, body *:not(pre):not(pre *):not(.code-text *):not(.vz-code *):not(textarea):not(svg *){font-family:Inter,system-ui,-apple-system,sans-serif!important}
+pre, pre *, .code-text *, .vz-code *, textarea, .lsn .ed{font-family:'JetBrains Mono',ui-monospace,monospace!important}
+.vz-n,.wk-i,.wk-v,.wk-val{font-variant-numeric:tabular-nums}
+.wk-v{font-weight:650}
+/* 47. no coloured accent lines down the left side */
+.lsn-part,.lsn-part.lsn-hard,.lsn-part.lsn-easy{border-left:1px solid var(--line)!important}
+.viz.pro .vz-cap.q{border-left:0!important;padding-left:0!important}
+.ws{border-left:1px solid var(--line)!important}
+.code-text .hl-pink,.code-text .hl-yellow,.code-text .hl-green,.code-text.stepping .ln.on,
+.lsn pre.snip .snl.ptr,.lsn pre.snip .snl.on,.l3-code .l3-ln.hl,.viz.pro .vz-code .snl.ptr,.viz.pro .vz-code .snl.ptr.skip,.lsn .grow .snl.new{box-shadow:none!important}
+blockquote{border-left:0!important}

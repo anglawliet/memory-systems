@@ -514,8 +514,10 @@
         else if (c === "#") break;
       }
       var code = esc(line.slice(0, i)), note = line.slice(i);
-      return note ? code + '<span class="hl-c">' + esc(note) + "</span>" : code;
-    }).join("\n") + "\n";
+      var html = note ? code + '<span class="hl-c">' + esc(note) + "</span>" : code;
+      // each line is its own block, so a wrapped line keeps one number in the gutter
+      return '<span class="hl-ln">' + (html || "\u200b") + "</span>";
+    }).join("");
   }
   function esc(t) { return t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
   function paint(ta) {
@@ -526,6 +528,8 @@
       back.setAttribute("aria-hidden", "true");
       ta.classList.add("hl-on");
     }
+    // the full-function editor gets line numbers; a small gap box does not, because its lines are part of a bigger program
+    back.classList.toggle("nums", ta.classList.contains("ed"));
     var parent = ta.parentNode;
     if (!parent) return;
     if (back.parentNode !== parent || back.nextSibling !== ta) parent.insertBefore(back, ta);

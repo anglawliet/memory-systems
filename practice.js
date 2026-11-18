@@ -148,7 +148,7 @@
   function hintFor(cfg, res) {
     if (res.load) {
       if (/SyntaxError|IndentationError|TabError/.test(res.kind)) {
-        return "Python could not read your code" + (res.line ? " at line " + res.line : "") + ". Make sure every def, for, while and if line ends with a colon, and that every block has at least one line inside it.";
+        return "Python could not read your code" + (res.line ? " at " + where(res.line) : "") + ". Make sure every def, for, while and if line ends with a colon, and that every block has at least one line inside it.";
       }
       if (res.kind === "NoName") return "The tests call " + cfg.need.join(" and ") + ". Check that the names are spelled exactly like that.";
       return "Your code stopped before the tests began. Read the error above and check the line it names.";
@@ -167,18 +167,27 @@
     if (own) return cfg.tests[own.id].hint;
     return "Some answers are wrong. Pick the first failing example and trace it by hand, one loop at a time.";
   }
+  // "line 18" alone is hard to find, so show the line itself, and its gap in Fill the gaps
+  var lastCode = "", lastBox = null;
+  function where(n) {
+    if (!n) return "";
+    var text = (lastCode.split("\n")[n - 1] || "").trim();
+    var gap = "";
+    if (lastBox && lastBox._gaps && lastBox.dataset.lv === "2") lastBox._gaps.forEach(function (g, i) { if (n >= g[0] && n <= g[1]) gap = " (in gap " + (i + 1) + ")"; });
+    return "line " + n + gap + (text ? ": " + text : "");
+  }
   function testText(cfg, r) {
     var steps = cfg.tests[r.id].steps;
     var setup = steps.slice(0, r.step).map(function (s) { return s[0]; });
     var call = steps[r.step][0];
     var head = setup.length ? "After " + setup.slice(-2).join(" and ") + (setup.length > 2 ? " (and earlier calls)" : "") + ", the call " : "The call ";
-    if (r.err) return head + call + " crashed with " + r.err + (r.line ? " on line " + r.line + "." : ".");
+    if (r.err) return head + call + " crashed with " + r.err + (r.line ? " on " + where(r.line) : ".");
     return head + call + " should return " + py(steps[r.step][1]) + ", but your code returned " + r.got + ".";
   }
   function showResult(cfg, out, res) {
     out.textContent = "";
     if (res.load) {
-      out.appendChild(el("p", "ro-bad", "Your code didn't run. " + res.load + (res.line ? " (line " + res.line + ")" : "")));
+      out.appendChild(el("p", "ro-bad", "Your code didn't run. " + res.load + (res.line ? " (" + where(res.line) + ")" : "")));
       out.appendChild(el("p", "ro-hint", hintFor(cfg, res)));
       return;
     }
@@ -319,6 +328,7 @@
     btn.addEventListener("click", function () {
       var code = getCode();
       if (code == null) return;
+      lastCode = code; lastBox = box;
       btn.disabled = true;
       out.textContent = "";
       runPython(code, cfg, status).then(function (res) {
@@ -326,7 +336,7 @@
         showResult(cfg, out, res);
         var lesson = box.closest(".lsn");
         var entry = { kind: "run", problem: problemName(lesson), mode: box.dataset.lv === "2" ? "Fill the gaps" : "From blank", code: box.dataset.lv === "2" ? gapText(box) : code };
-        if (res.load) { entry.result = "my code did not run: " + res.load + (res.line ? " (line " + res.line + ")" : ""); }
+        if (res.load) { entry.result = "my code did not run: " + res.load + (res.line ? " (" + where(res.line) + ")" : ""); }
         else {
           var pass = res.tests.filter(function (r) { return r.ok; }).length;
           entry.result = pass + " of " + res.tests.length + " tests pass.";
@@ -770,10 +780,19 @@
           $(".run-status", box).textContent = "Please fill in every gap first, and press Hint if you are stuck.";
           return null;
         }
-        return blanks.map(function (b, i) {
+        var lineNo = 1;
+        box._gaps = [];
+        var whole = blanks.map(function (b, i) {
           var pad = new Array(+b.dataset.indent + 1).join(" ");
-          return (cfg.before[i] || "") + dedent($("textarea", b).value).map(function (l) { return l.trim() ? pad + l : ""; }).join("\n") + "\n";
+          var given = cfg.before[i] || "";
+          lineNo += given.split("\n").length - 1;
+          var mine = dedent($("textarea", b).value).map(function (l) { return l.trim() ? pad + l : ""; }).join("\n") + "\n";
+          var n = mine.split("\n").length - 1;
+          box._gaps.push([lineNo, lineNo + n - 1]);
+          lineNo += n;
+          return given + mine;
         }).join("") + (cfg.after || "");
+        return whole;
       });
       logRow(box);
     });

@@ -1376,3 +1376,12 @@ pre, pre *, .code-text *, .vz-code *, textarea, .lsn .ed, .hl-back, .hl-back *{f
 .code-text .hl-pink,.code-text .hl-yellow,.code-text .hl-green,.code-text.stepping .ln.on,
 .lsn pre.snip .snl.ptr,.lsn pre.snip .snl.on,.l3-code .l3-ln.hl,.viz.pro .vz-code .snl.ptr,.viz.pro .vz-code .snl.ptr.skip,.lsn .grow .snl.new{box-shadow:none!important}
 blockquote{border-left:0!important}
+/* 48. line numbers in the full-function editor. The numbers sit in a gutter on the left; a long line that wraps keeps one number. */
+.lsn .ed{padding-left:44px!important}
+.hl-back .hl-ln{display:block;position:relative;min-height:1lh}
+.hl-back.nums{counter-reset:ln;background:linear-gradient(90deg,#161b23 0,#161b23 36px,#1b212b 36px)}
+.hl-back.nums .hl-ln{counter-increment:ln}
+.hl-back.nums .hl-ln::before{content:counter(ln);position:absolute;left:-42px;width:30px;text-align:right;color:#64748b;font-size:.92em}
+/* test results: no accent line on the hint, and long code calls may break anywhere so justified lines keep even gaps */
+.ro-hint{border-left:1px solid var(--line)!important}
+.ro-list li,.run-out p{overflow-wrap:anywhere}

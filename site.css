@@ -1360,3 +1360,6 @@ button.choice,.choice{min-height:40px!important}
   .ms-topbar.menu-open .ms-links a.on{border-color:var(--accent-strong);color:var(--accent-strong)!important}
   .ms-topbar.menu-open .ms-links a.on::after{display:none}
 }
+/* 45. no surprise zooming on iPhone: a quick double tap (like tapping Next twice) no longer zooms; pinch-to-zoom still works */
+html{touch-action:manipulation}
+button,a,.deriv-h,.wk-card{touch-action:manipulation}

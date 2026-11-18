@@ -1365,8 +1365,8 @@ html{touch-action:manipulation}
 button,a,.deriv-h,.wk-card{touch-action:manipulation}
 /* 46. one font. Everything uses Inter. Only code boxes and the typing editor use one code font,
    because code needs every letter the same width so indents line up. */
-body, body *:not(pre):not(pre *):not(.code-text *):not(.vz-code *):not(textarea):not(svg *){font-family:Inter,system-ui,-apple-system,sans-serif!important}
-pre, pre *, .code-text *, .vz-code *, textarea, .lsn .ed{font-family:'JetBrains Mono',ui-monospace,monospace!important}
+body, body *:not(pre):not(pre *):not(.code-text *):not(.vz-code *):not(textarea):not(svg *):not(.hl-back):not(.hl-back *){font-family:Inter,system-ui,-apple-system,sans-serif!important}
+pre, pre *, .code-text *, .vz-code *, textarea, .lsn .ed, .hl-back, .hl-back *{font-family:'JetBrains Mono',ui-monospace,monospace!important}
 .vz-n,.wk-i,.wk-v,.wk-val{font-variant-numeric:tabular-nums}
 .wk-v{font-weight:650}
 /* 47. no coloured accent lines down the left side */

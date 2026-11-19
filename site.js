@@ -16,7 +16,7 @@
       var dark = root.getAttribute("data-theme") === "dark";
       // the strip behind the phone's clock matches the page color
       var tc = document.querySelector('meta[name="theme-color"]');
-      if (tc) tc.setAttribute("content", dark ? "#0f1114" : "#f8f7f4");
+      if (tc) tc.setAttribute("content", dark ? "#141311" : "#FCFAF5");
       btn.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
       btn.title = dark ? "Light theme" : "Dark theme";
     }

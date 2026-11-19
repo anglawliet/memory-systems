@@ -1407,3 +1407,59 @@ blockquote{border-left:0!important}
 .trace-code *{font-variant-ligatures:none!important;font-feature-settings:"liga" 0,"calt" 0!important}
 /* 50. difficulty labels are quiet grey, not coloured (owner request) */
 .tag-e,.tag-m,.tag-h,:root[data-theme="dark"] .tag-e,:root[data-theme="dark"] .tag-m,:root[data-theme="dark"] .tag-h{background:var(--surface-2)!important;color:var(--ink-2)!important;border:1px solid var(--line)!important}
+
+/* 51. WARM PALETTE (19 November, 2026). Matches the lesson illustrations: cream, white cards, golden accent,
+   dark ochre for accent text, sage for "think first". Only colors change here; no layout, sizes or fonts.
+   Code syntax colors, the dark code editors and the illustrations are left alone. */
+:root{
+  --bg:#FCFAF5;--surface:#FFFFFF;--surface-2:#F3F1EC;--surface-3:#ECE7DE;--line:#E8E1D6;--line-strong:#D9D0C2;
+  --ink:#1C1E22;--ink-2:#4A4741;--ink-3:#6F6B63;
+  --accent:#8A6018;--accent-strong:#8A6018;--accent-soft:#FFF2CF;--on-accent:#1C1E22;
+  --gold-fill:#E0B24A;--gold-soft:#FFF2CF;--ochre:#8A6018;--sage:#4F7964;--sage-soft:#E4EFE7;--on-gold:#1C1E22;
+  --gold:#8A6018;--gold2:#8A6018;--sand:#8A6018;--blue:#8A6018;--amber:#A8661B;--green:#3E7A57;--red:#A8473B;--crimson:#A8473B;
+  --purple:#4F7964;--violet:#4F7964;--indigo:#4F7964;--lav:#4F7964;--emerald:#4F7964;--teal:#4F7964;--cyan:#4F7964;
+  --img-filter:none;
+}
+:root[data-theme="dark"]{
+  --bg:#141311;--surface:#1B1A17;--surface-2:#23211D;--surface-3:#2B2924;--line:#35322C;--line-strong:#4A463E;
+  --ink:#EFEBE3;--ink-2:#CFCAC0;--ink-3:#A39E94;
+  --accent:#E9C46A;--accent-strong:#E0B24A;--accent-soft:rgba(224,178,74,.16);--on-accent:#1C1E22;
+  --gold-fill:#E0B24A;--gold-soft:rgba(224,178,74,.16);--ochre:#E9C46A;--sage:#4F7964;--sage-soft:rgba(79,121,100,.28);--on-gold:#1C1E22;
+  --gold:#E9C46A;--gold2:#E9C46A;--sand:#E9C46A;--blue:#E9C46A;--amber:#E2A35A;--green:#7FB894;--red:#E58E83;--crimson:#E58E83;
+  --purple:#8DBA9F;--violet:#8DBA9F;--indigo:#8DBA9F;--lav:#8DBA9F;--emerald:#8DBA9F;--teal:#8DBA9F;--cyan:#8DBA9F;
+  --img-filter:none;
+}
+.lsn{--ok:#3E7A57;--ok-soft:#E4EFE7;--no:#A8473B;--no-soft:#F8E6E2;--cur:var(--accent-strong);--cur-soft:var(--accent-soft);--nxt:#3E7A57;--nxt-soft:#E4EFE7}
+:root[data-theme="dark"] .lsn{--ok:#7FB894;--ok-soft:rgba(127,184,148,.14);--no:#E58E83;--no-soft:rgba(229,142,131,.14);--cur:#E0B24A;--cur-soft:rgba(224,178,74,.18);--nxt:#7FB894;--nxt-soft:rgba(127,184,148,.16)}
+/* golden fills with dark text: active tabs, primary buttons, progress, the open problem's number, the active top link line */
+.deriv.open .deriv-n,.build-sheet .bs-next,.stages .st-nav .st-next,.lsn .lbtn:not(.ghost),.pick.on,.lv-tabs button.on,
+.viz.pro .vz-btn.primary,.viz.pro.brd .bd-tag,.kbar button.down,.kbar button:active,.cf-btn.cf-go,.ck-k.ck-enter,.code-text .step-btn,
+.l3-tabs button.on,.wk-tabs button.on{background:var(--gold-fill)!important;border-color:var(--gold-fill)!important;color:var(--on-gold)!important}
+.l3 .l3-tabs button.on:not(.wk-tabs button){background:var(--surface)!important;color:var(--ochre)!important}
+.build-sheet .bs-track i,.stages .st-track i,.viz.pro .vz-bar i,.ms-links a.on::after{background:var(--gold-fill)!important}
+/* selected example chips: pale gold, ochre text, golden border */
+.wk-exs button.on{background:var(--gold-soft)!important;color:var(--ochre)!important;border-color:var(--gold-fill)!important}
+/* think first: sage */
+.viz.pro .vz-cap .wk-think{background:var(--sage)!important;color:#fff!important}
+.l3-think,.l3 .l3-think{color:var(--sage)!important;background:var(--sage-soft)!important}
+.l3-cap.q{border-color:var(--sage)!important}
+/* Part labels: dark ochre */
+.lsn-tag,.lsn-part.lsn-hard .lsn-tag,:root[data-theme="dark"] .lsn-part.lsn-hard .lsn-tag{color:var(--ochre)!important}
+/* difficulty labels: one neutral grey with charcoal text */
+.tag-e,.tag-m,.tag-h,:root[data-theme="dark"] .tag-e,:root[data-theme="dark"] .tag-m,:root[data-theme="dark"] .tag-h{background:var(--surface-2)!important;color:var(--ink)!important;border:1px solid var(--line)!important}
+/* hints: soft yellow, no strong accent */
+.ro-hint{background:var(--gold-soft)!important;border-color:var(--line)!important}
+/* former purple accents in lessons and pictures drawn by code: sage */
+.lp1>.lp-n,.viz-state .lst-let .lst-name{color:var(--sage)!important}
+.lp1{border-color:var(--sage)!important;background:var(--sage-soft)!important}
+.trie .tn.mark>circle{stroke:var(--sage)!important}
+.trie .tn-mark rect,.tk-mark i{fill:var(--sage);background:var(--sage)!important;border-color:var(--sage)!important}
+.chip.c-let{color:var(--sage)!important;border-color:var(--sage)!important;background:var(--sage-soft)!important}
+.viz-state .lst-let{border-left-color:var(--sage)!important;background:var(--sage-soft)!important}
+.viz-state .chip.c-let{background:var(--sage)!important;border-color:var(--sage)!important;color:#fff!important}
+/* highlighted code lines inside the dark editors: a warm gold tint instead of blue (syntax colors unchanged) */
+.viz.pro .vz-code .snl.ptr,.lsn pre.snip .snl.ptr,.trace-code .tl.on{background:rgba(224,178,74,.22)!important}
+.lsn pre.snip .snl.on,.code-text.stepping .ln.on,.l3-code .l3-ln.hl,.lsn .grow .snl.new{background:rgba(224,178,74,.16)!important}
+.trace-code .tl.mine{background:rgba(224,178,74,.06)!important}
+textarea.hl-on::selection{background:rgba(224,178,74,.35)}
+.blank textarea{border-color:var(--gold-fill)!important}

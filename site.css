@@ -1647,3 +1647,10 @@ a.card::before{display:none!important}
 #drills.in-drill .dx-head{display:none}
 #drills .dx-test code{font-family:'JetBrains Mono',ui-monospace,monospace!important;background:none!important;border:0!important;padding:0!important;color:var(--ink-2)}
 #drills .dx-edit-ta,#drills .dx-edit-ta:focus{outline:none!important;box-shadow:none!important;border:0!important;background:transparent!important}
+#drills .dx-more{margin-top:16px}
+#drills .dx-more summary{display:inline-flex;align-items:center;gap:6px;min-height:40px;cursor:pointer;list-style:none;font-size:14px;font-weight:500;color:var(--ink-3)}
+#drills .dx-more summary::-webkit-details-marker{display:none}
+#drills .dx-more summary::after{content:"›";font-size:18px;line-height:1;transition:transform .15s}
+#drills .dx-more[open] summary::after{transform:rotate(90deg)}
+#drills .dx-more .dx-acc:not(:empty),#drills .dx-more .dx-trace:not(:empty){margin-top:14px}
+#drills .dx-more .dx-foot{margin-top:14px}

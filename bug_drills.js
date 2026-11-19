@@ -149,10 +149,11 @@
   }
   function drawAccuracy() {
     var box = $(".dx-acc", home); box.textContent = "";
-    box.appendChild(el("h4", null, "First-try accuracy"));
     var hs = Object.keys(HABITS).filter(function (h) { return state.stats[h] && state.stats[h].n; });
-    if (!hs.length) { box.appendChild(el("p", "dx-empty", "Appears after your first drill.")); return; }
+    if (!hs.length) return;
+    box.appendChild(el("h4", null, "Weakest habits"));
     hs.sort(function (a, b) { return state.stats[a].first / state.stats[a].n - state.stats[b].first / state.stats[b].n; });
+    hs = hs.slice(0, 3);
     var list = el("div", "dx-acc-list");
     hs.forEach(function (h) {
       var st = state.stats[h], pct = Math.round(100 * st.first / st.n);
@@ -166,9 +167,9 @@
   }
   function drawTrace() {
     var box = $(".dx-trace", home); box.textContent = "";
-    box.appendChild(el("h4", null, "Pre-Run Trace"));
     var runs = (P ? P.readLog() : []).filter(function (e) { return e.kind === "run" && e.mode === "From blank" && e.trace; });
-    if (!runs.length) { box.appendChild(el("p", "dx-empty", "In From blank, type a prediction before you run the tests. Your numbers appear here.")); return; }
+    if (!runs.length) return;
+    box.appendChild(el("h4", null, "Pre-Run Trace"));
     var used = runs.filter(function (e) { return /^used/.test(e.trace); }), not = runs.filter(function (e) { return !/^used/.test(e.trace); });
     function rate(list) { return list.length ? Math.round(100 * list.filter(function (e) { return /^(\d+) of \1 tests pass/.test(e.result || ""); }).length / list.length) + "%" : "–"; }
     var stats = el("div", "dx-stats");

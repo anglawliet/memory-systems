@@ -127,7 +127,8 @@
 
     var inYear = Object.keys(state.days).filter(function (d) { return d.slice(0, 4) === String(year) && done(d); }).length;
     var stats = el("div", "dx-stats");
-    [[streakNow(), "current streak"], [streakBest(), "longest streak"], [inYear, "days in " + year]].forEach(function (s) {
+    var allDrills = Object.keys(state.days).reduce(function (s, k) { return s + state.days[k]; }, 0);
+    [[streakNow(), "current streak"], [streakBest(), "longest streak"], [inYear, "days in " + year], [allDrills, "drills, all time"]].forEach(function (s) {
       var c = el("div", "dx-stat"); c.appendChild(el("b", null, String(s[0]))); c.appendChild(el("span", null, s[1])); stats.appendChild(c);
     });
     box.appendChild(stats);

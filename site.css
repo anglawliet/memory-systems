@@ -1662,3 +1662,5 @@ a.card::before{display:none!important}
 #drills .dx-key .dx-d{width:11px;height:11px}
 #drills .dx-key span:first-child{margin-right:4px}
 #drills .dx-key span:last-child{margin-left:4px}
+#drills .dx-cal .dx-stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:600px){#drills .dx-cal .dx-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 12px}}

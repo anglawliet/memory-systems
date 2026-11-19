@@ -718,7 +718,7 @@
   $$('.viz[data-mode="markers"]', lesson).forEach(function (box) {
     tracer(box, {
       picks: [".og", "..t", "c..", "d.t"], steps: markerSteps,
-      legend: [["mk", "A blue dot is a marker. It means the search could be at that node."], ["row", "The shaded row is where every marker is."], ["end", "A green $ marks the end of a saved word."]],
+      legend: [["mk", "A gold dot is a marker. It means the search could be at that node."], ["row", "The shaded row is where every marker is."], ["end", "A green $ marks the end of a saved word."]],
       draw: function (state, s) {
         state.appendChild(chips("current", s.cur, "c-cur"));
         markChips(state, s);
@@ -732,7 +732,7 @@
 
   /* Three modes for search("..t"): the idea, the lists, then the code */
   var L3T = {
-    "M1_00": "We start at the root. Blue shows our current position.",
+    "M1_00": "We start at the root. Gold shows our current position.",
     "M1_01": "The first character is a dot. A dot can match any one letter.",
     "M1_02": "The root has c and d children. Green shows both possible moves.",
     "M1_03": "We move to those children. Our positions are now c and d.",
@@ -946,7 +946,7 @@
   $$('.viz[data-mode="search"]', lesson).forEach(function (box) {
     searchViz = tracer(box, {
       picks: ["..t", ".og", "c.t", "c..", "cab", "ca", "cat."], steps: searchSteps,
-      legend: [["cur", "A blue node is in current."], ["nxt", "A green node is in next_nodes."], ["look", "A thick ring marks the node being checked."], ["dead", "A red dashed ring marks a path that ended."], ["end", "A green $ marks the end of a saved word."]],
+      legend: [["cur", "A gold node is in current."], ["nxt", "A green node is in next_nodes."], ["look", "A thick ring marks the node being checked."], ["dead", "A red dashed ring marks a path that ended."], ["end", "A green $ marks the end of a saved word."]],
       draw: function (state, s, word) {
         letterRow(state, word, s.li);
         if (s.node) nodeRow(state, s.node);

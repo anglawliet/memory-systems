@@ -1558,3 +1558,20 @@ textarea.hl-on::selection{background:rgba(224,178,74,.35)}
 #drills .dr-why .dr-code{margin:4px 0 12px}
 #drills .dr-ln.fixed{background:rgba(79,121,100,.35)}
 #drills .dr-edit{white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px!important}
+
+/* 56. Fixes from running the Sliding Window checks on the other lesson sections */
+.lsn-key{border-left:0!important;border:1px solid var(--line-strong)!important}
+.l3-cap,.l3-cap .l3-ct{text-align:justify;text-justify:inter-word;-webkit-hyphens:auto;hyphens:auto}
+.l3-tabs button,.pick,.vz-seg button,.wk-bar button,.wk-nav button{min-height:40px}
+.code-text .code-label{flex-wrap:wrap;row-gap:8px;white-space:normal}
+.code-text .code-label .cp-btn{margin-left:auto}
+@media(max-width:759px){.wk-cells.many .wk-p{font-size:11px;letter-spacing:-.4px}}
+.mcq-nav button{min-height:40px}
+.l3-tabs button,.pick{min-height:40px!important}
+.l3-cap,.l3 .l3-cap,.l3-cap .l3-ct{text-align:justify!important}
+
+/* 57. Panel pictures (Two Pointers, Stack, Linked List): the separate panels show on every screen,
+   one under another, like the lesson pictures. The old combined picture is no longer shown. */
+.scene-img.has-panels{display:none!important}
+.panel-stack{display:flex!important;flex-direction:column;gap:12px;margin:0 auto 16px;max-width:900px}
+.panel-stack img{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--line);filter:var(--img-filter)}

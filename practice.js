@@ -370,6 +370,8 @@
       } else {
         out.push("Result: " + e.result);
         (e.fails || []).forEach(function (f) { out.push("Failed: " + f); });
+        if (e.trace) out.push("Pre-run trace: " + e.trace);
+        if (e.nudge) out.push("Note: " + e.nudge);
       }
       if (e.code) out.push("My code:\n" + e.code);
       out.push("");
@@ -422,6 +424,13 @@
     var ind = (last.match(/^\s*/)[0] || "") + (/:\s*$/.test(last) ? "    " : "");
     return out.join("\n").replace(/\s+$/, "") + "\n" + ind + "\n";
   }
+  // a new line like "while ... and left < len(s)" that was not there before
+  function addedGuard(before, after) {
+    var old = {};
+    before.split("\n").forEach(function (l) { old[l.trim()] = 1; });
+    return after.split("\n").some(function (l) { var s = l.trim(); return !old[s] && /^(while|if)\b.*<\s*len\(/.test(s); });
+  }
+  window.MSPractice = { runPython: function (c, f, s) { return runPython(c, f, s); }, addLog: function (e) { addLog(e); }, readLog: function () { return readLog(); }, logText: function () { return logText(); }, py: function (v) { return py(v); } };
   function wireRun(cfg, box, getCode) {
     var btn = $(".run-btn", box), status = $(".run-status", box), out = $(".run-out", box);
     btn.addEventListener("click", function () {
@@ -430,11 +439,36 @@
       lastCode = code; lastBox = box;
       btn.disabled = true;
       out.textContent = "";
+      var full = box.dataset.lv === "3" || box.dataset.lv === "4";
+      var same = full && box._prevCode != null && code.trim() === box._prevCode.trim();
+      var guard = full && box._prevCrash && !same && addedGuard(box._prevCode || "", code);
+      var pt = $(".pt-in", box), guess = pt ? pt.value.trim() : "";
       runPython(code, cfg, status).then(function (res) {
         status.textContent = "";
         showResult(cfg, out, res);
         var lesson = box.closest(".lsn");
         var entry = { kind: "run", problem: problemName(lesson), mode: modeName(box), code: box.dataset.lv === "2" ? gapText(box) : code };
+        // the two nudges: running unchanged code, and hiding a crash with a guard
+        var notes = [];
+        if (same) { notes.push("Nothing changed since your last run, so the result is the same. Trace the first failing test by hand, or press Trace my code."); entry.nudge = "I ran the same code again."; }
+        if (guard) { notes.push("You added a guard right after a crash. A guard hides the crash, but not the bug. Which value was wrong when it crashed, and which line should have changed it?"); entry.nudge = "I added a guard right after a crash."; }
+        notes.reverse().forEach(function (n) { out.insertBefore(el("p", "ro-hint nudge", n), out.firstChild); });
+        // the Pre-Run Trace: compare the prediction with what the code returned
+        if (pt) {
+          var ti = +pt.dataset.test, want = cfg.tests[ti].steps[0][1], got = "";
+          if (!res.load) {
+            var r = res.tests[ti];
+            got = r.ok ? py(want) : r.err ? "a crash (" + r.err.split(":")[0] + ")" : r.got;
+          } else got = "nothing, because the code did not run";
+          if (guess) {
+            var match = guess.replace(/\s+/g, "").replace(/"/g, "'") === String(got).replace(/\s+/g, "").replace(/"/g, "'");
+            out.insertBefore(el("p", "ro-hint pt-res", "You predicted " + guess + ". Your code returned " + got + ". " + (match ? "Your trace matched your code." : "Your trace did not match your code, so one line does something different from what you think.")), out.firstChild);
+            entry.trace = "used. I predicted " + guess + " for " + pt.dataset.call + ", and my code returned " + got + (match ? " (match)." : " (no match).");
+          } else entry.trace = "not used.";
+          pt.value = "";
+        }
+        box._prevCode = code;
+        box._prevCrash = !res.load && res.tests.some(function (r) { return r.err; });
         if (res.load) { entry.result = "my code did not run: " + res.load + (res.line ? " (" + where(res.line) + ")" : ""); }
         else {
           var pass = res.tests.filter(function (r) { return r.ok; }).length;
@@ -930,6 +964,20 @@
       var own = JSON.parse(JSON.stringify(cfg)); own.start = blank ? bareStart(cfg.start) : cfg.start;
       (function (cfg) {
       var ta = $(".ed", box), KEY = "lsn-" + lesson.dataset.lesson + (blank ? "-blank-v1" : "-editor-v1");
+      if (blank && !$(".pre-trace", box)) {
+        // optional: trace the smallest test by hand before running
+        var best = -1;
+        cfg.tests.forEach(function (tst, i) { if (tst.steps.length === 1 && tst.steps[0][1] != null && (best < 0 || tst.steps[0][0].length < cfg.tests[best].steps[0][0].length)) best = i; });
+        if (best >= 0) {
+          var call = cfg.tests[best].steps[0][0];
+          var ptBox = el("div", "pre-trace");
+          var q = el("p", "pt-q"); q.innerHTML = "Optional. Before you run, trace <code>" + esc(call) + "</code> by hand. What will your code return?";
+          var inp = el("input", "pt-in"); inp.type = "text"; inp.placeholder = "Your prediction"; inp.dataset.test = best; inp.dataset.call = call;
+          inp.setAttribute("autocapitalize", "off"); inp.setAttribute("autocomplete", "off"); inp.setAttribute("autocorrect", "off"); inp.spellcheck = false;
+          ptBox.appendChild(q); ptBox.appendChild(inp);
+          $(".run", box).before(ptBox);
+        }
+      }
       var saved = null;
       try { saved = localStorage.getItem(KEY); } catch (e) { saved = null; }
       ta.value = saved || cfg.start;

@@ -1501,3 +1501,60 @@ textarea.hl-on::selection{background:rgba(224,178,74,.35)}
 .lsn .run:has(>.more){flex-wrap:wrap}
 @media(max-width:359px){.lsn .run>.lbtn{padding-left:11px;padding-right:11px;font-size:14px}.lsn .more-btn{min-width:42px;padding:0 8px}}
 @media(max-width:359px){.lsn .run{gap:5px}.lsn .run>.lbtn{padding-left:10px;padding-right:10px;font-size:13.5px}.lsn .more-btn{min-width:40px;padding:0 6px}}
+
+/* 55. Bug Prevention Drills (bug_drills.html) and the Pre-Run Trace box in From blank */
+.lsn .pre-trace{margin:10px 0;padding:12px 14px;border:1px dashed var(--line-strong);border-radius:12px;background:var(--surface-2)}
+.lsn .pre-trace .pt-q{margin:0 0 8px;font-size:14.5px;color:var(--ink-2)}
+.lsn .pt-in,.dr-in{box-sizing:border-box;width:100%;min-height:42px;padding:8px 12px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--ink);font:16px 'JetBrains Mono',ui-monospace,monospace!important}
+.lsn .ro-hint.nudge,.lsn .ro-hint.pt-res{border:1px solid var(--line-strong);border-radius:10px;padding:10px 12px;background:var(--gold-soft)}
+#drills .dr-big{font-size:1.15em;font-weight:600;margin:4px 0;color:var(--ink)}
+#drills .dr-sub{color:var(--ink-2);margin:0 0 12px}
+#drills .dr-go{min-width:200px}
+#drills h4{margin:22px 0 8px}
+#drills .dr-table{display:flex;flex-direction:column;gap:10px}
+#drills .dr-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center}
+#drills .dr-h{font-size:14.5px;color:var(--ink);text-align:left}
+#drills .dr-v{font-size:14px;color:var(--ink-2);white-space:nowrap}
+#drills .dr-bar{grid-column:1/-1;height:8px;border-radius:4px;background:var(--surface-3);overflow:hidden}
+#drills .dr-bar i{display:block;height:100%;background:var(--gold-fill);border-radius:4px}
+#drills .dr-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#drills .dr-top .lsn-tag{margin:0}
+#drills .dr-task{margin:12px 0 8px}
+#drills .dr-tests,#drills .dr-ask{color:var(--ink-2)}
+#drills .dr-ask{font-weight:600;color:var(--ink)}
+#drills .dr-code{background:#1b212b;border-radius:12px;padding:8px 6px;margin:10px 0;display:flex;flex-direction:column}
+#drills .dr-ln{display:grid;grid-template-columns:2.4ch minmax(0,1fr);gap:10px;align-items:start;width:100%;min-height:40px;padding:9px 8px;border:0;border-radius:8px;background:transparent;color:#e6e9ef;text-align:left;font:13.5px/1.6 'JetBrains Mono',ui-monospace,monospace!important;cursor:pointer;box-sizing:border-box}
+#drills div.dr-ln{min-height:0;padding:3px 8px;cursor:default}
+#drills .dr-ln:disabled{cursor:default;opacity:1}
+#drills .dr-ln .dr-n{color:#7d8796;text-align:right;user-select:none}
+#drills .dr-ln .dr-c{white-space:pre-wrap;overflow-wrap:anywhere;text-align:left;font-variant-ligatures:none}
+#drills button.dr-ln:not(:disabled):hover{background:rgba(255,255,255,.06)}
+#drills .dr-ln.bug{background:rgba(224,178,74,.22);box-shadow:inset 0 0 0 1px rgba(224,178,74,.7)}
+#drills .dr-ln.wrong{background:rgba(214,96,86,.25)}
+#drills .dr-msg.ok{color:var(--sage);font-weight:600}
+#drills .dr-msg.no{color:#A04A3E;font-weight:600}
+#drills .dr-edit{box-sizing:border-box;width:100%;padding:10px 12px;border:1px solid var(--line-strong);border-radius:10px;background:#1b212b;color:#e6e9ef;font:16px/1.5 'JetBrains Mono',ui-monospace,monospace!important;white-space:pre;overflow-x:hidden;resize:none}
+#drills .dr-btns{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0}
+#drills .dr-status{color:var(--ink-3);font-size:14px}
+#drills .dr-form{display:flex;flex-direction:column;gap:10px;margin:8px 0}
+#drills .dr-q{display:grid;grid-template-columns:minmax(0,9ch) minmax(0,1fr);gap:4px 10px;align-items:center}
+#drills .dr-q code{font-size:14px;overflow-wrap:anywhere}
+#drills .dr-q .dr-ans{grid-column:2;font-size:14px;font-weight:600}
+#drills .dr-q.ok .dr-ans{color:var(--sage)}
+#drills .dr-q.no .dr-ans{color:#A04A3E}
+#drills .dr-q.no .dr-in{border-color:#C7867C}
+#drills .dr-q.ok .dr-in{border-color:var(--sage)}
+#drills .dr-why{margin:14px 0 4px;padding:14px;border-radius:12px;border:1px solid var(--line-strong);background:var(--surface-2)}
+#drills .dr-why.good{background:var(--sage-soft)}
+#drills .dr-why.miss{background:var(--gold-soft)}
+#drills .dr-verdict{font-weight:700;margin-top:0}
+#drills .dr-small{font-size:14px;color:var(--ink-2);margin-bottom:4px}
+#drills .dr-fixed{white-space:pre-wrap!important;overflow-wrap:anywhere;overflow-x:hidden!important;font-size:13px!important;margin:0 0 12px}
+#drills .dr-cmsg{color:var(--ink-2)}
+#drills .dr-ln,#drills .dr-ln *{font-family:'JetBrains Mono',ui-monospace,monospace!important}
+#drills .dr-tl{margin:6px 0 10px;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+#drills .dr-tl li{text-align:left!important;hyphens:none!important;-webkit-hyphens:none!important;font-size:14.5px;color:var(--ink-2)}
+#drills .dr-tl code{overflow-wrap:anywhere}
+#drills .dr-why .dr-code{margin:4px 0 12px}
+#drills .dr-ln.fixed{background:rgba(79,121,100,.35)}
+#drills .dr-edit{white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px!important}

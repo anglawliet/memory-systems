@@ -1589,3 +1589,5 @@ a.card.c_linked_list::before{content:"Linked List"}
 a.card.c_heap::before{content:"Heap"}
 a.card.c_tries::before{content:"Tries"}
 @media(max-width:760px){a.card::before{aspect-ratio:3/1;font-size:26px}}
+/* 59. Home page cards are plain: just the title and the description, no tile on top */
+a.card::before{display:none!important}

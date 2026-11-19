@@ -69,8 +69,8 @@ td{padding:10px 12px;border:1px solid var(--border)}
 .scene-img{width:100%;border-radius:10px;border:1px solid var(--border);margin-bottom:16px;cursor:pointer;transition:transform .2s}
 .scene-img:hover{transform:scale(1.02)}
 </style>
-<link rel="stylesheet" href="legacy-colors.css?v=20261119a">
-<link rel="stylesheet" href="site.css?v=20261119a">
+<link rel="stylesheet" href="legacy-colors.css?v=20261119b">
+<link rel="stylesheet" href="site.css?v=20261119b">
 </head>
 <body>
 <header class="ms-topbar"><div class="ms-inner"><a class="ms-home" href="index.html" aria-label="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg><span>Memory Systems</span></a><nav class="ms-links"><a href="shankar_dada_trees.html">Trees</a><a href="graphs.html">Graphs</a><a href="dp_workshop.html">DP</a><a href="arrays.html">Arrays</a><a href="two_pointers.html">Two Pointers</a><a href="sliding_window.html" class="on">Sliding Window</a><a href="stack.html">Stack</a><a href="binary_search.html">Binary Search</a><a href="linked_list.html">Linked List</a><a href="heap.html">Heap</a><a href="tries.html">Tries</a></nav></div></header>
@@ -91,14 +91,14 @@ td{padding:10px 12px;border:1px solid var(--border)}
 <section class="lsn-part lsn-easy">
 <span class="lsn-tag">Part 1 of 4</span>
 <h4>What are we trying to find?</h4>
-<img class="lsn-pic" src="sliding_window/images/panels/p121_buy_sell_stock_question.webp" alt="The prices are 7, 1, 5, 3, 6 and 4. We buy at 1 on day 1 and sell at 6 on day 4. The profit is 6 minus 1, which is 5." width="1400" height="700" loading="lazy">
+<img class="lsn-pic" src="sliding_window/images/panels/p121_buy_sell_stock_question.webp" alt="The prices are 7, 1, 5, 3, 6 and 4. We buy at 1 on day 1 and sell at 6 on day 4. The profit is 6 minus 1, which is 5." width="1400" height="788" loading="lazy">
 <p>We must buy before we sell. If no later selling price gives us a profit, we return 0.</p>
 </section>
 
 <section class="lsn-part">
 <span class="lsn-tag">Part 2 of 4</span>
 <h4>What do we track?</h4>
-<img class="lsn-pic" src="sliding_window/images/panels/p121_buy_sell_stock_scan.webp" alt="Each day, we track the cheapest price and the best profit. On day 4, the price is 6 and the cheapest price is 1. The profit is 5, so it becomes the new best." width="1400" height="715" loading="lazy">
+<img class="lsn-pic" src="sliding_window/images/panels/p121_buy_sell_stock_scan.webp" alt="Each day, we track the cheapest price and the best profit. On day 4, the price is 6 and the cheapest price is 1. The profit is 5, so it becomes the new best." width="1400" height="788" loading="lazy">
 <p>We walk through the prices once. We create the variable <code>cheapest</code> to keep track of the lowest price seen so far. This is the best price we could have bought at before selling today. So today’s profit is <code>price - cheapest</code>.</p>
 
 </section>
@@ -122,7 +122,7 @@ td{padding:10px 12px;border:1px solid var(--border)}
 
 <p>Tap Build it to see how I would write and explain the solution in an interview.</p>
 <div class="code-text" data-src="def maxProfit(prices):&#10;    cheapest = prices[0]&#10;    best = 0&#10;    for price in prices:&#10;        # a cheaper day to buy&#10;        if price &lt; cheapest:&#10;            cheapest = price&#10;        profit = price - cheapest&#10;        best = max(best, profit)&#10;    return best&#10;"><div class="code-label"><span class="dots"><i></i><i></i><i></i></span>Python code<button class="step-btn" type="button">Build it &#9654;</button></div><div class="code-body"><div class="code-inner"><div class="ln" data-l="1" style="padding-left:calc(10px + 2ch);text-indent:-2ch"><span class="k-kw">def</span> <span class="k-def">maxProfit</span>(<wbr>prices):</div><div class="ln" data-l="2" style="padding-left:calc(10px + 4ch);text-indent:-4ch">  cheapest = prices[<span class="k-num">0</span>]</div><div class="ln" data-l="3" style="padding-left:calc(10px + 4ch);text-indent:-4ch">  best = <span class="k-num">0</span></div><div class="ln" data-l="4" style="padding-left:calc(10px + 4ch);text-indent:-4ch">  <span class="k-kw">for</span> price <span class="k-kw">in</span> prices:</div><div class="ln" data-l="5" style="padding-left:calc(10px + 6ch);text-indent:-6ch">    <span class="k-com"># a cheaper day to buy</span></div><div class="ln" data-l="6" style="padding-left:calc(10px + 6ch);text-indent:-6ch">    <span class="k-kw">if</span> price &lt; cheapest:</div><div class="ln" data-l="7" style="padding-left:calc(10px + 8ch);text-indent:-8ch">      cheapest = price</div><div class="ln" data-l="8" style="padding-left:calc(10px + 6ch);text-indent:-6ch">    profit = price - cheapest</div><div class="ln" data-l="9" style="padding-left:calc(10px + 6ch);text-indent:-6ch">    best = <span class="k-bi">max</span>(<wbr>best, profit)</div><div class="ln" data-l="10" style="padding-left:calc(10px + 4ch);text-indent:-4ch">  <span class="k-kw">return</span> best</div></div></div><script type="application/json" class="steps">[{"lines": "1", "say": "I'll scan the prices once from left to right because I must buy before I sell. For each selling price, I only need the cheapest earlier price. Then I can find the profit and remember the biggest one."}, {"lines": "2", "say": "I'll create the variable `cheapest` to keep track of the lowest price seen so far. I need it to choose the best earlier day to buy. It starts at `prices[0]` because the first price is the only price seen at the start."}, {"lines": "3", "say": "I'll create the variable `best` to keep track of the biggest profit seen so far. It starts at 0 because I can choose not to trade, so the profit should never be less than 0."}, {"lines": "4", "say": "I'll go through every `price` from left to right. This order matters because the variable `cheapest` must come from the current day or an earlier day."}, {"lines": "5-7", "say": "If `price` is less than `cheapest`, I found a better price to buy at, so I'll set `cheapest` to `price`. For example, when the price is 1, the variable `cheapest` changes from 7 to 1."}, {"lines": "8", "say": "I'll create the variable `profit` to keep track of the profit from selling at the current `price`. I subtract `cheapest` because that is the lowest buying price seen before or on this day."}, {"lines": "9", "say": "I'll compare `profit` with `best`. If the current profit is bigger, the variable `best` takes that value. For example, when the price is 6 and `cheapest` is 1, the profit is 5, so `best` becomes 5."}, {"lines": "10", "say": "After I check every price, I'll return `best` because it holds the biggest profit I could make. For `[7, 1, 5, 3, 6, 4]`, it returns 5."}, {"lines": "", "say": "The time cost is O(n) because I visit each price once. The space cost is O(1) because I keep only a few variables, no matter how many prices there are."}]</script></div>
-<img class="lsn-pic" src="sliding_window/images/panels/p121_buy_sell_stock_key.webp" alt="The one idea to remember. Remember the cheapest price so far. Selling today earns price minus cheapest. Keep the biggest profit in best." width="1400" height="700" loading="lazy">
+<img class="lsn-pic" src="sliding_window/images/panels/p121_buy_sell_stock_key.webp" alt="The one idea to remember. Remember the cheapest price so far. Selling today earns price minus cheapest. Keep the biggest profit in best." width="1400" height="788" loading="lazy">
 </section>
 
 <section class="lsn-part">
@@ -580,9 +580,9 @@ left += 1"><textarea rows="5" spellcheck="false" autocapitalize="off" autocomple
 </div></div>
 
 </div>
-<script src="site.js?v=20261119a" defer></script>
-<script src="code-steps.js?v=20261119a" defer></script>
-<script src="codekeys.js?v=20261119a" defer></script>
-<script src="practice.js?v=20261119a" defer></script>
+<script src="site.js?v=20261119b" defer></script>
+<script src="code-steps.js?v=20261119b" defer></script>
+<script src="codekeys.js?v=20261119b" defer></script>
+<script src="practice.js?v=20261119b" defer></script>
 </body>
 </html>

@@ -1463,3 +1463,7 @@ blockquote{border-left:0!important}
 .trace-code .tl.mine{background:rgba(224,178,74,.06)!important}
 textarea.hl-on::selection{background:rgba(224,178,74,.35)}
 .blank textarea{border-color:var(--gold-fill)!important}
+
+/* 52. Build it inside the practice tabs: the code header may wrap, so the copy button never gets cut off */
+.lv .code-text .code-label{flex-wrap:wrap;row-gap:8px;white-space:normal}
+.lv .code-text .code-label .cp-btn{margin-left:auto}

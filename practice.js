@@ -408,6 +408,20 @@
   function gapText(box) {
     return $$(".blank textarea", box).map(function (t, i) { return "# gap " + (i + 1) + "\n" + t.value.replace(/\s+$/, ""); }).join("\n");
   }
+  // the three practice levels: 4 = From blank (only the function line), 3 = From comments (numbered outline), 2 = Fill the gaps
+  function modeName(box) { return box.dataset.lv === "2" ? "Fill the gaps" : box.dataset.lv === "4" ? "From blank" : "From comments"; }
+  // the From blank start: the outline without its comments, so only imports and the function line are left
+  function bareStart(start) {
+    var out = [];
+    start.split("\n").forEach(function (l) {
+      if (/^\s*#/.test(l)) return;
+      if (!l.trim() && (!out.length || !out[out.length - 1].trim())) return;
+      out.push(l.replace(/\s+$/, ""));
+    });
+    var filled = out.filter(function (l) { return l.trim(); }), last = filled.length ? filled[filled.length - 1] : "";
+    var ind = (last.match(/^\s*/)[0] || "") + (/:\s*$/.test(last) ? "    " : "");
+    return out.join("\n").replace(/\s+$/, "") + "\n" + ind + "\n";
+  }
   function wireRun(cfg, box, getCode) {
     var btn = $(".run-btn", box), status = $(".run-status", box), out = $(".run-out", box);
     btn.addEventListener("click", function () {
@@ -420,7 +434,7 @@
         status.textContent = "";
         showResult(cfg, out, res);
         var lesson = box.closest(".lsn");
-        var entry = { kind: "run", problem: problemName(lesson), mode: box.dataset.lv === "2" ? "Fill the gaps" : "From blank", code: box.dataset.lv === "2" ? gapText(box) : code };
+        var entry = { kind: "run", problem: problemName(lesson), mode: modeName(box), code: box.dataset.lv === "2" ? gapText(box) : code };
         if (res.load) { entry.result = "my code did not run: " + res.load + (res.line ? " (" + where(res.line) + ")" : ""); }
         else {
           var pass = res.tests.filter(function (r) { return r.ok; }).length;
@@ -432,7 +446,7 @@
         status.textContent = "";
         if (err.message === "slow") {
           out.appendChild(el("p", "ro-bad", "Your code ran for more than 8 seconds, so I stopped it."));
-          addLog({ kind: "run", problem: problemName(box.closest(".lsn")), mode: box.dataset.lv === "2" ? "Fill the gaps" : "From blank", code: box.dataset.lv === "2" ? gapText(box) : code, result: "my code ran for more than 8 seconds, so it was stopped." });
+          addLog({ kind: "run", problem: problemName(box.closest(".lsn")), mode: modeName(box), code: box.dataset.lv === "2" ? gapText(box) : code, result: "my code ran for more than 8 seconds, so it was stopped." });
           out.appendChild(el("p", "ro-hint", "Here is something to think about. A loop may never end. Check that every while loop moves a pointer or changes its condition."));
         } else {
           out.appendChild(el("p", "ro-bad", "Python could not start. Check your internet connection and try again. (" + err.message + ")"));
@@ -829,7 +843,36 @@
 
     $$(".wk", lesson).forEach(walk);
 
-    /* The practice tabs */
+    /* The practice tabs. "From blank" is made here as a copy of the comments editor. */
+    var lv3 = $('.lv[data-lv="3"]', lesson), t3 = $('.lv-tabs button[data-lv="3"]', lesson);
+    if (lv3 && t3 && !$('.lv[data-lv="4"]', lesson) && cfg.start) {
+      var lv4 = lv3.cloneNode(true);
+      lv4.dataset.lv = "4";
+      var intro = $("p", lv4);
+      if (intro) intro.textContent = "Write the whole function from memory, with no outline. Only the function line is given. A failed test gives a hint.";
+      var intro3 = $("p", lv3);
+      if (intro3) intro3.textContent = "Write the whole function from the numbered comments. Each comment describes one job. A failed test gives a hint.";
+      lv3.parentNode.insertBefore(lv4, lv3);
+      var t4 = t3.cloneNode(true);
+      t4.dataset.lv = "4"; t4.textContent = "From blank";
+      t3.textContent = "From comments";
+      t3.parentNode.insertBefore(t4, t3);
+      $$(".lv-tabs button", lesson).forEach(function (x) { x.classList.toggle("on", x === t4); });
+      $$(".lv", lesson).forEach(function (l) { l.hidden = l !== lv4; });
+    }
+    // "Build it" (the full code with the interview walkthrough) becomes the fourth practice tab
+    var tabRow = $(".lv-tabs", lesson), buildBox = $(".code-text", lesson);
+    if (tabRow && buildBox && !$('.lv[data-lv="5"]', lesson)) {
+      var lv5 = el("div", "lv"); lv5.dataset.lv = "5"; lv5.hidden = true;
+      var lead = buildBox.previousElementSibling;
+      lv5.appendChild(el("p", null, "Read the full solution, or tap Build it to see how I would write and explain it in an interview, one piece at a time."));
+      if (lead && lead.tagName === "P" && /Build it/.test(lead.textContent)) lead.remove();
+      lv5.appendChild(buildBox);
+      var lastLv = $$(".lv", lesson).pop();
+      lastLv.parentNode.insertBefore(lv5, lastLv.nextSibling);
+      var t5 = el("button", null, "Build it"); t5.type = "button"; t5.dataset.lv = "5";
+      tabRow.appendChild(t5);
+    }
     var tabs = $$(".lv-tabs button", lesson), levels = $$(".lv", lesson);
     tabs.forEach(function (t) {
       t.addEventListener("click", function () {
@@ -882,8 +925,11 @@
       logRow(box);
     });
 
-    $$('.lv[data-lv="3"]', lesson).forEach(function (box) {
-      var ta = $(".ed", box), KEY = "lsn-" + lesson.dataset.lesson + "-editor-v1";
+    $$('.lv[data-lv="3"], .lv[data-lv="4"]', lesson).forEach(function (box) {
+      var blank = box.dataset.lv === "4";
+      var own = JSON.parse(JSON.stringify(cfg)); own.start = blank ? bareStart(cfg.start) : cfg.start;
+      (function (cfg) {
+      var ta = $(".ed", box), KEY = "lsn-" + lesson.dataset.lesson + (blank ? "-blank-v1" : "-editor-v1");
       var saved = null;
       try { saved = localStorage.getItem(KEY); } catch (e) { saved = null; }
       ta.value = saved || cfg.start;
@@ -937,10 +983,11 @@
           var c = comparePanel(ta.value, answer);
           cmpOut.appendChild(c.box);
           cmpBtn.textContent = "Hide the answer";
-          addLog({ kind: "answer", problem: problemName(lesson), mode: "From blank", code: ta.value.replace(/\s+$/, ""), missing: c.missing, extra: c.extra });
+          addLog({ kind: "answer", problem: problemName(lesson), mode: modeName(box), code: ta.value.replace(/\s+$/, ""), missing: c.missing, extra: c.extra });
         });
       }
       logRow(box);
+      })(own);
     });
 
     var keys = (cfg.keys || []).concat([["return", "return "], ["for", "for "], ["in", "in "], ["if", "if "]]);

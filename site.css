@@ -1405,3 +1405,5 @@ blockquote{border-left:0!important}
 .trace-btn{margin-top:10px}
 .trace-code .tc,.trace-code .tn,.trace-code .tl{margin:0!important}
 .trace-code *{font-variant-ligatures:none!important;font-feature-settings:"liga" 0,"calt" 0!important}
+/* 50. difficulty labels are quiet grey, not coloured (owner request) */
+.tag-e,.tag-m,.tag-h,:root[data-theme="dark"] .tag-e,:root[data-theme="dark"] .tag-m,:root[data-theme="dark"] .tag-h{background:var(--surface-2)!important;color:var(--ink-2)!important;border:1px solid var(--line)!important}

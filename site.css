@@ -1467,3 +1467,11 @@ textarea.hl-on::selection{background:rgba(224,178,74,.35)}
 /* 52. Build it inside the practice tabs: the code header may wrap, so the copy button never gets cut off */
 .lv .code-text .code-label{flex-wrap:wrap;row-gap:8px;white-space:normal}
 .lv .code-text .code-label .cp-btn{margin-left:auto}
+
+/* 53. Line numbers on phones. A phone code box is drawn at 16px and shrunk to 75%, so its
+   gutter is 4/3 wider in its own units: 59px, so the numbers sit inside the dark strip. */
+.lsn textarea.zf.ed{padding-left:59px!important}
+.hl-back.nums.zf{background:linear-gradient(90deg,#161b23 0,#161b23 48px,#1b212b 48px)}
+.hl-back.nums.zf .hl-ln::before{left:-56px;width:40px}
+/* the full-screen editor title: plain Inter, left aligned, no word breaks */
+.cf-title{font-family:Inter,system-ui,sans-serif!important;text-align:left!important;hyphens:none!important;-webkit-hyphens:none!important;overflow-wrap:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}

@@ -530,6 +530,7 @@
     }
     // the full-function editor gets line numbers; a small gap box does not, because its lines are part of a bigger program
     back.classList.toggle("nums", ta.classList.contains("ed"));
+    back.classList.toggle("zf", ta.classList.contains("zf"));
     var parent = ta.parentNode;
     if (!parent) return;
     if (back.parentNode !== parent || back.nextSibling !== ta) parent.insertBefore(back, ta);

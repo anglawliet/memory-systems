@@ -95,8 +95,11 @@
     var n = state.days[today()] || 0, finished = n >= PER_DAY;
     var left = el("div", "dx-today-l");
     left.appendChild(el("span", "dx-label", "Today"));
-    var big = el("span", "dx-count"); big.innerHTML = Math.min(n, PER_DAY) + "<small> / " + PER_DAY + "</small>"; left.appendChild(big);
-    left.appendChild(el("span", "dx-note", finished ? "Done. See you tomorrow." : n ? "Keep going." : "About five minutes."));
+    var sets = Math.floor(n / PER_DAY), inSet = n % PER_DAY;
+    var big = el("span", "dx-count");
+    big.innerHTML = (finished && !inSet ? PER_DAY : inSet) + "<small> / " + PER_DAY + "</small>";
+    left.appendChild(big);
+    left.appendChild(el("span", "dx-note", sets > 1 ? sets + " sets today. Extra sets darken today's square." : finished ? (inSet ? "Streak kept. Extra set in progress." : "Done. Extra sets darken today's square.") : n ? "Keep going." : "About five minutes."));
     var go = el("button", finished ? "lbtn ghost" : "lbtn", finished ? "Practice more" : t && t.done ? "Continue" : "Start");
     go.type = "button";
     go.addEventListener("click", function () {
@@ -139,13 +142,20 @@
       var count = new Date(year, m + 1, 0).getDate();
       for (var dnum = 1; dnum <= count; dnum++) {
         var key = ymd(new Date(year, m, dnum)), n = state.days[key] || 0;
-        var cls = "dx-d" + (n >= PER_DAY ? " on" : n ? " part" : "") + (key === tday ? " now" : "") + (key > tday ? " future" : "");
-        var d = el("span", cls); d.title = MONTHS[m] + " " + dnum + ": " + (n >= PER_DAY ? "done" : n ? n + " of " + PER_DAY : "no practice");
+        // one finished set makes the day gold; each extra set makes it darker, up to three levels
+        var sets = Math.floor(n / PER_DAY), lvl = sets >= 3 ? " dl3" : sets === 2 ? " dl2" : sets === 1 ? " dl1" : n ? " part" : "";
+        var cls = "dx-d" + lvl + (key === tday ? " now" : "") + (key > tday ? " future" : "");
+        var d = el("span", cls); d.title = MONTHS[m] + " " + dnum + ": " + (sets ? sets + (sets === 1 ? " set" : " sets") + ", " + n + " drills" : n ? n + " of " + PER_DAY : "no practice");
         days.appendChild(d);
       }
       mon.appendChild(days); grid.appendChild(mon);
     }
     box.appendChild(grid);
+    var key = el("div", "dx-key");
+    key.appendChild(el("span", null, "1 set"));
+    ["dl1", "dl2", "dl3"].forEach(function (c) { key.appendChild(el("span", "dx-d " + c)); });
+    key.appendChild(el("span", null, "3+ sets"));
+    box.appendChild(key);
   }
   function drawAccuracy() {
     var box = $(".dx-acc", home); box.textContent = "";

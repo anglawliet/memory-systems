@@ -1571,7 +1571,7 @@ a.card::before{display:none!important}
 #drills .dx-d.blank{background:transparent}
 #drills .dx-d.future{background:var(--surface-2)}
 #drills .dx-d.part{background:color-mix(in srgb,var(--gold-fill) 40%,var(--surface-3))}
-#drills .dx-d.on{background:var(--gold-fill)}
+#drills .dx-d.on,#drills .dx-d.dl1{background:var(--gold-fill)}
 #drills .dx-d.now{box-shadow:0 0 0 1.5px var(--ink)}
 #drills .dx-acc-list{display:flex;flex-direction:column;gap:14px;margin-top:16px}
 #drills .dx-acc-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:baseline}
@@ -1654,3 +1654,11 @@ a.card::before{display:none!important}
 #drills .dx-more[open] summary::after{transform:rotate(90deg)}
 #drills .dx-more .dx-acc:not(:empty),#drills .dx-more .dx-trace:not(:empty){margin-top:14px}
 #drills .dx-more .dx-foot{margin-top:14px}
+#drills .dx-d.part{background:color-mix(in srgb,var(--gold-fill) 18%,var(--surface-3))!important}
+#drills .dx-d.dl1{background:color-mix(in srgb,var(--gold-fill) 45%,var(--surface-3))!important}
+#drills .dx-d.dl2{background:color-mix(in srgb,var(--gold-fill) 75%,var(--surface-3))!important}
+#drills .dx-d.dl3{background:var(--gold-fill)!important}
+#drills .dx-key{display:flex;align-items:center;justify-content:flex-end;gap:4px;margin-top:16px;font-size:12px;color:var(--ink-3)}
+#drills .dx-key .dx-d{width:11px;height:11px}
+#drills .dx-key span:first-child{margin-right:4px}
+#drills .dx-key span:last-child{margin-left:4px}

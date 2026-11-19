@@ -943,7 +943,7 @@
         out.textContent = "";
         var co = $(".cmp-out", box), cb = $(".ed-cmp", box);
         if (co) co.textContent = "";
-        if (cb) cb.textContent = "Compare with the answer";
+        if (cb) cb.textContent = "Answer";
         // one tap clears the code, so give a way back
         if (before.trim() && before !== cfg.start) {
           var p = el("p", "ro-hint", "Your code was cleared. ");
@@ -967,14 +967,14 @@
           var pad = new Array(+b.dataset.indent + 1).join(" ");
           return (cfg.before[i] || "") + b.dataset.answer.split("\n").map(function (l) { return l.trim() ? pad + l : ""; }).join("\n") + "\n";
         }).join("") + (cfg.after || "");
-        var cmpBtn = el("button", "lbtn ghost ed-cmp", "Compare with the answer");
+        var cmpBtn = el("button", "lbtn ghost ed-cmp", "Answer");
         cmpBtn.type = "button";
         $(".run", box).insertBefore(cmpBtn, $(".run-status", box));
         var cmpOut = el("div", "cmp-out");
         $(".run-out", box).after(cmpOut);
         var asked = false;
         cmpBtn.addEventListener("click", function () {
-          if (cmpOut.firstChild) { cmpOut.textContent = ""; cmpBtn.textContent = "Compare with the answer"; return; }
+          if (cmpOut.firstChild) { cmpOut.textContent = ""; cmpBtn.textContent = "Answer"; return; }
           if (ta.value.trim() === cfg.start.trim() && !asked) {
             asked = true;
             cmpOut.appendChild(el("p", "ro-hint", "Try writing something first. A wrong guess teaches more than reading the answer. Press the button again to see it anyway."));
@@ -982,7 +982,7 @@
           }
           var c = comparePanel(ta.value, answer);
           cmpOut.appendChild(c.box);
-          cmpBtn.textContent = "Hide the answer";
+          cmpBtn.textContent = "Hide answer";
           addLog({ kind: "answer", problem: problemName(lesson), mode: modeName(box), code: ta.value.replace(/\s+$/, ""), missing: c.missing, extra: c.extra });
         });
       }
@@ -995,4 +995,56 @@
     keys = keys.filter(function (k) { if (seen[k[0]]) return false; seen[k[0]] = 1; return true; });
     if (window.CodeKeys) $$(".lv", lesson).forEach(function (lv) { window.CodeKeys.attach(lv, keys); });
   });
+})();
+
+/* One calm button row under each editor: Run the tests, See the answer, and a More menu (⋯).
+   The rarely used buttons (Start over, Copy, Copy my practice log) move into the menu, so the
+   row has at most three buttons of the same height. The original buttons stay in the page,
+   hidden, and the menu items just press them, so everything they do keeps working. */
+(function () {
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function tidy() {
+    document.querySelectorAll(".lsn .lv").forEach(function (lv) {
+      var run = lv.querySelector(".run");
+      if (!run || run.querySelector(".more-btn")) return;
+      var items = [];
+      var reset = run.querySelector(".ed-reset"), copy = run.querySelector(".cp-txt"), log = lv.querySelector(".log-copy");
+      if (reset) items.push([reset, "Start over"]);
+      if (copy) items.push([copy, "Copy my code"]);
+      if (log) items.push([log, "Copy my practice log"]);
+      if (!items.length) return;
+      var wrap = el("div", "more"), btn = el("button", "lbtn ghost more-btn", "⋯"), menu = el("div", "more-menu");
+      btn.type = "button"; btn.setAttribute("aria-label", "More"); btn.setAttribute("aria-expanded", "false");
+      menu.hidden = true;
+      items.forEach(function (it) {
+        it[0].classList.add("in-more");
+        var b = el("button", "more-item", it[1]); b.type = "button";
+        if (it[0] === log) {
+          var n = lv.querySelector(".log-n");
+          if (n) { var s = el("span", "more-sub"); b.appendChild(s); b._n = function () { s.textContent = n.textContent; }; }
+          var row = lv.querySelector(".log-row"); if (row) row.classList.add("in-more");
+        }
+        b.addEventListener("click", function () { close(); it[0].click(); });
+        menu.appendChild(b);
+      });
+      function close() { menu.hidden = true; btn.setAttribute("aria-expanded", "false"); }
+      btn.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        var open = menu.hidden;
+        document.querySelectorAll(".more-menu").forEach(function (m) { m.hidden = true; });
+        if (open) { menu.querySelectorAll(".more-item").forEach(function (b) { if (b._n) b._n(); }); menu.hidden = false; btn.setAttribute("aria-expanded", "true");
+          // keep the menu inside the screen: slide it right just enough when the left side has no room
+          menu.style.left = menu.style.right = "";
+          var gap = menu.getBoundingClientRect().left - 8;
+          if (gap < 0) menu.style.right = gap + "px"; }
+        else close();
+      });
+      document.addEventListener("click", function (ev) { if (!wrap.contains(ev.target)) close(); });
+      wrap.appendChild(btn); wrap.appendChild(menu);
+      var status = run.querySelector(".run-status");
+      run.insertBefore(wrap, status);
+    });
+  }
+  if (document.readyState === "complete") setTimeout(tidy, 0);
+  else window.addEventListener("load", function () { setTimeout(tidy, 0); });
 })();

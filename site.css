@@ -1475,3 +1475,29 @@ textarea.hl-on::selection{background:rgba(224,178,74,.35)}
 .hl-back.nums.zf .hl-ln::before{left:-56px;width:40px}
 /* the full-screen editor title: plain Inter, left aligned, no word breaks */
 .cf-title{font-family:Inter,system-ui,sans-serif!important;text-align:left!important;hyphens:none!important;-webkit-hyphens:none!important;overflow-wrap:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* 54. Practice button row: Run the tests, See the answer, and a More menu (⋯) with the rest */
+.lsn .run{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.lsn .in-more{display:none!important}
+.lsn .more{position:relative}
+.lsn .more-btn{min-width:44px;padding:0 12px;font-size:20px;line-height:1;letter-spacing:1px}
+.lsn .more-menu{position:absolute;left:0;bottom:calc(100% + 6px);z-index:20;min-width:230px;padding:6px;display:flex;flex-direction:column;gap:2px;background:var(--surface);border:1px solid var(--line-strong);border-radius:12px;box-shadow:0 8px 24px rgba(28,30,34,.14)}
+.lsn .more-menu[hidden]{display:none}
+.lsn .more-item{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:42px;padding:0 12px;border:0;border-radius:8px;background:transparent;color:var(--ink);font:500 14.5px Inter,system-ui,sans-serif;text-align:left;cursor:pointer}
+.lsn .more-item:hover,.lsn .more-item:focus-visible{background:var(--surface-2)}
+.lsn .more-sub{color:var(--ink-3);font-size:12.5px;font-weight:400}
+.lsn .run .run-status:empty{display:none}
+.lsn .run{flex-wrap:nowrap}
+.lsn .run>.lbtn,.lsn .run>.more{flex:0 1 auto;min-width:0}
+.lsn .run>.lbtn{padding-left:14px;padding-right:14px;white-space:nowrap}
+.lsn .run>.more{flex:none}
+.lsn .run{position:relative}
+.lsn .run .run-status:not(:empty){flex:1 1 100%}
+.lsn .run:has(.run-status:not(:empty)){flex-wrap:wrap}
+.lsn .more-item{flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;padding:8px 12px}
+.lsn .more-menu{left:auto;right:0;max-width:calc(100vw - 32px)}
+.lsn .run{gap:6px}
+.lsn .run>.lbtn{flex:none}
+.lsn .run:has(>.more){flex-wrap:wrap}
+@media(max-width:359px){.lsn .run>.lbtn{padding-left:11px;padding-right:11px;font-size:14px}.lsn .more-btn{min-width:42px;padding:0 8px}}
+@media(max-width:359px){.lsn .run{gap:5px}.lsn .run>.lbtn{padding-left:10px;padding-right:10px;font-size:13.5px}.lsn .more-btn{min-width:40px;padding:0 6px}}

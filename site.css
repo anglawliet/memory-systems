@@ -226,17 +226,6 @@ a.card::before{
   background-color:var(--surface-2);background-position:top left;background-size:cover;filter:var(--img-filter)
 }
 a.card:hover{transform:translateY(-3px)!important;box-shadow:var(--shadow-2)!important;border-color:var(--line-strong)!important}
-a.card.trees::before{background-image:url('trees/images/scene_1.png')}
-a.card.graphs::before{background-image:url('graphs/images/dfs_arundhati_palace.png')}
-a.card.dp::before{background-image:url('dp/images/family1_A.png')}
-a.card.arrays::before{background-image:url('arrays/images/p1_two_sum.png')}
-a.card.twoptr::before{background-image:url('two_pointers/images/p11_container_water.png')}
-a.card.window::before{background-image:url('sliding_window/images/p3_longest_substring.png')}
-a.card.stackc::before{background-image:url('stack/images/p739_daily_temperatures.png')}
-a.card.c_binary_search::before{background-image:url('binary_search/images/p875_koko_bananas.png')}
-a.card.c_linked_list::before{background-image:url('linked_list/images/p141_cycle.png')}
-a.card.c_heap::before{background-image:url('heap/images/p295_median_stream.png')}
-a.card.c_tries::before{background-image:url('tries/images/panels/p208_implement_trie_question.webp')}
 a.card.c_habits{grid-column:1/-1;border-color:var(--accent-strong)!important}
 a.card.c_habits::before{display:none}
 .card .icon{display:none}
@@ -1582,3 +1571,21 @@ textarea.hl-on::selection{background:rgba(224,178,74,.35)}
 .wk-cells.many .wk-p{width:100%;display:flex;justify-content:center;font-size:11px;letter-spacing:-.4px}
 .wk-cells.two .wk-p{min-height:26px;line-height:13px;align-items:flex-start}
 .wk-cells.two .wk-p.lo{align-items:flex-end}
+
+/* 58. Home page cards: a plain text tile with the topic name instead of a picture thumbnail */
+a.card::before{display:flex;align-items:center;justify-content:center;aspect-ratio:2/1;padding:0 18px;box-sizing:border-box;
+  background-image:none!important;background:var(--surface-2);color:var(--ink);text-align:center;
+  font:800 clamp(24px,3.2vw,34px)/1.15 Inter,system-ui,sans-serif;letter-spacing:-.01em;filter:none}
+:root[data-theme="dark"] a.card::before{background:var(--surface-2)}
+a.card.trees::before{content:"Trees"}
+a.card.graphs::before{content:"Graphs"}
+a.card.dp::before{content:"Dynamic Programming"}
+a.card.arrays::before{content:"Arrays & Hashing"}
+a.card.twoptr::before{content:"Two Pointers"}
+a.card.window::before{content:"Sliding Window"}
+a.card.stackc::before{content:"Stack"}
+a.card.c_binary_search::before{content:"Binary Search"}
+a.card.c_linked_list::before{content:"Linked List"}
+a.card.c_heap::before{content:"Heap"}
+a.card.c_tries::before{content:"Tries"}
+@media(max-width:760px){a.card::before{aspect-ratio:3/1;font-size:26px}}

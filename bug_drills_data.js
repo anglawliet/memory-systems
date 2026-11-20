@@ -1946,7 +1946,7 @@ false
 "habit": "O",
 "kind": "fix",
 "fn": "last_stone",
-"task": "The function smashes the two heaviest stones until at most one is left, then returns its weight, or 0.",
+"task": "The function smashes the two heaviest stones until one or none is left, then returns its weight, or 0.",
 "code": "def last_stone(stones):\n    heap = [-s for s in stones]\n    heapq.heapify(heap)\n    for _ in range(len(stones)):\n        if len(heap) < 2:\n            break\n        first = -heapq.heappop(heap)\n        second = -heap[0]\n        if first != second:\n            heapq.heappush(heap, -(first - second))\n    return -heap[0] if heap else 0",
 "bug": [
 8,
@@ -1967,7 +1967,7 @@ false
 2
 ]
 ],
-"why": "A smash uses two stones, so both must leave the heap. Reading `heap[0]` only peeks, so the second stone stayed in the heap. Pop twice, then push back only the difference. This is the slip from Last Stone Weight on 20 November.",
+"why": "A smash uses two stones, so both must leave the heap. A peek at `heap[0]` left the second stone in place. Pop twice, then push back only the difference. This is your Last Stone Weight slip from 20 November.",
 "domain": "Heaps",
 "bugText": "        second = -heap[0]"
 },
@@ -1997,7 +1997,7 @@ false
 7
 ]
 ],
-"why": "The heap must keep k numbers, and k changes from call to call. The 3 came from the example. Read every number in your code and ask where it came from. This is the slip from Kth Largest in a Stream on 20 November.",
+"why": "The heap must hold k numbers, and k changes with every call. The 3 came from the example. For every number in your code, ask where it came from. This is your Kth Largest slip from 20 November.",
 "domain": "Heaps",
 "bugText": "        if len(heap) > 3:"
 },
@@ -2012,7 +2012,7 @@ false
 "second",
 "size"
 ],
-"why": "`heap[0]` looks at the top without removing it. Only `heappop` removes a stone, so after one pop and one peek the heap still holds 3 stones.",
+"why": "A peek at `heap[0]` reads the top stone and leaves it there. Only `heappop` removes a stone, so one pop and one peek leave 3 of the 4 stones.",
 "domain": "Heaps",
 "answers": [
 "8",

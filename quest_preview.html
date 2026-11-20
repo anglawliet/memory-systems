@@ -2,8 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>Code Bug Drills</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Memory">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="theme-color" content="#FCFAF5">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -16,19 +23,19 @@
 html,body{height:100%;background:var(--night);color:var(--ink);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .app{position:relative;max-width:440px;overflow-x:hidden;height:100%;min-height:640px;margin:0 auto;overflow:hidden;background:var(--night)}
-.bg{position:absolute;inset:0;background:url(app_assets/quest_bg.webp) center 72%/100% auto no-repeat,linear-gradient(180deg,#09183a 0%,#0b1b40 55%,#0f2142 100%);transition:filter .6s,transform 1.2s}
+.bg{position:absolute;inset:0;background:url(app_assets/quest_bg.webp) center 72%/100% auto no-repeat,linear-gradient(180deg,var(--lb-09183a,#09183a) 0%,var(--lb-0b1b40,#0b1b40) 55%,var(--lb-0f2142,#0f2142) 100%);transition:filter .6s,transform 1.2s}
 /* the full hero and temple always stay in the picture; the plain night sky above it fills the rest */
 .app.soft .bg{filter:brightness(.62)}
 .app.dim .bg{filter:blur(5px) brightness(.4);transform:scale(1.05)}
-.shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,12,34,.35) 0%,rgba(5,12,34,0) 22%,rgba(5,12,34,0) 78%,rgba(5,12,34,.7) 100%);pointer-events:none}
+.shade{position:absolute;inset:0;background:linear-gradient(180deg,var(--lb-rgba5123435,rgba(5,12,34,.35)) 0%,var(--lb-rgba512340,rgba(5,12,34,0)) 22%,var(--lb-rgba512340,rgba(5,12,34,0)) 78%,var(--lb-rgba512347,rgba(5,12,34,.7)) 100%);pointer-events:none}
 .view{position:absolute;inset:0;display:none;flex-direction:column;padding:max(18px,env(safe-area-inset-top)) 20px max(22px,env(safe-area-inset-bottom))}
 .view.on{display:flex;animation:in .5s ease-out}
 @keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
 /* top bar */
 .top{display:flex;align-items:center;justify-content:space-between;min-height:44px}
-.chip{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:rgba(10,20,50,.5);border:1px solid var(--glass-line);font-weight:700;font-size:17px;backdrop-filter:blur(8px)}
-.icon-btn{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:rgba(10,20,50,.5);border:1px solid var(--glass-line);backdrop-filter:blur(8px)}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:var(--lb-rgba1020505,rgba(10,20,50,.5));border:1px solid var(--glass-line);font-weight:700;font-size:17px;backdrop-filter:blur(8px)}
+.icon-btn{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--lb-rgba1020505,rgba(10,20,50,.5));border:1px solid var(--glass-line);backdrop-filter:blur(8px)}
 .icon-btn svg{width:20px;height:20px}
 
 /* title */
@@ -42,7 +49,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
   background:linear-gradient(180deg,#4f9bff 0%,#1f5fe0 100%);border:1.5px solid rgba(170,210,255,.85);
   box-shadow:0 0 28px rgba(61,139,255,.75),inset 0 1px 0 rgba(255,255,255,.35);animation:breathe 3.2s ease-in-out infinite}
 .go b{display:flex;align-items:center;gap:12px;font-size:24px;font-weight:700}
-.go b::before{content:"";border-left:16px solid #e9f3ff;border-top:10px solid transparent;border-bottom:10px solid transparent}
+.go b::before{content:"";border-left:16px solid var(--ld-e9f3ff,#e9f3ff);border-top:10px solid transparent;border-bottom:10px solid transparent}
 .go span{font-size:14px;color:#cfe2ff;margin-top:2px}
 .go:active{transform:scale(.98)}
 @keyframes breathe{50%{box-shadow:0 0 40px rgba(61,139,255,.95),inset 0 1px 0 rgba(255,255,255,.35)}}
@@ -58,7 +65,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .card h3 small{font-size:14px;color:var(--ink-3);font-weight:500}
 .wk{display:grid;grid-template-columns:repeat(7,1fr);gap:5px 6px;margin-top:12px}
 .wk i{font-style:normal;text-align:center;font-size:12px;color:var(--ink-3)}
-.wk em{height:15px;border-radius:5px;background:rgba(120,150,210,.12)}
+.wk em{height:15px;border-radius:5px;background:var(--lb-rgba12015021012,rgba(120,150,210,.12))}
 .wk em.done{background:linear-gradient(180deg,#6cc0ff,#2f86ff);box-shadow:0 0 10px rgba(70,150,255,.55)}
 .wk em.today{background:transparent;border:2px solid var(--gold);box-shadow:0 0 10px rgba(255,200,97,.5)}
 .wk em.blank{background:transparent}
@@ -68,23 +75,23 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 /* drill */
 .bar{display:flex;align-items:center;gap:12px}
 .dots{flex:1;display:flex;gap:6px}
-.dots i{flex:1;height:6px;border-radius:3px;background:rgba(140,170,230,.2)}
+.dots i{flex:1;height:6px;border-radius:3px;background:var(--lb-rgba1401702302,rgba(140,170,230,.2))}
 .dots i.done{background:var(--ok)}
 .dots i.cur{background:var(--glow-2);box-shadow:0 0 8px var(--glow)}
 .ask{font-size:22px;font-weight:700;margin-top:26px;line-height:1.3}
-.code{margin-top:16px;border-radius:16px;background:#1e1e1e;border:1px solid #333;padding:10px 0;font:13px/1.75 "JetBrains Mono",monospace;overflow:hidden;font-variant-ligatures:none;box-shadow:0 10px 40px rgba(0,0,0,.45)}
-.code div{display:grid;grid-template-columns:auto 1fr;padding:0 12px 0 8px;color:#d4d4d4;border-left:3px solid transparent;cursor:pointer;transition:background .2s}
+.code{margin-top:16px;border-radius:16px;background:var(--lb-1e1e1e,#1e1e1e);border:1px solid var(--ld-333,#333);padding:10px 0;font:13px/1.75 "JetBrains Mono",monospace;overflow:hidden;font-variant-ligatures:none;box-shadow:0 10px 40px rgba(0,0,0,.45)}
+.code div{display:grid;grid-template-columns:auto 1fr;padding:0 12px 0 8px;color:var(--lc-d4d4d4,#d4d4d4);border-left:3px solid transparent;cursor:pointer;transition:background .2s}
 .code .nb{white-space:pre}
 .code div>span.t{white-space:pre-wrap;overflow-wrap:break-word;min-width:0}
-.code div:hover{background:#2a2d2e}
-.code div.bad{background:rgba(255,120,110,.16);border-left-color:var(--bad);animation:shake .35s}
-.code div.hit{background:rgba(95,224,168,.14);border-left-color:var(--ok)}
-.code u{text-decoration:none;color:#858585;display:inline-block;width:2.2ch;margin-right:10px;text-align:right}
+.code div:hover{background:var(--lb-2a2d2e,#2a2d2e)}
+.code div.bad{background:var(--lb-rgba25512011016,rgba(255,120,110,.16));border-left-color:var(--bad);animation:shake .35s}
+.code div.hit{background:var(--lb-rgba9522416814,rgba(95,224,168,.14));border-left-color:var(--ok)}
+.code u{text-decoration:none;color:var(--lc-858585,#858585);display:inline-block;width:2.2ch;margin-right:10px;text-align:right}
 @keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
-.k{color:#c586c0}.f{color:#dcdcaa}.n{color:#b5cea8}.s{color:#ce9178}.c{color:#6a9955}.v{color:#9cdcfe}.b{color:#4ec9b0}
+.k{color:var(--lc-c586c0,#c586c0)}.f{color:var(--lc-dcdcaa,#dcdcaa)}.n{color:var(--lc-b5cea8,#b5cea8)}.s{color:var(--lc-ce9178,#ce9178)}.c{color:var(--lc-6a9955,#6a9955)}.v{color:var(--lc-9cdcfe,#9cdcfe)}.b{color:var(--lc-4ec9b0,#4ec9b0)}
 .fix{display:none;margin-top:14px}
 .fix.on{display:block;animation:in .4s}
-.fix input{width:100%;min-width:0;padding:14px;border-radius:14px;background:#1e1e1e;border:1.5px solid #3c3c3c;color:#d4d4d4;font:15px 'JetBrains Mono',monospace;outline:none}
+.fix input{width:100%;min-width:0;padding:14px;border-radius:14px;background:var(--lb-1e1e1e,#1e1e1e);border:1.5px solid var(--ld-3c3c3c,#3c3c3c);color:var(--lc-d4d4d4,#d4d4d4);font:15px 'JetBrains Mono',monospace;outline:none}
 .fix input:focus{border-color:var(--glow)}
 .say{min-height:24px;margin-top:12px;font-size:16px;color:var(--ink-2);line-height:1.5}
 .say.ok{color:var(--ok)}.say.bad{color:var(--bad)}
@@ -97,7 +104,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 @keyframes fly{to{transform:translate(var(--x),var(--y));opacity:0}}
 .chips{display:flex;gap:8px}
 .stats{display:flex;justify-content:center;gap:14px;margin-top:16px}
-.stats>div{display:flex;flex-direction:column;align-items:center;min-width:120px;padding:12px 10px;border-radius:18px;background:rgba(10,20,50,.45);border:1px solid var(--glass-line);backdrop-filter:blur(8px)}
+.stats>div{display:flex;flex-direction:column;align-items:center;min-width:120px;padding:12px 10px;border-radius:18px;background:var(--lb-rgba10205045,rgba(10,20,50,.45));border:1px solid var(--glass-line);backdrop-filter:blur(8px)}
 .stats .ico{font-size:30px;line-height:1;filter:drop-shadow(0 0 10px rgba(255,170,60,.55))}
 .stats b{font-size:28px;font-weight:800;margin-top:6px}
 .stats small{font-size:13px;color:var(--ink-2)}
@@ -105,7 +112,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .wk em.today.done,.wk em.today.more{border:2px solid var(--gold)}
 .key{display:flex;justify-content:center;gap:14px;margin-top:10px;font-size:12px;color:var(--ink-3)}
 .key i{display:inline-block;width:14px;height:9px;border-radius:3px;margin-right:5px;vertical-align:-1px}
-.gain{display:inline-flex;align-items:center;gap:8px;margin-top:18px;padding:10px 18px;border-radius:999px;background:rgba(10,20,50,.5);border:1px solid var(--glass-line)}
+.gain{display:inline-flex;align-items:center;gap:8px;margin-top:18px;padding:10px 18px;border-radius:999px;background:var(--lb-rgba1020505,rgba(10,20,50,.5));border:1px solid var(--glass-line)}
 .gain .ico{font-size:22px}.gain b{font-size:24px;font-weight:800}
 .gain.pop{animation:gainPop .6s ease-out}
 @keyframes gainPop{40%{transform:scale(1.15);box-shadow:0 0 30px rgba(255,200,97,.7)}}
@@ -324,5 +331,6 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
   $("#fixIn").addEventListener("keydown", function (e) { if (e.key === "Enter") $("#act").click(); });
 })();
 </script>
+<script src="site.js?v=20261120a" defer></script>
 </body>
 </html>

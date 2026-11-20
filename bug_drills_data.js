@@ -5,7 +5,7 @@ window.DRILLS = [
 "habit": "E",
 "kind": "fix",
 "fn": "window_sums",
-"task": "The function returns the sum of each window of k numbers in a row.",
+"task": "Add up every group of `k` numbers in a row in `nums`. Return the list of sums. For example, `window_sums([1, 2, 3, 4], 2)` gives `[3, 5, 7]`, because 1 + 2, 2 + 3 and 3 + 4.",
 "code": "def window_sums(nums, k):\n    total = 0\n    sums = []\n    for right in range(len(nums)):\n        added = nums[right]\n        total += added\n        if right >= k:\n            gone = nums[right - k]\n            total -= added\n        if right >= k - 1:\n            sums.append(total)\n    return sums",
 "bug": [
 9,
@@ -37,7 +37,7 @@ window.DRILLS = [
 ]
 ]
 ],
-"why": "The number leaving the window is `gone`. Subtract `gone` from `total`. The line was copied from `total += added` above it, but one name was not changed.",
+"why": "The line subtracted `added`, the number that just joined, so `total` lost the wrong number. Subtract `gone`, the number that left: `total -= gone`. The line was copied from `total += added` above it, and one name stayed the same.",
 "domain": "Algorithms",
 "bugText": "            total -= added"
 },
@@ -46,7 +46,7 @@ window.DRILLS = [
 "habit": "E",
 "kind": "fix",
 "fn": "distinct_counts",
-"task": "The function returns the number of different letters in each window of k letters.",
+"task": "For every group of `k` letters in a row in `s`, count how many different letters it has. Return the list of counts. For example, `distinct_counts('aab', 2)` gives `[1, 2]`, because \"aa\" has 1 different letter and \"ab\" has 2.",
 "code": "def distinct_counts(s, k):\n    window = Counter()\n    out = []\n    for right in range(len(s)):\n        letter = s[right]\n        window[letter] += 1\n        if right >= k:\n            gone = s[right - k]\n            window[letter] -= 1\n        if right >= k - 1:\n            out.append(sum(1 for c in window.values() if c > 0))\n    return out",
 "bug": [
 9,
@@ -76,7 +76,7 @@ window.DRILLS = [
 ]
 ]
 ],
-"why": "The letter leaving the window is `gone`. Lower its count. The remove line copied `window[letter] += 1`, but the name was not changed. This is the exact slip from Minimum Window on 19 November.",
+"why": "The line lowered the count of `letter`, the letter that just joined. Lower the count of `gone`, the letter that left: `window[gone] -= 1`. The line was copied from `window[letter] += 1`, and one name stayed the same. You made this exact slip in Minimum Window on 19 November.",
 "domain": "Algorithms",
 "bugText": "            window[letter] -= 1"
 },
@@ -85,7 +85,7 @@ window.DRILLS = [
 "habit": "E",
 "kind": "fix",
 "fn": "has_anagram",
-"task": "The function returns True if a window of s2 has exactly the letters of s1 in any order.",
+"task": "Return True if `s2` has a group of letters in a row that uses exactly the letters of `s1`, in any order. Otherwise return False. For example, `has_anagram('adc', 'dcda')` gives `True`, because \"cda\" uses the same letters as \"adc\".",
 "code": "def has_anagram(s1, s2):\n    need = Counter(s1)\n    window = Counter()\n    left = 0\n    for right in range(len(s2)):\n        window[s2[right]] += 1\n        if len(window) > len(s1):\n            window[s2[left]] -= 1\n            left += 1\n        if window == need:\n            return True\n    return False",
 "bug": [
 7,
@@ -106,7 +106,7 @@ true
 false
 ]
 ],
-"why": "The value of `len(window)` is the number of different letters in the dictionary. It is not the number of letters in the window. For \"dcd\" it is 2, not 3. The window length is `right - left + 1`.",
+"why": "The check `len(window)` counts how many different letters the dictionary holds, not how many letters sit in the window. For \"dcd\", it gives 2, but the window holds 3 letters. Measure the window with `right - left + 1`.",
 "domain": "Algorithms",
 "bugText": "        if len(window) > len(s1):"
 },
@@ -115,7 +115,7 @@ false
 "habit": "E",
 "kind": "fix",
 "fn": "max_profit",
-"task": "The function returns the best profit from buying on one day and selling on a later day.",
+"task": "Each number in `prices` is the price on one day. Buy on one day, sell on a later day, and return the biggest profit, or 0 if no sale makes money. For example, `max_profit([7, 1, 5, 3, 6, 4])` gives `5`, because buying at 1 and selling at 6 makes 5.",
 "code": "def max_profit(prices):\n    cheapest = prices[0]\n    best = 0\n    for price in prices:\n        cheapest = min(cheapest, price)\n        profit = price - cheapest\n        best = max(best, profit)\n    return profit",
 "bug": [
 8,
@@ -136,7 +136,7 @@ false
 0
 ]
 ],
-"why": "The value of `profit` is only today's profit. The value of `best` is the biggest profit seen so far. The function must return `best`.",
+"why": "The function returned `profit`, which is only the last day's profit. Return `best`, the biggest profit seen on any day.",
 "domain": "Algorithms",
 "bugText": "    return profit"
 },
@@ -145,7 +145,7 @@ false
 "habit": "E",
 "kind": "fix",
 "fn": "longest_unique",
-"task": "The function returns the length of the longest part of s with no repeated letter.",
+"task": "Return the length of the longest group of letters in a row in `s` where no letter repeats. For example, `longest_unique('abcabcbb')` gives `3`, because \"abc\" has no repeat.",
 "code": "def longest_unique(s):\n    seen = set()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        while s[right] in seen:\n            seen.remove(s[left])\n            left += 1\n        seen.add(s[left])\n        best = max(best, right - left + 1)\n    return best",
 "bug": [
 9,
@@ -166,7 +166,7 @@ false
 3
 ]
 ],
-"why": "The letter joining the window is `s[right]`. The line copied `seen.remove(s[left])` from two lines above. This is the first mistake in the log, from 14 November.",
+"why": "The line added `s[left]`, but the letter joining the window is `s[right]`. The line was copied from `seen.remove(s[left])` two lines above. This was the first mistake in your log, on 14 November.",
 "domain": "Algorithms",
 "bugText": "        seen.add(s[left])"
 },
@@ -175,7 +175,7 @@ false
 "habit": "A",
 "kind": "fix",
 "fn": "has_anagram",
-"task": "The function returns True if a window of s2 has exactly the letters of s1 in any order.",
+"task": "Return True if `s2` has a group of letters in a row that uses exactly the letters of `s1`, in any order. Otherwise return False. For example, `has_anagram('ab', 'aab')` gives `True`, because \"ab\" appears in \"aab\".",
 "code": "def has_anagram(s1, s2):\n    need = Counter(s1)\n    window = Counter()\n    for right in range(len(s2)):\n        window[s2[right]] += 1\n        if right >= len(s1):\n            gone = s2[right - len(s1)]\n        if window == need:\n            return True\n    return False",
 "bug": [
 7,
@@ -196,7 +196,7 @@ true
 false
 ]
 ],
-"why": "The letter `gone` left the window, but its count did not go down. The tracker `window` must change whenever the window loses a letter. The same line was missing in Minimum Window on 18 November.",
+"why": "When `gone` left the window, its count never went down, so the dictionary `window` still counted it. Add `window[gone] -= 1` right after finding `gone`. You missed this same line in Minimum Window on 18 November.",
 "domain": "Algorithms",
 "bugText": "            gone = s2[right - len(s1)]"
 },
@@ -205,7 +205,7 @@ false
 "habit": "A",
 "kind": "fix",
 "fn": "longest_replace",
-"task": "The function returns the longest window that needs at most k letter changes to become all one letter.",
+"task": "You may change up to `k` letters. Return the length of the longest group of letters in a row in `s` that can become all one letter. For example, `longest_replace('ABA', 0)` gives `1`, because with no changes, each group can be only one letter long.",
 "code": "def longest_replace(s, k):\n    count = Counter()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        count[s[right]] += 1\n        while right - left + 1 - max(count.values()) > k:\n            left += 1\n            count[s[left]] -= 1\n        best = max(best, right - left + 1)\n    return best",
 "bug": [
 8,
@@ -226,7 +226,7 @@ false
 3
 ]
 ],
-"why": "Moving `left` first makes `s[left]` the next letter. It is not the letter leaving. Lower the count of the letter at `left` first. Then move `left`.",
+"why": "The code moved `left` before lowering the count, so `s[left]` pointed at the next letter, not the one leaving. Lower the count first with `count[s[left]] -= 1`, then move `left`.",
 "domain": "Algorithms",
 "bugText": "            left += 1\n            count[s[left]] -= 1"
 },
@@ -235,7 +235,7 @@ false
 "habit": "A",
 "kind": "fix",
 "fn": "max_profit",
-"task": "The function returns the best profit from buying on one day and selling on a later day.",
+"task": "Each number in `prices` is the price on one day. Buy on one day, sell on a later day, and return the biggest profit, or 0 if no sale makes money. For example, `max_profit([7, 1, 5, 3, 6, 4])` gives `5`, because buying at 1 and selling at 6 makes 5.",
 "code": "def max_profit(prices):\n    cheapest = prices[0]\n    best = 0\n    for price in prices:\n        profit = price - cheapest\n        best = max(best, profit)\n    return best",
 "bug": [
 5,
@@ -256,7 +256,7 @@ false
 3
 ]
 ],
-"why": "The loop moves to a new day, but `cheapest` never changes. Every profit is measured from day 0. Each time the loop moves, ask which tracker must learn about the new item.",
+"why": "The variable `cheapest` never changed, so every profit was measured from the first day's price. Update it each day with `cheapest = min(cheapest, price)` before finding the profit. Each time the loop moves, ask which tracker must learn about the new item.",
 "domain": "Algorithms",
 "bugText": "        profit = price - cheapest"
 },
@@ -265,7 +265,7 @@ false
 "habit": "B",
 "kind": "fix",
 "fn": "longest_replace",
-"task": "The function returns the longest window that needs at most k letter changes to become all one letter.",
+"task": "You may change up to `k` letters. Return the length of the longest group of letters in a row in `s` that can become all one letter. For example, `longest_replace('AABABBA', 1)` gives `4`, because changing one letter turns \"AABA\" into \"AAAA\".",
 "code": "def longest_replace(s, k):\n    count = Counter()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        count[s[right]] += 1\n        while right - left + 1 - max(count.values()) > k:\n            count[left] -= 1\n            left += 1\n        best = max(best, right - left + 1)\n    return best",
 "bug": [
 8,
@@ -286,7 +286,7 @@ false
 3
 ]
 ],
-"why": "The value of `left` is a position, such as 2. The counts use letters as keys. Use `s[left]`, the letter at that position.",
+"why": "The line used `left`, which is a position like 2, but the counts use letters as keys. Use the letter at that position: `count[s[left]] -= 1`.",
 "domain": "Algorithms",
 "bugText": "            count[left] -= 1"
 },
@@ -295,7 +295,7 @@ false
 "habit": "B",
 "kind": "fix",
 "fn": "longest_unique",
-"task": "The function returns the length of the longest part of s with no repeated letter.",
+"task": "Return the length of the longest group of letters in a row in `s` where no letter repeats. For example, `longest_unique('abcb')` gives `3`, because \"abc\" has no repeat.",
 "code": "def longest_unique(s):\n    seen = set()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        while s[right] in seen:\n            seen.pop(s[left])\n            left += 1\n        seen.add(s[right])\n        best = max(best, right - left + 1)\n    return best",
 "bug": [
 7,
@@ -316,7 +316,7 @@ false
 3
 ]
 ],
-"why": "The value of `seen` is a set. A set's `pop()` takes no value and removes a random item. Use `remove` to remove one chosen item from a set. Name the type before choosing the method.",
+"why": "A set's `pop()` takes no value and removes a random item, so the call crashed. Use `remove` to take out one chosen item: `seen.remove(s[left])`. Name the type first, then choose the method.",
 "domain": "Algorithms",
 "bugText": "            seen.pop(s[left])"
 },
@@ -325,7 +325,7 @@ false
 "habit": "B",
 "kind": "fix",
 "fn": "shortest_slice",
-"task": "The function returns the shortest run of numbers with a sum of at least target.",
+"task": "Find the shortest group of numbers in a row in `nums` whose sum is at least `target`. Return that group as a list. For example, `shortest_slice([2, 3, 1, 2, 4, 3], 7)` gives `[4, 3]`, because 4 + 3 = 7, and no single number reaches 7.",
 "code": "def shortest_slice(nums, target):\n    total = 0\n    left = 0\n    best_left, best_size = 0, len(nums) + 1\n    for right in range(len(nums)):\n        total += nums[right]\n        while total >= target:\n            if right - left + 1 < best_size:\n                best_left, best_size = nums[left], right - left + 1\n            total -= nums[left]\n            left += 1\n    return nums[best_left:best_left + best_size]",
 "bug": [
 9,
@@ -354,7 +354,7 @@ false
 ]
 ]
 ],
-"why": "The value of `best_left` must be a position because the return line uses it for slicing. The value of `nums[left]` is the number at that position.",
+"why": "The line saved `nums[left]`, the number at that spot. The return line slices with `best_left`, so it needs the position. Save `left` instead.",
 "domain": "Algorithms",
 "bugText": "                best_left, best_size = nums[left], right - left + 1"
 },
@@ -363,7 +363,7 @@ false
 "habit": "G",
 "kind": "fix",
 "fn": "longest_ones",
-"task": "The function returns the longest window with at most k zeros.",
+"task": "Each number in `nums` is 0 or 1. Return the length of the longest group of numbers in a row that has at most `k` zeros. For example, `longest_ones([1, 1, 0, 0, 1], 1)` gives `3`, because [1, 1, 0] has one zero.",
 "code": "def longest_ones(nums, k):\n    zeros = 0\n    left = 0\n    best = 0\n    for right in range(len(nums)):\n        if nums[right] == 0:\n            zeros += 1\n        while zeros >= k:\n            if nums[left] == 0:\n                zeros -= 1\n            left += 1\n        best = max(best, right - left + 1)\n    return best",
 "bug": [
 8,
@@ -384,7 +384,7 @@ false
 2
 ]
 ],
-"why": "\"At most k zeros\" means k zeros is allowed. The window is invalid only when `zeros > k`. Using `>=` removes a window with exactly k zeros.",
+"why": "\"At most k zeros\" means a window with exactly k zeros is fine. The check `zeros >= k` shrank that window anyway. Shrink only when `zeros > k`.",
 "domain": "Algorithms",
 "bugText": "        while zeros >= k:"
 },
@@ -393,7 +393,7 @@ false
 "habit": "G",
 "kind": "fix",
 "fn": "count_small",
-"task": "The function counts the windows of k numbers with a sum of at most limit.",
+"task": "Count the groups of `k` numbers in a row in `nums` whose sum is at most `limit`. For example, `count_small([1, 2, 3, 1], 2, 4)` gives `2`, because 1 + 2 = 3 and 3 + 1 = 4 are at most 4, but 2 + 3 = 5 is not.",
 "code": "def count_small(nums, k, limit):\n    total = 0\n    found = 0\n    for right in range(len(nums)):\n        total += nums[right]\n        if right >= k:\n            total -= nums[right - k]\n        if right >= k - 1 and total == limit:\n            found += 1\n    return found",
 "bug": [
 8,
@@ -414,7 +414,7 @@ false
 0
 ]
 ],
-"why": "\"At most limit\" means `<=`. The check `== limit` counts only windows that equal the limit. Read the problem's words. Choose the matching comparison.",
+"why": "\"At most limit\" means less than or equal, so the check is `total <= limit`. The check `total == limit` counted only windows that hit the limit exactly.",
 "domain": "Algorithms",
 "bugText": "        if right >= k - 1 and total == limit:"
 },
@@ -423,7 +423,7 @@ false
 "habit": "G",
 "kind": "fix",
 "fn": "window_sums",
-"task": "The function returns the sum of each window of k numbers in a row.",
+"task": "Add up every group of `k` numbers in a row in `nums`. Return the list of sums. For example, `window_sums([1, 2, 3, 4], 2)` gives `[3, 5, 7]`, because 1 + 2, 2 + 3 and 3 + 4.",
 "code": "def window_sums(nums, k):\n    total = 0\n    sums = []\n    for right in range(len(nums)):\n        total += nums[right]\n        if right > k:\n            total -= nums[right - k]\n        if right >= k - 1:\n            sums.append(total)\n    return sums",
 "bug": [
 6,
@@ -454,7 +454,7 @@ false
 ]
 ]
 ],
-"why": "The first number leaves when `right` reaches k. For k = 2, the window has 3 numbers at `right = 2`. The value `nums[0]` must leave then. Try the first moment by hand: `right = k`.",
+"why": "With `right > k`, the first number left one step too late. For k = 2, the window held 3 numbers when `right` was 2. Start removing when `right >= k`, and check that first moment by hand.",
 "domain": "Algorithms",
 "bugText": "        if right > k:"
 },
@@ -463,7 +463,7 @@ false
 "habit": "G",
 "kind": "fix",
 "fn": "longest_replace",
-"task": "The function returns the longest window that needs at most k letter changes to become all one letter.",
+"task": "You may change up to `k` letters. Return the length of the longest group of letters in a row in `s` that can become all one letter. For example, `longest_replace('AAAA', 2)` gives `4`, because \"AAAA\" is already all one letter.",
 "code": "def longest_replace(s, k):\n    count = Counter()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        count[s[right]] += 1\n        size = right - left + 1\n        if size - max(count.values()) == k:\n            best = max(best, size)\n        while right - left + 1 - max(count.values()) > k:\n            count[s[left]] -= 1\n            left += 1\n    return best",
 "bug": [
 8,
@@ -484,7 +484,7 @@ false
 4
 ]
 ],
-"why": "A window is valid when it needs at most k changes. \"AAAA\" needs 0 changes. Since 0 is not equal to 2, `== k` skipped it. This is the slip from 19 November at 3:08 AM.",
+"why": "A window is valid when it needs at most k changes, so the check is `<= k`. \"AAAA\" needs 0 changes, and 0 is not equal to 2, so `== k` skipped it. You made this slip on 19 November at 3:08 AM.",
 "domain": "Algorithms",
 "bugText": "        if size - max(count.values()) == k:"
 },
@@ -493,7 +493,7 @@ false
 "habit": "J",
 "kind": "fix",
 "fn": "longest_unique",
-"task": "The function returns the length of the longest part of s with no repeated letter.",
+"task": "Return the length of the longest group of letters in a row in `s` where no letter repeats. For example, `longest_unique('abcb')` gives `3`, because \"abc\" has no repeat.",
 "code": "def longest_unique(s):\n    seen = set()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        while s[right] in seen:\n            seen.remove(s[left])\n            left -= 1\n        seen.add(s[right])\n        best = max(best, right - left + 1)\n    return best",
 "bug": [
 8,
@@ -514,7 +514,7 @@ false
 3
 ]
 ],
-"why": "The window shrinks from the left. The value of `left` moves forward toward `right`. Say the direction out loud: \"shrink means `left` goes up.\"",
+"why": "The window shrinks from the left, so `left` moves forward, toward `right`. The line `left -= 1` moved it backward. Say the direction out loud: \"shrink means left goes up.\"",
 "domain": "Algorithms",
 "bugText": "            left -= 1"
 },
@@ -523,7 +523,7 @@ false
 "habit": "J",
 "kind": "fix",
 "fn": "count_vowels",
-"task": "The function counts the vowels in s.",
+"task": "Return how many vowels `s` has. For example, `count_vowels('banana')` gives `3`.",
 "code": "def count_vowels(s):\n    found = 0\n    for i in len(range(s)):\n        if s[i] in 'aeiou':\n            found += 1\n    return found",
 "bug": [
 3,
@@ -544,7 +544,7 @@ false
 1
 ]
 ],
-"why": "Read nested calls from the inside out. First find the length of `s`. Then make a range of that length. The call `range(s)` fails because `s` is a string.",
+"why": "The call `range(s)` failed because `s` is a string, not a number. Read nested calls from the inside out: first get the length with `len(s)`, then make the range with `range(len(s))`.",
 "domain": "Algorithms",
 "bugText": "    for i in len(range(s)):"
 },
@@ -553,7 +553,7 @@ false
 "habit": "J",
 "kind": "fix",
 "fn": "shortest_len",
-"task": "The function returns the length of the shortest run with a sum of at least target, or 0 if none exists.",
+"task": "Return the length of the shortest group of numbers in a row in `nums` whose sum is at least `target`, or 0 if no group reaches it. For example, `shortest_len([1, 1], 5)` gives `0`, because the whole list only adds up to 2.",
 "code": "def shortest_len(nums, target):\n    total = 0\n    left = 0\n    best = float('inf')\n    for right in range(len(nums)):\n        total += nums[right]\n        while total >= target:\n            best = min(best, right - left + 1)\n            total -= nums[left]\n            left += 1\n    return 0 if best == float('-inf') else best",
 "bug": [
 11,
@@ -574,7 +574,7 @@ false
 1
 ]
 ],
-"why": "The value of `best` starts at plus infinity. So \"nothing found\" means it is still `float('inf')`. The check used minus infinity, which has the reversed sign. This is the slip from 19 November at 6:15 AM.",
+"why": "The variable `best` starts at plus infinity, so \"nothing found\" means it still equals `float('inf')`. The check compared with minus infinity, the opposite sign. You made this slip on 19 November at 6:15 AM.",
 "domain": "Algorithms",
 "bugText": "    return 0 if best == float('-inf') else best"
 },
@@ -583,7 +583,7 @@ false
 "habit": "J",
 "kind": "fix",
 "fn": "window_max",
-"task": "The function returns the biggest number in each window of k numbers.",
+"task": "For every group of `k` numbers in a row in `nums`, find the biggest number. Return the list of biggest numbers. For example, `window_max([5, 1, 3], 3)` gives `[5]`.",
 "code": "def window_max(nums, k):\n    queue = deque()\n    out = []\n    for right in range(len(nums)):\n        while queue and nums[queue[-1]] < nums[right]:\n            queue.popleft()\n        queue.append(right)\n        if queue[0] <= right - k:\n            queue.popleft()\n        if right >= k - 1:\n            out.append(nums[queue[0]])\n    return out",
 "bug": [
 6,
@@ -613,7 +613,7 @@ false
 ]
 ]
 ],
-"why": "Remove smaller numbers from the back. This is where the new number arrives. The method `pop()` removes from the back. The method `popleft()` removes from the front.",
+"why": "Smaller numbers must leave from the back of the queue, where the new number arrives. The method `popleft()` removed from the front instead. Use `pop()` to remove from the back.",
 "domain": "Algorithms",
 "bugText": "            queue.popleft()"
 },
@@ -622,7 +622,7 @@ false
 "habit": "M",
 "kind": "fix",
 "fn": "has_sum",
-"task": "The function returns True if a window of k numbers adds up to target. It returns False if none does.",
+"task": "Return True if some group of `k` numbers in a row in `nums` adds up to exactly `target`. Otherwise return False. For example, `has_sum([1, 2, 3], 2, 5)` gives `True`, because 2 + 3 = 5.",
 "code": "def has_sum(nums, k, target):\n    total = 0\n    for right in range(len(nums)):\n        total += nums[right]\n        if right >= k:\n            total -= nums[right - k]\n        if right >= k - 1 and total == target:\n            return True",
 "bug": [
 8,
@@ -643,7 +643,7 @@ false
 false
 ]
 ],
-"why": "When the loop ends without finding a window, the function reaches the end and returns `None`. Right after writing a loop, write the line for \"nothing found\".",
+"why": "When no window adds up to the target, the loop ends and the function returns `None`. Add `return False` after the loop. Right after writing a loop, write the line for \"nothing found\".",
 "domain": "Algorithms",
 "bugText": "            return True"
 },
@@ -652,7 +652,7 @@ false
 "habit": "M",
 "kind": "fix",
 "fn": "first_repeat",
-"task": "The function returns the first letter that appears twice, or an empty string if no letter repeats.",
+"task": "Return the first letter in `s` that shows up a second time, or an empty string if no letter repeats. For example, `first_repeat('abca')` gives `'a'`.",
 "code": "def first_repeat(s):\n    seen = set()\n    for letter in s:\n        if letter in seen:\n            return letter\n        seen.add(letter)",
 "bug": [
 6,
@@ -673,7 +673,7 @@ false
 ""
 ]
 ],
-"why": "The loop returns only when it finds a repeat. If no repeat exists, Python returns `None`, not \"\". Ask: what do I return when the loop finds nothing?",
+"why": "When no letter repeats, the loop ends without a return, so Python gives back `None` instead of an empty string. Add `return \"\"` after the loop. Ask what to return when the loop finds nothing.",
 "domain": "Algorithms",
 "bugText": "        seen.add(letter)"
 },
@@ -682,7 +682,7 @@ false
 "habit": "N",
 "kind": "fix",
 "fn": "has_anagram",
-"task": "The function returns True if a window of s2 has exactly the letters of s1 in any order.",
+"task": "Return True if `s2` has a group of letters in a row that uses exactly the letters of `s1`, in any order. Otherwise return False. For example, `has_anagram('ab', 'eidbaooo')` gives `True`, because \"ba\" uses the same letters as \"ab\".",
 "code": "def has_anagram(s1, s2):\n    need = Counter(s1)\n    window = Counter()\n    for right in range(len(s2)):\n        window[s2[right]] += 1\n        if window == need:\n            return True\n        if right >= len(s1):\n            window[s2[right - len(s1)]] -= 1\n    return False",
 "bug": [
 6,
@@ -703,7 +703,7 @@ true
 false
 ]
 ],
-"why": "The order inside the loop is add, fix, check. Here, the check ran when the window was one letter too long. The correct window was never compared. This is the slip from 19 November at 5:58 AM.",
+"why": "The check ran while the window was still one letter too long, so the right window was never compared. Keep this order inside the loop: add the new letter, remove the old one, then check. You made this slip on 19 November at 5:58 AM.",
 "domain": "Algorithms",
 "bugText": "        if window == need:\n            return True\n        if right >= len(s1):\n            window[s2[right - len(s1)]] -= 1"
 },
@@ -712,7 +712,7 @@ false
 "habit": "N",
 "kind": "fix",
 "fn": "shortest_len",
-"task": "The function returns the length of the shortest run with a sum of at least target, or 0 if none exists.",
+"task": "Return the length of the shortest group of numbers in a row in `nums` whose sum is at least `target`, or 0 if no group reaches it. For example, `shortest_len([2, 3, 1, 2, 4, 3], 7)` gives `2`, because 4 + 3 = 7.",
 "code": "def shortest_len(nums, target):\n    total = 0\n    left = 0\n    best = float('inf')\n    for right in range(len(nums)):\n        total += nums[right]\n        while total >= target:\n            total -= nums[left]\n            left += 1\n            best = min(best, right - left + 1)\n    return 0 if best == float('inf') else best",
 "bug": [
 8,
@@ -733,7 +733,7 @@ false
 1
 ]
 ],
-"why": "Save the window while it is still valid. Do this before shrinking it. Here, `best` was saved after `left` moved. It measured a window that might no longer reach the target.",
+"why": "The code moved `left` before saving the length, so it measured a window that might no longer reach the target. Save `best` while the window is still valid, then shrink it.",
 "domain": "Algorithms",
 "bugText": "            total -= nums[left]\n            left += 1\n            best = min(best, right - left + 1)"
 },
@@ -742,7 +742,7 @@ false
 "habit": "C",
 "kind": "fix",
 "fn": "longest_unique",
-"task": "The function returns the length of the longest part of s with no repeated letter.",
+"task": "Return the length of the longest group of letters in a row in `s` where no letter repeats. For example, `longest_unique('aaccca')` gives `2`, because \"ac\" has no repeat.",
 "code": "def longest_unique(s):\n    seen = set()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        if s[right] in seen:\n            seen.remove(s[left])\n            left += 1\n        seen.add(s[right])\n        best = max(best, right - left + 1)\n    return best",
 "bug": [
 6,
@@ -763,7 +763,7 @@ false
 3
 ]
 ],
-"why": "Removing one letter may not remove the repeat. For \"abcb\", removing \"a\" still leaves the first \"b\". Use `while` to shrink until the repeat is gone.",
+"why": "Removing one letter may leave the repeat in place. For \"abcb\", removing \"a\" still leaves the first \"b\". Use `while` instead of `if`, so the window keeps shrinking until the repeat is gone.",
 "domain": "Algorithms",
 "bugText": "        if s[right] in seen:"
 },
@@ -771,14 +771,14 @@ false
 "id": "p1",
 "habit": "A",
 "kind": "predict",
-"task": "Trace these lines by hand. What are the final values?",
+"task": "Run these lines in your head, one at a time. Then type the value of each name at the end.",
 "code": "s = \"abb\"\ncount = {\"a\": 1, \"b\": 2}\nleft = 0\nleft += 1\ncount[s[left]] -= 1",
 "ask": [
 "left",
 "count[\"a\"]",
 "count[\"b\"]"
 ],
-"why": "The value of `left` moved first. So `s[left]` is the letter after the one that should leave. The count of \"b\" went down, and \"a\" stayed at 1. This is why the count must go down before `left` moves.",
+"why": "The code moved `left` first, so `s[left]` became the letter after the one that should leave. The count of \"b\" went down, and \"a\" stayed at 1. Lower the count before moving `left`.",
 "domain": "Algorithms",
 "answers": [
 "1",
@@ -790,13 +790,13 @@ false
 "id": "p2",
 "habit": "E",
 "kind": "predict",
-"task": "Trace these lines by hand. What are the final values?",
+"task": "Run these lines in your head, one at a time. Then type the value of each name at the end.",
 "code": "window = {\"d\": 2, \"c\": 1}\nleft = 0\nright = 2\nsize = right - left + 1\nkinds = len(window)",
 "ask": [
 "size",
 "kinds"
 ],
-"why": "The value of `size` is the number of letters in the window, which is 3. The value of `len(window)` is the number of different letters, which is 2. They are easy to confuse because both sound like \"how big is the window\".",
+"why": "The variable `size` is how many letters the window holds: 3. The value `len(window)` is how many different letters it holds: 2. The two are easy to mix up, because both sound like \"how big is the window\".",
 "domain": "Algorithms",
 "answers": [
 "3",
@@ -807,14 +807,14 @@ false
 "id": "p3",
 "habit": "A",
 "kind": "predict",
-"task": "Trace this loop by hand. What are the values when it ends?",
+"task": "Run this loop in your head, one step at a time. Then type the value of each name when the loop ends.",
 "code": "s = \"abca\"\nseen = set()\nleft = 0\nfor right in range(len(s)):\n    while s[right] in seen:\n        seen.remove(s[left])\n        left += 1\n    seen.add(s[right])",
 "ask": [
 "left",
 "right",
 "len(seen)"
 ],
-"why": "At the last \"a\", the first \"a\" leaves. The value of `left` moves to 1. The set `seen` always holds exactly the letters from `left` to `right`. Those letters are b, c and a.",
+"why": "At the last \"a\", the first \"a\" leaves, and `left` moves to 1. The set `seen` always holds the letters from `left` to `right`, which are b, c and a, so its length is 3.",
 "domain": "Algorithms",
 "answers": [
 "1",
@@ -826,14 +826,14 @@ false
 "id": "p4",
 "habit": "G",
 "kind": "predict",
-"task": "Trace this loop by hand. What are the values when it ends?",
+"task": "Run this loop in your head, one step at a time. Then type the value of each name when the loop ends.",
 "code": "nums = [1, 0, 0, 1]\nk = 1\nzeros = 0\nleft = 0\nbest = 0\nfor right in range(len(nums)):\n    if nums[right] == 0:\n        zeros += 1\n    while zeros > k:\n        if nums[left] == 0:\n            zeros -= 1\n        left += 1\n    best = max(best, right - left + 1)",
 "ask": [
 "left",
 "zeros",
 "best"
 ],
-"why": "At the second zero, `zeros` becomes 2, which is more than 1. The loop removes the 1 and then the first 0. The value of `left` ends at 2, and `zeros` returns to 1. The best window was [1, 0], with length 2. The window [0, 1] at the end also has length 2.",
+"why": "At the second zero, `zeros` becomes 2, which is more than 1. The loop drops the 1 and then the first 0, so `left` ends at 2 and `zeros` goes back to 1. The best window was [1, 0], with length 2.",
 "domain": "Algorithms",
 "answers": [
 "2",
@@ -845,13 +845,13 @@ false
 "id": "p5",
 "habit": "B",
 "kind": "predict",
-"task": "Trace these lines by hand. What are the final values?",
+"task": "Run these lines in your head, one at a time. Then type the value of each name at the end.",
 "code": "nums = [5, 7, 9]\nleft = 1\nbest_left = nums[left]\nend = left + 2",
 "ask": [
 "best_left",
 "end"
 ],
-"why": "The value of `nums[left]` is 7, not the position 1. If `best_left` is a position used for slicing, it must be `left`.",
+"why": "The value of `nums[left]` is 7, the number at that spot, not the position 1. A variable used for slicing, like `best_left`, must hold the position `left`.",
 "domain": "Algorithms",
 "answers": [
 "7",
@@ -862,13 +862,13 @@ false
 "id": "p6",
 "habit": "N",
 "kind": "predict",
-"task": "Trace this loop by hand. What are the values when it ends?",
+"task": "Run this loop in your head, one step at a time. Then type the value of each name when the loop ends.",
 "code": "nums = [2, 3, 1]\nk = 2\ntotal = 0\nsums = []\nfor right in range(len(nums)):\n    total += nums[right]\n    if right >= k:\n        total -= nums[right - k]\n    if right >= k - 1:\n        sums.append(total)",
 "ask": [
 "total",
 "sums"
 ],
-"why": "Use this order: add, fix, check. At `right = 2`, the 2 leaves before the sum is saved. So the second sum is 3 + 1 = 4.",
+"why": "Use this order: add, remove, then save. At `right = 2`, the 2 leaves before the sum is saved, so the second sum is 3 + 1 = 4.",
 "domain": "Algorithms",
 "answers": [
 "4",
@@ -879,13 +879,13 @@ false
 "id": "p7",
 "habit": "J",
 "kind": "predict",
-"task": "Trace these lines by hand. What are the final values?",
+"task": "Run these lines in your head, one at a time. Then type the value of each name at the end.",
 "code": "best = float(\"inf\")\nfound = best == float(\"-inf\")\nmissing = best == float(\"inf\")",
 "ask": [
 "found",
 "missing"
 ],
-"why": "The value of `best` starts at plus infinity. So it equals `float(\"inf\")`, not minus infinity. The \"nothing found\" check must use the same sign as the starting value.",
+"why": "The variable `best` starts at plus infinity, so it equals `float(\"inf\")`, not minus infinity. The \"nothing found\" check must use the same sign as the starting value.",
 "domain": "Algorithms",
 "answers": [
 "False",
@@ -896,14 +896,14 @@ false
 "id": "p8",
 "habit": "A",
 "kind": "predict",
-"task": "Trace this loop by hand. What are the values when it ends?",
+"task": "Run this loop in your head, one step at a time. Then type the value of each name when the loop ends.",
 "code": "s = \"AABAB\"\nk = 1\ncount = {}\nleft = 0\nbest = 0\nfor right in range(len(s)):\n    count[s[right]] = count.get(s[right], 0) + 1\n    while right - left + 1 - max(count.values()) > k:\n        count[s[left]] -= 1\n        left += 1\n    best = max(best, right - left + 1)",
 "ask": [
 "left",
 "count[\"A\"]",
 "best"
 ],
-"why": "At the last \"B\", the window AABAB needs 2 changes. So the first \"A\" leaves. The window ABAB still needs 2 changes. So the second \"A\" also leaves. The value of `left` ends at 2, and the count of \"A\" is 1. The best window was AABA, with length 4.",
+"why": "At the last \"B\", the window AABAB needs 2 changes, so the first \"A\" leaves. The window ABAB still needs 2 changes, so the second \"A\" leaves too. That leaves `left` at 2 and the count of \"A\" at 1, and the best window was AABA, with length 4.",
 "domain": "Algorithms",
 "answers": [
 "2",
@@ -916,7 +916,7 @@ false
 "habit": "J",
 "kind": "fix",
 "fn": "box_area",
-"task": "The function returns the area of a box given as (x1, y1, x2, y2), where x2 > x1 and y2 > y1.",
+"task": "The box is given by two corners, (x1, y1) and (x2, y2), where x2 is bigger than x1 and y2 is bigger than y1. Return the area of the box. For example, `box_area((0, 0, 4, 3))` gives `12`, because the box is 4 wide and 3 tall.",
 "code": "def box_area(box):\n    x1, y1, x2, y2 = box\n    width = x1 - x2\n    height = y2 - y1\n    return width * height",
 "bug": [
 3,
@@ -937,7 +937,7 @@ false
 1
 ]
 ],
-"why": "Width is the right edge minus the left edge, so it is `x2 - x1`. The line had the two sides reversed, which made every area negative.",
+"why": "Width is the right edge minus the left edge: `x2 - x1`. The line subtracted the other way, so every area came out negative.",
 "domain": "Computer vision",
 "bugText": "    width = x1 - x2"
 },
@@ -946,7 +946,7 @@ false
 "habit": "E",
 "kind": "fix",
 "fn": "overlap",
-"task": "The function returns the overlap area of two boxes given as (x1, y1, x2, y2), or 0 if they do not touch.",
+"task": "Each box is given by two corners, (x1, y1, x2, y2). Return the area where the two boxes overlap, or 0 if they do not overlap. For example, `overlap((0, 0, 4, 4), (2, 2, 6, 6))` gives `4`, because the boxes share a 2 by 2 square.",
 "code": "def overlap(a, b):\n    w = min(a[2], b[2]) - max(a[0], b[0])\n    h = min(a[3], b[3]) - max(a[0], b[1])\n    if w <= 0 or h <= 0:\n        return 0\n    return w * h",
 "bug": [
 3,
@@ -967,7 +967,7 @@ false
 0
 ]
 ],
-"why": "The height uses the y values, which sit at positions 1 and 3. The line copied `a[0]` from the width line above, so it mixed an x value into the height.",
+"why": "The height uses the y values, which sit at positions 1 and 3. The line used `a[0]`, an x value, because it was copied from the width line above. Use `max(a[1], b[1])`.",
 "domain": "Computer vision",
 "bugText": "    h = min(a[3], b[3]) - max(a[0], b[1])"
 },
@@ -976,7 +976,7 @@ false
 "habit": "B",
 "kind": "fix",
 "fn": "brightest_pixel",
-"task": "The function returns the brightness at row y and column x of a grayscale image stored as a list of rows.",
+"task": "The image is a list of rows, and each row is a list of brightness values. Return the brightness at column `x` of row `y`. For example, `brightest_pixel([[1, 2, 3], [4, 5, 6]], 2, 1)` gives `6`, because row 1 is [4, 5, 6], and column 2 of it is 6.",
 "code": "def brightest_pixel(image, x, y):\n    row = image[x]\n    return row[y]",
 "bug": [
 2,
@@ -997,7 +997,7 @@ false
 5
 ]
 ],
-"why": "An image is a list of rows, so the first index picks the row, which is `y`. The second index picks the column, which is `x`. Name what each index means before you use it.",
+"why": "An image is a list of rows, so the first index picks the row, `y`, and the second index picks the column, `x`. The code swapped them. Say what each index means before you use it.",
 "domain": "Computer vision",
 "bugText": "    row = image[x]\n    return row[y]"
 },
@@ -1006,7 +1006,7 @@ false
 "habit": "A",
 "kind": "fix",
 "fn": "rolling_brightness",
-"task": "The function returns the average brightness of every group of k frames in a row.",
+"task": "Each number in `frames` is the brightness of one video frame. Return the average brightness of every group of `k` frames in a row. For example, `rolling_brightness([10, 20, 30, 40], 2)` gives `[15, 25, 35]`, because (10 + 20) / 2 = 15, and so on.",
 "code": "def rolling_brightness(frames, k):\n    total = 0\n    out = []\n    for right in range(len(frames)):\n        total += frames[right]\n        if right >= k:\n            leaving = frames[right - k]\n        if right >= k - 1:\n            out.append(total / k)\n    return out",
 "bug": [
 7,
@@ -1037,7 +1037,7 @@ false
 ]
 ]
 ],
-"why": "The frame `leaving` left the group, but `total` never lost it. Every time the window moves, the running total must drop the frame that left.",
+"why": "The frame `leaving` left the group, but `total` still included it, so the total kept growing. Add `total -= leaving` each time the window moves.",
 "domain": "Computer vision",
 "bugText": "            leaving = frames[right - k]"
 },
@@ -1046,7 +1046,7 @@ false
 "habit": "G",
 "kind": "fix",
 "fn": "motion_frames",
-"task": "The function counts frames whose change from the previous frame is at least threshold.",
+"task": "Each number in `levels` is the brightness of one frame. Count the frames whose brightness changed by at least `threshold` from the frame before. For example, `motion_frames([0, 5, 5, 12], 5)` gives `2`, because 0 to 5 and 5 to 12 both change by at least 5.",
 "code": "def motion_frames(levels, threshold):\n    count = 0\n    for i in range(1, len(levels)):\n        change = abs(levels[i] - levels[i - 1])\n        if change > threshold:\n            count += 1\n    return count",
 "bug": [
 5,
@@ -1076,7 +1076,7 @@ false
 "habit": "J",
 "kind": "fix",
 "fn": "top_detections",
-"task": "The function returns the k detections with the highest scores, highest first. Each detection is (label, score).",
+"task": "Each detection is a pair of a label and a score. Return the `k` detections with the highest scores, highest first. For example, `top_detections([('cat', 0.2), ('dog', 0.9), ('car', 0.5)], 2)` gives `[['dog', 0.9], ['car', 0.5]]`.",
 "code": "def top_detections(dets, k):\n    ranked = sorted(dets, key=lambda d: d[1])\n    return ranked[:k]",
 "bug": [
 2,
@@ -1116,7 +1116,7 @@ false
 ]
 ]
 ],
-"why": "`sorted` puts the smallest first. The highest scores come first only with `reverse=True`. Say the order out loud: \"highest first means reversed.\"",
+"why": "The function `sorted` puts the smallest score first. Add `reverse=True` to put the highest score first. Say the order out loud: \"highest first means reversed.\"",
 "domain": "Computer vision",
 "bugText": "    ranked = sorted(dets, key=lambda d: d[1])"
 },
@@ -1125,7 +1125,7 @@ false
 "habit": "M",
 "kind": "fix",
 "fn": "first_stable",
-"task": "The function returns the first frame index where the object has been seen in 3 frames in a row, or -1 if that never happens.",
+"task": "Each item in `seen` is True when the camera saw the object in that frame. Return the index of the first frame that completes 3 sightings in a row, or -1 if that never happens. For example, `first_stable([True, True, False, True, True, True])` gives `5`, because frames 3, 4 and 5 are the first 3 sightings in a row.",
 "code": "def first_stable(seen):\n    run = 0\n    for i in range(len(seen)):\n        if seen[i]:\n            run += 1\n        else:\n            run = 0\n        if run == 3:\n            return i",
 "bug": [
 9,
@@ -1146,7 +1146,7 @@ false
 -1
 ]
 ],
-"why": "When the object is never stable, the loop ends without a return and Python gives back `None`. Right after the loop, write the \"never found\" answer.",
+"why": "When the object never shows up 3 times in a row, the loop ends without a return, and Python gives back `None`. Add `return -1` after the loop.",
 "domain": "Computer vision",
 "bugText": "            return i"
 },
@@ -1155,7 +1155,7 @@ false
 "habit": "E",
 "kind": "fix",
 "fn": "clamp_box",
-"task": "The function keeps a box (x1, y1, x2, y2) inside an image of the given width and height.",
+"task": "Move any edge of the box (x1, y1, x2, y2) that sticks out, so the box fits inside an image that is `width` wide and `height` tall. Return the new box. For example, `clamp_box((-5, -5, 50, 50), 40, 30)` gives `[0, 0, 40, 30]`, because the left and top edges move up to 0, and the right and bottom edges move in to 40 and 30.",
 "code": "def clamp_box(box, width, height):\n    x1, y1, x2, y2 = box\n    x1 = max(0, x1)\n    y1 = max(0, y1)\n    x2 = min(width, x2)\n    y2 = min(width, y2)\n    return (x1, y1, x2, y2)",
 "bug": [
 6,
@@ -1191,7 +1191,7 @@ false
 ]
 ]
 ],
-"why": "The y values are limited by the height, not the width. The line was copied from the `x2` line above it, and one name stayed the same.",
+"why": "The y values must stay inside the height, not the width: `y2 = min(height, y2)`. The line was copied from the `x2` line above it, and one name stayed the same.",
 "domain": "Computer vision",
 "bugText": "    y2 = min(width, y2)"
 },
@@ -1200,7 +1200,7 @@ false
 "habit": "N",
 "kind": "fix",
 "fn": "allow",
-"task": "A rate limiter. The function returns, for each request time, whether it is allowed. At most limit requests may happen in any window of seconds.",
+"task": "Each number in `times` is the second when a request arrived. Allow at most `limit` requests in any `window` seconds. Return True or False for each request. For example, `allow([1, 2, 3, 12], 2, 10)` gives `[True, True, False, True]`, because the request at second 3 would be the third one inside 10 seconds.",
 "code": "def allow(times, limit, window):\n    recent = deque()\n    out = []\n    for t in times:\n        out.append(len(recent) < limit)\n        while recent and recent[0] <= t - window:\n            recent.popleft()\n        if out[-1]:\n            recent.append(t)\n    return out",
 "bug": [
 5,
@@ -1234,7 +1234,7 @@ false
 ]
 ]
 ],
-"why": "The order is add, fix, check. Old requests must leave the window before we decide. Here the decision came first, so expired requests still counted.",
+"why": "The code decided before removing old requests, so expired requests still counted against the limit. Keep this order: add, remove the old ones, then decide.",
 "domain": "Backend",
 "bugText": "        out.append(len(recent) < limit)\n        while recent and recent[0] <= t - window:\n            recent.popleft()"
 },
@@ -1243,7 +1243,7 @@ false
 "habit": "B",
 "kind": "fix",
 "fn": "count_hits",
-"task": "The function counts how many requests each user made.",
+"task": "Each item in `users` is the name of the user who made one request. Return how many requests each user made. For example, `dict(count_hits(['ann', 'bo', 'ann']))` gives `{'ann': 2, 'bo': 1}`.",
 "code": "def count_hits(users):\n    counts = {}\n    for user in users:\n        counts[user] += 1\n    return counts",
 "bug": [
 2,
@@ -1269,7 +1269,7 @@ false
 }
 ]
 ],
-"why": "A plain dictionary has no starting value for a new key, so `+= 1` raises KeyError. A Counter starts every new key at 0. This is the same crash as in Minimum Window Substring.",
+"why": "A plain dictionary has no starting value for a new key, so `counts[user] += 1` raised a KeyError. A `Counter` starts every new key at 0. You hit the same crash in Minimum Window Substring.",
 "domain": "Backend",
 "bugText": "    counts = {}"
 },
@@ -1278,7 +1278,7 @@ false
 "habit": "M",
 "kind": "fix",
 "fn": "first_error",
-"task": "The function returns the line number of the first log line that starts with \"ERROR\", or -1 if there is none.",
+"task": "Return the index of the first line in `lines` that starts with \"ERROR\", or -1 if no line does. For example, `first_error(['INFO ok', 'ERROR disk', 'ERROR net'])` gives `1`, because line 0 is INFO and line 1 is the first ERROR.",
 "code": "def first_error(lines):\n    for i, line in enumerate(lines):\n        if line.startswith(\"ERROR\"):\n            return i",
 "bug": [
 4,
@@ -1299,7 +1299,7 @@ false
 -1
 ]
 ],
-"why": "A clean log never reaches `return i`, so the function returns `None`. Every search needs a \"not found\" line after the loop.",
+"why": "A log with no errors never reaches `return i`, so the function returns `None`. Add `return -1` after the loop. Every search needs a \"not found\" line after the loop.",
 "domain": "Backend",
 "bugText": "            return i"
 },
@@ -1308,7 +1308,7 @@ false
 "habit": "N",
 "kind": "fix",
 "fn": "retry_delays",
-"task": "The function returns the wait before each retry. The first wait is base seconds, and each wait doubles.",
+"task": "Return the wait before each of the `attempts` retries. The first wait is `base` seconds, and each later wait is twice the one before. For example, `retry_delays(1, 3)` gives `[1, 2, 4]`, because the waits are 1, then 2, then 4.",
 "code": "def retry_delays(base, attempts):\n    delay = base\n    out = []\n    for _ in range(attempts):\n        delay = delay * 2\n        out.append(delay)\n    return out",
 "bug": [
 5,
@@ -1335,7 +1335,7 @@ false
 []
 ]
 ],
-"why": "Use the current wait first, then double it for next time. Doubling first skipped the base wait completely.",
+"why": "The code doubled the wait before using it, so the base wait was never used. Add the current wait first, then double it for the next retry.",
 "domain": "Backend",
 "bugText": "        delay = delay * 2\n        out.append(delay)"
 },
@@ -1344,7 +1344,7 @@ false
 "habit": "G",
 "kind": "fix",
 "fn": "page_items",
-"task": "The function returns page number page (pages start at 0) when each page holds size items.",
+"task": "Split `items` into pages of `size` items each. The first page is page 0. Return the items on page `page`. For example, `page_items([1, 2, 3, 4, 5], 0, 2)` gives `[1, 2]`, because page 0 holds the first 2 items.",
 "code": "def page_items(items, page, size):\n    start = (page - 1) * size\n    end = start + size\n    return items[start:end]",
 "bug": [
 2,
@@ -1372,7 +1372,7 @@ false
 ]
 ]
 ],
-"why": "Pages start at 0 here, so page 0 starts at item 0, and the start is `page * size`. Check the first case by hand: page 0 must give the first items.",
+"why": "Pages start at 0 here, so page 0 starts at item 0, and the start is `page * size`. The code used `(page - 1) * size`, which counts pages from 1. Check page 0 by hand: it must give the first items.",
 "domain": "Backend",
 "bugText": "    start = (page - 1) * size"
 },
@@ -1381,7 +1381,7 @@ false
 "habit": "G",
 "kind": "fix",
 "fn": "active_users",
-"task": "The function counts users whose last activity was less than timeout seconds before now.",
+"task": "The dictionary `last_seen` holds the second each user was last active. Count the users who were active less than `timeout` seconds before `now`. For example, `active_users({'a': 95, 'b': 90, 'c': 50}, 100, 10)` gives `1`, because only user a, at 95, was active less than 10 seconds before 100.",
 "code": "def active_users(last_seen, now, timeout):\n    count = 0\n    for user in last_seen:\n        if now - last_seen[user] <= timeout:\n            count += 1\n    return count",
 "bug": [
 4,
@@ -1402,7 +1402,7 @@ false
 0
 ]
 ],
-"why": "\"Less than timeout\" does not include the timeout itself, so the check is `<`. User b was exactly 10 seconds ago and must not count.",
+"why": "\"Less than timeout\" leaves out the timeout itself, so the check is `<`. User b was active exactly 10 seconds ago and must not count.",
 "domain": "Backend",
 "bugText": "        if now - last_seen[user] <= timeout:"
 },
@@ -1411,7 +1411,7 @@ false
 "habit": "E",
 "kind": "fix",
 "fn": "merge_events",
-"task": "The function merges two lists of event times that are already sorted into one sorted list.",
+"task": "The lists `a` and `b` each hold event times in sorted order. Return one sorted list with all the times. For example, `merge_events([1, 4], [2, 3])` gives `[1, 2, 3, 4]`.",
 "code": "def merge_events(a, b):\n    i, j, out = 0, 0, []\n    while i < len(a) and j < len(b):\n        if a[i] <= b[j]:\n            out.append(a[i])\n            i += 1\n        else:\n            out.append(b[j])\n            i += 1\n    return out + a[i:] + b[j:]",
 "bug": [
 9,
@@ -1443,7 +1443,7 @@ false
 ]
 ]
 ],
-"why": "After taking from `b`, its pointer `j` must move. The line was copied from the `a` branch above and still moved `i`.",
+"why": "After taking a time from `b`, its pointer `j` must move forward. The line moved `i` instead, because it was copied from the `a` branch above.",
 "domain": "Backend",
 "bugText": "            i += 1"
 },
@@ -1452,7 +1452,7 @@ false
 "habit": "A",
 "kind": "fix",
 "fn": "unique_in_window",
-"task": "The function returns, for each request id, whether it is new compared with the k requests just before it.",
+"task": "For each request id in `ids`, return True if it differs from all of the `k` ids just before it, and False if it matches one of them. For example, `unique_in_window(['a', 'b', 'a', 'a'], 1)` gives `[True, True, True, False]`, because the last \"a\" matches the \"a\" just before it.",
 "code": "def unique_in_window(ids, k):\n    recent = Counter()\n    out = []\n    for right in range(len(ids)):\n        if right > k:\n            old = ids[right - k - 1]\n        out.append(recent[ids[right]] == 0)\n        recent[ids[right]] += 1\n    return out",
 "bug": [
 6,
@@ -1486,7 +1486,7 @@ true
 ]
 ]
 ],
-"why": "The request `old` left the window, but its count stayed. The tracker must forget every request that slides out.",
+"why": "The request `old` left the window, but its count stayed the same, so the code still treated it as recent. Add `recent[old] -= 1`, so the tracker forgets every request that slides out.",
 "domain": "Backend",
 "bugText": "            old = ids[right - k - 1]"
 },
@@ -1495,7 +1495,7 @@ true
 "habit": "B",
 "kind": "fix",
 "fn": "newer_version",
-"task": "The function returns True if version a is newer than version b. Versions look like \"1.10.2\".",
+"task": "Versions look like \"1.10.2\". Return True if version `a` is newer than version `b`. For example, `newer_version('1.10', '1.9')` gives `True`, because 10 is bigger than 9.",
 "code": "def newer_version(a, b):\n    pa = a.split(\".\")\n    pb = b.split(\".\")\n    return pa > pb",
 "bug": [
 2,
@@ -1516,7 +1516,7 @@ false
 false
 ]
 ],
-"why": "The parts are strings, and strings compare letter by letter, so \"10\" sorts before \"9\". Turn each part into a number before comparing.",
+"why": "The parts are strings, and strings compare letter by letter, so \"10\" comes before \"9\". Turn each part into a number with `int` before comparing.",
 "domain": "Backend",
 "bugText": "    pa = a.split(\".\")\n    pb = b.split(\".\")"
 },
@@ -1525,7 +1525,7 @@ false
 "habit": "E",
 "kind": "fix",
 "fn": "best_week",
-"task": "The function returns the highest total sales in any 7 days in a row.",
+"task": "Each number in `sales` is one day's sales. Return the highest total over any 7 days in a row. For example, `best_week([1, 1, 1, 1, 1, 1, 1, 9])` gives `15`, because the last 7 days add up to 6 + 9.",
 "code": "def best_week(sales):\n    total = 0\n    best = 0\n    for right in range(len(sales)):\n        total += sales[right]\n        if right >= 7:\n            total -= sales[right]\n        if right >= 6:\n            best = max(best, total)\n    return best",
 "bug": [
 7,
@@ -1546,7 +1546,7 @@ false
 5
 ]
 ],
-"why": "The day leaving the week is `sales[right - 7]`. The line subtracted the day that just arrived, so the new day was added and then removed.",
+"why": "The day leaving the week is `sales[right - 7]`. The line subtracted `sales[right]`, the day that just arrived, so the new day was added and then removed.",
 "domain": "Data analytics",
 "bugText": "            total -= sales[right]"
 },
@@ -1555,7 +1555,7 @@ false
 "habit": "E",
 "kind": "fix",
 "fn": "longest_goal_streak",
-"task": "The function returns the longest run of days in a row with at least goal steps.",
+"task": "Each number in `steps` is one day's step count. Return the most days in a row that reached at least `goal` steps. For example, `longest_goal_streak([9, 9, 1, 9], 5)` gives `2`, because the first two days both reach 5.",
 "code": "def longest_goal_streak(steps, goal):\n    current = 0\n    best = 0\n    for s in steps:\n        if s >= goal:\n            current += 1\n            best = max(best, current)\n        else:\n            best = 0\n    return best",
 "bug": [
 9,
@@ -1576,7 +1576,7 @@ false
 3
 ]
 ],
-"why": "A missed day ends the current run, so `current` resets. Resetting `best` erased the record. Two names that sound alike hold very different things.",
+"why": "A missed day ends the current run, so only `current` resets to 0. Resetting `best` erased the record. Two names that sound alike can hold very different things.",
 "domain": "Data analytics",
 "bugText": "            best = 0"
 },
@@ -1585,7 +1585,7 @@ false
 "habit": "E",
 "kind": "fix",
 "fn": "percent_change",
-"task": "The function returns the percent change from old to new for each pair.",
+"task": "Each pair holds an old value and a new value. Return the percent change from old to new for each pair. For example, `percent_change([(100, 150)])` gives `[50]`, because going from 100 to 150 is a 50 percent rise.",
 "code": "def percent_change(pairs):\n    out = []\n    for old, new in pairs:\n        out.append((new - old) / new * 100)\n    return out",
 "bug": [
 4,
@@ -1613,7 +1613,7 @@ false
 ]
 ]
 ],
-"why": "Percent change is measured against the starting value, so divide by `old`. Dividing by `new` gives a different number.",
+"why": "Percent change compares against the starting value, so divide by `old`. Dividing by `new` gives a different number.",
 "domain": "Data analytics",
 "bugText": "        out.append((new - old) / new * 100)"
 },
@@ -1622,7 +1622,7 @@ false
 "habit": "B",
 "kind": "fix",
 "fn": "top_customer",
-"task": "The function returns the name of the customer who spent the most.",
+"task": "The dictionary `spend` holds how much each customer spent. Return the name of the customer who spent the most. For example, `top_customer({'ann': 30, 'bo': 80})` gives `'bo'`.",
 "code": "def top_customer(spend):\n    best_name = None\n    best_amount = -1\n    for name in spend:\n        if spend[name] > best_amount:\n            best_amount = spend[name]\n            best_name = spend[name]\n    return best_name",
 "bug": [
 7,
@@ -1643,7 +1643,7 @@ false
 "c"
 ]
 ],
-"why": "The task asks for the name, which is the key. `spend[name]` is the amount, the value. Say which one each variable holds.",
+"why": "The task asks for the name, which is the dictionary key. The value `spend[name]` is the amount spent. Save `name` instead.",
 "domain": "Data analytics",
 "bugText": "            best_name = spend[name]"
 },
@@ -1652,7 +1652,7 @@ false
 "habit": "A",
 "kind": "fix",
 "fn": "running_max_drop",
-"task": "The function returns the biggest drop from an earlier peak to a later value.",
+"task": "Return the biggest drop from a high value to any later, lower value in `values`. For example, `running_max_drop([3, 8, 2, 5])` gives `6`, because the values drop from 8 down to 2.",
 "code": "def running_max_drop(values):\n    peak = values[0]\n    worst = 0\n    for v in values:\n        worst = max(worst, peak - v)\n    return worst",
 "bug": [
 5,
@@ -1673,7 +1673,7 @@ false
 5
 ]
 ],
-"why": "The tracker `peak` never learned about new highs, so every drop was measured from the first value. Each step, update what you track before you use it.",
+"why": "The variable `peak` never learned about new highs, so every drop was measured from the first value. Update `peak` with `max(peak, v)` before measuring the drop.",
 "domain": "Finance",
 "bugText": "        worst = max(worst, peak - v)"
 },
@@ -1682,7 +1682,7 @@ false
 "habit": "G",
 "kind": "fix",
 "fn": "first_overdraft",
-"task": "The function returns the first day the balance goes below zero, or -1 if it never does.",
+"task": "The balance starts at `start`, and each number in `changes` is one day's change. Return the first day the balance drops below zero, or -1 if it never does. For example, `first_overdraft(10, [-10, -1])` gives `1`, because the balance is 0 after day 0 and -1 after day 1.",
 "code": "def first_overdraft(start, changes):\n    balance = start\n    for day, change in enumerate(changes):\n        balance += change\n        if balance <= 0:\n            return day\n    return -1",
 "bug": [
 5,
@@ -1712,7 +1712,7 @@ false
 "habit": "N",
 "kind": "fix",
 "fn": "max_profit_day",
-"task": "The function returns the best profit from buying on one day and selling on a later day.",
+"task": "Each number in `prices` is the price on one day. Buy on one day, sell on a later day, and return the biggest profit, or 0 if no sale makes money. For example, `max_profit_day([7, 1, 5, 3, 6, 4])` gives `5`, because buying at 1 and selling at 6 makes 5.",
 "code": "def max_profit_day(prices):\n    cheapest = prices[0]\n    best = 0\n    for p in prices:\n        best = max(best, p - cheapest)\n        cheapest = max(cheapest, p)\n    return best",
 "bug": [
 6,
@@ -1733,7 +1733,7 @@ false
 7
 ]
 ],
-"why": "The tracker is the cheapest price, so it keeps the minimum. Using `max` kept the most expensive price instead.",
+"why": "The variable `cheapest` must keep the lowest price, so use `min`. With `max`, it kept the highest price instead.",
 "domain": "Finance",
 "bugText": "        cheapest = max(cheapest, p)"
 },
@@ -1742,7 +1742,7 @@ false
 "habit": "G",
 "kind": "fix",
 "fn": "spikes",
-"task": "The function counts readings that jump by more than limit above the reading before them.",
+"task": "Count the readings that are more than `limit` higher than the reading just before them. For example, `spikes([1, 9, 9, 20], 5)` gives `2`, because 1 to 9 and 9 to 20 both jump by more than 5.",
 "code": "def spikes(readings, limit):\n    count = 0\n    for i in range(len(readings)):\n        if readings[i + 1] - readings[i] > limit:\n            count += 1\n    return count",
 "bug": [
 3,
@@ -1763,7 +1763,7 @@ false
 2
 ]
 ],
-"why": "The loop reads `readings[i + 1]`, so `i` must stop one early. Check the last step by hand: when `i` is the last index, `i + 1` does not exist.",
+"why": "The loop reads `readings[i + 1]`, so `i` must stop one step early. On the last index, `i + 1` does not exist. Loop over `range(len(readings) - 1)`.",
 "domain": "Sensors",
 "bugText": "    for i in range(len(readings)):"
 },
@@ -1772,7 +1772,7 @@ false
 "habit": "A",
 "kind": "fix",
 "fn": "max_window_temp",
-"task": "The function returns the highest average temperature over any k readings in a row.",
+"task": "Return the highest average temperature over any `k` readings in a row. For example, `max_window_temp([1, 2, 3, 4], 2)` gives `3.5`, because (3 + 4) / 2 = 3.5.",
 "code": "def max_window_temp(temps, k):\n    total = sum(temps[:k])\n    best = total\n    for right in range(k, len(temps)):\n        total += temps[right]\n        best = max(best, total)\n    return best / k",
 "bug": [
 5,
@@ -1793,7 +1793,7 @@ false
 9.0
 ]
 ],
-"why": "The window gained a reading but never lost one, so it kept growing. A fixed window adds the new reading and drops the oldest one in the same step.",
+"why": "The window gained a reading on each step but never lost one, so it kept growing. Add `total -= temps[right - k]` to drop the oldest reading in the same step.",
 "domain": "Sensors",
 "bugText": "        total += temps[right]"
 },
@@ -1802,7 +1802,7 @@ false
 "habit": "J",
 "kind": "fix",
 "fn": "last_n",
-"task": "The function returns the last n sensor readings, oldest first.",
+"task": "Return the last `n` readings, oldest first. For example, `last_n([1, 2, 3, 4], 2)` gives `[3, 4]`.",
 "code": "def last_n(readings, n):\n    return readings[:n]",
 "bug": [
 2,
@@ -1831,7 +1831,7 @@ false
 ]
 ]
 ],
-"why": "`readings[:n]` takes from the front. The last items come from the back, which is `readings[-n:]`.",
+"why": "The slice `readings[:n]` takes items from the front. The last items come from the back: `readings[-n:]`.",
 "domain": "Sensors",
 "bugText": "    return readings[:n]"
 },
@@ -1839,13 +1839,13 @@ false
 "id": "q1",
 "habit": "N",
 "kind": "predict",
-"task": "Trace this rate limiter by hand. What are the values when it ends?",
+"task": "Run these lines in your head, one at a time. Then type the value of each name at the end.",
 "code": "times = [1, 2, 3, 12]\nwindow = 10\nrecent = []\nfor t in times:\n    while recent and recent[0] <= t - window:\n        recent.pop(0)\n    recent.append(t)",
 "ask": [
 "len(recent)",
 "recent[0]"
 ],
-"why": "At time 12, every time up to 2 has left the 10-second window, so 1 and 2 are removed. That leaves 3 and 12.",
+"why": "At time 12, the times 1 and 2 are 10 or more seconds old, so both leave. That leaves 3 and 12, so the length is 2 and the first time is 3.",
 "domain": "Backend",
 "answers": [
 "2",
@@ -1856,14 +1856,14 @@ false
 "id": "q2",
 "habit": "J",
 "kind": "predict",
-"task": "Trace these lines by hand. What are the values at the end?",
+"task": "Run these lines in your head, one at a time. Then type the value of each name at the end.",
 "code": "box = (2, 1, 6, 4)\nx1, y1, x2, y2 = box\nwidth = x2 - x1\nheight = y2 - y1\narea = width * height",
 "ask": [
 "width",
 "height",
 "area"
 ],
-"why": "Width is right minus left, 6 - 2 = 4. Height is bottom minus top, 4 - 1 = 3. So the area is 12.",
+"why": "Width is right minus left: 6 - 2 = 4. Height is bottom minus top: 4 - 1 = 3. So the area is 4 times 3, which is 12.",
 "domain": "Computer vision",
 "answers": [
 "4",
@@ -1875,7 +1875,7 @@ false
 "id": "q3",
 "habit": "G",
 "kind": "predict",
-"task": "Trace these lines by hand. What are the values at the end?",
+"task": "Run these lines in your head, one at a time. Then type the value of each name at the end.",
 "code": "items = ['a', 'b', 'c', 'd', 'e']\npage = 1\nsize = 2\nstart = page * size\nend = start + size\nshown = items[start:end]",
 "ask": [
 "start",
@@ -1894,13 +1894,13 @@ false
 "id": "q4",
 "habit": "A",
 "kind": "predict",
-"task": "Trace this loop by hand. What are the values when it ends?",
+"task": "Run this loop in your head, one step at a time. Then type the value of each name when the loop ends.",
 "code": "frames = [4, 8, 6, 2]\nk = 2\ntotal = 0\naverages = []\nfor right in range(len(frames)):\n    total += frames[right]\n    if right >= k:\n        total -= frames[right - k]\n    if right >= k - 1:\n        averages.append(total / k)",
 "ask": [
 "total",
 "averages"
 ],
-"why": "Each step adds the new frame and drops the one k steps back. The last window is 6 and 2, so `total` is 8.",
+"why": "Each step adds the new frame and drops the one k steps back. The last window holds 6 and 2, so `total` ends at 8.",
 "domain": "Computer vision",
 "answers": [
 "8",
@@ -1911,7 +1911,7 @@ false
 "id": "q5",
 "habit": "N",
 "kind": "predict",
-"task": "Trace this loop by hand. What are the values when it ends?",
+"task": "Run this loop in your head, one step at a time. Then type the value of each name when the loop ends.",
 "code": "delay = 3\nwaits = []\nfor _ in range(3):\n    waits.append(delay)\n    delay = delay * 2",
 "ask": [
 "waits",
@@ -1928,13 +1928,13 @@ false
 "id": "q6",
 "habit": "E",
 "kind": "predict",
-"task": "Trace this loop by hand. What are the values when it ends?",
+"task": "Run this loop in your head, one step at a time. Then type the value of each name when the loop ends.",
 "code": "steps = [9, 9, 1, 9]\ngoal = 5\ncurrent = 0\nbest = 0\nfor s in steps:\n    if s >= goal:\n        current += 1\n        best = max(best, current)\n    else:\n        current = 0",
 "ask": [
 "current",
 "best"
 ],
-"why": "The day with 1 step resets `current`, but `best` keeps the record of 2. The last day starts a new run of 1.",
+"why": "The day with 1 step resets `current`, but `best` keeps the record of 2. The last day starts a new run, so `current` ends at 1.",
 "domain": "Data analytics",
 "answers": [
 "1",
@@ -1946,7 +1946,7 @@ false
 "habit": "O",
 "kind": "fix",
 "fn": "last_stone",
-"task": "The function smashes the two heaviest stones until one or none is left, then returns its weight, or 0.",
+"task": "Each turn, smash the two heaviest stones. Equal stones both break, and different stones leave one stone that weighs the difference. Return the weight of the last stone, or 0 if no stone is left. For example, `last_stone([2, 7, 4, 1, 8, 1])` gives `1`, because 8 and 7 leave 1, 4 and 2 leave 2, 2 and 1 leave 1, 1 and 1 break, and 1 is left.",
 "code": "def last_stone(stones):\n    heap = [-s for s in stones]\n    heapq.heapify(heap)\n    for _ in range(len(stones)):\n        if len(heap) < 2:\n            break\n        first = -heapq.heappop(heap)\n        second = -heap[0]\n        if first != second:\n            heapq.heappush(heap, -(first - second))\n    return -heap[0] if heap else 0",
 "bug": [
 8,
@@ -1967,7 +1967,7 @@ false
 2
 ]
 ],
-"why": "A smash uses two stones, so both must leave the heap. A peek at `heap[0]` left the second stone in place. Pop twice, then push back only the difference. This is your Last Stone Weight slip from 20 November.",
+"why": "A smash uses two stones, so both must leave the heap. The peek at `heap[0]` left the second stone in place. Pop twice with `heappop`, then push back only the difference. You made this slip in Last Stone Weight on 20 November.",
 "domain": "Heaps",
 "bugText": "        second = -heap[0]"
 },
@@ -1976,7 +1976,7 @@ false
 "habit": "P",
 "kind": "fix",
 "fn": "kth_largest",
-"task": "The function returns the k-th largest number in nums.",
+"task": "Return the `k`-th largest number in `nums`. For example, `kth_largest([3, 2, 1, 5, 6, 4], 2)` gives `5`, because the largest is 6 and the second largest is 5.",
 "code": "def kth_largest(nums, k):\n    heap = []\n    for n in nums:\n        heapq.heappush(heap, n)\n        if len(heap) > 3:\n            heapq.heappop(heap)\n    return heap[0]",
 "bug": [
 5,
@@ -1997,7 +1997,7 @@ false
 7
 ]
 ],
-"why": "The heap must hold k numbers, and k changes with every call. The 3 came from the example. For every number in your code, ask where it came from. This is your Kth Largest slip from 20 November.",
+"why": "The 3 came from the example, but `k` changes with every call. Compare with `k`, not a fixed number. For every number in your code, ask where it came from. You made this slip in Kth Largest on 20 November.",
 "domain": "Heaps",
 "bugText": "        if len(heap) > 3:"
 },
@@ -2005,14 +2005,14 @@ false
 "id": "q7",
 "habit": "O",
 "kind": "predict",
-"task": "Trace these lines by hand. What are the values at the end?",
+"task": "Run these lines in your head, one at a time. Then type the value of each name at the end.",
 "code": "import heapq\nheap = [-8, -7, -4, -2]\nheapq.heapify(heap)\nfirst = -heapq.heappop(heap)\nsecond = -heap[0]\nsize = len(heap)",
 "ask": [
 "first",
 "second",
 "size"
 ],
-"why": "A peek at `heap[0]` reads the top stone and leaves it there. Only `heappop` removes a stone, so one pop and one peek leave 3 of the 4 stones.",
+"why": "A peek at `heap[0]` reads the top stone and leaves it in the heap. Only `heappop` removes a stone, so one pop and one peek leave 3 of the 4 stones.",
 "domain": "Heaps",
 "answers": [
 "8",

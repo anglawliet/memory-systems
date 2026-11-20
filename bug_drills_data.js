@@ -47,7 +47,7 @@ window.DRILLS = [
 "kind": "fix",
 "fn": "distinct_counts",
 "task": "For every group of `k` letters in a row in `s`, count how many different letters it has. Return the list of counts. For example, `distinct_counts('aab', 2)` gives `[1, 2]`, because \"aa\" has 1 different letter and \"ab\" has 2.",
-"code": "def distinct_counts(s, k):\n    window = Counter()\n    out = []\n    for right in range(len(s)):\n        letter = s[right]\n        window[letter] += 1\n        if right >= k:\n            gone = s[right - k]\n            window[letter] -= 1\n        if right >= k - 1:\n            out.append(sum(1 for c in window.values() if c > 0))\n    return out",
+"code": "def distinct_counts(s, k):\n    window = Counter()\n    out = []\n    for right in range(len(s)):\n        letter = s[right]\n        window[letter] += 1\n        if right >= k:\n            gone = s[right - k]\n            window[letter] -= 1\n            if window[gone] == 0:\n                del window[gone]\n        if right >= k - 1:\n            out.append(len(window))\n    return out",
 "bug": [
 9,
 9
@@ -116,7 +116,7 @@ false
 "kind": "fix",
 "fn": "max_profit",
 "task": "Each number in `prices` is the price on one day. Buy on one day, sell on a later day, and return the biggest profit, or 0 if no sale makes money. For example, `max_profit([7, 1, 5, 3, 6, 4])` gives `5`, because buying at 1 and selling at 6 makes 5.",
-"code": "def max_profit(prices):\n    cheapest = prices[0]\n    best = 0\n    for price in prices:\n        cheapest = min(cheapest, price)\n        profit = price - cheapest\n        best = max(best, profit)\n    return profit",
+"code": "def max_profit(prices):\n    lowest = prices[0]\n    best = 0\n    for price in prices:\n        lowest = min(lowest, price)\n        profit = price - lowest\n        best = max(best, profit)\n    return profit",
 "bug": [
 8,
 8
@@ -146,7 +146,7 @@ false
 "kind": "fix",
 "fn": "longest_unique",
 "task": "Return the length of the longest group of letters in a row in `s` where no letter repeats. For example, `longest_unique('abcabcbb')` gives `3`, because \"abc\" has no repeat.",
-"code": "def longest_unique(s):\n    seen = set()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        while s[right] in seen:\n            seen.remove(s[left])\n            left += 1\n        seen.add(s[left])\n        best = max(best, right - left + 1)\n    return best",
+"code": "def longest_unique(s):\n    seen = set()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        while s[right] in seen:\n            seen.remove(s[left])\n            left += 1\n        seen.add(s[left])\n        size = right - left + 1\n        best = max(best, size)\n    return best",
 "bug": [
 9,
 9
@@ -206,10 +206,10 @@ false
 "kind": "fix",
 "fn": "longest_replace",
 "task": "You may change up to `k` letters. Return the length of the longest group of letters in a row in `s` that can become all one letter. For example, `longest_replace('ABA', 0)` gives `1`, because with no changes, each group can be only one letter long.",
-"code": "def longest_replace(s, k):\n    count = Counter()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        count[s[right]] += 1\n        while right - left + 1 - max(count.values()) > k:\n            left += 1\n            count[s[left]] -= 1\n        best = max(best, right - left + 1)\n    return best",
+"code": "def longest_replace(s, k):\n    count = Counter()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        count[s[right]] += 1\n        size = right - left + 1\n        most = max(count.values())\n        while size - most > k:\n            left += 1\n            count[s[left]] -= 1\n            size = right - left + 1\n            most = max(count.values())\n        best = max(best, size)\n    return best",
 "bug": [
-8,
-9
+10,
+11
 ],
 "fix": "            count[s[left]] -= 1\n            left += 1",
 "tests": [
@@ -236,12 +236,12 @@ false
 "kind": "fix",
 "fn": "max_profit",
 "task": "Each number in `prices` is the price on one day. Buy on one day, sell on a later day, and return the biggest profit, or 0 if no sale makes money. For example, `max_profit([7, 1, 5, 3, 6, 4])` gives `5`, because buying at 1 and selling at 6 makes 5.",
-"code": "def max_profit(prices):\n    cheapest = prices[0]\n    best = 0\n    for price in prices:\n        profit = price - cheapest\n        best = max(best, profit)\n    return best",
+"code": "def max_profit(prices):\n    lowest = prices[0]\n    best = 0\n    for price in prices:\n        profit = price - lowest\n        best = max(best, profit)\n    return best",
 "bug": [
 5,
 5
 ],
-"fix": "        cheapest = min(cheapest, price)\n        profit = price - cheapest",
+"fix": "        lowest = min(lowest, price)\n        profit = price - lowest",
 "tests": [
 [
 "max_profit([7, 1, 5, 3, 6, 4])",
@@ -258,7 +258,7 @@ false
 ],
 "why": "The variable `cheapest` never changed, so every profit was measured from the first day's price. Update it each day with `cheapest = min(cheapest, price)` before finding the profit. Each time the loop moves, ask which tracker must learn about the new item.",
 "domain": "Algorithms",
-"bugText": "        profit = price - cheapest"
+"bugText": "        profit = price - lowest"
 },
 {
 "id": "b1",
@@ -266,10 +266,10 @@ false
 "kind": "fix",
 "fn": "longest_replace",
 "task": "You may change up to `k` letters. Return the length of the longest group of letters in a row in `s` that can become all one letter. For example, `longest_replace('AABABBA', 1)` gives `4`, because changing one letter turns \"AABA\" into \"AAAA\".",
-"code": "def longest_replace(s, k):\n    count = Counter()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        count[s[right]] += 1\n        while right - left + 1 - max(count.values()) > k:\n            count[left] -= 1\n            left += 1\n        best = max(best, right - left + 1)\n    return best",
+"code": "def longest_replace(s, k):\n    count = Counter()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        count[s[right]] += 1\n        size = right - left + 1\n        most = max(count.values())\n        while size - most > k:\n            count[left] -= 1\n            left += 1\n            size = right - left + 1\n            most = max(count.values())\n        best = max(best, size)\n    return best",
 "bug": [
-8,
-8
+10,
+10
 ],
 "fix": "            count[s[left]] -= 1",
 "tests": [
@@ -296,7 +296,7 @@ false
 "kind": "fix",
 "fn": "longest_unique",
 "task": "Return the length of the longest group of letters in a row in `s` where no letter repeats. For example, `longest_unique('abcb')` gives `3`, because \"abc\" has no repeat.",
-"code": "def longest_unique(s):\n    seen = set()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        while s[right] in seen:\n            seen.pop(s[left])\n            left += 1\n        seen.add(s[right])\n        best = max(best, right - left + 1)\n    return best",
+"code": "def longest_unique(s):\n    seen = set()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        while s[right] in seen:\n            seen.pop(s[left])\n            left += 1\n        seen.add(s[right])\n        size = right - left + 1\n        best = max(best, size)\n    return best",
 "bug": [
 7,
 7
@@ -326,12 +326,12 @@ false
 "kind": "fix",
 "fn": "shortest_slice",
 "task": "Find the shortest group of numbers in a row in `nums` whose sum is at least `target`. Return that group as a list. For example, `shortest_slice([2, 3, 1, 2, 4, 3], 7)` gives `[4, 3]`, because 4 + 3 = 7, and no single number reaches 7.",
-"code": "def shortest_slice(nums, target):\n    total = 0\n    left = 0\n    best_left, best_size = 0, len(nums) + 1\n    for right in range(len(nums)):\n        total += nums[right]\n        while total >= target:\n            if right - left + 1 < best_size:\n                best_left, best_size = nums[left], right - left + 1\n            total -= nums[left]\n            left += 1\n    return nums[best_left:best_left + best_size]",
+"code": "def shortest_slice(nums, target):\n    total = 0\n    left = 0\n    best_left = 0\n    best_size = len(nums) + 1\n    for right in range(len(nums)):\n        total += nums[right]\n        while total >= target:\n            size = right - left + 1\n            if size < best_size:\n                best_left = nums[left]\n                best_size = size\n            total -= nums[left]\n            left += 1\n    end = best_left + best_size\n    return nums[best_left:end]",
 "bug": [
-9,
-9
+11,
+11
 ],
-"fix": "                best_left, best_size = left, right - left + 1",
+"fix": "                best_left = left",
 "tests": [
 [
 "shortest_slice([2, 3, 1, 2, 4, 3], 7)",
@@ -356,7 +356,7 @@ false
 ],
 "why": "The line saved `nums[left]`, the number at that spot. The return line slices with `best_left`, so it needs the position. Save `left` instead.",
 "domain": "Algorithms",
-"bugText": "                best_left, best_size = nums[left], right - left + 1"
+"bugText": "                best_left = nums[left]"
 },
 {
 "id": "g1",
@@ -364,7 +364,7 @@ false
 "kind": "fix",
 "fn": "longest_ones",
 "task": "Each number in `nums` is 0 or 1. Return the length of the longest group of numbers in a row that has at most `k` zeros. For example, `longest_ones([1, 1, 0, 0, 1], 1)` gives `3`, because [1, 1, 0] has one zero.",
-"code": "def longest_ones(nums, k):\n    zeros = 0\n    left = 0\n    best = 0\n    for right in range(len(nums)):\n        if nums[right] == 0:\n            zeros += 1\n        while zeros >= k:\n            if nums[left] == 0:\n                zeros -= 1\n            left += 1\n        best = max(best, right - left + 1)\n    return best",
+"code": "def longest_ones(nums, k):\n    zeros = 0\n    left = 0\n    best = 0\n    for right in range(len(nums)):\n        if nums[right] == 0:\n            zeros += 1\n        while zeros >= k:\n            if nums[left] == 0:\n                zeros -= 1\n            left += 1\n        size = right - left + 1\n        best = max(best, size)\n    return best",
 "bug": [
 8,
 8
@@ -394,12 +394,12 @@ false
 "kind": "fix",
 "fn": "count_small",
 "task": "Count the groups of `k` numbers in a row in `nums` whose sum is at most `limit`. For example, `count_small([1, 2, 3, 1], 2, 4)` gives `2`, because 1 + 2 = 3 and 3 + 1 = 4 are at most 4, but 2 + 3 = 5 is not.",
-"code": "def count_small(nums, k, limit):\n    total = 0\n    found = 0\n    for right in range(len(nums)):\n        total += nums[right]\n        if right >= k:\n            total -= nums[right - k]\n        if right >= k - 1 and total == limit:\n            found += 1\n    return found",
+"code": "def count_small(nums, k, limit):\n    total = 0\n    found = 0\n    for right in range(len(nums)):\n        total += nums[right]\n        if right >= k:\n            total -= nums[right - k]\n        if right >= k - 1:\n            if total == limit:\n                found += 1\n    return found",
 "bug": [
-8,
-8
+9,
+9
 ],
-"fix": "        if right >= k - 1 and total <= limit:",
+"fix": "            if total <= limit:",
 "tests": [
 [
 "count_small([1, 2, 3, 1], 2, 4)",
@@ -416,7 +416,7 @@ false
 ],
 "why": "\"At most limit\" means less than or equal, so the check is `total <= limit`. The check `total == limit` counted only windows that hit the limit exactly.",
 "domain": "Algorithms",
-"bugText": "        if right >= k - 1 and total == limit:"
+"bugText": "            if total == limit:"
 },
 {
 "id": "g3",
@@ -464,12 +464,12 @@ false
 "kind": "fix",
 "fn": "longest_replace",
 "task": "You may change up to `k` letters. Return the length of the longest group of letters in a row in `s` that can become all one letter. For example, `longest_replace('AAAA', 2)` gives `4`, because \"AAAA\" is already all one letter.",
-"code": "def longest_replace(s, k):\n    count = Counter()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        count[s[right]] += 1\n        size = right - left + 1\n        if size - max(count.values()) == k:\n            best = max(best, size)\n        while right - left + 1 - max(count.values()) > k:\n            count[s[left]] -= 1\n            left += 1\n    return best",
+"code": "def longest_replace(s, k):\n    count = Counter()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        count[s[right]] += 1\n        size = right - left + 1\n        most = max(count.values())\n        if size - most == k:\n            best = max(best, size)\n        while size - most > k:\n            count[s[left]] -= 1\n            left += 1\n            size = right - left + 1\n            most = max(count.values())\n    return best",
 "bug": [
-8,
-8
+9,
+9
 ],
-"fix": "        if size - max(count.values()) <= k:",
+"fix": "        if size - most <= k:",
 "tests": [
 [
 "longest_replace('AAAA', 2)",
@@ -486,7 +486,7 @@ false
 ],
 "why": "A window is valid when it needs at most k changes, so the check is `<= k`. \"AAAA\" needs 0 changes, and 0 is not equal to 2, so `== k` skipped it. You made this slip on 19 November at 3:08 AM.",
 "domain": "Algorithms",
-"bugText": "        if size - max(count.values()) == k:"
+"bugText": "        if size - most == k:"
 },
 {
 "id": "j1",
@@ -494,7 +494,7 @@ false
 "kind": "fix",
 "fn": "longest_unique",
 "task": "Return the length of the longest group of letters in a row in `s` where no letter repeats. For example, `longest_unique('abcb')` gives `3`, because \"abc\" has no repeat.",
-"code": "def longest_unique(s):\n    seen = set()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        while s[right] in seen:\n            seen.remove(s[left])\n            left -= 1\n        seen.add(s[right])\n        best = max(best, right - left + 1)\n    return best",
+"code": "def longest_unique(s):\n    seen = set()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        while s[right] in seen:\n            seen.remove(s[left])\n            left -= 1\n        seen.add(s[right])\n        size = right - left + 1\n        best = max(best, size)\n    return best",
 "bug": [
 8,
 8
@@ -554,12 +554,12 @@ false
 "kind": "fix",
 "fn": "shortest_len",
 "task": "Return the length of the shortest group of numbers in a row in `nums` whose sum is at least `target`, or 0 if no group reaches it. For example, `shortest_len([1, 1], 5)` gives `0`, because the whole list only adds up to 2.",
-"code": "def shortest_len(nums, target):\n    total = 0\n    left = 0\n    best = float('inf')\n    for right in range(len(nums)):\n        total += nums[right]\n        while total >= target:\n            best = min(best, right - left + 1)\n            total -= nums[left]\n            left += 1\n    return 0 if best == float('-inf') else best",
+"code": "def shortest_len(nums, target):\n    total = 0\n    left = 0\n    best = float('inf')\n    for right in range(len(nums)):\n        total += nums[right]\n        while total >= target:\n            size = right - left + 1\n            best = min(best, size)\n            total -= nums[left]\n            left += 1\n    if best == float('-inf'):\n        return 0\n    return best",
 "bug": [
-11,
-11
+12,
+12
 ],
-"fix": "    return 0 if best == float('inf') else best",
+"fix": "    if best == float('inf'):",
 "tests": [
 [
 "shortest_len([1, 1], 5)",
@@ -576,7 +576,7 @@ false
 ],
 "why": "The variable `best` starts at plus infinity, so \"nothing found\" means it still equals `float('inf')`. The check compared with minus infinity, the opposite sign. You made this slip on 19 November at 6:15 AM.",
 "domain": "Algorithms",
-"bugText": "    return 0 if best == float('-inf') else best"
+"bugText": "    if best == float('-inf'):"
 },
 {
 "id": "j4",
@@ -584,10 +584,10 @@ false
 "kind": "fix",
 "fn": "window_max",
 "task": "For every group of `k` numbers in a row in `nums`, find the biggest number. Return the list of biggest numbers. For example, `window_max([5, 1, 3], 3)` gives `[5]`.",
-"code": "def window_max(nums, k):\n    queue = deque()\n    out = []\n    for right in range(len(nums)):\n        while queue and nums[queue[-1]] < nums[right]:\n            queue.popleft()\n        queue.append(right)\n        if queue[0] <= right - k:\n            queue.popleft()\n        if right >= k - 1:\n            out.append(nums[queue[0]])\n    return out",
+"code": "def window_max(nums, k):\n    queue = deque()\n    out = []\n    for right in range(len(nums)):\n        new = nums[right]\n        while queue:\n            back = nums[queue[-1]]\n            if back >= new:\n                break\n            queue.popleft()\n        queue.append(right)\n        if queue[0] <= right - k:\n            queue.popleft()\n        if right >= k - 1:\n            out.append(nums[queue[0]])\n    return out",
 "bug": [
-6,
-6
+10,
+10
 ],
 "fix": "            queue.pop()",
 "tests": [
@@ -623,12 +623,12 @@ false
 "kind": "fix",
 "fn": "has_sum",
 "task": "Return True if some group of `k` numbers in a row in `nums` adds up to exactly `target`. Otherwise return False. For example, `has_sum([1, 2, 3], 2, 5)` gives `True`, because 2 + 3 = 5.",
-"code": "def has_sum(nums, k, target):\n    total = 0\n    for right in range(len(nums)):\n        total += nums[right]\n        if right >= k:\n            total -= nums[right - k]\n        if right >= k - 1 and total == target:\n            return True",
+"code": "def has_sum(nums, k, target):\n    total = 0\n    for right in range(len(nums)):\n        total += nums[right]\n        if right >= k:\n            total -= nums[right - k]\n        if right >= k - 1:\n            if total == target:\n                return True",
 "bug": [
-8,
-8
+9,
+9
 ],
-"fix": "            return True\n    return False",
+"fix": "                return True\n    return False",
 "tests": [
 [
 "has_sum([1, 2, 3], 2, 5)",
@@ -645,7 +645,7 @@ false
 ],
 "why": "When no window adds up to the target, the loop ends and the function returns `None`. Add `return False` after the loop. Right after writing a loop, write the line for \"nothing found\".",
 "domain": "Algorithms",
-"bugText": "            return True"
+"bugText": "                return True"
 },
 {
 "id": "m2",
@@ -683,12 +683,12 @@ false
 "kind": "fix",
 "fn": "has_anagram",
 "task": "Return True if `s2` has a group of letters in a row that uses exactly the letters of `s1`, in any order. Otherwise return False. For example, `has_anagram('ab', 'eidbaooo')` gives `True`, because \"ba\" uses the same letters as \"ab\".",
-"code": "def has_anagram(s1, s2):\n    need = Counter(s1)\n    window = Counter()\n    for right in range(len(s2)):\n        window[s2[right]] += 1\n        if window == need:\n            return True\n        if right >= len(s1):\n            window[s2[right - len(s1)]] -= 1\n    return False",
+"code": "def has_anagram(s1, s2):\n    need = Counter(s1)\n    window = Counter()\n    for right in range(len(s2)):\n        window[s2[right]] += 1\n        if window == need:\n            return True\n        if right >= len(s1):\n            gone = s2[right - len(s1)]\n            window[gone] -= 1\n    return False",
 "bug": [
 6,
-9
+10
 ],
-"fix": "        if right >= len(s1):\n            window[s2[right - len(s1)]] -= 1\n        if window == need:\n            return True",
+"fix": "        if right >= len(s1):\n            gone = s2[right - len(s1)]\n            window[gone] -= 1\n        if window == need:\n            return True",
 "tests": [
 [
 "has_anagram('ab', 'eidbaooo')",
@@ -705,7 +705,7 @@ false
 ],
 "why": "The check ran while the window was still one letter too long, so the right window was never compared. Keep this order inside the loop: add the new letter, remove the old one, then check. You made this slip on 19 November at 5:58 AM.",
 "domain": "Algorithms",
-"bugText": "        if window == need:\n            return True\n        if right >= len(s1):\n            window[s2[right - len(s1)]] -= 1"
+"bugText": "        if window == need:\n            return True\n        if right >= len(s1):\n            gone = s2[right - len(s1)]\n            window[gone] -= 1"
 },
 {
 "id": "n2",
@@ -713,12 +713,12 @@ false
 "kind": "fix",
 "fn": "shortest_len",
 "task": "Return the length of the shortest group of numbers in a row in `nums` whose sum is at least `target`, or 0 if no group reaches it. For example, `shortest_len([2, 3, 1, 2, 4, 3], 7)` gives `2`, because 4 + 3 = 7.",
-"code": "def shortest_len(nums, target):\n    total = 0\n    left = 0\n    best = float('inf')\n    for right in range(len(nums)):\n        total += nums[right]\n        while total >= target:\n            total -= nums[left]\n            left += 1\n            best = min(best, right - left + 1)\n    return 0 if best == float('inf') else best",
+"code": "def shortest_len(nums, target):\n    total = 0\n    left = 0\n    best = float('inf')\n    for right in range(len(nums)):\n        total += nums[right]\n        while total >= target:\n            total -= nums[left]\n            left += 1\n            size = right - left + 1\n            best = min(best, size)\n    if best == float('inf'):\n        return 0\n    return best",
 "bug": [
 8,
-10
+11
 ],
-"fix": "            best = min(best, right - left + 1)\n            total -= nums[left]\n            left += 1",
+"fix": "            size = right - left + 1\n            best = min(best, size)\n            total -= nums[left]\n            left += 1",
 "tests": [
 [
 "shortest_len([2, 3, 1, 2, 4, 3], 7)",
@@ -735,7 +735,7 @@ false
 ],
 "why": "The code moved `left` before saving the length, so it measured a window that might no longer reach the target. Save `best` while the window is still valid, then shrink it.",
 "domain": "Algorithms",
-"bugText": "            total -= nums[left]\n            left += 1\n            best = min(best, right - left + 1)"
+"bugText": "            total -= nums[left]\n            left += 1\n            size = right - left + 1\n            best = min(best, size)"
 },
 {
 "id": "c1",
@@ -743,7 +743,7 @@ false
 "kind": "fix",
 "fn": "longest_unique",
 "task": "Return the length of the longest group of letters in a row in `s` where no letter repeats. For example, `longest_unique('aaccca')` gives `2`, because \"ac\" has no repeat.",
-"code": "def longest_unique(s):\n    seen = set()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        if s[right] in seen:\n            seen.remove(s[left])\n            left += 1\n        seen.add(s[right])\n        best = max(best, right - left + 1)\n    return best",
+"code": "def longest_unique(s):\n    seen = set()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        if s[right] in seen:\n            seen.remove(s[left])\n            left += 1\n        seen.add(s[right])\n        size = right - left + 1\n        best = max(best, size)\n    return best",
 "bug": [
 6,
 6
@@ -827,7 +827,7 @@ false
 "habit": "G",
 "kind": "predict",
 "task": "Run this loop in your head, one step at a time. Then type the value of each name when the loop ends.",
-"code": "nums = [1, 0, 0, 1]\nk = 1\nzeros = 0\nleft = 0\nbest = 0\nfor right in range(len(nums)):\n    if nums[right] == 0:\n        zeros += 1\n    while zeros > k:\n        if nums[left] == 0:\n            zeros -= 1\n        left += 1\n    best = max(best, right - left + 1)",
+"code": "nums = [1, 0, 0, 1]\nk = 1\nzeros = 0\nleft = 0\nbest = 0\nfor right in range(len(nums)):\n    if nums[right] == 0:\n        zeros += 1\n    while zeros > k:\n        if nums[left] == 0:\n            zeros -= 1\n        left += 1\n    size = right - left + 1\n    best = max(best, size)",
 "ask": [
 "left",
 "zeros",
@@ -897,7 +897,7 @@ false
 "habit": "A",
 "kind": "predict",
 "task": "Run this loop in your head, one step at a time. Then type the value of each name when the loop ends.",
-"code": "s = \"AABAB\"\nk = 1\ncount = {}\nleft = 0\nbest = 0\nfor right in range(len(s)):\n    count[s[right]] = count.get(s[right], 0) + 1\n    while right - left + 1 - max(count.values()) > k:\n        count[s[left]] -= 1\n        left += 1\n    best = max(best, right - left + 1)",
+"code": "s = \"AABAB\"\nk = 1\ncount = {}\nleft = 0\nbest = 0\nfor right in range(len(s)):\n    if s[right] not in count:\n        count[s[right]] = 0\n    count[s[right]] += 1\n    size = right - left + 1\n    most = max(count.values())\n    while size - most > k:\n        count[s[left]] -= 1\n        left += 1\n        size = right - left + 1\n        most = max(count.values())\n    best = max(best, size)",
 "ask": [
 "left",
 "count[\"A\"]",
@@ -947,12 +947,12 @@ false
 "kind": "fix",
 "fn": "overlap",
 "task": "Each box is given by two corners, (x1, y1, x2, y2). Return the area where the two boxes overlap, or 0 if they do not overlap. For example, `overlap((0, 0, 4, 4), (2, 2, 6, 6))` gives `4`, because the boxes share a 2 by 2 square.",
-"code": "def overlap(a, b):\n    w = min(a[2], b[2]) - max(a[0], b[0])\n    h = min(a[3], b[3]) - max(a[0], b[1])\n    if w <= 0 or h <= 0:\n        return 0\n    return w * h",
+"code": "def overlap(a, b):\n    x1 = max(a[0], b[0])\n    y1 = max(a[0], b[1])\n    x2 = min(a[2], b[2])\n    y2 = min(a[3], b[3])\n    width = x2 - x1\n    height = y2 - y1\n    if width <= 0 or height <= 0:\n        return 0\n    return width * height",
 "bug": [
 3,
 3
 ],
-"fix": "    h = min(a[3], b[3]) - max(a[1], b[1])",
+"fix": "    y1 = max(a[1], b[1])",
 "tests": [
 [
 "overlap((0, 0, 4, 4), (2, 2, 6, 6))",
@@ -969,7 +969,7 @@ false
 ],
 "why": "The height uses the y values, which sit at positions 1 and 3. The line used `a[0]`, an x value, because it was copied from the width line above. Use `max(a[1], b[1])`.",
 "domain": "Computer vision",
-"bugText": "    h = min(a[3], b[3]) - max(a[0], b[1])"
+"bugText": "    y1 = max(a[0], b[1])"
 },
 {
 "id": "v3",
@@ -1047,10 +1047,10 @@ false
 "kind": "fix",
 "fn": "motion_frames",
 "task": "Each number in `levels` is the brightness of one frame. Count the frames whose brightness changed by at least `threshold` from the frame before. For example, `motion_frames([0, 5, 5, 12], 5)` gives `2`, because 0 to 5 and 5 to 12 both change by at least 5.",
-"code": "def motion_frames(levels, threshold):\n    count = 0\n    for i in range(1, len(levels)):\n        change = abs(levels[i] - levels[i - 1])\n        if change > threshold:\n            count += 1\n    return count",
+"code": "def motion_frames(\n    levels, threshold\n):\n    count = 0\n    for i in range(1, len(levels)):\n        before = levels[i - 1]\n        after = levels[i]\n        change = abs(after - before)\n        if change > threshold:\n            count += 1\n    return count",
 "bug": [
-5,
-5
+9,
+9
 ],
 "fix": "        if change >= threshold:",
 "tests": [
@@ -1077,12 +1077,12 @@ false
 "kind": "fix",
 "fn": "top_detections",
 "task": "Each detection is a pair of a label and a score. Return the `k` detections with the highest scores, highest first. For example, `top_detections([('cat', 0.2), ('dog', 0.9), ('car', 0.5)], 2)` gives `[['dog', 0.9], ['car', 0.5]]`.",
-"code": "def top_detections(dets, k):\n    ranked = sorted(dets, key=lambda d: d[1])\n    return ranked[:k]",
+"code": "def top_detections(dets, k):\n    def score(det):\n        return det[1]\n    ranked = sorted(dets, key=score)\n    return ranked[:k]",
 "bug": [
-2,
-2
+4,
+4
 ],
-"fix": "    ranked = sorted(dets, key=lambda d: d[1], reverse=True)",
+"fix": "    ranked = sorted(dets, key=score)\n    ranked.reverse()",
 "tests": [
 [
 "top_detections([('cat', 0.2), ('dog', 0.9), ('car', 0.5)], 2)",
@@ -1118,7 +1118,7 @@ false
 ],
 "why": "The function `sorted` puts the smallest score first. Add `reverse=True` to put the highest score first. Say the order out loud: \"highest first means reversed.\"",
 "domain": "Computer vision",
-"bugText": "    ranked = sorted(dets, key=lambda d: d[1])"
+"bugText": "    ranked = sorted(dets, key=score)"
 },
 {
 "id": "v7",
@@ -1201,12 +1201,12 @@ false
 "kind": "fix",
 "fn": "allow",
 "task": "Each number in `times` is the second when a request arrived. Allow at most `limit` requests in any `window` seconds. Return True or False for each request. For example, `allow([1, 2, 3, 12], 2, 10)` gives `[True, True, False, True]`, because the request at second 3 would be the third one inside 10 seconds.",
-"code": "def allow(times, limit, window):\n    recent = deque()\n    out = []\n    for t in times:\n        out.append(len(recent) < limit)\n        while recent and recent[0] <= t - window:\n            recent.popleft()\n        if out[-1]:\n            recent.append(t)\n    return out",
+"code": "def allow(times, limit, window):\n    recent = deque()\n    out = []\n    for t in times:\n        cutoff = t - window\n        ok = len(recent) < limit\n        out.append(ok)\n        while recent:\n            if recent[0] > cutoff:\n                break\n            recent.popleft()\n        if ok:\n            recent.append(t)\n    return out",
 "bug": [
-5,
-7
+6,
+11
 ],
-"fix": "        while recent and recent[0] <= t - window:\n            recent.popleft()\n        out.append(len(recent) < limit)",
+"fix": "        while recent:\n            if recent[0] > cutoff:\n                break\n            recent.popleft()\n        ok = len(recent) < limit\n        out.append(ok)",
 "tests": [
 [
 "allow([1, 2, 3, 12], 2, 10)",
@@ -1236,7 +1236,7 @@ false
 ],
 "why": "The code decided before removing old requests, so expired requests still counted against the limit. Keep this order: add, remove the old ones, then decide.",
 "domain": "Backend",
-"bugText": "        out.append(len(recent) < limit)\n        while recent and recent[0] <= t - window:\n            recent.popleft()"
+"bugText": "        ok = len(recent) < limit\n        out.append(ok)\n        while recent:\n            if recent[0] > cutoff:\n                break\n            recent.popleft()"
 },
 {
 "id": "s2",
@@ -1382,12 +1382,12 @@ false
 "kind": "fix",
 "fn": "active_users",
 "task": "The dictionary `last_seen` holds the second each user was last active. Count the users who were active less than `timeout` seconds before `now`. For example, `active_users({'a': 95, 'b': 90, 'c': 50}, 100, 10)` gives `1`, because only user a, at 95, was active less than 10 seconds before 100.",
-"code": "def active_users(last_seen, now, timeout):\n    count = 0\n    for user in last_seen:\n        if now - last_seen[user] <= timeout:\n            count += 1\n    return count",
+"code": "def active_users(\n    last_seen, now, timeout\n):\n    count = 0\n    for user in last_seen:\n        age = now - last_seen[user]\n        if age <= timeout:\n            count += 1\n    return count",
 "bug": [
-4,
-4
+7,
+7
 ],
-"fix": "        if now - last_seen[user] < timeout:",
+"fix": "        if age < timeout:",
 "tests": [
 [
 "active_users({'a': 95, 'b': 90, 'c': 50}, 100, 10)",
@@ -1404,7 +1404,7 @@ false
 ],
 "why": "\"Less than timeout\" leaves out the timeout itself, so the check is `<`. User b was active exactly 10 seconds ago and must not count.",
 "domain": "Backend",
-"bugText": "        if now - last_seen[user] <= timeout:"
+"bugText": "        if age <= timeout:"
 },
 {
 "id": "s7",
@@ -1453,7 +1453,7 @@ false
 "kind": "fix",
 "fn": "unique_in_window",
 "task": "For each request id in `ids`, return True if it differs from all of the `k` ids just before it, and False if it matches one of them. For example, `unique_in_window(['a', 'b', 'a', 'a'], 1)` gives `[True, True, True, False]`, because the last \"a\" matches the \"a\" just before it.",
-"code": "def unique_in_window(ids, k):\n    recent = Counter()\n    out = []\n    for right in range(len(ids)):\n        if right > k:\n            old = ids[right - k - 1]\n        out.append(recent[ids[right]] == 0)\n        recent[ids[right]] += 1\n    return out",
+"code": "def unique_in_window(ids, k):\n    recent = Counter()\n    out = []\n    for right in range(len(ids)):\n        if right > k:\n            old = ids[right - k - 1]\n        new = ids[right]\n        out.append(recent[new] == 0)\n        recent[new] += 1\n    return out",
 "bug": [
 6,
 6
@@ -1496,12 +1496,12 @@ true
 "kind": "fix",
 "fn": "newer_version",
 "task": "Versions look like \"1.10.2\". Return True if version `a` is newer than version `b`. For example, `newer_version('1.10', '1.9')` gives `True`, because 10 is bigger than 9.",
-"code": "def newer_version(a, b):\n    pa = a.split(\".\")\n    pb = b.split(\".\")\n    return pa > pb",
+"code": "def newer_version(a, b):\n    a_parts = a.split(\".\")\n    b_parts = b.split(\".\")\n    return a_parts > b_parts",
 "bug": [
-2,
-3
+4,
+4
 ],
-"fix": "    pa = [int(x) for x in a.split(\".\")]\n    pb = [int(x) for x in b.split(\".\")]",
+"fix": "    a_nums = list(map(int, a_parts))\n    b_nums = list(map(int, b_parts))\n    return a_nums > b_nums",
 "tests": [
 [
 "newer_version('1.10', '1.9')",
@@ -1518,7 +1518,7 @@ false
 ],
 "why": "The parts are strings, and strings compare letter by letter, so \"10\" comes before \"9\". Turn each part into a number with `int` before comparing.",
 "domain": "Backend",
-"bugText": "    pa = a.split(\".\")\n    pb = b.split(\".\")"
+"bugText": "    return a_parts > b_parts"
 },
 {
 "id": "d1",
@@ -1556,10 +1556,10 @@ false
 "kind": "fix",
 "fn": "longest_goal_streak",
 "task": "Each number in `steps` is one day's step count. Return the most days in a row that reached at least `goal` steps. For example, `longest_goal_streak([9, 9, 1, 9], 5)` gives `2`, because the first two days both reach 5.",
-"code": "def longest_goal_streak(steps, goal):\n    current = 0\n    best = 0\n    for s in steps:\n        if s >= goal:\n            current += 1\n            best = max(best, current)\n        else:\n            best = 0\n    return best",
+"code": "def longest_goal_streak(\n    steps, goal\n):\n    current = 0\n    best = 0\n    for s in steps:\n        if s >= goal:\n            current += 1\n            best = max(best, current)\n        else:\n            best = 0\n    return best",
 "bug": [
-9,
-9
+11,
+11
 ],
 "fix": "            current = 0",
 "tests": [
@@ -1586,12 +1586,12 @@ false
 "kind": "fix",
 "fn": "percent_change",
 "task": "Each pair holds an old value and a new value. Return the percent change from old to new for each pair. For example, `percent_change([(100, 150)])` gives `[50]`, because going from 100 to 150 is a 50 percent rise.",
-"code": "def percent_change(pairs):\n    out = []\n    for old, new in pairs:\n        out.append((new - old) / new * 100)\n    return out",
+"code": "def percent_change(pairs):\n    out = []\n    for old, new in pairs:\n        diff = new - old\n        percent = diff / new * 100\n        out.append(percent)\n    return out",
 "bug": [
-4,
-4
+5,
+5
 ],
-"fix": "        out.append((new - old) / old * 100)",
+"fix": "        percent = diff / old * 100",
 "tests": [
 [
 "percent_change([(100, 150)])",
@@ -1615,7 +1615,7 @@ false
 ],
 "why": "Percent change compares against the starting value, so divide by `old`. Dividing by `new` gives a different number.",
 "domain": "Data analytics",
-"bugText": "        out.append((new - old) / new * 100)"
+"bugText": "        percent = diff / new * 100"
 },
 {
 "id": "d4",
@@ -1683,10 +1683,10 @@ false
 "kind": "fix",
 "fn": "first_overdraft",
 "task": "The balance starts at `start`, and each number in `changes` is one day's change. Return the first day the balance drops below zero, or -1 if it never does. For example, `first_overdraft(10, [-10, -1])` gives `1`, because the balance is 0 after day 0 and -1 after day 1.",
-"code": "def first_overdraft(start, changes):\n    balance = start\n    for day, change in enumerate(changes):\n        balance += change\n        if balance <= 0:\n            return day\n    return -1",
+"code": "def first_overdraft(\n    start, changes\n):\n    balance = start\n    for day in range(len(changes)):\n        balance += changes[day]\n        if balance <= 0:\n            return day\n    return -1",
 "bug": [
-5,
-5
+7,
+7
 ],
 "fix": "        if balance < 0:",
 "tests": [
@@ -1743,12 +1743,12 @@ false
 "kind": "fix",
 "fn": "spikes",
 "task": "Count the readings that are more than `limit` higher than the reading just before them. For example, `spikes([1, 9, 9, 20], 5)` gives `2`, because 1 to 9 and 9 to 20 both jump by more than 5.",
-"code": "def spikes(readings, limit):\n    count = 0\n    for i in range(len(readings)):\n        if readings[i + 1] - readings[i] > limit:\n            count += 1\n    return count",
+"code": "def spikes(readings, limit):\n    count = 0\n    stop = len(readings)\n    for i in range(stop):\n        before = readings[i]\n        after = readings[i + 1]\n        if after - before > limit:\n            count += 1\n    return count",
 "bug": [
 3,
 3
 ],
-"fix": "    for i in range(len(readings) - 1):",
+"fix": "    stop = len(readings) - 1",
 "tests": [
 [
 "spikes([1, 9, 9, 20], 5)",
@@ -1765,7 +1765,7 @@ false
 ],
 "why": "The loop reads `readings[i + 1]`, so `i` must stop one step early. On the last index, `i + 1` does not exist. Loop over `range(len(readings) - 1)`.",
 "domain": "Sensors",
-"bugText": "    for i in range(len(readings)):"
+"bugText": "    stop = len(readings)"
 },
 {
 "id": "r2",
@@ -1773,10 +1773,10 @@ false
 "kind": "fix",
 "fn": "max_window_temp",
 "task": "Return the highest average temperature over any `k` readings in a row. For example, `max_window_temp([1, 2, 3, 4], 2)` gives `3.5`, because (3 + 4) / 2 = 3.5.",
-"code": "def max_window_temp(temps, k):\n    total = sum(temps[:k])\n    best = total\n    for right in range(k, len(temps)):\n        total += temps[right]\n        best = max(best, total)\n    return best / k",
+"code": "def max_window_temp(temps, k):\n    total = sum(temps[:k])\n    best = total\n    end = len(temps)\n    for right in range(k, end):\n        total += temps[right]\n        best = max(best, total)\n    return best / k",
 "bug": [
-5,
-5
+6,
+6
 ],
 "fix": "        total += temps[right]\n        total -= temps[right - k]",
 "tests": [
@@ -1840,7 +1840,7 @@ false
 "habit": "N",
 "kind": "predict",
 "task": "Run these lines in your head, one at a time. Then type the value of each name at the end.",
-"code": "times = [1, 2, 3, 12]\nwindow = 10\nrecent = []\nfor t in times:\n    while recent and recent[0] <= t - window:\n        recent.pop(0)\n    recent.append(t)",
+"code": "times = [1, 2, 3, 12]\nwindow = 10\nrecent = []\nfor t in times:\n    cutoff = t - window\n    while recent:\n        if recent[0] > cutoff:\n            break\n        recent.pop(0)\n    recent.append(t)",
 "ask": [
 "len(recent)",
 "recent[0]"
@@ -1947,7 +1947,7 @@ false
 "kind": "fix",
 "fn": "last_stone",
 "task": "Each turn, smash the two heaviest stones. Equal stones both break, and different stones leave one stone that weighs the difference. Return the weight of the last stone, or 0 if no stone is left. For example, `last_stone([2, 7, 4, 1, 8, 1])` gives `1`, because 8 and 7 leave 1, 4 and 2 leave 2, 2 and 1 leave 1, 1 and 1 break, and 1 is left.",
-"code": "def last_stone(stones):\n    heap = [-s for s in stones]\n    heapq.heapify(heap)\n    for _ in range(len(stones)):\n        if len(heap) < 2:\n            break\n        first = -heapq.heappop(heap)\n        second = -heap[0]\n        if first != second:\n            heapq.heappush(heap, -(first - second))\n    return -heap[0] if heap else 0",
+"code": "def last_stone(stones):\n    heap = [-s for s in stones]\n    heapq.heapify(heap)\n    for _ in range(len(stones)):\n        if len(heap) < 2:\n            break\n        first = -heapq.heappop(heap)\n        second = -heap[0]\n        if first != second:\n            rest = first - second\n            heapq.heappush(heap, -rest)\n    return -heap[0] if heap else 0",
 "bug": [
 8,
 8

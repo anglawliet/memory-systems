@@ -256,7 +256,7 @@ false
 3
 ]
 ],
-"why": "The variable `cheapest` never changed, so every profit was measured from the first day's price. Update it each day with `cheapest = min(cheapest, price)` before finding the profit. Each time the loop moves, ask which tracker must learn about the new item.",
+"why": "The variable `lowest` never changed, so every profit was measured from the first day's price. Update it each day with `lowest = min(lowest, price)` before finding the profit. Each time the loop moves, ask which tracker must learn about the new item.",
 "domain": "Algorithms",
 "bugText": "        profit = price - lowest"
 },
@@ -967,7 +967,7 @@ false
 0
 ]
 ],
-"why": "The height uses the y values, which sit at positions 1 and 3. The line used `a[0]`, an x value, because it was copied from the width line above. Use `max(a[1], b[1])`.",
+"why": "The height uses the y values, which sit at positions 1 and 3. The line used `a[0]`, an x value, because it was copied from the `x1` line above. Use `max(a[1], b[1])`.",
 "domain": "Computer vision",
 "bugText": "    y1 = max(a[0], b[1])"
 },
@@ -1116,7 +1116,7 @@ false
 ]
 ]
 ],
-"why": "The function `sorted` puts the smallest score first. Add `reverse=True` to put the highest score first. Say the order out loud: \"highest first means reversed.\"",
+"why": "The function `sorted` puts the smallest score first. Add `ranked.reverse()` to put the highest score first. Say the order out loud: \"highest first means reversed.\"",
 "domain": "Computer vision",
 "bugText": "    ranked = sorted(dets, key=score)"
 },
@@ -1763,7 +1763,7 @@ false
 2
 ]
 ],
-"why": "The loop reads `readings[i + 1]`, so `i` must stop one step early. On the last index, `i + 1` does not exist. Loop over `range(len(readings) - 1)`.",
+"why": "The loop reads `readings[i + 1]`, so `i` must stop one step early. On the last index, `i + 1` does not exist. Set `stop = len(readings) - 1`, so the loop ends one step early.",
 "domain": "Sensors",
 "bugText": "    stop = len(readings)"
 },

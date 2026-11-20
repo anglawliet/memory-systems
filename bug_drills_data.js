@@ -1200,7 +1200,7 @@ false
 "habit": "N",
 "kind": "fix",
 "fn": "allow",
-"task": "Each number in `times` is the second when a request arrived. Allow at most `limit` requests in any `window` seconds. Return True or False for each request. For example, `allow([1, 2, 3, 12], 2, 10)` gives `[True, True, False, True]`, because the request at second 3 would be the third one inside 10 seconds.",
+"task": "Each number in `times` is the second when a request arrived. A request is allowed only if fewer than `limit` allowed requests arrived in the last `window` seconds. Return True for each allowed request and False for each blocked one. For example, `allow([1, 2, 3, 12], 2, 10)` gives `[True, True, False, True]`. The request at second 3 is blocked, because the requests at seconds 1 and 2 already used the limit of 2. The request at second 12 is allowed, because seconds 1 and 2 are 10 or more seconds old.",
 "code": "def allow(times, limit, window):\n    recent = deque()\n    out = []\n    for t in times:\n        cutoff = t - window\n        ok = len(recent) < limit\n        out.append(ok)\n        while recent:\n            if recent[0] > cutoff:\n                break\n            recent.popleft()\n        if ok:\n            recent.append(t)\n    return out",
 "bug": [
 6,

@@ -323,7 +323,7 @@ a.card.c_habits::before{display:none}
 .code-text.stepping .ln.on{background:rgba(96,150,255,.12);box-shadow:inset 3px 0 #60a5fa}
 .code-text.stepping:not(.summary) .note-row:not(.on){display:none}
 .code-text.stepping .ln,.code-text.stepping .ln span{transition:color .2s,background .2s}
-.panel-stack.building > :not(.code-text):not(.build-sheet){display:none}
+.panel-stack.building > :not(.code-text):not(.build-sheet):not(.bi-card){display:none}
 
 .build-sheet{display:none}
 .build-sheet.shown{display:block;position:fixed;left:0;right:0;bottom:0;z-index:60;
@@ -1667,3 +1667,32 @@ a.card::before{display:none!important}
 /* 61. A "watch out" note for a step that is easy to get half right */
 .lsn-watch{padding:12px 14px;border-radius:12px;border:1px solid #F2C9A8;background:#FFF4EA}
 :root[data-theme="dark"] .lsn-watch{border-color:#6B4A30;background:#2A2018}
+
+/* 62. The new Build it walkthrough. The code grows one piece at a time, and a card under the code
+   asks the question first and shows the answer on the next tap. */
+.code-text.bi-on .ln.hid,.code-text.bi-on .note-row.hid{display:none}
+.code-text.bi-on .ln.built{opacity:.62}
+.code-text.bi-on .ln.on{background:rgba(224,178,74,.13);box-shadow:inset 3px 0 #E0B24A}
+.code-text.bi-on .ln.pop{animation:biIn .35s ease-out}
+@keyframes biIn{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+.code-text.bi-on .step-btn{background:#2a313c!important;color:#e6e9ef!important;border-color:#2a313c!important}
+.bi-card{margin:12px 0 4px;padding:16px 18px 18px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.bi-card[hidden]{display:none}
+.bi-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.bi-step{font:650 12px/1 'Inter',system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap}
+.bi-dots{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px}
+.bi-dots i{display:block;width:14px;height:4px;border-radius:2px;background:var(--surface-3)}
+.bi-dots i.done{background:var(--gold-fill);opacity:.45}
+.bi-dots i.cur{background:var(--gold-fill)}
+.bi-card .bi-ask{margin:12px 0 0;font:650 18px/1.4 'Inter',system-ui,sans-serif;color:var(--ink);text-align:left}
+.bi-card .bi-think{margin:6px 0 0;font-size:14px;color:var(--ink-3);text-align:left}
+.bi-card .bi-think[hidden],.bi-card .bi-say[hidden]{display:none}
+.bi-say{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:16px;line-height:1.6;color:var(--ink-2);animation:biIn .3s ease-out}
+.bi-say p{margin:0 0 8px}
+.bi-say p:last-child{margin-bottom:0}
+.bi-card code{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.88em;background:var(--surface-2);border:1px solid var(--line);border-radius:5px;padding:1px 5px;color:var(--ink);font-variant-ligatures:none;-webkit-hyphens:none;hyphens:none}
+.bi-nav{display:grid;grid-template-columns:1fr 1.6fr;gap:10px;margin-top:16px}
+.bi-nav button{font:650 16px 'Inter',system-ui,sans-serif;height:44px;border-radius:12px;cursor:pointer}
+.bi-back{background:transparent;border:1px solid var(--line-strong);color:var(--ink)}
+.bi-back:disabled{opacity:.4;cursor:default}
+.bi-next{background:var(--gold-fill);border:0;color:var(--on-gold)}

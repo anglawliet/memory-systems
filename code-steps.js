@@ -88,7 +88,8 @@
 
   // leave enough room under the page so the last lines can scroll above the panel
   function pad() {
-    document.body.style.paddingBottom = active && inView && !docked() ? (sheet.offsetHeight + 40) + "px" : "";
+    var old = active && !active.classList.contains("v2");
+    document.body.style.paddingBottom = old && inView && !docked() ? (sheet.offsetHeight + 40) + "px" : "";
   }
 
   // scroll so the lit lines sit between the top menu and the panel
@@ -104,7 +105,7 @@
   }
 
   function update() {
-    var on = !!active && inView;
+    var on = !!active && inView && !active.classList.contains("v2");
     sheet.classList.toggle("shown", on);
     pad();
     dock();
@@ -125,7 +126,10 @@
   function stop() {
     if (!active) return;
     var box = active;
-    box.classList.remove("stepping", "summary");
+    box.classList.remove("stepping", "summary", "bi-on");
+    var card = box.nextElementSibling;
+    if (card && card.classList.contains("bi-card")) card.hidden = true;
+    box.querySelectorAll(".hid, .pop").forEach(function (el) { el.classList.remove("hid", "pop"); });
     var stack = box.closest(".panel-stack");
     if (stack) stack.classList.remove("building", "docked");
     sheet.classList.remove("docked");
@@ -139,6 +143,7 @@
 
   function start(box) {
     if (active) stop();
+    if (box.classList.contains("v2")) { startNew(box); return; }
     active = box; cur = 0;
     steps = JSON.parse(box.querySelector("script.steps").textContent);
     box.classList.add("stepping");
@@ -173,6 +178,99 @@
     });
   });
 
+  // The new walkthrough. The code grows one piece at a time, the way I would write it.
+  // Each step first asks the question I would ask myself, and the code stays hidden.
+  // The first tap shows the new lines and what I would say about them.
+  var phase = "ask", card = null;
+
+  function startNew(box) {
+    active = box; cur = 0; phase = "ask";
+    steps = JSON.parse(box.querySelector("script.steps").textContent);
+    card = box.nextElementSibling;
+    if (!card || !card.classList.contains("bi-card")) {
+      card = document.createElement("div");
+      card.className = "bi-card";
+      card.innerHTML =
+        '<div class="bi-top"><span class="bi-step"></span><span class="bi-dots"></span></div>' +
+        '<h4 class="bi-ask"></h4><p class="bi-think">Think of your answer first.</p>' +
+        '<div class="bi-say"></div>' +
+        '<div class="bi-nav"><button type="button" class="bi-back">Back</button>' +
+        '<button type="button" class="bi-next"></button></div>';
+      box.after(card);
+      card.querySelector(".bi-back").addEventListener("click", goBack);
+      card.querySelector(".bi-next").addEventListener("click", goNext);
+    }
+    card.hidden = false;
+    box.classList.add("bi-on");
+    var stack = box.closest(".panel-stack");
+    if (stack) stack.classList.add("building");
+    box.querySelector(".step-btn").innerHTML = "Exit";
+    inView = true;
+    update();
+    window.scrollTo({ top: box.getBoundingClientRect().top + window.scrollY - 80, behavior: "smooth" });
+    showNew();
+  }
+
+  function showNew() {
+    var shown = phase === "show";
+    var now = lines(steps[cur].lines), before = [];
+    for (var k = 0; k < cur; k++) before = before.concat(lines(steps[k].lines));
+    var all = shown && now.length === 0;
+    var rows = active.querySelectorAll(".code-inner > *");
+    var seen = [];
+    rows.forEach(function (el) {
+      var l = el.dataset.l ? +el.dataset.l : 0;
+      var isNew = shown && now.indexOf(l) >= 0;
+      var vis = all || before.indexOf(l) >= 0 || isNew;
+      if (el.classList.contains("note-row")) vis = all;
+      else if (!l) vis = null;
+      el.classList.toggle("on", isNew && !all);
+      el.classList.toggle("built", !isNew && vis === true && !all);
+      if (isNew && !el.classList.contains("pop")) el.classList.add("pop");
+      if (!isNew) el.classList.remove("pop");
+      seen.push(vis);
+    });
+    // a blank line shows only when code sits both above it and below it
+    rows.forEach(function (el, i) {
+      var vis = seen[i];
+      if (vis === null) {
+        var up = false, down = false;
+        for (var a = i - 1; a >= 0; a--) if (seen[a] !== null && !rows[a].classList.contains("note-row")) { up = seen[a]; break; }
+        for (var b = i + 1; b < rows.length; b++) if (seen[b] !== null && !rows[b].classList.contains("note-row")) { down = seen[b]; break; }
+        vis = up && down;
+      }
+      el.classList.toggle("hid", !vis);
+    });
+    var last = cur === steps.length - 1;
+    card.querySelector(".bi-step").textContent = now.length ? "Step " + (cur + 1) + " of " + steps.length : "Wrap up";
+    var dots = "";
+    for (var d = 0; d < steps.length; d++) dots += '<i class="' + (d < cur ? "done" : d === cur ? "cur" : "") + '"></i>';
+    card.querySelector(".bi-dots").innerHTML = dots;
+    card.querySelector(".bi-ask").innerHTML = format(steps[cur].ask).replace(/^<p>|<\/p>$/g, "");
+    card.querySelector(".bi-think").hidden = shown;
+    var say = card.querySelector(".bi-say");
+    say.hidden = !shown;
+    say.innerHTML = shown ? format(steps[cur].say) : "";
+    card.querySelector(".bi-back").disabled = cur === 0 && !shown;
+    card.querySelector(".bi-next").textContent = !shown ? (now.length ? "Show the code" : "Show the answer") : last ? "Done" : "Next";
+    var r = card.getBoundingClientRect();
+    if (r.bottom > window.innerHeight - 12 || r.top < 80) {
+      window.scrollTo({ top: window.scrollY + r.bottom - window.innerHeight + 24, behavior: "smooth" });
+    }
+  }
+
+  function goNext() {
+    if (phase === "ask") phase = "show";
+    else if (cur < steps.length - 1) { cur++; phase = "ask"; }
+    else { stop(); return; }
+    showNew();
+  }
+  function goBack() {
+    if (phase === "show") phase = "ask";
+    else if (cur > 0) { cur--; phase = "show"; }
+    showNew();
+  }
+
   back.addEventListener("click", function () { if (cur > 0) { cur--; show(true); } });
   next.addEventListener("click", function () {
     if (cur < steps.length - 1) { cur++; show(true); } else stop();
@@ -180,8 +278,9 @@
   close.addEventListener("click", stop);
   document.addEventListener("keydown", function (e) {
     if (!active) return;
-    if (e.key === "ArrowRight") next.click();
-    if (e.key === "ArrowLeft") back.click();
+    var v2 = active.classList.contains("v2");
+    if (e.key === "ArrowRight") { if (v2) goNext(); else next.click(); }
+    if (e.key === "ArrowLeft") { if (v2) goBack(); else back.click(); }
     if (e.key === "Escape") stop();
   });
 })();

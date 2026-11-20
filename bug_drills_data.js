@@ -1,4 +1,4 @@
-window.DRILL_HABITS = {"A": "The tracker falls out of step with the pointers", "B": "Mixing up a position and a value, or a type and its methods", "C": "No fixed plan for shrinking the window", "E": "Using the wrong one of two similar names", "G": "The wrong comparison", "J": "A reversed direction or sign", "M": "Forgetting the \"nothing found\" return", "N": "Checking before the window is fixed"};
+window.DRILL_HABITS = {"A": "The tracker falls out of step with the pointers", "B": "Mixing up a position and a value, or a type and its methods", "C": "No fixed plan for shrinking the window", "E": "Using the wrong one of two similar names", "G": "The wrong comparison", "J": "A reversed direction or sign", "M": "Forgetting the \"nothing found\" return", "N": "Checking before the window is fixed", "O": "Doing only half of a two-part step", "P": "Hard-coding a value from the example"};
 window.DRILLS = [
 {
 "id": "e1",
@@ -1939,6 +1939,85 @@ false
 "answers": [
 "1",
 "2"
+]
+},
+{
+"id": "h1",
+"habit": "O",
+"kind": "fix",
+"fn": "last_stone",
+"task": "The function smashes the two heaviest stones until at most one is left, then returns its weight, or 0.",
+"code": "def last_stone(stones):\n    heap = [-s for s in stones]\n    heapq.heapify(heap)\n    for _ in range(len(stones)):\n        if len(heap) < 2:\n            break\n        first = -heapq.heappop(heap)\n        second = -heap[0]\n        if first != second:\n            heapq.heappush(heap, -(first - second))\n    return -heap[0] if heap else 0",
+"bug": [
+8,
+8
+],
+"fix": "        second = -heapq.heappop(heap)",
+"tests": [
+[
+"last_stone([2, 7, 4, 1, 8, 1])",
+1
+],
+[
+"last_stone([2, 2])",
+0
+],
+[
+"last_stone([3, 7, 2])",
+2
+]
+],
+"why": "A smash uses two stones, so both must leave the heap. Reading `heap[0]` only peeks, so the second stone stayed in the heap. Pop twice, then push back only the difference. This is the slip from Last Stone Weight on 20 November.",
+"domain": "Heaps",
+"bugText": "        second = -heap[0]"
+},
+{
+"id": "h2",
+"habit": "P",
+"kind": "fix",
+"fn": "kth_largest",
+"task": "The function returns the k-th largest number in nums.",
+"code": "def kth_largest(nums, k):\n    heap = []\n    for n in nums:\n        heapq.heappush(heap, n)\n        if len(heap) > 3:\n            heapq.heappop(heap)\n    return heap[0]",
+"bug": [
+5,
+5
+],
+"fix": "        if len(heap) > k:",
+"tests": [
+[
+"kth_largest([3, 2, 1, 5, 6, 4], 2)",
+5
+],
+[
+"kth_largest([1], 1)",
+1
+],
+[
+"kth_largest([7, 7, 8], 3)",
+7
+]
+],
+"why": "The heap must keep k numbers, and k changes from call to call. The 3 came from the example. Read every number in your code and ask where it came from. This is the slip from Kth Largest in a Stream on 20 November.",
+"domain": "Heaps",
+"bugText": "        if len(heap) > 3:"
+},
+{
+"id": "q7",
+"habit": "O",
+"kind": "predict",
+"task": "Trace these lines by hand. What are the values at the end?",
+"code": "import heapq\nheap = [-8, -7, -4, -2]\nheapq.heapify(heap)\nfirst = -heapq.heappop(heap)\nsecond = -heap[0]\nsize = len(heap)",
+"ask": [
+"first",
+"second",
+"size"
+],
+"why": "`heap[0]` looks at the top without removing it. Only `heappop` removes a stone, so after one pop and one peek the heap still holds 3 stones.",
+"domain": "Heaps",
+"answers": [
+"8",
+"7",
+"3"
 ]
 }
 ];

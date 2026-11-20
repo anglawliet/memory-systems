@@ -9,7 +9,7 @@
   var DRILLS = window.DRILLS || [], HABITS = window.DRILL_HABITS || {};
   var P = window.MSPractice;
   var KEY = "drills-v1", PER_DAY = 6;
-  var PRE = "from collections import Counter, deque\n";
+  var PRE = "import heapq\nfrom collections import Counter, deque\n";
   var MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
   function $(sel, root) { return (root || document).querySelector(sel); }

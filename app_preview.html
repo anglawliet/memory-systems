@@ -355,6 +355,18 @@ body{background:radial-gradient(70% 60% at 50% 30%,#FFF1D2,#FCE6BF)}
 .sect{margin-top:24px}
 .done h1{margin-bottom:24px}
 </style>
+<style>
+/* Code editor colors: VS Code Dark+, the theme LeetCode and most coding sites use */
+.code{background:#1E1E1E;border:1px solid #2D2D2D;box-shadow:0 6px 0 #141414,0 16px 30px rgba(0,0,0,.18);border-radius:18px}
+.ln .n,.edit .n{color:#858585}
+.ln .t,.edit textarea{color:#D4D4D4}
+.kd{color:#569CD6}.kf{color:#C586C0}.fn{color:#DCDCAA}.va{color:#9CDCFE}.nu{color:#B5CEA8}.s{color:#CE9178}.cm{color:#6A9955}.op{color:#D4D4D4}
+button.ln:hover{background:#2A2D2E}
+.edit{background:#264F78;box-shadow:inset 3px 0 0 #FFD15C}
+.edit textarea{caret-color:#AEAFAD}
+.ln.wrong{background:rgba(244,71,71,.22)}
+.ln.good{background:rgba(78,201,110,.18)}
+</style>
 </head>
 <body>
 <div class="app" id="app">
@@ -548,10 +560,27 @@ body{background:radial-gradient(70% 60% at 50% 30%,#FFF1D2,#FCE6BF)}
     return "<div class='playtop'><button class='x' id='quit' aria-label='Quit'><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.4' stroke-linecap='round'><path d='M6 6l12 12M18 6 6 18'/></svg></button><div class='prog'>" + segs + "</div>" +
       (combo > 1 ? "<div class='combo'>×" + combo + "</div>" : "") + "</div>";
   }
+  /* Python highlighting with the VS Code "Dark+" colors that LeetCode's editor uses */
+  var KW_DEF = /^(def|class|lambda|import|from|as|None|True|False)$/, KW_FLOW = /^(if|elif|else|for|while|in|not|and|or|is|return|break|continue|pass|try|except|with|yield)$/;
+  var BUILTIN = /^(min|max|len|range|sum|sorted|abs|int|str|list|dict|set|print|enumerate|zip)$/;
+  function plain(html) { var d = document.createElement("div"); d.innerHTML = html; return d.textContent; }
+  function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function hl(line) {
+    return line.replace(/("[^"]*"|'[^']*')|(#.*$)|(\b\d+(?:\.\d+)?\b)|([A-Za-z_]\w*)(\s*\()?|([^\w\s"'#]+)/g, function (m, str, com, num, id, call, op) {
+      if (str) return "<span class='s'>" + esc(str) + "</span>";
+      if (com) return "<span class='cm'>" + esc(com) + "</span>";
+      if (num) return "<span class='nu'>" + num + "</span>";
+      if (id) {
+        var cls = KW_DEF.test(id) ? "kd" : KW_FLOW.test(id) ? "kf" : (call || BUILTIN.test(id)) ? "fn" : "va";
+        return "<span class='" + cls + "'>" + id + "</span>" + (call ? esc(call) : "");
+      }
+      return "<span class='op'>" + esc(op) + "</span>";
+    });
+  }
   function codeHTML(d, tappable) {
     return "<div class='code' id='code'>" + d.code.map(function (l, i) {
       var tag = tappable ? "button" : "div";
-      return "<" + tag + " class='ln' data-n='" + (i + 1) + "'><span class='n'>" + (i + 1) + "</span><span class='t' style='padding-left:" + l[1] + "ch'>" + l[0] + "</span></" + tag + ">";
+      return "<" + tag + " class='ln' data-n='" + (i + 1) + "'><span class='n'>" + (i + 1) + "</span><span class='t' style='padding-left:" + l[1] + "ch'>" + hl(plain(l[0])) + "</span></" + tag + ">";
     }).join("") + "</div>";
   }
   function run() {

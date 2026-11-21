@@ -39,6 +39,20 @@ window.DRILLS = [
 ],
 "why": "The line subtracted `added`, the number that just joined, so `total` lost the wrong number. Subtract `gone`, the number that left: `total -= gone`. The line was copied from `total += added` above it, and one name stayed the same.",
 "domain": "Algorithms",
+"jobs": [
+[
+5,
+"add the new number"
+],
+[
+7,
+"drop the number that left"
+],
+[
+10,
+"save each full window"
+]
+],
 "bugText": "            total -= added"
 },
 {
@@ -78,6 +92,20 @@ window.DRILLS = [
 ],
 "why": "The line lowered the count of `letter`, the letter that just joined. Lower the count of `gone`, the letter that left: `window[gone] -= 1`. The line was copied from `window[letter] += 1`, and one name stayed the same. You made this exact slip in Minimum Window on 19 November.",
 "domain": "Algorithms",
+"jobs": [
+[
+5,
+"add the new letter"
+],
+[
+7,
+"drop the letter that left"
+],
+[
+12,
+"save each full window"
+]
+],
 "bugText": "            window[letter] -= 1"
 },
 {
@@ -108,6 +136,20 @@ false
 ],
 "why": "The check `len(window)` counts how many different letters the dictionary holds, not how many letters sit in the window. For \"dcd\", it gives 2, but the window holds 3 letters. Measure the window with `right - left + 1`.",
 "domain": "Algorithms",
+"jobs": [
+[
+6,
+"add the new letter"
+],
+[
+7,
+"keep the window at len(s1)"
+],
+[
+10,
+"check the window"
+]
+],
 "bugText": "        if len(window) > len(s1):"
 },
 {
@@ -168,6 +210,20 @@ false
 ],
 "why": "The line added `s[left]`, but the letter joining the window is `s[right]`. The line was copied from `seen.remove(s[left])` two lines above. This was the first mistake in your log, on 14 November.",
 "domain": "Algorithms",
+"jobs": [
+[
+6,
+"make room for s[right]"
+],
+[
+9,
+"add the new letter"
+],
+[
+10,
+"record the best size"
+]
+],
 "bugText": "        seen.add(s[left])"
 },
 {
@@ -198,6 +254,20 @@ false
 ],
 "why": "When `gone` left the window, its count never went down, so the dictionary `window` still counted it. Add `window[gone] -= 1` right after finding `gone`. You missed this same line in Minimum Window on 18 November.",
 "domain": "Algorithms",
+"jobs": [
+[
+5,
+"add the new letter"
+],
+[
+6,
+"drop the letter that left"
+],
+[
+8,
+"check the window"
+]
+],
 "bugText": "            gone = s2[right - len(s1)]"
 },
 {
@@ -228,6 +298,20 @@ false
 ],
 "why": "The code moved `left` before lowering the count, so `s[left]` pointed at the next letter, not the one leaving. Lower the count first with `count[s[left]] -= 1`, then move `left`.",
 "domain": "Algorithms",
+"jobs": [
+[
+6,
+"add the new letter"
+],
+[
+9,
+"shrink until it is valid"
+],
+[
+14,
+"record the best size"
+]
+],
 "bugText": "            left += 1\n            count[s[left]] -= 1"
 },
 {
@@ -288,6 +372,20 @@ false
 ],
 "why": "The line used `left`, which is a position like 2, but the counts use letters as keys. Use the letter at that position: `count[s[left]] -= 1`.",
 "domain": "Algorithms",
+"jobs": [
+[
+6,
+"add the new letter"
+],
+[
+9,
+"shrink until it is valid"
+],
+[
+14,
+"record the best size"
+]
+],
 "bugText": "            count[left] -= 1"
 },
 {
@@ -318,6 +416,20 @@ false
 ],
 "why": "A set's `pop()` takes no value and removes a random item, so the call crashed. Use `remove` to take out one chosen item: `seen.remove(s[left])`. Name the type first, then choose the method.",
 "domain": "Algorithms",
+"jobs": [
+[
+6,
+"make room for s[right]"
+],
+[
+9,
+"add the new letter"
+],
+[
+10,
+"record the best size"
+]
+],
 "bugText": "            seen.pop(s[left])"
 },
 {
@@ -356,6 +468,24 @@ false
 ],
 "why": "The line saved `nums[left]`, the number at that spot. The return line slices with `best_left`, so it needs the position. Save `left` instead.",
 "domain": "Algorithms",
+"jobs": [
+[
+7,
+"add the new number"
+],
+[
+8,
+"shrink while sum is enough"
+],
+[
+10,
+"remember the best window"
+],
+[
+15,
+"slice out the best window"
+]
+],
 "bugText": "                best_left = nums[left]"
 },
 {
@@ -386,6 +516,20 @@ false
 ],
 "why": "\"At most k zeros\" means a window with exactly k zeros is fine. The check `zeros >= k` shrank that window anyway. Shrink only when `zeros > k`.",
 "domain": "Algorithms",
+"jobs": [
+[
+6,
+"count the new zero"
+],
+[
+8,
+"shrink to at most k zeros"
+],
+[
+12,
+"record the best size"
+]
+],
 "bugText": "        while zeros >= k:"
 },
 {
@@ -416,6 +560,20 @@ false
 ],
 "why": "\"At most limit\" means less than or equal, so the check is `total <= limit`. The check `total == limit` counted only windows that hit the limit exactly.",
 "domain": "Algorithms",
+"jobs": [
+[
+5,
+"add the new number"
+],
+[
+6,
+"drop the number that left"
+],
+[
+8,
+"count a window under limit"
+]
+],
 "bugText": "            if total == limit:"
 },
 {
@@ -456,6 +614,20 @@ false
 ],
 "why": "With `right > k`, the first number left one step too late. For k = 2, the window held 3 numbers when `right` was 2. Start removing when `right >= k`, and check that first moment by hand.",
 "domain": "Algorithms",
+"jobs": [
+[
+5,
+"add the new number"
+],
+[
+6,
+"drop the number that left"
+],
+[
+8,
+"save each full window"
+]
+],
 "bugText": "        if right > k:"
 },
 {
@@ -486,6 +658,20 @@ false
 ],
 "why": "A window is valid when it needs at most k changes, so the check is `<= k`. \"AAAA\" needs 0 changes, and 0 is not equal to 2, so `== k` skipped it. You made this slip on 19 November at 3:08 AM.",
 "domain": "Algorithms",
+"jobs": [
+[
+6,
+"add the new letter"
+],
+[
+9,
+"record a valid window"
+],
+[
+11,
+"shrink until it is valid"
+]
+],
 "bugText": "        if size - most == k:"
 },
 {
@@ -516,6 +702,20 @@ false
 ],
 "why": "The window shrinks from the left, so `left` moves forward, toward `right`. The line `left -= 1` moved it backward. Say the direction out loud: \"shrink means left goes up.\"",
 "domain": "Algorithms",
+"jobs": [
+[
+6,
+"make room for s[right]"
+],
+[
+9,
+"add the new letter"
+],
+[
+10,
+"record the best size"
+]
+],
 "bugText": "            left -= 1"
 },
 {
@@ -576,6 +776,20 @@ false
 ],
 "why": "The variable `best` starts at plus infinity, so \"nothing found\" means it still equals `float('inf')`. The check compared with minus infinity, the opposite sign. You made this slip on 19 November at 6:15 AM.",
 "domain": "Algorithms",
+"jobs": [
+[
+6,
+"add the new number"
+],
+[
+7,
+"shrink while sum is enough"
+],
+[
+12,
+"nothing found gives 0"
+]
+],
 "bugText": "    if best == float('-inf'):"
 },
 {
@@ -615,6 +829,24 @@ false
 ],
 "why": "Smaller numbers must leave from the back of the queue, where the new number arrives. The method `popleft()` removed from the front instead. Use `pop()` to remove from the back.",
 "domain": "Algorithms",
+"jobs": [
+[
+6,
+"drop smaller from the back"
+],
+[
+11,
+"add the new position"
+],
+[
+12,
+"drop the front if it left"
+],
+[
+14,
+"record the max"
+]
+],
 "bugText": "            queue.popleft()"
 },
 {
@@ -705,6 +937,16 @@ false
 ],
 "why": "The check ran while the window was still one letter too long, so the right window was never compared. Keep this order inside the loop: add the new letter, remove the old one, then check. You made this slip on 19 November at 5:58 AM.",
 "domain": "Algorithms",
+"jobs": [
+[
+5,
+"add the new letter"
+],
+[
+11,
+"no window matched"
+]
+],
 "bugText": "        if window == need:\n            return True\n        if right >= len(s1):\n            gone = s2[right - len(s1)]\n            window[gone] -= 1"
 },
 {
@@ -735,6 +977,20 @@ false
 ],
 "why": "The code moved `left` before saving the length, so it measured a window that might no longer reach the target. Save `best` while the window is still valid, then shrink it.",
 "domain": "Algorithms",
+"jobs": [
+[
+6,
+"add the new number"
+],
+[
+7,
+"shrink while sum is enough"
+],
+[
+12,
+"nothing found gives 0"
+]
+],
 "bugText": "            total -= nums[left]\n            left += 1\n            size = right - left + 1\n            best = min(best, size)"
 },
 {
@@ -765,6 +1021,20 @@ false
 ],
 "why": "Removing one letter may leave the repeat in place. For \"abcb\", removing \"a\" still leaves the first \"b\". Use `while` instead of `if`, so the window keeps shrinking until the repeat is gone.",
 "domain": "Algorithms",
+"jobs": [
+[
+6,
+"make room for s[right]"
+],
+[
+9,
+"add the new letter"
+],
+[
+10,
+"record the best size"
+]
+],
 "bugText": "        if s[right] in seen:"
 },
 {
@@ -969,6 +1239,20 @@ false
 ],
 "why": "The height uses the y values, which sit at positions 1 and 3. The line used `a[0]`, an x value, because it was copied from the `x1` line above. Use `max(a[1], b[1])`.",
 "domain": "Computer vision",
+"jobs": [
+[
+2,
+"top-left of the overlap"
+],
+[
+4,
+"bottom-right of the overlap"
+],
+[
+8,
+"boxes that miss share 0"
+]
+],
 "bugText": "    y1 = max(a[0], b[1])"
 },
 {
@@ -1039,6 +1323,20 @@ false
 ],
 "why": "The frame `leaving` left the group, but `total` still included it, so the total kept growing. Add `total -= leaving` each time the window moves.",
 "domain": "Computer vision",
+"jobs": [
+[
+5,
+"add the new frame"
+],
+[
+6,
+"drop the frame that left"
+],
+[
+8,
+"save the average"
+]
+],
 "bugText": "            leaving = frames[right - k]"
 },
 {
@@ -1069,6 +1367,16 @@ false
 ],
 "why": "\"At least threshold\" includes the threshold itself, so the check is `>=`. With `>`, a change of exactly 5 was not counted.",
 "domain": "Computer vision",
+"jobs": [
+[
+6,
+"measure the change"
+],
+[
+9,
+"count big enough changes"
+]
+],
 "bugText": "        if change > threshold:"
 },
 {
@@ -1236,6 +1544,16 @@ false
 ],
 "why": "The code decided before removing old requests, so expired requests still counted against the limit. Keep this order: add, remove the old ones, then decide.",
 "domain": "Backend",
+"jobs": [
+[
+5,
+"times up to cutoff expire"
+],
+[
+12,
+"remember allowed requests"
+]
+],
 "bugText": "        ok = len(recent) < limit\n        out.append(ok)\n        while recent:\n            if recent[0] > cutoff:\n                break\n            recent.popleft()"
 },
 {
@@ -1445,6 +1763,16 @@ false
 ],
 "why": "After taking a time from `b`, its pointer `j` must move forward. The line moved `i` instead, because it was copied from the `a` branch above.",
 "domain": "Backend",
+"jobs": [
+[
+4,
+"take the smaller time"
+],
+[
+10,
+"add what is left"
+]
+],
 "bugText": "            i += 1"
 },
 {
@@ -1488,6 +1816,20 @@ true
 ],
 "why": "The request `old` left the window, but its count stayed the same, so the code still treated it as recent. Add `recent[old] -= 1`, so the tracker forgets every request that slides out.",
 "domain": "Backend",
+"jobs": [
+[
+5,
+"forget the id that left"
+],
+[
+7,
+"is the new id unseen?"
+],
+[
+9,
+"remember the new id"
+]
+],
 "bugText": "            old = ids[right - k - 1]"
 },
 {
@@ -1548,6 +1890,20 @@ false
 ],
 "why": "The day leaving the week is `sales[right - 7]`. The line subtracted `sales[right]`, the day that just arrived, so the new day was added and then removed.",
 "domain": "Data analytics",
+"jobs": [
+[
+5,
+"add the new day"
+],
+[
+6,
+"drop the day that left"
+],
+[
+8,
+"record each full week"
+]
+],
 "bugText": "            total -= sales[right]"
 },
 {
@@ -1578,6 +1934,16 @@ false
 ],
 "why": "A missed day ends the current run, so only `current` resets to 0. Resetting `best` erased the record. Two names that sound alike can hold very different things.",
 "domain": "Data analytics",
+"jobs": [
+[
+7,
+"a goal day grows the run"
+],
+[
+10,
+"a missed day ends the run"
+]
+],
 "bugText": "            best = 0"
 },
 {
@@ -1969,6 +2335,20 @@ false
 ],
 "why": "A smash uses two stones, so both must leave the heap. The peek at `heap[0]` left the second stone in place. Pop twice with `heappop`, then push back only the difference. You made this slip in Last Stone Weight on 20 November.",
 "domain": "Heaps",
+"jobs": [
+[
+5,
+"stop with under 2 stones"
+],
+[
+7,
+"take the two heaviest"
+],
+[
+9,
+"push back the difference"
+]
+],
 "bugText": "        second = -heap[0]"
 },
 {
@@ -2018,6 +2398,1132 @@ false
 "8",
 "7",
 "3"
+]
+},
+{
+"id": "t1",
+"habit": "B",
+"kind": "trace",
+"fn": "window_max",
+"src": "j4",
+"call": "window_max([3, 1, 2], 2)",
+"loop": "right",
+"watch": [
+"queue",
+"out"
+],
+"changes": [
+[
+10,
+"queue"
+],
+[
+11,
+"queue"
+],
+[
+13,
+"queue"
+],
+[
+15,
+"out"
+]
+],
+"code": "def window_max(nums, k):\n    queue = deque()\n    out = []\n    for right in range(len(nums)):\n        new = nums[right]\n        while queue:\n            back = nums[queue[-1]]\n            if back >= new:\n                break\n            queue.pop()\n        queue.append(right)\n        if queue[0] <= right - k:\n            queue.popleft()\n        if right >= k - 1:\n            out.append(nums[queue[0]])\n    return out",
+"task": "`window_max` returns the biggest number in each group of `k` numbers in a row. Dry-run `window_max([3, 1, 2], 2)`. Pick a pass under the loop line, then fill in each gold comment with the value right after its line runs.",
+"why": "`queue` holds positions, not numbers. At `right = 2`, the 2 pushes out position 1 from the back, and position 0 drops off the front because it left the window, so `queue` ends as `[2]`.",
+"domain": "Algorithms",
+"passes": [
+{
+"loop": "0",
+"lines": {
+"11": [
+"[0]"
+]
+}
+},
+{
+"loop": "1",
+"lines": {
+"11": [
+"[0, 1]"
+],
+"15": [
+"[3]"
+]
+}
+},
+{
+"loop": "2",
+"lines": {
+"10": [
+"[0]"
+],
+"11": [
+"[0, 2]"
+],
+"13": [
+"[2]"
+],
+"15": [
+"[3, 2]"
+]
+}
+}
+]
+},
+{
+"id": "t2",
+"habit": "C",
+"kind": "trace",
+"fn": "longest_unique",
+"src": "e5",
+"call": "longest_unique('abcb')",
+"loop": "right",
+"watch": [
+"left",
+"seen",
+"best"
+],
+"changes": [
+[
+7,
+"seen"
+],
+[
+8,
+"left"
+],
+[
+9,
+"seen"
+],
+[
+11,
+"best"
+]
+],
+"code": "def longest_unique(s):\n    seen = set()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        while s[right] in seen:\n            seen.remove(s[left])\n            left += 1\n        seen.add(s[right])\n        size = right - left + 1\n        best = max(best, size)\n    return best",
+"task": "`longest_unique` returns the length of the longest group of letters in a row with no repeat. Dry-run `longest_unique('abcb')`. Pick a pass under the loop line, then fill in each gold comment with the value right after its line runs.",
+"why": "At the second \"b\", the loop removes \"a\" and then the first \"b\", so `left` jumps from 0 to 2. One removal is not enough, which is why the code uses `while`.",
+"domain": "Algorithms",
+"passes": [
+{
+"loop": "0",
+"lines": {
+"9": [
+"{'a'}"
+],
+"11": [
+"1"
+]
+}
+},
+{
+"loop": "1",
+"lines": {
+"9": [
+"{'a', 'b'}"
+],
+"11": [
+"2"
+]
+}
+},
+{
+"loop": "2",
+"lines": {
+"9": [
+"{'a', 'b', 'c'}"
+],
+"11": [
+"3"
+]
+}
+},
+{
+"loop": "3",
+"lines": {
+"7": [
+"{'b', 'c'}",
+"{'c'}"
+],
+"8": [
+"1",
+"2"
+],
+"9": [
+"{'b', 'c'}"
+],
+"11": [
+"3"
+]
+}
+}
+]
+},
+{
+"id": "t3",
+"habit": "A",
+"kind": "trace",
+"fn": "longest_replace",
+"src": "a2",
+"call": "longest_replace('ABAB', 1)",
+"loop": "right",
+"watch": [
+"left",
+"count",
+"best"
+],
+"changes": [
+[
+6,
+"count"
+],
+[
+10,
+"count"
+],
+[
+11,
+"left"
+],
+[
+14,
+"best"
+]
+],
+"code": "def longest_replace(s, k):\n    count = Counter()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        count[s[right]] += 1\n        size = right - left + 1\n        most = max(count.values())\n        while size - most > k:\n            count[s[left]] -= 1\n            left += 1\n            size = right - left + 1\n            most = max(count.values())\n        best = max(best, size)\n    return best",
+"task": "`longest_replace` returns the longest group of letters in a row that at most `k` changes can make all one letter. Dry-run `longest_replace('ABAB', 1)`. Pick a pass under the loop line, then fill in each gold comment with the value right after its line runs.",
+"why": "At `right = 3`, \"ABAB\" needs 2 changes, so the first \"A\" leaves: its count drops to 1 before `left` moves to 1. `best` stays 3.",
+"domain": "Algorithms",
+"passes": [
+{
+"loop": "0",
+"lines": {
+"6": [
+"{'A': 1}"
+],
+"14": [
+"1"
+]
+}
+},
+{
+"loop": "1",
+"lines": {
+"6": [
+"{'A': 1, 'B': 1}"
+],
+"14": [
+"2"
+]
+}
+},
+{
+"loop": "2",
+"lines": {
+"6": [
+"{'A': 2, 'B': 1}"
+],
+"14": [
+"3"
+]
+}
+},
+{
+"loop": "3",
+"lines": {
+"6": [
+"{'A': 2, 'B': 2}"
+],
+"10": [
+"{'A': 1, 'B': 2}"
+],
+"11": [
+"1"
+],
+"14": [
+"3"
+]
+}
+}
+]
+},
+{
+"id": "t4",
+"habit": "A",
+"kind": "trace",
+"fn": "has_anagram",
+"src": "e3",
+"call": "has_anagram('ab', 'aab')",
+"loop": "right",
+"watch": [
+"left",
+"window"
+],
+"changes": [
+[
+6,
+"window"
+],
+[
+8,
+"window"
+],
+[
+9,
+"left"
+]
+],
+"code": "def has_anagram(s1, s2):\n    need = Counter(s1)\n    window = Counter()\n    left = 0\n    for right in range(len(s2)):\n        window[s2[right]] += 1\n        if right - left + 1 > len(s1):\n            window[s2[left]] -= 1\n            left += 1\n        if window == need:\n            return True\n    return False",
+"task": "`has_anagram` returns True when some group of letters in `s2` uses exactly the letters of `s1`. Dry-run `has_anagram('ab', 'aab')`. Pick a pass under the loop line, then fill in each gold comment with the value right after its line runs.",
+"why": "At `right = 2`, the window \"aab\" is one letter too long, so the first \"a\" leaves and `left` moves to 1. Only then does `window` match `need`, and the function returns True inside that pass.",
+"domain": "Algorithms",
+"passes": [
+{
+"loop": "0",
+"lines": {
+"6": [
+"{'a': 1}"
+]
+}
+},
+{
+"loop": "1",
+"lines": {
+"6": [
+"{'a': 2}"
+]
+}
+},
+{
+"loop": "2",
+"lines": {
+"6": [
+"{'a': 2, 'b': 1}"
+],
+"8": [
+"{'a': 1, 'b': 1}"
+],
+"9": [
+"1"
+]
+}
+}
+]
+},
+{
+"id": "t5",
+"habit": "N",
+"kind": "trace",
+"fn": "shortest_len",
+"src": "j3",
+"call": "shortest_len([1, 1, 4], 4)",
+"loop": "right",
+"watch": [
+"total",
+"left",
+"best"
+],
+"changes": [
+[
+6,
+"total"
+],
+[
+9,
+"best"
+],
+[
+10,
+"total"
+],
+[
+11,
+"left"
+]
+],
+"code": "def shortest_len(nums, target):\n    total = 0\n    left = 0\n    best = float('inf')\n    for right in range(len(nums)):\n        total += nums[right]\n        while total >= target:\n            size = right - left + 1\n            best = min(best, size)\n            total -= nums[left]\n            left += 1\n    if best == float('inf'):\n        return 0\n    return best",
+"task": "`shortest_len` returns the length of the shortest group of numbers in a row whose sum is at least `target`. Dry-run `shortest_len([1, 1, 4], 4)`. Pick a pass under the loop line, then fill in each gold comment with the value right after its line runs.",
+"why": "At `right = 2`, the sum reaches 6, and the inner loop shrinks three times: sizes 3, 2 and 1 all reach 4. `best` saves each size before the shrink, so it ends at 1.",
+"domain": "Algorithms",
+"passes": [
+{
+"loop": "0",
+"lines": {
+"6": [
+"1"
+]
+}
+},
+{
+"loop": "1",
+"lines": {
+"6": [
+"2"
+]
+}
+},
+{
+"loop": "2",
+"lines": {
+"6": [
+"6"
+],
+"9": [
+"3",
+"2",
+"1"
+],
+"10": [
+"5",
+"4",
+"0"
+],
+"11": [
+"1",
+"2",
+"3"
+]
+}
+}
+]
+},
+{
+"id": "t6",
+"habit": "G",
+"kind": "trace",
+"fn": "window_sums",
+"src": "g3",
+"call": "window_sums([4, 1, 2], 2)",
+"loop": "right",
+"watch": [
+"total",
+"sums"
+],
+"changes": [
+[
+5,
+"total"
+],
+[
+7,
+"total"
+],
+[
+9,
+"sums"
+]
+],
+"code": "def window_sums(nums, k):\n    total = 0\n    sums = []\n    for right in range(len(nums)):\n        total += nums[right]\n        if right >= k:\n            total -= nums[right - k]\n        if right >= k - 1:\n            sums.append(total)\n    return sums",
+"task": "`window_sums` returns the sum of every group of `k` numbers in a row. Dry-run `window_sums([4, 1, 2], 2)`. Pick a pass under the loop line, then fill in each gold comment with the value right after its line runs.",
+"why": "The first number leaves at `right = 2`, when `right` reaches `k`. The 4 leaves, so `total` drops from 7 to 3.",
+"domain": "Algorithms",
+"passes": [
+{
+"loop": "0",
+"lines": {
+"5": [
+"4"
+]
+}
+},
+{
+"loop": "1",
+"lines": {
+"5": [
+"5"
+],
+"9": [
+"[5]"
+]
+}
+},
+{
+"loop": "2",
+"lines": {
+"5": [
+"7"
+],
+"7": [
+"3"
+],
+"9": [
+"[5, 3]"
+]
+}
+}
+]
+},
+{
+"id": "t7",
+"habit": "E",
+"kind": "trace",
+"fn": "distinct_counts",
+"src": "e2",
+"call": "distinct_counts('abb', 2)",
+"loop": "right",
+"watch": [
+"window",
+"out"
+],
+"changes": [
+[
+6,
+"window"
+],
+[
+9,
+"window"
+],
+[
+11,
+"window"
+],
+[
+13,
+"out"
+]
+],
+"code": "def distinct_counts(s, k):\n    window = Counter()\n    out = []\n    for right in range(len(s)):\n        letter = s[right]\n        window[letter] += 1\n        if right >= k:\n            gone = s[right - k]\n            window[gone] -= 1\n            if window[gone] == 0:\n                del window[gone]\n        if right >= k - 1:\n            out.append(len(window))\n    return out",
+"task": "`distinct_counts` returns how many different letters each group of `k` letters has. Dry-run `distinct_counts('abb', 2)`. Pick a pass under the loop line, then fill in each gold comment with the value right after its line runs.",
+"why": "At `right = 2`, \"a\" leaves and its count reaches 0, so the code deletes it. `len(window)` then counts only \"b\", which gives 1.",
+"domain": "Algorithms",
+"passes": [
+{
+"loop": "0",
+"lines": {
+"6": [
+"{'a': 1}"
+]
+}
+},
+{
+"loop": "1",
+"lines": {
+"6": [
+"{'a': 1, 'b': 1}"
+],
+"13": [
+"[2]"
+]
+}
+},
+{
+"loop": "2",
+"lines": {
+"6": [
+"{'a': 1, 'b': 2}"
+],
+"9": [
+"{'a': 0, 'b': 2}"
+],
+"11": [
+"{'b': 2}"
+],
+"13": [
+"[2, 1]"
+]
+}
+}
+]
+},
+{
+"id": "t8",
+"habit": "A",
+"kind": "trace",
+"fn": "max_profit",
+"src": "a3",
+"call": "max_profit([3, 8, 1, 4])",
+"loop": "price",
+"watch": [
+"lowest",
+"best"
+],
+"changes": [
+[
+5,
+"lowest"
+],
+[
+7,
+"best"
+]
+],
+"code": "def max_profit(prices):\n    lowest = prices[0]\n    best = 0\n    for price in prices:\n        lowest = min(lowest, price)\n        profit = price - lowest\n        best = max(best, profit)\n    return best",
+"task": "`max_profit` returns the best profit from buying on one day and selling on a later day. Dry-run `max_profit([3, 8, 1, 4])`. Pick a pass under the loop line, then fill in each gold comment with the value right after its line runs.",
+"why": "At the price 1, `lowest` drops to 1, but `best` keeps the 5 from buying at 3 and selling at 8. The later profit 4 - 1 = 3 does not beat it.",
+"domain": "Algorithms",
+"passes": [
+{
+"loop": "3",
+"lines": {
+"5": [
+"3"
+],
+"7": [
+"0"
+]
+}
+},
+{
+"loop": "8",
+"lines": {
+"5": [
+"3"
+],
+"7": [
+"5"
+]
+}
+},
+{
+"loop": "1",
+"lines": {
+"5": [
+"1"
+],
+"7": [
+"5"
+]
+}
+},
+{
+"loop": "4",
+"lines": {
+"5": [
+"1"
+],
+"7": [
+"5"
+]
+}
+}
+]
+},
+{
+"id": "t9",
+"habit": "G",
+"kind": "trace",
+"fn": "longest_ones",
+"src": "g1",
+"call": "longest_ones([1, 0, 0, 1], 1)",
+"loop": "right",
+"watch": [
+"zeros",
+"left",
+"best"
+],
+"changes": [
+[
+7,
+"zeros"
+],
+[
+10,
+"zeros"
+],
+[
+11,
+"left"
+],
+[
+13,
+"best"
+]
+],
+"code": "def longest_ones(nums, k):\n    zeros = 0\n    left = 0\n    best = 0\n    for right in range(len(nums)):\n        if nums[right] == 0:\n            zeros += 1\n        while zeros > k:\n            if nums[left] == 0:\n                zeros -= 1\n            left += 1\n        size = right - left + 1\n        best = max(best, size)\n    return best",
+"task": "`longest_ones` returns the longest group in a row with at most `k` zeros. Dry-run `longest_ones([1, 0, 0, 1], 1)`. Pick a pass under the loop line, then fill in each gold comment with the value right after its line runs.",
+"why": "At the second zero, `zeros` becomes 2, so the loop drops the 1 and then the first 0. `left` moves twice, to 2, and `zeros` is back to 1.",
+"domain": "Algorithms",
+"passes": [
+{
+"loop": "0",
+"lines": {
+"13": [
+"1"
+]
+}
+},
+{
+"loop": "1",
+"lines": {
+"7": [
+"1"
+],
+"13": [
+"2"
+]
+}
+},
+{
+"loop": "2",
+"lines": {
+"7": [
+"2"
+],
+"11": [
+"1",
+"2"
+],
+"10": [
+"1"
+],
+"13": [
+"2"
+]
+}
+},
+{
+"loop": "3",
+"lines": {
+"13": [
+"2"
+]
+}
+}
+]
+},
+{
+"id": "t10",
+"habit": "A",
+"kind": "trace",
+"fn": "rolling_brightness",
+"src": "v4",
+"call": "rolling_brightness([2, 4, 6], 2)",
+"loop": "right",
+"watch": [
+"total",
+"out"
+],
+"changes": [
+[
+5,
+"total"
+],
+[
+8,
+"total"
+],
+[
+10,
+"out"
+]
+],
+"code": "def rolling_brightness(frames, k):\n    total = 0\n    out = []\n    for right in range(len(frames)):\n        total += frames[right]\n        if right >= k:\n            leaving = frames[right - k]\n            total -= leaving\n        if right >= k - 1:\n            out.append(total / k)\n    return out",
+"task": "`rolling_brightness` returns the average of every group of `k` frames in a row. Dry-run `rolling_brightness([2, 4, 6], 2)`. Pick a pass under the loop line, then fill in each gold comment with the value right after its line runs.",
+"why": "At `right = 2`, the frame 2 leaves, so `total` goes from 12 to 10. Each average divides by `k`, so the values are floats like `3.0`.",
+"domain": "Computer vision",
+"passes": [
+{
+"loop": "0",
+"lines": {
+"5": [
+"2"
+]
+}
+},
+{
+"loop": "1",
+"lines": {
+"5": [
+"6"
+],
+"10": [
+"[3.0]"
+]
+}
+},
+{
+"loop": "2",
+"lines": {
+"5": [
+"12"
+],
+"8": [
+"10"
+],
+"10": [
+"[3.0, 5.0]"
+]
+}
+}
+]
+},
+{
+"id": "t11",
+"habit": "N",
+"kind": "trace",
+"fn": "allow",
+"src": "s1",
+"call": "allow([1, 2, 3, 12], 2, 10)",
+"loop": "t",
+"watch": [
+"recent",
+"out"
+],
+"changes": [
+[
+9,
+"recent"
+],
+[
+11,
+"out"
+],
+[
+13,
+"recent"
+]
+],
+"code": "def allow(times, limit, window):\n    recent = deque()\n    out = []\n    for t in times:\n        cutoff = t - window\n        while recent:\n            if recent[0] > cutoff:\n                break\n            recent.popleft()\n        ok = len(recent) < limit\n        out.append(ok)\n        if ok:\n            recent.append(t)\n    return out",
+"task": "`allow` is a rate limiter: for each request time, it returns whether the request is allowed, with at most `limit` requests in any `window` seconds. Dry-run `allow([1, 2, 3, 12], 2, 10)`. Pick a pass under the loop line, then fill in each gold comment with the value right after its line runs.",
+"why": "At time 3, two requests are still recent, so the request is refused and never joins `recent`. At time 12, the cutoff is 2, so both 1 and 2 leave before the check.",
+"domain": "Backend",
+"passes": [
+{
+"loop": "1",
+"lines": {
+"11": [
+"[True]"
+],
+"13": [
+"[1]"
+]
+}
+},
+{
+"loop": "2",
+"lines": {
+"11": [
+"[True, True]"
+],
+"13": [
+"[1, 2]"
+]
+}
+},
+{
+"loop": "3",
+"lines": {
+"11": [
+"[True, True, False]"
+]
+}
+},
+{
+"loop": "12",
+"lines": {
+"9": [
+"[2]",
+"[]"
+],
+"11": [
+"[True, True, False, True]"
+],
+"13": [
+"[12]"
+]
+}
+}
+]
+},
+{
+"id": "t12",
+"habit": "A",
+"kind": "trace",
+"fn": "unique_in_window",
+"src": "s8",
+"call": "unique_in_window('abaa', 1)",
+"loop": "right",
+"watch": [
+"recent",
+"out"
+],
+"changes": [
+[
+7,
+"recent"
+],
+[
+9,
+"out"
+],
+[
+10,
+"recent"
+]
+],
+"code": "def unique_in_window(ids, k):\n    recent = Counter()\n    out = []\n    for right in range(len(ids)):\n        if right > k:\n            old = ids[right - k - 1]\n            recent[old] -= 1\n        new = ids[right]\n        out.append(recent[new] == 0)\n        recent[new] += 1\n    return out",
+"task": "`unique_in_window` returns, for each id, whether it is new compared with the `k` ids just before it. Dry-run `unique_in_window('abaa', 1)`. Pick a pass under the loop line, then fill in each gold comment with the value right after its line runs.",
+"why": "At `right = 2`, the first \"a\" leaves, so its count drops to 0 and the new \"a\" counts as new. A count can sit at 0 in the Counter, like `'b': 0` at the end.",
+"domain": "Backend",
+"passes": [
+{
+"loop": "0",
+"lines": {
+"9": [
+"[True]"
+],
+"10": [
+"{'a': 1}"
+]
+}
+},
+{
+"loop": "1",
+"lines": {
+"9": [
+"[True, True]"
+],
+"10": [
+"{'a': 1, 'b': 1}"
+]
+}
+},
+{
+"loop": "2",
+"lines": {
+"7": [
+"{'a': 0, 'b': 1}"
+],
+"9": [
+"[True, True, True]"
+],
+"10": [
+"{'a': 1, 'b': 1}"
+]
+}
+},
+{
+"loop": "3",
+"lines": {
+"7": [
+"{'a': 1, 'b': 0}"
+],
+"9": [
+"[True, True, True, False]"
+],
+"10": [
+"{'a': 2, 'b': 0}"
+]
+}
+}
+]
+},
+{
+"id": "t13",
+"habit": "A",
+"kind": "trace",
+"fn": "running_max_drop",
+"src": "d5",
+"call": "running_max_drop([3, 8, 2, 5])",
+"loop": "v",
+"watch": [
+"peak",
+"worst"
+],
+"changes": [
+[
+5,
+"peak"
+],
+[
+6,
+"worst"
+]
+],
+"code": "def running_max_drop(values):\n    peak = values[0]\n    worst = 0\n    for v in values:\n        peak = max(peak, v)\n        worst = max(worst, peak - v)\n    return worst",
+"task": "`running_max_drop` returns the biggest drop from an earlier high to a later value. Dry-run `running_max_drop([3, 8, 2, 5])`. Pick a pass under the loop line, then fill in each gold comment with the value right after its line runs.",
+"why": "`peak` learns about the 8 before the drop is measured, so the 2 gives a drop of 8 - 2 = 6. The 5 gives only 3, so `worst` stays 6.",
+"domain": "Finance",
+"passes": [
+{
+"loop": "3",
+"lines": {
+"5": [
+"3"
+],
+"6": [
+"0"
+]
+}
+},
+{
+"loop": "8",
+"lines": {
+"5": [
+"8"
+],
+"6": [
+"0"
+]
+}
+},
+{
+"loop": "2",
+"lines": {
+"5": [
+"8"
+],
+"6": [
+"6"
+]
+}
+},
+{
+"loop": "5",
+"lines": {
+"5": [
+"8"
+],
+"6": [
+"6"
+]
+}
+}
+]
+},
+{
+"id": "t14",
+"habit": "E",
+"kind": "trace",
+"fn": "longest_goal_streak",
+"src": "d2",
+"call": "longest_goal_streak([9, 9, 1], 5)",
+"loop": "s",
+"watch": [
+"current",
+"best"
+],
+"changes": [
+[
+8,
+"current"
+],
+[
+9,
+"best"
+],
+[
+11,
+"current"
+]
+],
+"code": "def longest_goal_streak(\n    steps, goal\n):\n    current = 0\n    best = 0\n    for s in steps:\n        if s >= goal:\n            current += 1\n            best = max(best, current)\n        else:\n            current = 0\n    return best",
+"task": "`longest_goal_streak` returns the longest run of days in a row with at least `goal` steps. Dry-run `longest_goal_streak([9, 9, 1], 5)`. Pick a pass under the loop line, then fill in each gold comment with the value right after its line runs.",
+"why": "The day with 1 step resets `current` to 0. `best` keeps the record of 2.",
+"domain": "Data analytics",
+"passes": [
+{
+"loop": "9",
+"lines": {
+"8": [
+"1"
+],
+"9": [
+"1"
+]
+}
+},
+{
+"loop": "9",
+"lines": {
+"8": [
+"2"
+],
+"9": [
+"2"
+]
+}
+},
+{
+"loop": "1",
+"lines": {
+"11": [
+"0"
+]
+}
+}
+]
+},
+{
+"id": "t15",
+"habit": "G",
+"kind": "trace",
+"fn": "count_small",
+"src": "g2",
+"call": "count_small([1, 2, 3, 1], 2, 4)",
+"loop": "right",
+"watch": [
+"total",
+"found"
+],
+"changes": [
+[
+5,
+"total"
+],
+[
+7,
+"total"
+],
+[
+10,
+"found"
+]
+],
+"code": "def count_small(nums, k, limit):\n    total = 0\n    found = 0\n    for right in range(len(nums)):\n        total += nums[right]\n        if right >= k:\n            total -= nums[right - k]\n        if right >= k - 1:\n            if total <= limit:\n                found += 1\n    return found",
+"task": "`count_small` counts the groups of `k` numbers in a row whose sum is at most `limit`. Dry-run `count_small([1, 2, 3, 1], 2, 4)`. Pick a pass under the loop line, then fill in each gold comment with the value right after its line runs.",
+"why": "At `right = 2`, the window 2 + 3 = 5 is over the limit, so `found` stays 1. At `right = 3`, the window 3 + 1 = 4 equals the limit, and \"at most\" counts it.",
+"domain": "Algorithms",
+"passes": [
+{
+"loop": "0",
+"lines": {
+"5": [
+"1"
+]
+}
+},
+{
+"loop": "1",
+"lines": {
+"5": [
+"3"
+],
+"10": [
+"1"
+]
+}
+},
+{
+"loop": "2",
+"lines": {
+"5": [
+"6"
+],
+"7": [
+"5"
+]
+}
+},
+{
+"loop": "3",
+"lines": {
+"5": [
+"6"
+],
+"7": [
+"4"
+],
+"10": [
+"2"
+]
+}
+}
 ]
 }
 ];

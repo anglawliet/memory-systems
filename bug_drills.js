@@ -6,7 +6,8 @@
    Progress lives on this device (localStorage), with a backup file for moving between devices.
    The drills come from bug_drills_data.js, made and checked by tools/drills/build.py. */
 (function () {
-  var DRILLS = window.DRILLS || [], HABITS = window.DRILL_HABITS || {};
+  // dry-run ("trace") drills live only in the Breakpoint app, so this page skips them; it also ignores job comments
+  var DRILLS = (window.DRILLS || []).filter(function (d) { return d.kind !== "trace"; }), HABITS = window.DRILL_HABITS || {};
   var P = window.MSPractice;
   var KEY = "drills-v1", PER_DAY = 6;
   var PRE = "import heapq\nfrom collections import Counter, deque\n";

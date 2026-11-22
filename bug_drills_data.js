@@ -3525,5 +3525,2042 @@ false
 }
 }
 ]
+},
+{
+"id": "a4",
+"habit": "A",
+"kind": "fix",
+"fn": "max_vowels",
+"task": "Look at every group of `k` letters in a row in `s`. Return the most vowels that any group holds. For example, `max_vowels('abciiidef', 3)` gives `3`, because \"iii\" holds 3 vowels.",
+"code": "def max_vowels(s, k):\n    inside = 0\n    best = 0\n    for right in range(len(s)):\n        if s[right] in 'aeiou':\n            inside += 1\n        if right >= k:\n            gone = s[right - k]\n        best = max(best, inside)\n    return best",
+"bug": [
+8,
+8
+],
+"fix": "            gone = s[right - k]\n            if gone in 'aeiou':\n                inside -= 1",
+"tests": [
+[
+"max_vowels('abciiidef', 3)",
+3
+],
+[
+"max_vowels('aeiou', 2)",
+2
+],
+[
+"max_vowels('leetcode', 3)",
+2
+]
+],
+"why": "The letter `gone` left the window, but `inside` still counted it when it was a vowel. Add `if gone in 'aeiou':` and `inside -= 1` right after finding `gone`. Every time the window loses a letter, the counter must lose it too.",
+"domain": "Sliding window",
+"jobs": [
+[
+5,
+"count the new vowel"
+],
+[
+7,
+"drop the letter that left"
+],
+[
+9,
+"record the best count"
+]
+],
+"bugText": "            gone = s[right - k]"
+},
+{
+"id": "a5",
+"habit": "A",
+"kind": "fix",
+"fn": "reverse_list",
+"task": "The dict `links` maps each node to the next node, and the last node maps to `None`. Reverse the list in place and return the new first node. For example, `reverse_list({'a': 'b', 'b': 'c', 'c': None}, 'a')` gives `'c'`, because the list becomes c, b, a.",
+"code": "def reverse_list(links, head):\n    before = None\n    node = head\n    while node is not None:\n        after = links[node]\n        links[node] = before\n        node = after\n    return before",
+"bug": [
+6,
+6
+],
+"fix": "        links[node] = before\n        before = node",
+"tests": [
+[
+"reverse_list({'a': 'b', 'b': 'c', 'c': None}, 'a')",
+"c"
+],
+[
+"reverse_list({'x': None}, 'x')",
+"x"
+],
+[
+"reverse_list({'a': 'b', 'b': None}, 'a')",
+"b"
+]
+],
+"why": "The pointer `node` moved forward every pass, but `before` stayed at `None`. So every node pointed back to `None`, and the function returned `None`. Add `before = node` before `node` moves, so `before` always holds the node just behind.",
+"domain": "Linked lists",
+"bugText": "        links[node] = before"
+},
+{
+"id": "a6",
+"habit": "A",
+"kind": "fix",
+"fn": "merge_ranges",
+"task": "Each range in `ranges` is `[start, end]`. Join the ranges that overlap or touch, and return the merged ranges in order. For example, `merge_ranges([[1, 3], [2, 6], [8, 10]])` gives `[[1, 6], [8, 10]]`, because 1 to 3 and 2 to 6 overlap.",
+"code": "def merge_ranges(ranges):\n    ordered = sorted(ranges)\n    out = []\n    begin = ordered[0][0]\n    finish = ordered[0][1]\n    for start, end in ordered:\n        if start <= finish:\n            finish = max(finish, end)\n        else:\n            out.append([begin, finish])\n            finish = end\n    out.append([begin, finish])\n    return out",
+"bug": [
+11,
+11
+],
+"fix": "            begin = start\n            finish = end",
+"tests": [
+[
+"merge_ranges([[1, 3], [2, 6], [8, 10]])",
+[
+[
+1,
+6
+],
+[
+8,
+10
+]
+]
+],
+[
+"merge_ranges([[1, 4], [4, 5]])",
+[
+[
+1,
+5
+]
+]
+],
+[
+"merge_ranges([[5, 6], [1, 2]])",
+[
+[
+1,
+2
+],
+[
+5,
+6
+]
+]
+]
+],
+"why": "When a gap starts a new range, `finish` moved to the new range, but `begin` stayed at the old start. So [8, 10] came out as [1, 10]. Set `begin = start` as well. A range is two numbers, so both must move together.",
+"domain": "Intervals",
+"jobs": [
+[
+4,
+"start with the first range"
+],
+[
+7,
+"an overlap stretches it"
+],
+[
+9,
+"a gap starts a new range"
+],
+[
+12,
+"save the last range"
+]
+],
+"bugText": "            finish = end"
+},
+{
+"id": "a7",
+"habit": "A",
+"kind": "fix",
+"fn": "pivot_index",
+"task": "Return the first position `i` where the sum of the numbers left of `i` equals the sum of the numbers right of `i`, or -1 if there is none. For example, `pivot_index([1, 7, 3, 6, 5, 6])` gives `3`, because 1 + 7 + 3 = 11 and 5 + 6 = 11.",
+"code": "def pivot_index(nums):\n    total = sum(nums)\n    left_sum = 0\n    for i in range(len(nums)):\n        rest = total - nums[i]\n        right_sum = rest - left_sum\n        if left_sum == right_sum:\n            return i\n    return -1",
+"bug": [
+8,
+8
+],
+"fix": "            return i\n        left_sum += nums[i]",
+"tests": [
+[
+"pivot_index([1, 7, 3, 6, 5, 6])",
+3
+],
+[
+"pivot_index([1, 2, 3])",
+-1
+],
+[
+"pivot_index([2, 1, -1])",
+0
+]
+],
+"why": "The loop moved to the next position, but `left_sum` stayed at 0. So every check compared 0 with the right side. Add `left_sum += nums[i]` at the end of each pass, so the number you just passed joins the left side.",
+"domain": "Hashing",
+"bugText": "            return i"
+},
+{
+"id": "a8",
+"habit": "A",
+"kind": "fix",
+"fn": "climb_ways",
+"task": "You climb 1 or 2 steps at a time. Return how many different ways reach step `n`. For example, `climb_ways(4)` gives `5`: 1+1+1+1, 1+1+2, 1+2+1, 2+1+1 and 2+2.",
+"code": "def climb_ways(n):\n    before = 1\n    current = 1\n    for _ in range(n - 1):\n        new = before + current\n        current = new\n    return current",
+"bug": [
+6,
+6
+],
+"fix": "        before = current\n        current = new",
+"tests": [
+[
+"climb_ways(4)",
+5
+],
+[
+"climb_ways(2)",
+2
+],
+[
+"climb_ways(5)",
+8
+]
+],
+"why": "The ways for each step are the ways for the two steps below it added together. `current` moved up one step, but `before` stayed at 1, so each new count added 1 instead of the count one step lower. Add `before = current` before `current = new`, so the pair moves up together.",
+"domain": "Dynamic programming",
+"bugText": "        current = new"
+},
+{
+"id": "b4",
+"habit": "B",
+"kind": "fix",
+"fn": "two_sum",
+"task": "Return the positions of the two numbers in `nums` that add up to `target`, or `[]` if no pair does. For example, `two_sum([2, 7, 11, 15], 9)` gives `[0, 1]`, because 2 + 7 = 9.",
+"code": "def two_sum(nums, target):\n    where = {}\n    for i in range(len(nums)):\n        need = target - nums[i]\n        if need in where:\n            return [where[need], i]\n        where[nums[i]] = nums[i]\n    return []",
+"bug": [
+7,
+7
+],
+"fix": "        where[nums[i]] = i",
+"tests": [
+[
+"two_sum([2, 7, 11, 15], 9)",
+[
+0,
+1
+]
+],
+[
+"two_sum([3, 2, 4], 6)",
+[
+1,
+2
+]
+],
+[
+"two_sum([1, 2], 7)",
+[]
+]
+],
+"why": "The dict `where` saved `nums[i]`, the number, as its own answer. The function must return positions, so it must save `i`, the position: `where[nums[i]] = i`. Ask what each dict value must be: a position or a number?",
+"domain": "Hashing",
+"bugText": "        where[nums[i]] = nums[i]"
+},
+{
+"id": "b5",
+"habit": "B",
+"kind": "fix",
+"fn": "wait_days",
+"task": "Each number in `temps` is one day's temperature. For each day, return how many days you wait for a warmer day, or 0 if none comes. For example, `wait_days([30, 40, 50, 60])` gives `[1, 1, 1, 0]`.",
+"code": "def wait_days(temps):\n    answer = [0] * len(temps)\n    stack = []\n    for day in range(len(temps)):\n        while stack:\n            top = stack[-1]\n            if temps[top] >= temps[day]:\n                break\n            stack.pop()\n            answer[top] = day - top\n        stack.append(temps[day])\n    return answer",
+"bug": [
+11,
+11
+],
+"fix": "        stack.append(day)",
+"tests": [
+[
+"wait_days([30, 40, 50, 60])",
+[
+1,
+1,
+1,
+0
+]
+],
+[
+"wait_days([5, 3, 4])",
+[
+0,
+1,
+0
+]
+],
+[
+"wait_days([9])",
+[
+0
+]
+]
+],
+"why": "The stack must hold days, because the line `answer[top] = day - top` treats `top` as a day. Pushing `temps[day]` put a temperature there, so `temps[top]` read a wrong spot or crashed. Push the position: `stack.append(day)`.",
+"domain": "Stacks",
+"jobs": [
+[
+5,
+"settle colder days"
+],
+[
+11,
+"this day waits too"
+]
+],
+"bugText": "        stack.append(temps[day])"
+},
+{
+"id": "b6",
+"habit": "B",
+"kind": "fix",
+"fn": "find_spot",
+"task": "`nums` is sorted. Return the position of `target`, or the position where it would go to keep the list sorted. For example, `find_spot([1, 3, 5, 6], 5)` gives `2`, and `find_spot([1, 3, 5, 6], 2)` gives `1`.",
+"code": "def find_spot(nums, target):\n    low = 0\n    high = len(nums) - 1\n    while low <= high:\n        mid = (low + high) // 2\n        if nums[mid] == target:\n            return nums[mid]\n        if nums[mid] < target:\n            low = mid + 1\n        else:\n            high = mid - 1\n    return low",
+"bug": [
+7,
+7
+],
+"fix": "            return mid",
+"tests": [
+[
+"find_spot([1, 3, 5, 6], 5)",
+2
+],
+[
+"find_spot([1, 3, 5, 6], 1)",
+0
+],
+[
+"find_spot([1, 3, 5, 6], 2)",
+1
+]
+],
+"why": "The task asks for a position. `nums[mid]` is the number at that position, which equals `target`, so the function returned 5 instead of 2. Return `mid`, the position.",
+"domain": "Binary search",
+"jobs": [
+[
+6,
+"found it"
+],
+[
+8,
+"keep the half with target"
+],
+[
+12,
+"where target would go"
+]
+],
+"bugText": "            return nums[mid]"
+},
+{
+"id": "b7",
+"habit": "B",
+"kind": "fix",
+"fn": "has_path",
+"task": "The dict `graph` maps each node to the nodes it links to. Return True if you can walk from `start` to `goal` along the links, otherwise False. For example, `has_path({'a': ['b'], 'b': ['c'], 'c': []}, 'a', 'c')` gives `True`, because a goes to b and b goes to c.",
+"code": "def has_path(graph, start, goal):\n    seen = set()\n    seen.append(start)\n    stack = [start]\n    while stack:\n        node = stack.pop()\n        if node == goal:\n            return True\n        for neighbor in graph[node]:\n            if neighbor not in seen:\n                seen.add(neighbor)\n                stack.append(neighbor)\n    return False",
+"bug": [
+3,
+3
+],
+"fix": "    seen.add(start)",
+"tests": [
+[
+"has_path({'a': ['b'], 'b': ['c'], 'c': []}, 'a', 'c')",
+true
+],
+[
+"has_path({'a': ['b'], 'b': [], 'c': ['a']}, 'a', 'c')",
+false
+],
+[
+"has_path({'a': []}, 'a', 'a')",
+true
+]
+],
+"why": "`seen` is a set, and a set has no `append`, so the line crashed. A list uses `append`, and a set uses `add`: `seen.add(start)`. The `stack.append` below is fine, because `stack` is a list. Name the type before choosing the method.",
+"domain": "Graphs",
+"jobs": [
+[
+2,
+"mark start as seen"
+],
+[
+6,
+"visit the next node"
+],
+[
+9,
+"push unseen neighbors"
+]
+],
+"bugText": "    seen.append(start)"
+},
+{
+"id": "b8",
+"habit": "B",
+"kind": "fix",
+"fn": "top_k_frequent",
+"task": "Return the `k` numbers that appear most often in `nums`, smallest first. For example, `top_k_frequent([1, 1, 1, 2, 2, 3], 2)` gives `[1, 2]`, because 1 appears 3 times and 2 appears twice.",
+"code": "def top_k_frequent(nums, k):\n    counts = Counter(nums)\n    heap = []\n    for num in counts:\n        pair = (counts[num], num)\n        heapq.heappush(heap, pair)\n        if len(heap) > k:\n            heapq.heappop(heap)\n    out = []\n    for pair in heap:\n        out.append(pair[0])\n    return sorted(out)",
+"bug": [
+11,
+11
+],
+"fix": "        out.append(pair[1])",
+"tests": [
+[
+"top_k_frequent([1, 1, 1, 2, 2, 3], 2)",
+[
+1,
+2
+]
+],
+[
+"top_k_frequent([4, 4, 9], 1)",
+[
+4
+]
+],
+[
+"top_k_frequent([7], 1)",
+[
+7
+]
+]
+],
+"why": "Each heap item is `(count, number)`. `pair[0]` is the count, so the function returned how often numbers appeared, not the numbers. Take `pair[1]`. Say what each spot in a tuple holds before you index it.",
+"domain": "Heaps",
+"jobs": [
+[
+4,
+"keep the k most common"
+],
+[
+9,
+"collect the numbers"
+]
+],
+"bugText": "        out.append(pair[0])"
+},
+{
+"id": "c2",
+"habit": "C",
+"kind": "fix",
+"fn": "count_small_products",
+"task": "Count the runs of numbers in a row in `nums` whose product is less than `k`. For example, `count_small_products([10, 5, 2, 6], 100)` gives `8`: [10], [5], [2], [6], [10, 5], [5, 2], [2, 6] and [5, 2, 6].",
+"code": "def count_small_products(nums, k):\n    product = 1\n    left = 0\n    found = 0\n    for right in range(len(nums)):\n        product *= nums[right]\n        if product >= k:\n            product //= nums[left]\n            left += 1\n        found += right - left + 1\n    return found",
+"bug": [
+7,
+7
+],
+"fix": "        while product >= k:",
+"tests": [
+[
+"count_small_products([10, 5, 2, 6], 100)",
+8
+],
+[
+"count_small_products([1, 2], 2)",
+1
+],
+[
+"count_small_products([2, 1, 5], 4)",
+3
+]
+],
+"why": "Removing one number may leave the product still too big. In `[1, 2]` with `k = 2`, dropping 1 keeps the product at 2, so the window [2] was counted. Shrink with `while product >= k:` until the window is valid again.",
+"domain": "Sliding window",
+"jobs": [
+[
+6,
+"add the new number"
+],
+[
+7,
+"shrink from the left"
+],
+[
+10,
+"count runs ending here"
+]
+],
+"bugText": "        if product >= k:"
+},
+{
+"id": "c3",
+"habit": "C",
+"kind": "fix",
+"fn": "count_cheap",
+"task": "Count the runs of prices in a row in `prices` whose total is at most `budget`. For example, `count_cheap([1, 2, 3], 3)` gives `4`: [1], [2], [3] and [1, 2].",
+"code": "def count_cheap(prices, budget):\n    total = 0\n    left = 0\n    found = 0\n    for right in range(len(prices)):\n        total += prices[right]\n        if total > budget:\n            total -= prices[left]\n            left += 1\n        found += right - left + 1\n    return found",
+"bug": [
+7,
+7
+],
+"fix": "        while total > budget:",
+"tests": [
+[
+"count_cheap([1, 2, 3], 3)",
+4
+],
+[
+"count_cheap([1, 2], 1)",
+1
+],
+[
+"count_cheap([2, 2, 1, 4], 3)",
+4
+]
+],
+"why": "Removing one price may leave the total over the budget. In `[1, 2]` with a budget of 1, dropping 1 leaves [2], which still costs too much, but it was counted. Shrink with `while total > budget:` until the total fits.",
+"domain": "Sliding window",
+"jobs": [
+[
+6,
+"add the new price"
+],
+[
+7,
+"shrink from the left"
+],
+[
+10,
+"count runs ending here"
+]
+],
+"bugText": "        if total > budget:"
+},
+{
+"id": "c4",
+"habit": "C",
+"kind": "fix",
+"fn": "shortest_abc",
+"task": "`s` holds only the letters a, b and c, and holds each at least once. Return the length of the shortest part of `s` in a row that holds all three. For example, `shortest_abc('aabc')` gives `3`, because \"abc\" holds all three.",
+"code": "def shortest_abc(s):\n    count = Counter()\n    left = 0\n    best = len(s)\n    for right in range(len(s)):\n        count[s[right]] += 1\n        if len(count) == 3:\n            size = right - left + 1\n            best = min(best, size)\n            gone = s[left]\n            count[gone] -= 1\n            if count[gone] == 0:\n                del count[gone]\n            left += 1\n    return best",
+"bug": [
+7,
+7
+],
+"fix": "        while len(count) == 3:",
+"tests": [
+[
+"shortest_abc('abcabc')",
+3
+],
+[
+"shortest_abc('aabc')",
+3
+],
+[
+"shortest_abc('aaabcb')",
+3
+]
+],
+"why": "Shrinking once may still leave all three letters inside, and that shorter window is never measured. In \"aabc\", dropping the first a leaves \"abc\", which still holds all three. Use `while len(count) == 3:` so you keep measuring and shrinking.",
+"domain": "Sliding window",
+"jobs": [
+[
+6,
+"add the new letter"
+],
+[
+7,
+"shrink from the left"
+],
+[
+8,
+"record the length"
+]
+],
+"bugText": "        if len(count) == 3:"
+},
+{
+"id": "c5",
+"habit": "C",
+"kind": "fix",
+"fn": "longest_k_repeats",
+"task": "Return the length of the longest run of numbers in a row in `nums` where no number appears more than `k` times. For example, `longest_k_repeats([1, 2, 2, 1], 1)` gives `2`, because [1, 2] and [2, 1] have no repeats.",
+"code": "def longest_k_repeats(nums, k):\n    count = Counter()\n    left = 0\n    best = 0\n    for right in range(len(nums)):\n        new = nums[right]\n        count[new] += 1\n        if count[new] > k:\n            count[nums[left]] -= 1\n            left += 1\n        size = right - left + 1\n        best = max(best, size)\n    return best",
+"bug": [
+8,
+8
+],
+"fix": "        while count[new] > k:",
+"tests": [
+[
+"longest_k_repeats([1, 2, 3, 1, 2, 3, 1, 2], 2)",
+6
+],
+[
+"longest_k_repeats([1, 2, 2, 1], 1)",
+2
+],
+[
+"longest_k_repeats([5, 6, 6, 6], 2)",
+3
+]
+],
+"why": "The number at `left` may not be the repeated one. In [1, 2, 2], dropping 1 still leaves two 2s. Shrink with `while count[new] > k:` until the new number fits.",
+"domain": "Sliding window",
+"jobs": [
+[
+7,
+"add the new number"
+],
+[
+8,
+"shrink from the left"
+],
+[
+11,
+"record the best size"
+]
+],
+"bugText": "        if count[new] > k:"
+},
+{
+"id": "c6",
+"habit": "C",
+"kind": "fix",
+"fn": "max_unique_sum",
+"task": "Return the biggest sum of a run of numbers in a row in `nums` with no number repeated. For example, `max_unique_sum([4, 2, 4, 5, 6])` gives `17`, because 2 + 4 + 5 + 6 = 17.",
+"code": "def max_unique_sum(nums):\n    seen = set()\n    left = 0\n    total = 0\n    best = 0\n    for right in range(len(nums)):\n        new = nums[right]\n        if new in seen:\n            seen.remove(nums[left])\n            total -= nums[left]\n            left += 1\n        seen.add(new)\n        total += new\n        best = max(best, total)\n    return best",
+"bug": [
+8,
+8
+],
+"fix": "        while new in seen:",
+"tests": [
+[
+"max_unique_sum([4, 2, 4, 5, 6])",
+17
+],
+[
+"max_unique_sum([1, 2, 2])",
+3
+],
+[
+"max_unique_sum([5, 2, 1, 2, 5, 2, 1, 2, 5])",
+8
+]
+],
+"why": "The repeat may sit further in than `left`. In [1, 2, 2], dropping 1 still leaves the first 2, so the sum 4 counted two 2s. Shrink with `while new in seen:` until the old copy is gone.",
+"domain": "Sliding window",
+"jobs": [
+[
+8,
+"shrink from the left"
+],
+[
+12,
+"add the new number"
+],
+[
+14,
+"record the best sum"
+]
+],
+"bugText": "        if new in seen:"
+},
+{
+"id": "e6",
+"habit": "E",
+"kind": "fix",
+"fn": "pair_sum",
+"task": "`nums` is sorted. Return the positions of two numbers that add up to `target`, or `[]` if none do. For example, `pair_sum([2, 7, 11, 15], 9)` gives `[0, 1]`, because 2 + 7 = 9.",
+"code": "def pair_sum(nums, target):\n    left = 0\n    right = len(nums) - 1\n    while left < right:\n        low = nums[left]\n        high = nums[left]\n        total = low + high\n        if total == target:\n            return [left, right]\n        if total < target:\n            left += 1\n        else:\n            right -= 1\n    return []",
+"bug": [
+6,
+6
+],
+"fix": "        high = nums[right]",
+"tests": [
+[
+"pair_sum([2, 7, 11, 15], 9)",
+[
+0,
+1
+]
+],
+[
+"pair_sum([1, 3, 4, 6], 7)",
+[
+0,
+3
+]
+],
+[
+"pair_sum([1, 2], 9)",
+[]
+]
+],
+"why": "The line `high = nums[left]` was copied from the line above, so the code added the left number to itself. The other number sits at the right end: `high = nums[right]`.",
+"domain": "Two pointers",
+"jobs": [
+[
+5,
+"one number from each end"
+],
+[
+8,
+"found the pair"
+],
+[
+10,
+"move toward the target"
+]
+],
+"bugText": "        high = nums[left]"
+},
+{
+"id": "e7",
+"habit": "E",
+"kind": "fix",
+"fn": "can_attend",
+"task": "Each meeting in `meetings` is `[start, end]`. Return True if no two meetings overlap, otherwise False. For example, `can_attend([[0, 30], [5, 10], [15, 20]])` gives `False`, because 5 to 10 falls inside 0 to 30.",
+"code": "def can_attend(meetings):\n    ordered = sorted(meetings)\n    prev_end = 0\n    for start, end in ordered:\n        if start < prev_end:\n            return False\n        prev_end = start\n    return True",
+"bug": [
+7,
+7
+],
+"fix": "        prev_end = end",
+"tests": [
+[
+"can_attend([[0, 30], [5, 10], [15, 20]])",
+false
+],
+[
+"can_attend([[7, 10], [2, 4]])",
+true
+],
+[
+"can_attend([[1, 5], [3, 4]])",
+false
+]
+],
+"why": "The next meeting must start after this one ends, so `prev_end` must hold `end`. Saving `start` let the meeting at 5 pass, because 5 is not less than 0. Use `prev_end = end`.",
+"domain": "Intervals",
+"bugText": "        prev_end = start"
+},
+{
+"id": "e8",
+"habit": "E",
+"kind": "fix",
+"fn": "has_cycle",
+"task": "The dict `links` maps each node to the next node, and the last node maps to `None`. Return True if following the links from `head` loops back, otherwise False. For example, `has_cycle({'a': 'b', 'b': 'a'}, 'a')` gives `True`.",
+"code": "def has_cycle(links, head):\n    slow = head\n    fast = head\n    while fast is not None:\n        step = links[fast]\n        if step is None:\n            return False\n        slow = links[slow]\n        fast = links[fast]\n        if slow == fast:\n            return True\n    return False",
+"bug": [
+9,
+9
+],
+"fix": "        fast = links[step]",
+"tests": [
+[
+"has_cycle({'a': 'b', 'b': 'c', 'c': None}, 'a')",
+false
+],
+[
+"has_cycle({'a': 'b', 'b': 'a'}, 'a')",
+true
+],
+[
+"has_cycle({'a': None}, 'a')",
+false
+]
+],
+"why": "The fast pointer moves two nodes each pass. `step` is already one node ahead, so the second move is `fast = links[step]`. Using `links[fast]` moved fast one node, so it landed on slow at once, and every list looked like a loop.",
+"domain": "Linked lists",
+"jobs": [
+[
+5,
+"fast needs two more nodes"
+],
+[
+8,
+"slow moves 1, fast moves 2"
+],
+[
+10,
+"they meet only in a loop"
+]
+],
+"bugText": "        fast = links[fast]"
+},
+{
+"id": "e9",
+"habit": "E",
+"kind": "fix",
+"fn": "course_order",
+"task": "The dict `graph` maps each course to the courses that need it first. Return an order to take every course, so each comes after the courses it needs. Courses that are ready together keep their order in the dict. For example, `course_order({'a': ['c'], 'b': ['c'], 'c': []})` gives `['a', 'b', 'c']`.",
+"code": "def course_order(graph):\n    need = Counter()\n    for course in graph:\n        for later in graph[course]:\n            need[later] += 1\n    ready = deque()\n    for course in graph:\n        if need[course] == 0:\n            ready.append(course)\n    order = []\n    while ready:\n        course = ready.popleft()\n        order.append(course)\n        for later in graph[course]:\n            need[later] -= 1\n            if need[course] == 0:\n                ready.append(later)\n    return order",
+"bug": [
+16,
+16
+],
+"fix": "            if need[later] == 0:",
+"tests": [
+[
+"course_order({'a': ['c'], 'b': ['c'], 'c': []})",
+[
+"a",
+"b",
+"c"
+]
+],
+[
+"course_order({'x': ['y'], 'y': ['z'], 'z': []})",
+[
+"x",
+"y",
+"z"
+]
+],
+[
+"course_order({'m': []})",
+[
+"m"
+]
+]
+],
+"why": "The count that just went down belongs to `later`, so the check is `need[later] == 0`. `need[course]` is already 0, because `course` was ready, so every later course joined the queue at once, and some joined twice.",
+"domain": "Graphs",
+"jobs": [
+[
+2,
+"count what each course needs"
+],
+[
+6,
+"start with courses ready"
+],
+[
+11,
+"take courses in order"
+],
+[
+14,
+"free the courses after it"
+]
+],
+"bugText": "            if need[course] == 0:"
+},
+{
+"id": "e10",
+"habit": "E",
+"kind": "fix",
+"fn": "has_prefix",
+"task": "Return True if some word in `words` starts with `prefix`, otherwise False. The code builds a trie, a tree of nested dicts with one level per letter. For example, `has_prefix(['apple', 'app'], 'app')` gives `True`.",
+"code": "def has_prefix(words, prefix):\n    root = {}\n    for word in words:\n        node = root\n        for letter in word:\n            if letter not in node:\n                node[letter] = {}\n            node = node[letter]\n    node = root\n    for letter in prefix:\n        if letter not in node:\n            return False\n        node = root[letter]\n    return True",
+"bug": [
+13,
+13
+],
+"fix": "        node = node[letter]",
+"tests": [
+[
+"has_prefix(['apple', 'app'], 'app')",
+true
+],
+[
+"has_prefix(['cat'], 'ca')",
+true
+],
+[
+"has_prefix(['cat'], 'cow')",
+false
+]
+],
+"why": "Each step must go one level down from `node`. `root[letter]` jumped back to the top level, so the second letter crashed. Use `node = node[letter]`, the same line as in the build loop above.",
+"domain": "Tries",
+"jobs": [
+[
+2,
+"build the trie"
+],
+[
+9,
+"walk down the prefix"
+]
+],
+"bugText": "        node = root[letter]"
+},
+{
+"id": "g5",
+"habit": "G",
+"kind": "fix",
+"fn": "first_at_least",
+"task": "`nums` is sorted. Return the first position whose number is at least `target`, or `len(nums)` if there is none. For example, `first_at_least([1, 3, 3, 5], 3)` gives `1`.",
+"code": "def first_at_least(nums, target):\n    low = 0\n    high = len(nums)\n    while low < high:\n        mid = (low + high) // 2\n        if nums[mid] > target:\n            high = mid\n        else:\n            low = mid + 1\n    return low",
+"bug": [
+6,
+6
+],
+"fix": "        if nums[mid] >= target:",
+"tests": [
+[
+"first_at_least([1, 3, 3, 5], 3)",
+1
+],
+[
+"first_at_least([2, 4], 4)",
+1
+],
+[
+"first_at_least([1, 2], 5)",
+2
+]
+],
+"why": "\"At least\" includes `target` itself. With `>`, a middle number equal to 3 sent the search to the right, so it found the first number bigger than 3. Use `>=`.",
+"domain": "Binary search",
+"jobs": [
+[
+4,
+"close in on the first spot"
+],
+[
+6,
+"pick a half"
+]
+],
+"bugText": "        if nums[mid] > target:"
+},
+{
+"id": "g6",
+"habit": "G",
+"kind": "fix",
+"fn": "min_rooms",
+"task": "Each meeting in `meetings` is `[start, end]`. Return the fewest rooms that hold every meeting. A meeting that ends at 5 frees its room for a meeting that starts at 5. For example, `min_rooms([[0, 30], [5, 10], [15, 20]])` gives `2`.",
+"code": "def min_rooms(meetings):\n    ordered = sorted(meetings)\n    ends = []\n    for start, end in ordered:\n        if ends and ends[0] < start:\n            heapq.heappop(ends)\n        heapq.heappush(ends, end)\n    return len(ends)",
+"bug": [
+5,
+5
+],
+"fix": "        if ends and ends[0] <= start:",
+"tests": [
+[
+"min_rooms([[0, 30], [5, 10], [15, 20]])",
+2
+],
+[
+"min_rooms([[1, 5], [5, 9]])",
+1
+],
+[
+"min_rooms([[2, 4], [2, 4]])",
+2
+]
+],
+"why": "A room that frees at 5 can take a meeting that starts at 5, so the check is `ends[0] <= start`. With `<`, the meetings [1, 5] and [5, 9] used 2 rooms instead of 1.",
+"domain": "Heaps",
+"bugText": "        if ends and ends[0] < start:"
+},
+{
+"id": "g7",
+"habit": "G",
+"kind": "fix",
+"fn": "remove_digits",
+"task": "`num` is a string of digits. Remove `k` digits and return the smallest number left, as a string without leading zeros. For example, `remove_digits('1432219', 3)` gives `'1219'`.",
+"code": "def remove_digits(num, k):\n    stack = []\n    for digit in num:\n        while k > 0 and stack:\n            if stack[-1] < digit:\n                break\n            stack.pop()\n            k -= 1\n        stack.append(digit)\n    while k > 0:\n        stack.pop()\n        k -= 1\n    joined = ''.join(stack)\n    result = joined.lstrip('0')\n    if result == '':\n        return '0'\n    return result",
+"bug": [
+5,
+5
+],
+"fix": "            if stack[-1] <= digit:",
+"tests": [
+[
+"remove_digits('112', 1)",
+"11"
+],
+[
+"remove_digits('1432219', 3)",
+"1219"
+],
+[
+"remove_digits('10', 2)",
+"0"
+]
+],
+"why": "Pop a digit only when it is bigger than the new digit. Popping an equal digit gains nothing and wastes a removal, so '112' gave '12' instead of '11'. Stop when `stack[-1] <= digit`.",
+"domain": "Stacks",
+"jobs": [
+[
+4,
+"drop bigger digits first"
+],
+[
+10,
+"use up any k left"
+],
+[
+13,
+"remove leading zeros"
+]
+],
+"bugText": "            if stack[-1] < digit:"
+},
+{
+"id": "g8",
+"habit": "G",
+"kind": "fix",
+"fn": "near_repeat",
+"task": "Return True if the same number appears at two positions that are at most `k` apart, otherwise False. For example, `near_repeat([1, 2, 3, 1], 3)` gives `True`, because the two 1s are 3 apart.",
+"code": "def near_repeat(nums, k):\n    last = {}\n    for i in range(len(nums)):\n        num = nums[i]\n        if num in last:\n            gap = i - last[num]\n            if gap < k:\n                return True\n        last[num] = i\n    return False",
+"bug": [
+7,
+7
+],
+"fix": "            if gap <= k:",
+"tests": [
+[
+"near_repeat([1, 2, 3, 1], 3)",
+true
+],
+[
+"near_repeat([1, 2, 1], 1)",
+false
+],
+[
+"near_repeat([5, 5], 1)",
+true
+]
+],
+"why": "\"At most k apart\" includes a gap of exactly `k`. With `<`, the gap of 3 did not count. Use `gap <= k`.",
+"domain": "Hashing",
+"jobs": [
+[
+5,
+"compare with the last spot"
+],
+[
+9,
+"remember where num was"
+]
+],
+"bugText": "            if gap < k:"
+},
+{
+"id": "g9",
+"habit": "G",
+"kind": "fix",
+"fn": "has_majority",
+"task": "Return True if one number makes up more than half of `nums`, otherwise False. For example, `has_majority([3, 3, 4])` gives `True`, because 3 fills 2 of 3 spots.",
+"code": "def has_majority(nums):\n    counts = Counter(nums)\n    half = len(nums) // 2\n    for num in counts:\n        if counts[num] >= half:\n            return True\n    return False",
+"bug": [
+5,
+5
+],
+"fix": "        if counts[num] > half:",
+"tests": [
+[
+"has_majority([1, 2])",
+false
+],
+[
+"has_majority([3, 3, 4])",
+true
+],
+[
+"has_majority([1, 1, 2, 2])",
+false
+]
+],
+"why": "\"More than half\" leaves out exactly half. In [1, 2], the number 1 fills exactly half, and `>=` said True. Use `counts[num] > half`.",
+"domain": "Hashing",
+"bugText": "        if counts[num] >= half:"
+},
+{
+"id": "j5",
+"habit": "J",
+"kind": "fix",
+"fn": "find_number",
+"task": "`nums` is sorted. Return the position of `target`, or -1 if it is missing. For example, `find_number([1, 3, 5, 7, 9], 7)` gives `3`.",
+"code": "def find_number(nums, target):\n    low = 0\n    high = len(nums) - 1\n    while low <= high:\n        mid = (low + high) // 2\n        if nums[mid] == target:\n            return mid\n        if nums[mid] < target:\n            high = mid - 1\n        else:\n            low = mid + 1\n    return -1",
+"bug": [
+8,
+8
+],
+"fix": "        if nums[mid] > target:",
+"tests": [
+[
+"find_number([1, 3, 5, 7, 9], 7)",
+3
+],
+[
+"find_number([2, 4], 4)",
+1
+],
+[
+"find_number([1, 2, 3], 8)",
+-1
+]
+],
+"why": "When the middle number is too small, `target` sits to the right, so `low` must move up. The check was reversed, so the search threw away the half that held `target`. Use `if nums[mid] > target:` before `high = mid - 1`.",
+"domain": "Binary search",
+"jobs": [
+[
+6,
+"found it"
+],
+[
+8,
+"keep the half with target"
+]
+],
+"bugText": "        if nums[mid] < target:"
+},
+{
+"id": "j6",
+"habit": "J",
+"kind": "fix",
+"fn": "is_palindrome",
+"task": "Return True if `s` reads the same forward and backward, otherwise False. For example, `is_palindrome('racecar')` gives `True`.",
+"code": "def is_palindrome(s):\n    left = 0\n    right = len(s) - 1\n    while left < right:\n        if s[left] != s[right]:\n            return False\n        left += 1\n        right += 1\n    return True",
+"bug": [
+8,
+8
+],
+"fix": "        right -= 1",
+"tests": [
+[
+"is_palindrome('racecar')",
+true
+],
+[
+"is_palindrome('abba')",
+true
+],
+[
+"is_palindrome('ab')",
+false
+]
+],
+"why": "`right` starts at the end and walks toward the middle, so it goes down. `right += 1` walked off the end and crashed. Use `right -= 1`.",
+"domain": "Two pointers",
+"bugText": "        right += 1"
+},
+{
+"id": "j7",
+"habit": "J",
+"kind": "fix",
+"fn": "eval_rpn",
+"task": "Each item in `tokens` is a number or one of `+`, `-` and `*`. An operator works on the two numbers just before it. Return the result. For example, `eval_rpn(['5', '2', '-'])` gives `3`, because 5 - 2 = 3.",
+"code": "def eval_rpn(tokens):\n    stack = []\n    for token in tokens:\n        if token in '+-*':\n            right = stack.pop()\n            left = stack.pop()\n            if token == '+':\n                stack.append(left + right)\n            elif token == '-':\n                stack.append(right - left)\n            else:\n                stack.append(left * right)\n        else:\n            stack.append(int(token))\n    return stack[0]",
+"bug": [
+10,
+10
+],
+"fix": "                stack.append(left - right)",
+"tests": [
+[
+"eval_rpn(['5', '2', '-'])",
+3
+],
+[
+"eval_rpn(['2', '1', '+', '3', '*'])",
+9
+],
+[
+"eval_rpn(['4', '13', '5', '-', '+'])",
+12
+]
+],
+"why": "The stack gives back the last number first, so the first pop is the right number. \"5 2 -\" means 5 - 2, which is `left - right`. The line had the order reversed and gave -3.",
+"domain": "Stacks",
+"jobs": [
+[
+4,
+"apply the operator"
+],
+[
+13,
+"push a number"
+]
+],
+"bugText": "                stack.append(right - left)"
+},
+{
+"id": "j8",
+"habit": "J",
+"kind": "fix",
+"fn": "halve_piles",
+"task": "Each turn, take the biggest pile and remove half of it, rounded down. After `k` turns, return how many stones are left. For example, `halve_piles([5, 4, 9], 2)` gives `12`: 9 becomes 5, then a 5 becomes 3, and 3 + 5 + 4 = 12.",
+"code": "def halve_piles(piles, k):\n    heap = []\n    for pile in piles:\n        heapq.heappush(heap, -pile)\n    for _ in range(k):\n        biggest = -heapq.heappop(heap)\n        taken = biggest // 2\n        rest = biggest - taken\n        heapq.heappush(heap, rest)\n    return -sum(heap)",
+"bug": [
+9,
+9
+],
+"fix": "        heapq.heappush(heap, -rest)",
+"tests": [
+[
+"halve_piles([5, 4, 9], 2)",
+12
+],
+[
+"halve_piles([10], 1)",
+5
+],
+[
+"halve_piles([4, 3, 6, 7], 3)",
+12
+]
+],
+"why": "The heap stores every pile with a minus sign, so the biggest pile comes out first. The pile went back without its minus sign, so it looked like the smallest and broke the total. Push `-rest`.",
+"domain": "Heaps",
+"jobs": [
+[
+2,
+"max heap with minus signs"
+],
+[
+5,
+"halve the biggest k times"
+]
+],
+"bugText": "        heapq.heappush(heap, rest)"
+},
+{
+"id": "j9",
+"habit": "J",
+"kind": "fix",
+"fn": "range_sums",
+"task": "Each query in `queries` is `[first, last]`. For each query, return the sum of `nums` from position `first` to position `last`. For example, `range_sums([1, 2, 3, 4], [[1, 2]])` gives `[5]`, because 2 + 3 = 5.",
+"code": "def range_sums(nums, queries):\n    prefix = [0]\n    for num in nums:\n        running = prefix[-1] + num\n        prefix.append(running)\n    out = []\n    for first, last in queries:\n        upto = prefix[last + 1]\n        before = prefix[first]\n        total = before - upto\n        out.append(total)\n    return out",
+"bug": [
+10,
+10
+],
+"fix": "        total = upto - before",
+"tests": [
+[
+"range_sums([1, 2, 3, 4], [[1, 2]])",
+[
+5
+]
+],
+[
+"range_sums([5, -1, 2], [[0, 2], [1, 1]])",
+[
+6,
+-1
+]
+],
+[
+"range_sums([7], [[0, 0]])",
+[
+7
+]
+]
+],
+"why": "`upto` holds the sum through `last`, and `before` holds the sum before `first`. The range sum is the bigger one minus the smaller one: `upto - before`. The reversed order gave -5.",
+"domain": "Hashing",
+"jobs": [
+[
+2,
+"build the prefix sums"
+],
+[
+7,
+"answer each range"
+]
+],
+"bugText": "        total = before - upto"
+},
+{
+"id": "m3",
+"habit": "M",
+"kind": "fix",
+"fn": "has_gap_pair",
+"task": "Return True if two numbers in `nums` differ by exactly `diff`, otherwise False. For example, `has_gap_pair([1, 5, 3], 2)` gives `True`, because 3 - 1 = 2.",
+"code": "def has_gap_pair(nums, diff):\n    seen = set()\n    for num in nums:\n        if num - diff in seen:\n            return True\n        if num + diff in seen:\n            return True\n        seen.add(num)",
+"bug": [
+8,
+8
+],
+"fix": "        seen.add(num)\n    return False",
+"tests": [
+[
+"has_gap_pair([1, 5, 3], 2)",
+true
+],
+[
+"has_gap_pair([1, 2], 5)",
+false
+],
+[
+"has_gap_pair([], 1)",
+false
+]
+],
+"why": "When no pair exists, the loop ends without a return, and Python gives back `None`. Add `return False` after the loop. Right after writing a loop, write the line for \"nothing found\".",
+"domain": "Hashing",
+"bugText": "        seen.add(num)"
+},
+{
+"id": "m4",
+"habit": "M",
+"kind": "fix",
+"fn": "path_len",
+"task": "The dict `graph` maps each node to the nodes it links to. Return the fewest links you follow from `start` to reach `goal`, or -1 if you cannot reach it. For example, `path_len({'a': ['b'], 'b': ['c'], 'c': []}, 'a', 'c')` gives `2`.",
+"code": "def path_len(graph, start, goal):\n    steps = {start: 0}\n    queue = deque([start])\n    while queue:\n        node = queue.popleft()\n        if node == goal:\n            return steps[node]\n        hops = steps[node] + 1\n        for neighbor in graph[node]:\n            if neighbor not in steps:\n                steps[neighbor] = hops\n                queue.append(neighbor)",
+"bug": [
+12,
+12
+],
+"fix": "                queue.append(neighbor)\n    return -1",
+"tests": [
+[
+"path_len({'a': ['b'], 'b': ['c'], 'c': []}, 'a', 'c')",
+2
+],
+[
+"path_len({'a': [], 'b': []}, 'a', 'b')",
+-1
+],
+[
+"path_len({'a': ['a']}, 'a', 'a')",
+0
+]
+],
+"why": "An unreachable goal empties the queue, the loop ends, and Python gives back `None`. Add `return -1` after the loop.",
+"domain": "Graphs",
+"jobs": [
+[
+2,
+"steps from start"
+],
+[
+6,
+"reached the goal"
+],
+[
+9,
+"visit new neighbors"
+]
+],
+"bugText": "                queue.append(neighbor)"
+},
+{
+"id": "m5",
+"habit": "M",
+"kind": "fix",
+"fn": "first_unique",
+"task": "Return the position of the first letter in `s` that appears only once, or -1 if every letter repeats. For example, `first_unique('loveleetcode')` gives `2`, because v is the first letter with no copy.",
+"code": "def first_unique(s):\n    counts = Counter(s)\n    for i in range(len(s)):\n        if counts[s[i]] == 1:\n            return i",
+"bug": [
+5,
+5
+],
+"fix": "            return i\n    return -1",
+"tests": [
+[
+"first_unique('leetcode')",
+0
+],
+[
+"first_unique('aabb')",
+-1
+],
+[
+"first_unique('loveleetcode')",
+2
+]
+],
+"why": "When every letter repeats, the loop never returns, and Python gives back `None`. Add `return -1` after the loop.",
+"domain": "Hashing",
+"bugText": "            return i"
+},
+{
+"id": "m6",
+"habit": "M",
+"kind": "fix",
+"fn": "find_step",
+"task": "The dict `links` maps each node to the next node, and the last node maps to `None`. Return how many steps from `head` the node `goal` is, or -1 if it is not in the list. For example, `find_step({'a': 'b', 'b': None}, 'a', 'b')` gives `1`.",
+"code": "def find_step(links, head, goal):\n    node = head\n    step = 0\n    while node is not None:\n        if node == goal:\n            return step\n        node = links[node]\n        step += 1",
+"bug": [
+8,
+8
+],
+"fix": "        step += 1\n    return -1",
+"tests": [
+[
+"find_step({'a': 'b', 'b': None}, 'a', 'b')",
+1
+],
+[
+"find_step({'a': 'b', 'b': None}, 'a', 'z')",
+-1
+],
+[
+"find_step({'a': None}, 'a', 'a')",
+0
+]
+],
+"why": "A missing `goal` walks off the end, the loop stops, and Python gives back `None`. Add `return -1` after the loop.",
+"domain": "Linked lists",
+"bugText": "        step += 1"
+},
+{
+"id": "m7",
+"habit": "M",
+"kind": "fix",
+"fn": "first_gap",
+"task": "Each meeting in `meetings` is `[start, end]`, and no two meetings overlap. Sort them, and return the start of the first free gap between two meetings that lasts at least `need` hours, or -1. For example, `first_gap([[9, 10], [13, 14], [10, 12]], 1)` gives `12`, because 12 to 13 is free.",
+"code": "def first_gap(meetings, need):\n    ordered = sorted(meetings)\n    for i in range(1, len(ordered)):\n        free_from = ordered[i - 1][1]\n        free_to = ordered[i][0]\n        gap = free_to - free_from\n        if gap >= need:\n            return free_from",
+"bug": [
+8,
+8
+],
+"fix": "            return free_from\n    return -1",
+"tests": [
+[
+"first_gap([[9, 10], [13, 14], [10, 12]], 1)",
+12
+],
+[
+"first_gap([[1, 2], [2, 3]], 1)",
+-1
+],
+[
+"first_gap([[5, 6]], 1)",
+-1
+]
+],
+"why": "A full schedule has no gap, so the loop ends without a return, and Python gives back `None`. Add `return -1` after the loop.",
+"domain": "Intervals",
+"bugText": "            return free_from"
+},
+{
+"id": "n3",
+"habit": "N",
+"kind": "fix",
+"fn": "best_run_sum",
+"task": "Return the biggest sum of a run of one or more numbers in a row in `nums`. For example, `best_run_sum([-2, 1, -3, 4, -1, 2, 1, -5, 4])` gives `6`, because 4 - 1 + 2 + 1 = 6.",
+"code": "def best_run_sum(nums):\n    current = 0\n    best = nums[0]\n    for num in nums:\n        best = max(best, current)\n        extended = current + num\n        current = max(num, extended)\n    return best",
+"bug": [
+5,
+7
+],
+"fix": "        extended = current + num\n        current = max(num, extended)\n        best = max(best, current)",
+"tests": [
+[
+"best_run_sum([1, 2])",
+3
+],
+[
+"best_run_sum([-2, 1, -3, 4, -1, 2, 1, -5, 4])",
+6
+],
+[
+"best_run_sum([-3, 5])",
+5
+]
+],
+"why": "The order inside the loop is add, fix, check. Here `best` was saved before `current` took the new number, so the run that ends at the last number was never saved. [1, 2] gave 1 instead of 3. Update `current` first, then save `best`.",
+"domain": "Dynamic programming",
+"bugText": "        best = max(best, current)\n        extended = current + num\n        current = max(num, extended)"
+},
+{
+"id": "n4",
+"habit": "N",
+"kind": "fix",
+"fn": "max_depth",
+"task": "Return the deepest level of nested brackets in `s`. For example, `max_depth('(()(()))')` gives `3`, because the inner brackets sit three levels in.",
+"code": "def max_depth(s):\n    depth = 0\n    best = 0\n    for char in s:\n        if char == '(':\n            best = max(best, depth)\n            depth += 1\n        elif char == ')':\n            depth -= 1\n    return best",
+"bug": [
+6,
+7
+],
+"fix": "            depth += 1\n            best = max(best, depth)",
+"tests": [
+[
+"max_depth('(1)')",
+1
+],
+[
+"max_depth('(()(()))')",
+3
+],
+[
+"max_depth('abc')",
+0
+]
+],
+"why": "The depth was recorded before stepping in, so it was always one level short. '(1)' gave 0 instead of 1. Add 1 to `depth` first, then record `best`.",
+"domain": "Stacks",
+"jobs": [
+[
+5,
+"step in"
+],
+[
+8,
+"step out"
+]
+],
+"bugText": "            best = max(best, depth)\n            depth += 1"
+},
+{
+"id": "n5",
+"habit": "N",
+"kind": "fix",
+"fn": "count_target_sums",
+"task": "Count the runs of one or more numbers in a row in `nums` that add up to `k`. For example, `count_target_sums([1, 1, 1], 2)` gives `2`, because the first two 1s and the last two 1s both add up to 2.",
+"code": "def count_target_sums(nums, k):\n    seen = Counter()\n    seen[0] = 1\n    total = 0\n    found = 0\n    for num in nums:\n        total += num\n        seen[total] += 1\n        found += seen[total - k]\n    return found",
+"bug": [
+8,
+9
+],
+"fix": "        found += seen[total - k]\n        seen[total] += 1",
+"tests": [
+[
+"count_target_sums([0, 0], 0)",
+3
+],
+[
+"count_target_sums([1, -1], 0)",
+1
+],
+[
+"count_target_sums([1, 1, 1], 2)",
+2
+]
+],
+"why": "The code saved the current total before looking up earlier totals. When `k` is 0, the lookup then found the total it had just saved, which counts a run of zero numbers. [1, -1] with `k = 0` gave 3 instead of 1. Look up first, then save: `found += seen[total - k]`, then `seen[total] += 1`.",
+"domain": "Hashing",
+"jobs": [
+[
+3,
+"the empty start"
+],
+[
+7,
+"add the new number"
+]
+],
+"bugText": "        seen[total] += 1\n        found += seen[total - k]"
+},
+{
+"id": "n6",
+"habit": "N",
+"kind": "fix",
+"fn": "fewest_whites",
+"task": "Each letter in `blocks` is 'W' for white or 'B' for black. Return the fewest white blocks in any `k` blocks in a row. For example, `fewest_whites('WBB', 2)` gives `0`, because \"BB\" has no white block.",
+"code": "def fewest_whites(blocks, k):\n    whites = 0\n    best = k\n    for right in range(len(blocks)):\n        if blocks[right] == 'W':\n            whites += 1\n        if right >= k - 1:\n            best = min(best, whites)\n        if right >= k:\n            if blocks[right - k] == 'W':\n                whites -= 1\n    return best",
+"bug": [
+7,
+11
+],
+"fix": "        if right >= k:\n            if blocks[right - k] == 'W':\n                whites -= 1\n        if right >= k - 1:\n            best = min(best, whites)",
+"tests": [
+[
+"fewest_whites('WBBWWBBWBW', 7)",
+3
+],
+[
+"fewest_whites('WBWBBBW', 2)",
+0
+],
+[
+"fewest_whites('WBB', 2)",
+0
+]
+],
+"why": "The order inside the loop is add, fix, check. Here the check ran before the leaving block was dropped, so it counted `k + 1` blocks. In \"WBB\", the check saw \"WBB\" with 1 white and missed \"BB\". Drop the leaving block first, then check.",
+"domain": "Sliding window",
+"jobs": [
+[
+5,
+"add the new block"
+],
+[
+12,
+"fewest whites seen"
+]
+],
+"bugText": "        if right >= k - 1:\n            best = min(best, whites)\n        if right >= k:\n            if blocks[right - k] == 'W':\n                whites -= 1"
+},
+{
+"id": "n7",
+"habit": "N",
+"kind": "fix",
+"fn": "cheapest_total",
+"task": "After each price in `prices`, return the total of the `k` cheapest prices seen so far. For example, `cheapest_total([5, 1, 3], 2)` gives `[5, 6, 4]`: 5, then 5 + 1, then 1 + 3.",
+"code": "def cheapest_total(prices, k):\n    heap = []\n    out = []\n    for price in prices:\n        heapq.heappush(heap, -price)\n        out.append(-sum(heap))\n        if len(heap) > k:\n            heapq.heappop(heap)\n    return out",
+"bug": [
+6,
+8
+],
+"fix": "        if len(heap) > k:\n            heapq.heappop(heap)\n        out.append(-sum(heap))",
+"tests": [
+[
+"cheapest_total([5, 1, 3], 2)",
+[
+5,
+6,
+4
+]
+],
+[
+"cheapest_total([2, 8], 1)",
+[
+2,
+2
+]
+],
+[
+"cheapest_total([4], 3)",
+[
+4
+]
+]
+],
+"why": "The total was saved while the heap still held `k + 1` prices, so the priciest one was counted too. Pop the extra price first, then save the total.",
+"domain": "Heaps",
+"bugText": "        out.append(-sum(heap))\n        if len(heap) > k:\n            heapq.heappop(heap)"
+},
+{
+"id": "o1",
+"habit": "O",
+"kind": "fix",
+"fn": "reverse_in_place",
+"task": "Reverse `items` in place by swapping the two ends and moving inward, then return it. For example, `reverse_in_place([1, 2, 3])` gives `[3, 2, 1]`.",
+"code": "def reverse_in_place(items):\n    left = 0\n    right = len(items) - 1\n    while left < right:\n        saved = items[left]\n        items[left] = items[right]\n        left += 1\n        right -= 1\n    return items",
+"bug": [
+6,
+6
+],
+"fix": "        items[left] = items[right]\n        items[right] = saved",
+"tests": [
+[
+"reverse_in_place([1, 2, 3])",
+[
+3,
+2,
+1
+]
+],
+[
+"reverse_in_place([4, 5])",
+[
+5,
+4
+]
+],
+[
+"reverse_in_place([])",
+[]
+]
+],
+"why": "A swap changes two spots. The code copied the right item to the left, but never put the saved left item on the right, so [1, 2, 3] became [3, 2, 3]. Add `items[right] = saved`.",
+"domain": "Two pointers",
+"bugText": "        items[left] = items[right]"
+},
+{
+"id": "o2",
+"habit": "O",
+"kind": "fix",
+"fn": "count_groups",
+"task": "There are `n` people, numbered 0 to `n - 1`. Each edge `[a, b]` in `edges` links two people. Return how many separate groups there are. For example, `count_groups(4, [[0, 1], [1, 2], [0, 2]])` gives `2`: {0, 1, 2} and {3}.",
+"code": "def count_groups(n, edges):\n    parent = list(range(n))\n    def find(x):\n        while parent[x] != x:\n            x = parent[x]\n        return x\n    groups = n\n    for a, b in edges:\n        root_a = find(a)\n        root_b = find(b)\n        if root_a != root_b:\n            groups -= 1\n    return groups",
+"bug": [
+12,
+12
+],
+"fix": "            parent[root_a] = root_b\n            groups -= 1",
+"tests": [
+[
+"count_groups(3, [[0, 1], [1, 0]])",
+2
+],
+[
+"count_groups(4, [[0, 1], [1, 2], [0, 2]])",
+2
+],
+[
+"count_groups(2, [])",
+2
+]
+],
+"why": "Joining two groups has two parts: link one root under the other, and lower the count. The code only lowered the count, so the same two groups were joined again by the next edge. Add `parent[root_a] = root_b`.",
+"domain": "Graphs",
+"jobs": [
+[
+3,
+"walk up to the root"
+],
+[
+8,
+"join the two groups"
+]
+],
+"bugText": "            groups -= 1"
+},
+{
+"id": "o3",
+"habit": "O",
+"kind": "fix",
+"fn": "join_cost",
+"task": "Joining two sticks costs their total length and makes one longer stick. Join all the sticks into one, always joining the two shortest, and return the total cost. For example, `join_cost([2, 4, 3])` gives `14`: 2 + 3 costs 5, then 5 + 4 costs 9.",
+"code": "def join_cost(sticks):\n    heap = list(sticks)\n    heapq.heapify(heap)\n    cost = 0\n    while len(heap) > 1:\n        first = heapq.heappop(heap)\n        second = heapq.heappop(heap)\n        joined = first + second\n        cost += joined\n    return cost",
+"bug": [
+9,
+9
+],
+"fix": "        cost += joined\n        heapq.heappush(heap, joined)",
+"tests": [
+[
+"join_cost([2, 4, 3])",
+14
+],
+[
+"join_cost([1, 8, 3, 5])",
+30
+],
+[
+"join_cost([5])",
+0
+]
+],
+"why": "A join takes two sticks out and puts one new stick back. The joined stick never went back into the heap, so later joins skipped it. Add `heapq.heappush(heap, joined)`.",
+"domain": "Heaps",
+"jobs": [
+[
+5,
+"join until one stick"
+],
+[
+6,
+"take the two cheapest"
+]
+],
+"bugText": "        cost += joined"
+},
+{
+"id": "o4",
+"habit": "O",
+"kind": "fix",
+"fn": "reach_count",
+"task": "There are `n` people, numbered 0 to `n - 1`. Each edge `[a, b]` in `edges` is a two-way link. Return how many people `start` can reach, counting `start`. For example, `reach_count(3, [[0, 1], [2, 1]], 0)` gives `3`.",
+"code": "def reach_count(n, edges, start):\n    graph = {}\n    for node in range(n):\n        graph[node] = []\n    for a, b in edges:\n        graph[a].append(b)\n    seen = {start}\n    queue = deque([start])\n    while queue:\n        node = queue.popleft()\n        for other in graph[node]:\n            if other not in seen:\n                seen.add(other)\n                queue.append(other)\n    return len(seen)",
+"bug": [
+6,
+6
+],
+"fix": "        graph[a].append(b)\n        graph[b].append(a)",
+"tests": [
+[
+"reach_count(3, [[0, 1], [2, 1]], 0)",
+3
+],
+[
+"reach_count(3, [[1, 0]], 0)",
+2
+],
+[
+"reach_count(2, [], 1)",
+1
+]
+],
+"why": "A two-way link must go into both people's lists. The code only added `b` to `a`'s list, so the walk could not go from 1 back to 2. Add `graph[b].append(a)`.",
+"domain": "Graphs",
+"jobs": [
+[
+2,
+"build the two-way graph"
+],
+[
+9,
+"walk out from start"
+]
+],
+"bugText": "        graph[a].append(b)"
+},
+{
+"id": "o5",
+"habit": "O",
+"kind": "fix",
+"fn": "stack_mins",
+"task": "Each item in `ops` is a number to push or the word 'pop'. After each step, return the smallest number on the stack. For example, `stack_mins([3, 1, 'pop'])` gives `[3, 1, 3]`.",
+"code": "def stack_mins(ops):\n    stack = []\n    mins = []\n    out = []\n    for op in ops:\n        if op == 'pop':\n            stack.pop()\n        else:\n            stack.append(op)\n            low = op\n            if mins:\n                low = min(low, mins[-1])\n            mins.append(low)\n        out.append(mins[-1])\n    return out",
+"bug": [
+7,
+7
+],
+"fix": "            stack.pop()\n            mins.pop()",
+"tests": [
+[
+"stack_mins([3, 1, 'pop'])",
+[
+3,
+1,
+3
+]
+],
+[
+"stack_mins([2, 5, 'pop'])",
+[
+2,
+2,
+2
+]
+],
+[
+"stack_mins([4, 2, 'pop', 1])",
+[
+4,
+2,
+4,
+1
+]
+]
+],
+"why": "The code keeps two stacks: `stack` for the numbers and `mins` for the smallest so far. A pop must leave both. Only `stack` lost its top, so `mins` still said 1 after the 1 was gone. Add `mins.pop()`.",
+"domain": "Stacks",
+"jobs": [
+[
+6,
+"pop from the stack"
+],
+[
+8,
+"push and save the min"
+],
+[
+14,
+"record the min"
+]
+],
+"bugText": "            stack.pop()"
+},
+{
+"id": "p9",
+"habit": "P",
+"kind": "fix",
+"fn": "search_grid",
+"task": "Each row of `grid` is sorted, and each row starts after the row above ends. Return True if `target` is in the grid, otherwise False. For example, `search_grid([[1, 3, 5, 7], [10, 11, 16, 20]], 11)` gives `True`.",
+"code": "def search_grid(grid, target):\n    cols = 4\n    low = 0\n    high = len(grid) * cols - 1\n    while low <= high:\n        mid = (low + high) // 2\n        row = mid // cols\n        col = mid % cols\n        value = grid[row][col]\n        if value == target:\n            return True\n        if value < target:\n            low = mid + 1\n        else:\n            high = mid - 1\n    return False",
+"bug": [
+2,
+2
+],
+"fix": "    cols = len(grid[0])",
+"tests": [
+[
+"search_grid([[1, 3, 5, 7], [10, 11, 16, 20]], 11)",
+true
+],
+[
+"search_grid([[1, 2], [3, 4]], 3)",
+true
+],
+[
+"search_grid([[1, 2, 3]], 4)",
+false
+]
+],
+"why": "The 4 came from the example grid, which has 4 columns. A grid with 2 columns then read the wrong spots or crashed. Use `cols = len(grid[0])`. For every number in your code, ask where it came from.",
+"domain": "Binary search",
+"jobs": [
+[
+2,
+"the grid as one list"
+],
+[
+7,
+"turn mid into row and col"
+],
+[
+10,
+"found it"
+]
+],
+"bugText": "    cols = 4"
+},
+{
+"id": "p10",
+"habit": "P",
+"kind": "fix",
+"fn": "coin_ways",
+"task": "Return how many ways the coins in `coins` can add up to `amount`. You can use each coin as many times as you like, and order does not matter. For example, `coin_ways(11, [1, 5])` gives `3`: eleven 1s, one 5 and six 1s, or two 5s and one 1.",
+"code": "def coin_ways(amount, coins):\n    ways = [0] * 12\n    ways[0] = 1\n    stop = amount + 1\n    for coin in coins:\n        for goal in range(coin, stop):\n            rest = goal - coin\n            ways[goal] += ways[rest]\n    return ways[amount]",
+"bug": [
+2,
+2
+],
+"fix": "    ways = [0] * (amount + 1)",
+"tests": [
+[
+"coin_ways(15, [5, 10])",
+2
+],
+[
+"coin_ways(11, [1, 5])",
+3
+],
+[
+"coin_ways(3, [2])",
+0
+]
+],
+"why": "The 12 came from the example amount of 11. An amount of 15 needs 16 slots, so the code crashed. Use `[0] * (amount + 1)`.",
+"domain": "Dynamic programming",
+"bugText": "    ways = [0] * 12"
+},
+{
+"id": "p11",
+"habit": "P",
+"kind": "fix",
+"fn": "rotate",
+"task": "Move every number in `nums` `k` places to the right. Numbers that fall off the end wrap around to the front. For example, `rotate([1, 2, 3, 4, 5, 6, 7], 3)` gives `[5, 6, 7, 1, 2, 3, 4]`.",
+"code": "def rotate(nums, k):\n    shift = k % 7\n    cut = len(nums) - shift\n    return nums[cut:] + nums[:cut]",
+"bug": [
+2,
+2
+],
+"fix": "    shift = k % len(nums)",
+"tests": [
+[
+"rotate([1, 2, 3, 4, 5, 6, 7], 3)",
+[
+5,
+6,
+7,
+1,
+2,
+3,
+4
+]
+],
+[
+"rotate([1, 2, 3], 8)",
+[
+2,
+3,
+1
+]
+],
+[
+"rotate([1, 2], 5)",
+[
+2,
+1
+]
+]
+],
+"why": "The 7 came from the example list, which holds 7 numbers. For a list of 3, the shift must wrap at 3, not 7. Use `k % len(nums)`.",
+"domain": "Two pointers",
+"bugText": "    shift = k % 7"
+},
+{
+"id": "p12",
+"habit": "P",
+"kind": "fix",
+"fn": "find_judge",
+"task": "There are `n` people, numbered 1 to `n`. Each pair `[a, b]` in `trust` means a trusts b. The judge trusts nobody, and everyone else trusts the judge. Return the judge, or -1 if there is none. For example, `find_judge(3, [[1, 3], [2, 3]])` gives `3`.",
+"code": "def find_judge(n, trust):\n    score = [0] * (n + 1)\n    for a, b in trust:\n        score[a] -= 1\n        score[b] += 1\n    for person in range(1, n + 1):\n        if score[person] == 2:\n            return person\n    return -1",
+"bug": [
+7,
+7
+],
+"fix": "        if score[person] == n - 1:",
+"tests": [
+[
+"find_judge(3, [[1, 3], [2, 3]])",
+3
+],
+[
+"find_judge(2, [[1, 2]])",
+2
+],
+[
+"find_judge(4, [[1, 3], [2, 3], [4, 3]])",
+3
+]
+],
+"why": "The judge is trusted by everyone else, which is `n - 1` people. The 2 came from the example with 3 people, so any other size failed. Use `score[person] == n - 1`.",
+"domain": "Graphs",
+"bugText": "        if score[person] == 2:"
+},
+{
+"id": "p13",
+"habit": "P",
+"kind": "fix",
+"fn": "closest_points",
+"task": "Each point in `points` is `[x, y]`. Return the `k` points closest to (0, 0), sorted. For example, `closest_points([[1, 3], [-2, 2]], 1)` gives `[[-2, 2]]`, because (-2, 2) is closer than (1, 3).",
+"code": "def closest_points(points, k):\n    heap = []\n    for x, y in points:\n        dist = x * x + y * y\n        item = (-dist, x, y)\n        heapq.heappush(heap, item)\n        if len(heap) > 2:\n            heapq.heappop(heap)\n    out = []\n    for item in heap:\n        out.append([item[1], item[2]])\n    return sorted(out)",
+"bug": [
+7,
+7
+],
+"fix": "        if len(heap) > k:",
+"tests": [
+[
+"closest_points([[3, 3], [5, -1], [-2, 4]], 2)",
+[
+[
+-2,
+4
+],
+[
+3,
+3
+]
+]
+],
+[
+"closest_points([[1, 3], [-2, 2]], 1)",
+[
+[
+-2,
+2
+]
+]
+],
+[
+"closest_points([[0, 1], [2, 2], [1, 0]], 3)",
+[
+[
+0,
+1
+],
+[
+1,
+0
+],
+[
+2,
+2
+]
+]
+]
+],
+"why": "The heap must keep `k` points, and `k` changes with every call. The 2 came from the example. Use `len(heap) > k`.",
+"domain": "Heaps",
+"jobs": [
+[
+4,
+"distance squared"
+],
+[
+7,
+"keep only the closest"
+],
+[
+9,
+"collect the points"
+]
+],
+"bugText": "        if len(heap) > 2:"
 }
 ];

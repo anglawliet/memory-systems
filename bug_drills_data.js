@@ -1,4 +1,4 @@
-window.DRILL_HABITS = {"A": "The tracker falls out of step with the pointers", "B": "Mixing up a position and a value, or a type and its methods", "C": "No fixed plan for shrinking the window", "E": "Using the wrong one of two similar names", "G": "The wrong comparison", "J": "A reversed direction or sign", "M": "Forgetting the \"nothing found\" return", "N": "Checking before the window is fixed", "O": "Doing only half of a two-part step", "P": "Hard-coding a value from the example"};
+window.DRILL_HABITS = {"A": "The tracker falls out of step with the pointers", "B": "Mixing up a position and a value, or a type and its methods", "C": "No fixed plan for shrinking the window", "E": "Using the wrong one of two similar names", "G": "The wrong comparison", "J": "A reversed direction or sign", "M": "Forgetting the \"nothing found\" return", "N": "Checking before the window is fixed", "O": "Doing only half of a two-part step", "P": "Hard-coding a value from the example", "R": "A loop that starts or stops one item off", "S": "Returning or stopping before the loop is done", "U": "Marking a node as seen too late", "V": "Two names for the same list", "W": "Using a value before or after the line that changes it", "X": "Forgetting the empty or one-item case", "Y": "Changing a list or dict while looping over it", "Z": "Sorting or comparing on the wrong part of a pair"};
 window.DRILLS = [
 {
 "id": "e1",
@@ -5562,5 +5562,1757 @@ false
 ]
 ],
 "bugText": "        if len(heap) > 2:"
+},
+{
+"id": "r4",
+"habit": "R",
+"kind": "fix",
+"fn": "move_zeros",
+"task": "`nums` is a list of numbers. Move every 0 to the end and keep the other numbers in their old order. Change `nums` in place, which means you edit the list you were given instead of building a new one, then return it. The code uses two positions: `read` walks over every number, and `write` is the next spot for a number that is not 0. For example, `move_zeros([1, 0, 2])` gives `[1, 2, 0]`. read 0 sees 1: copy it to spot 0, and write becomes 1. read 1 sees 0: skip it. read 2 sees 2: copy it to spot 1, and write becomes 2. Then fill spot 2 with 0.",
+"code": "def move_zeros(nums):\n    n = len(nums)\n    write = 0\n    for read in range(1, n):\n        if nums[read] != 0:\n            nums[write] = nums[read]\n            write += 1\n    for i in range(write, n):\n        nums[i] = 0\n    return nums",
+"bug": [
+4,
+4
+],
+"fix": "    for read in range(n):",
+"tests": [
+[
+"move_zeros([1, 0, 2])",
+[
+1,
+2,
+0
+]
+],
+[
+"move_zeros([0, 1, 0, 3, 12])",
+[
+1,
+3,
+12,
+0,
+0
+]
+],
+[
+"move_zeros([3, 4])",
+[
+3,
+4
+]
+]
+],
+"why": "`range(1, n)` starts at position 1, so `read` never looks at the first number. In [1, 0, 2] the 1 was never copied, the 2 took its spot, and the result was [2, 0, 0]. Start at 0 with `range(n)`. For every range, ask which item comes first and which comes last.",
+"domain": "Two pointers",
+"jobs": [
+[
+3,
+"next spot for a nonzero"
+],
+[
+8,
+"fill the rest with zeros"
+]
+],
+"bugText": "    for read in range(1, n):"
+},
+{
+"id": "r5",
+"habit": "R",
+"kind": "fix",
+"fn": "common_prefix",
+"task": "`words` is a list of at least one word. A prefix is the start of a word, so 'fl' is a prefix of 'flow'. Return the longest prefix that every word shares, or '' if they share none. The code checks one position `i` of the first word at a time, and stops at the first word that is too short or has a different letter there. For example, `common_prefix(['flow', 'flop'])` gives `'flo'`. Position 0: both have f. Position 1: both have l. Position 2: both have o. Position 3: w and p differ, so the answer is the first 3 letters, 'flo'.",
+"code": "def common_prefix(words):\n    first = words[0]\n    for i in range(len(first) - 1):\n        letter = first[i]\n        for word in words:\n            if i >= len(word):\n                return first[:i]\n            if word[i] != letter:\n                return first[:i]\n    return first",
+"bug": [
+3,
+3
+],
+"fix": "    for i in range(len(first)):",
+"tests": [
+[
+"common_prefix(['flower', 'flow', 'flight'])",
+"fl"
+],
+[
+"common_prefix(['flow', 'flop'])",
+"flo"
+],
+[
+"common_prefix(['dog', 'dot', 'do'])",
+"do"
+]
+],
+"why": "`range(len(first) - 1)` stops one position early, so the loop never checks the last letter of the first word. For ['flow', 'flop'] it never compared w with p and returned all of 'flow'. Use `range(len(first))`. Say the last value the loop variable takes, and check that it is the last position you need.",
+"domain": "Strings",
+"jobs": [
+[
+2,
+"compare with the first word"
+],
+[
+5,
+"every word must match"
+],
+[
+10,
+"every letter matched"
+]
+],
+"bugText": "    for i in range(len(first) - 1):"
+},
+{
+"id": "r6",
+"habit": "R",
+"kind": "fix",
+"fn": "same_group",
+"task": "There are `n` people, numbered 0 to `n - 1`. Each item `[x, y]` in `links` joins person x and person y, and groups join through chains of links. Return True if people `a` and `b` end up in the same group. The code uses union find: `parent` holds one parent for each person, and a person who is their own parent is the top of a group. `root(x)` follows parents up to the top. Joining two groups points one top at the other. Two people share a group when they have the same top. For example, `same_group(5, [[0, 4], [4, 2]], 0, 2)` gives `True`. Link [0, 4]: 0 now points to 4. Link [4, 2]: 4 now points to 2. root(0) goes 0, 4, 2, and root(2) is 2, so they match.",
+"code": "def same_group(n, links, a, b):\n    parent = list(range(n - 1))\n    def root(x):\n        while parent[x] != x:\n            x = parent[x]\n        return x\n    for link in links:\n        root_a = root(link[0])\n        root_b = root(link[1])\n        parent[root_a] = root_b\n    return root(a) == root(b)",
+"bug": [
+2,
+2
+],
+"fix": "    parent = list(range(n))",
+"tests": [
+[
+"same_group(3, [[0, 1]], 0, 1)",
+true
+],
+[
+"same_group(4, [[0, 1], [2, 3]], 1, 3)",
+false
+],
+[
+"same_group(5, [[0, 4], [4, 2]], 0, 2)",
+true
+]
+],
+"why": "`list(range(n - 1))` makes one spot too few, so person `n - 1` has no parent. With 5 people, `parent[4]` raised an IndexError. Use `list(range(n))`, which gives every person from 0 to n - 1 a spot. Count how many items a list needs before you build it.",
+"domain": "Union find",
+"jobs": [
+[
+3,
+"follow parents to the top"
+],
+[
+7,
+"join the two groups"
+],
+[
+11,
+"same top, same group"
+]
+],
+"bugText": "    parent = list(range(n - 1))"
+},
+{
+"id": "r7",
+"habit": "R",
+"kind": "fix",
+"fn": "rotated_min",
+"task": "`nums` is a sorted list of different numbers that was rotated. Rotated means some numbers from the front moved to the back in order, so [1, 2, 3, 4, 5] can become [4, 5, 1, 2, 3]. Return the smallest number. The code uses binary search: it compares the middle number `nums[mid]` with `nums[high]`. If the middle is bigger, the smallest number lies to the right of mid. Otherwise it lies at mid or to its left. For example, `rotated_min([2, 3, 4, 1])` gives `1`. low 0, high 3: mid 1 holds 3, and 3 > 1, so low becomes 2. mid 2 holds 4, and 4 > 1, so low becomes 3. low and high meet at 3, which holds 1.",
+"code": "def rotated_min(nums):\n    low = 0\n    high = len(nums) - 2\n    while low < high:\n        mid = (low + high) // 2\n        if nums[mid] > nums[high]:\n            low = mid + 1\n        else:\n            high = mid\n    return nums[low]",
+"bug": [
+3,
+3
+],
+"fix": "    high = len(nums) - 1",
+"tests": [
+[
+"rotated_min([4, 5, 1, 2, 3])",
+1
+],
+[
+"rotated_min([2, 3, 4, 1])",
+1
+],
+[
+"rotated_min([7])",
+7
+]
+],
+"why": "`high = len(nums) - 2` leaves the last number out of the search. In [2, 3, 4, 1] the smallest number sits at the end, so the search never saw it and returned 2. Start with `high = len(nums) - 1`, the last position. Check that a search can reach both the first and the last item.",
+"domain": "Binary search",
+"jobs": [
+[
+5,
+"look at the middle"
+],
+[
+6,
+"the drop is on the right"
+],
+[
+10,
+"the smallest number"
+]
+],
+"bugText": "    high = len(nums) - 2"
+},
+{
+"id": "r8",
+"habit": "R",
+"kind": "fix",
+"fn": "same_diagonals",
+"task": "`grid` is a list of rows of equal length. A diagonal runs down and to the right, so the cell at row r, column c sits on the same diagonal as the cell at row r - 1, column c - 1. Return True if every diagonal holds one repeated number. The code compares each cell with its up-left neighbor. It starts at row 1 and column 1, because the first row and the first column have no up-left neighbor. For example, `same_diagonals([[1, 2], [2, 2]])` gives `False`. The only cell with an up-left neighbor is row 1, column 1. It holds 2, but its up-left neighbor holds 1.",
+"code": "def same_diagonals(grid):\n    rows = len(grid)\n    cols = len(grid[0])\n    for r in range(1, rows):\n        for c in range(1, cols - 1):\n            up_left = grid[r - 1][c - 1]\n            if grid[r][c] != up_left:\n                return False\n    return True",
+"bug": [
+5,
+5
+],
+"fix": "        for c in range(1, cols):",
+"tests": [
+[
+"same_diagonals([[1, 2, 3], [4, 1, 2]])",
+true
+],
+[
+"same_diagonals([[1, 2], [2, 2]])",
+false
+],
+[
+"same_diagonals([[1, 2, 3], [5, 1, 9]])",
+false
+]
+],
+"why": "`range(1, cols - 1)` stops before the last column, so the loop never checks it. In [[1, 2], [2, 2]] the only cell to check sits in the last column, so the loop checked nothing and returned True. Use `range(1, cols)`. Say aloud which column the loop checks last.",
+"domain": "Grids",
+"bugText": "        for c in range(1, cols - 1):"
+},
+{
+"id": "s10",
+"habit": "S",
+"kind": "fix",
+"fn": "same_pattern",
+"task": "`s` and `t` are two words of the same length. They follow the same pattern if you can swap each letter of s for a letter of t and get t. A letter of s must always become the same letter, and no two letters of s may become the same letter. Return True or False. The dict `pair` stores which letter of t each letter of s became, and the set `used` holds the letters of t already taken. For example, `same_pattern('foo', 'bar')` gives `False`. f pairs with b. o pairs with a. The second o needs r, but o already became a.",
+"code": "def same_pattern(s, t):\n    pair = {}\n    used = set()\n    for i in range(len(s)):\n        letter = s[i]\n        partner = t[i]\n        if letter in pair:\n            if pair[letter] != partner:\n                return False\n        elif partner in used:\n            return False\n        else:\n            pair[letter] = partner\n            used.add(partner)\n        return True",
+"bug": [
+15,
+15
+],
+"fix": "    return True",
+"tests": [
+[
+"same_pattern('egg', 'add')",
+true
+],
+[
+"same_pattern('foo', 'bar')",
+false
+],
+[
+"same_pattern('ab', 'aa')",
+false
+]
+],
+"why": "`return True` sat inside the loop, so the function answered after the first letter. For 'foo' and 'bar' it paired f with b and returned True before it reached the o's. Move `return True` out of the loop, because the answer is True only after every letter fits. For every return inside a loop, ask whether one item is enough to decide.",
+"domain": "Hashing",
+"jobs": [
+[
+5,
+"the two letters at i"
+],
+[
+7,
+"an old pair must match"
+],
+[
+12,
+"make a new pair"
+]
+],
+"bugText": "        return True"
+},
+{
+"id": "s11",
+"habit": "S",
+"kind": "fix",
+"fn": "next_greater",
+"task": "`nums` is a list of numbers. For each number, find the first bigger number to its right, or -1 if there is none, and return those answers as a list. The code keeps a stack, a list where you add and remove only at the end, called the top. The stack holds the positions still waiting for a bigger number. Each new number settles every waiting position whose number is smaller, then waits itself. For example, `next_greater([2, 1, 3])` gives `[3, 3, -1]`. 2 waits: the stack is [0]. 1 is smaller than 2, so it waits too: [0, 1]. 3 is bigger than 1, so position 1 gets 3. 3 is bigger than 2, so position 0 gets 3. Nothing comes after 3, so it gets -1.",
+"code": "def next_greater(nums):\n    out = [-1] * len(nums)\n    stack = []\n    for i in range(len(nums)):\n        while stack:\n            top = stack[-1]\n            if nums[top] >= nums[i]:\n                break\n            out[top] = nums[i]\n            stack.pop()\n            break\n        stack.append(i)\n    return out",
+"bug": [
+10,
+11
+],
+"fix": "            stack.pop()",
+"tests": [
+[
+"next_greater([2, 1, 3])",
+[
+3,
+3,
+-1
+]
+],
+[
+"next_greater([1, 2])",
+[
+2,
+-1
+]
+],
+[
+"next_greater([5, 4, 3, 8])",
+[
+8,
+8,
+8,
+-1
+]
+]
+],
+"why": "The second `break` stopped the `while` loop after one pop, so each new number settled only one waiting position. In [2, 1, 3] the 3 settled the 1 and left the 2 waiting, so position 0 kept -1. Remove that `break`, so the loop keeps popping while the top number is smaller.",
+"domain": "Monotonic stack",
+"jobs": [
+[
+5,
+"settle smaller numbers"
+],
+[
+12,
+"this one waits too"
+]
+],
+"bugText": "            stack.pop()\n            break"
+},
+{
+"id": "s12",
+"habit": "S",
+"kind": "fix",
+"fn": "longest_start",
+"task": "`words` is a set of words, and `text` is a string. Find the longest word in `words` that `text` starts with, and return its length, or 0 if no word fits. The code tries the starts of `text` from short to long, where `text[:size]` is the first `size` letters. For example, `longest_start({'go', 'gone'}, 'goner')` gives `4`. size 1: 'g' is not a word. size 2: 'go' is a word, so best is 2. size 3: 'gon' is not a word. size 4: 'gone' is a word, so best is 4. size 5: 'goner' is not a word.",
+"code": "def longest_start(words, text):\n    best = 0\n    n = len(text)\n    for size in range(1, n + 1):\n        piece = text[:size]\n        if piece in words:\n            best = size\n            break\n    return best",
+"bug": [
+7,
+8
+],
+"fix": "            best = size",
+"tests": [
+[
+"longest_start({'a', 'ab', 'abc'}, 'abcd')",
+3
+],
+[
+"longest_start({'go', 'gone'}, 'goner')",
+4
+],
+[
+"longest_start({'x'}, 'abc')",
+0
+]
+],
+"why": "The `break` stopped the loop at the first word it found. The loop goes from short to long, so it kept the shortest word: for 'goner' it stopped at 'go' and returned 2. Remove the `break`, so a longer word can replace `best`. Before a `break`, ask whether a later item could still give a better answer.",
+"domain": "Strings",
+"bugText": "            best = size\n            break"
+},
+{
+"id": "s13",
+"habit": "S",
+"kind": "fix",
+"fn": "window_start",
+"task": "`nums` is a list of numbers, `k` is a window size, and `target` is a number. A window is `k` numbers in a row. Return the start position of the first window whose sum equals `target`, or -1 if none does. For example, `window_start([1, 2, 3, 4], 2, 7)` gives `2`. Window [1, 2] at position 0 sums to 3. Window [2, 3] at position 1 sums to 5. Window [3, 4] at position 2 sums to 7, so the answer is 2.",
+"code": "def window_start(nums, k, target):\n    total = 0\n    for right in range(len(nums)):\n        total += nums[right]\n        if right >= k:\n            total -= nums[right - k]\n        if right >= k - 1:\n            if total == target:\n                return right - k + 1\n            else:\n                return -1\n    return -1",
+"bug": [
+9,
+11
+],
+"fix": "                return right - k + 1",
+"tests": [
+[
+"window_start([1, 2, 3, 4], 2, 7)",
+2
+],
+[
+"window_start([5, 1, 2], 1, 2)",
+2
+],
+[
+"window_start([1, 1], 2, 5)",
+-1
+]
+],
+"why": "The `else: return -1` gave up at the first window that missed. For [1, 2, 3, 4] the first window summed to 3, so the code returned -1 without trying [3, 4]. Delete the `else` branch and let the loop go on. Only the line after the loop knows that no window matched.",
+"domain": "Sliding window",
+"jobs": [
+[
+4,
+"add the new number"
+],
+[
+5,
+"drop the number that left"
+],
+[
+7,
+"check each full window"
+]
+],
+"bugText": "                return right - k + 1\n            else:\n                return -1"
+},
+{
+"id": "s14",
+"habit": "S",
+"kind": "fix",
+"fn": "has_leaf_sum",
+"task": "A tree node is a dict with a number `'val'` and a list `'kids'` of child nodes. A leaf is a node with no kids. Return True if some path from the top node down to a leaf adds up to `target`. The code takes the node's value off `target`, then asks each kid whether it can make the rest. For example, take a top node 1 with two leaf kids, 2 and 3, and a target of 4. From 1 the rest is 3. The kid 2 leaves 1, so that path fails. The kid 3 leaves 0, so that path works, and the answer is True.",
+"code": "def has_leaf_sum(node, target):\n    rest = target - node['val']\n    kids = node['kids']\n    if not kids:\n        return rest == 0\n    for kid in kids:\n        return has_leaf_sum(kid, rest)\n    return False",
+"bug": [
+7,
+7
+],
+"fix": "        if has_leaf_sum(kid, rest):\n            return True",
+"tests": [
+[
+"has_leaf_sum({'val': 1, 'kids': [{'val': 2, 'kids': []}, {'val': 3, 'kids': []}]}, 4)",
+true
+],
+[
+"has_leaf_sum({'val': 2, 'kids': [{'val': 4, 'kids': [{'val': 1, 'kids': []}]}, {'val': 6, 'kids': []}]}, 8)",
+true
+],
+[
+"has_leaf_sum({'val': 2, 'kids': [{'val': 4, 'kids': [{'val': 1, 'kids': []}]}, {'val': 6, 'kids': []}]}, 9)",
+false
+]
+],
+"why": "`return has_leaf_sum(kid, rest)` returned the first kid's answer, so the other kids never got a turn. For a target of 4 the kid 2 said False, and the function stopped before it tried the kid 3. Return True as soon as a kid says True, and return False only after every kid has failed.",
+"domain": "Trees",
+"bugText": "        return has_leaf_sum(kid, rest)"
+},
+{
+"id": "u1",
+"habit": "U",
+"kind": "fix",
+"fn": "install_size",
+"task": "`deps` maps each package to the list of packages it needs, and `size` maps each package to its size in MB. Installing `app` installs every package it needs, directly or through other packages, each one once. Return the total size. The code hands out packages with a queue, in the order they were added. The set `seen` holds the packages already found, so none is added twice. For example, app needs ui and net, and both need core. The sizes are app 5, ui 3, net 2 and core 10. The answer is 5 + 3 + 2 + 10 = 20, because core is installed once.",
+"code": "def install_size(deps, size, app):\n    seen = {app}\n    queue = deque([app])\n    total = 0\n    while queue:\n        pkg = queue.popleft()\n        total += size[pkg]\n        seen.add(pkg)\n        for need in deps[pkg]:\n            if need not in seen:\n                queue.append(need)\n    return total",
+"bug": [
+8,
+10
+],
+"fix": "        for need in deps[pkg]:\n            if need not in seen:\n                seen.add(need)",
+"tests": [
+[
+"install_size({'app': ['ui', 'net'], 'ui': ['core'], 'net': ['core'], 'core': []}, {'app': 5, 'ui': 3, 'net': 2, 'core': 10}, 'app')",
+20
+],
+[
+"install_size({'a': ['b'], 'b': []}, {'a': 1, 'b': 2}, 'a')",
+3
+],
+[
+"install_size({'x': ['y', 'z'], 'y': ['z'], 'z': []}, {'x': 4, 'y': 6, 'z': 1}, 'x')",
+11
+]
+],
+"why": "The code marked a package only when it came out of the queue. ui and net both came out before core did, so each one added core, and core was counted twice: 30 instead of 20. Mark a package when you add it to the queue, with `seen.add(need)`. Ask whether the same item can sit in the queue twice.",
+"domain": "Graphs",
+"jobs": [
+[
+2,
+"the app is marked"
+],
+[
+6,
+"install the next one"
+],
+[
+12,
+"the total size"
+]
+],
+"bugText": "        seen.add(pkg)\n        for need in deps[pkg]:\n            if need not in seen:"
+},
+{
+"id": "u2",
+"habit": "U",
+"kind": "fix",
+"fn": "at_distance",
+"task": "`graph` maps each person to the list of their friends, and friendship goes both ways. Return, sorted, everyone exactly `k` links away from `start`, which means their shortest chain of friends from `start` has `k` links. The code moves out one ring at a time: `level` holds the people at the current distance, and `seen` holds everyone already reached. For example, a is friends with b and c, b and c are friends, and both are friends with d. With k = 2 the answer is ['d']. Round 1: b and c are 1 link away. Round 2: b and c lead to d, which is 2 links away.",
+"code": "def at_distance(graph, start, k):\n    seen = {start}\n    level = [start]\n    for _ in range(k):\n        after = []\n        for node in level:\n            seen.add(node)\n            for nxt in graph[node]:\n                if nxt not in seen:\n                    after.append(nxt)\n        level = after\n    return sorted(level)",
+"bug": [
+7,
+9
+],
+"fix": "            for nxt in graph[node]:\n                if nxt not in seen:\n                    seen.add(nxt)",
+"tests": [
+[
+"at_distance({'a': ['b', 'c'], 'b': ['a', 'c', 'd'], 'c': ['a', 'b', 'd'], 'd': ['b', 'c']}, 'a', 1)",
+[
+"b",
+"c"
+]
+],
+[
+"at_distance({'a': ['b', 'c'], 'b': ['a', 'c', 'd'], 'c': ['a', 'b', 'd'], 'd': ['b', 'c']}, 'a', 2)",
+[
+"d"
+]
+],
+[
+"at_distance({'x': ['y'], 'y': ['x', 'z'], 'z': ['y']}, 'x', 2)",
+[
+"z"
+]
+]
+],
+"why": "The code marked a person only when it looked around them. b looked around first and added c, because c was not marked yet, though c was already 1 link away. Then b and c both added d, so the answer came out ['c', 'd', 'd']. Mark each person when you add them to the next ring. Ask who is already found but not yet marked.",
+"domain": "Graphs",
+"jobs": [
+[
+4,
+"one ring per round"
+],
+[
+6,
+"look around each node"
+],
+[
+11,
+"move to the next ring"
+]
+],
+"bugText": "            seen.add(node)\n            for nxt in graph[node]:\n                if nxt not in seen:"
+},
+{
+"id": "u3",
+"habit": "U",
+"kind": "fix",
+"fn": "rooms_opened",
+"task": "`rooms` is a list of rooms numbered from 0, and `rooms[i]` lists the keys found in room i. Key 3 opens room 3. Room 0 is open at the start, and every other room is locked. Return how many rooms you can enter. The code keeps a stack of rooms to enter, and the set `seen` holds the rooms already added to the stack. For example, `rooms_opened([[1, 3], [3, 0, 1], [2], [0]])` gives `3`. Room 0 has keys 1 and 3. Room 3 has key 0, which is already open. Room 1 has keys 3, 0 and 1, all known. Nobody finds key 2, so you enter rooms 0, 1 and 3.",
+"code": "def rooms_opened(rooms):\n    seen = set()\n    stack = [0]\n    opened = 0\n    while stack:\n        room = stack.pop()\n        opened += 1\n        for key in rooms[room]:\n            if key not in seen:\n                seen.add(key)\n                stack.append(key)\n    return opened",
+"bug": [
+2,
+2
+],
+"fix": "    seen = {0}",
+"tests": [
+[
+"rooms_opened([[1], [0]])",
+2
+],
+[
+"rooms_opened([[1], [2], []])",
+3
+],
+[
+"rooms_opened([[1, 3], [3, 0, 1], [2], [0]])",
+3
+]
+],
+"why": "`seen` started empty, so room 0 was never marked. When room 3 held key 0, the code entered room 0 a second time, and `opened` counted it twice. Start with `seen = {0}`, because room 0 sits in the stack from the start. Mark the first item when you add it, like every other item.",
+"domain": "Graphs",
+"jobs": [
+[
+3,
+"start in room 0"
+],
+[
+6,
+"open the next room"
+],
+[
+12,
+"rooms we got into"
+]
+],
+"bugText": "    seen = set()"
+},
+{
+"id": "u4",
+"habit": "U",
+"kind": "fix",
+"fn": "all_prereqs",
+"task": "`needs` maps each course to the list of courses you must take first. Return, sorted, every course you need before `course`, directly or through other courses, each one once. For example, `all_prereqs({'web': ['html', 'js'], 'js': ['html'], 'html': []}, 'web')` gives `['html', 'js']`. web needs html and js. js needs html too, but html is already on the list.",
+"code": "def all_prereqs(needs, course):\n    seen = {course}\n    stack = [course]\n    found = []\n    while stack:\n        node = stack.pop()\n        seen.add(node)\n        for before in needs[node]:\n            if before not in seen:\n                found.append(before)\n                stack.append(before)\n    return sorted(found)",
+"bug": [
+7,
+9
+],
+"fix": "        for before in needs[node]:\n            if before not in seen:\n                seen.add(before)",
+"tests": [
+[
+"all_prereqs({'web': ['html', 'js'], 'js': ['html'], 'html': []}, 'web')",
+[
+"html",
+"js"
+]
+],
+[
+"all_prereqs({'ml': ['stats', 'code'], 'stats': ['math'], 'code': ['math'], 'math': []}, 'ml')",
+[
+"code",
+"math",
+"stats"
+]
+],
+[
+"all_prereqs({'c': ['b'], 'b': ['a'], 'a': []}, 'c')",
+[
+"a",
+"b"
+]
+]
+],
+"why": "The code marked a course only when it came off the stack. html was still waiting on the stack when js added it again, so html appeared twice: ['html', 'html', 'js']. Mark a course when you add it, with `seen.add(before)`. A course on the stack is already found.",
+"domain": "Graphs",
+"jobs": [
+[
+2,
+"the course is marked"
+],
+[
+6,
+"look at the next course"
+],
+[
+12,
+"every course needed"
+]
+],
+"bugText": "        seen.add(node)\n        for before in needs[node]:\n            if before not in seen:"
+},
+{
+"id": "u5",
+"habit": "U",
+"kind": "fix",
+"fn": "all_distances",
+"task": "`graph` maps each node to the nodes it links to, and each link goes one way. Return a dict with the fewest links from `start` to every node you can reach. The code visits nodes in rings: first the nodes 1 link away, then 2 links away, and so on. The queue holds pairs of a node and its distance. For example, `all_distances({'a': ['b', 'c'], 'b': ['c'], 'c': []}, 'a')` gives `{'a': 0, 'b': 1, 'c': 1}`. a links straight to b and c, so both are 1 link away. The longer way a, b, c does not count.",
+"code": "def all_distances(graph, start):\n    dist = {start: 0}\n    queue = deque([(start, 0)])\n    while queue:\n        pair = queue.popleft()\n        node = pair[0]\n        steps = pair[1]\n        far = steps + 1\n        dist[node] = steps\n        for nxt in graph[node]:\n            if nxt not in dist:\n                queue.append((nxt, far))\n    return dist",
+"bug": [
+9,
+11
+],
+"fix": "        for nxt in graph[node]:\n            if nxt not in dist:\n                dist[nxt] = far",
+"tests": [
+[
+"all_distances({'a': ['b', 'c'], 'b': ['c'], 'c': []}, 'a')",
+{
+"a": 0,
+"b": 1,
+"c": 1
+}
+],
+[
+"all_distances({'p': ['q'], 'q': ['r'], 'r': []}, 'p')",
+{
+"p": 0,
+"q": 1,
+"r": 2
+}
+],
+[
+"all_distances({'s': ['x', 'y'], 'x': ['y'], 'y': ['x']}, 's')",
+{
+"s": 0,
+"x": 1,
+"y": 1
+}
+]
+],
+"why": "The code wrote a distance only when a node came out of the queue. c was still waiting when b added c again with distance 2. That second copy came out last and overwrote 1 with 2. Write the distance when you add the node, with `dist[nxt] = far`, so nobody can add it a second time.",
+"domain": "Graphs",
+"jobs": [
+[
+2,
+"start is 0 steps away"
+],
+[
+5,
+"take the next node"
+],
+[
+13,
+"steps to every node"
+]
+],
+"bugText": "        dist[node] = steps\n        for nxt in graph[node]:\n            if nxt not in dist:"
+},
+{
+"id": "v9",
+"habit": "V",
+"kind": "fix",
+"fn": "longest_run",
+"task": "`nums` is a list of numbers. A rising run is numbers in a row where each one is bigger than the one before. Return the longest rising run as a list. If two runs tie, keep the first. For example, `longest_run([3, 4, 1])` gives `[3, 4]`. 3 starts a run: [3]. 4 is bigger: [3, 4], the best so far. 1 is smaller, so a new run starts: [1], which is shorter than [3, 4].",
+"code": "def longest_run(nums):\n    best = []\n    run = []\n    for num in nums:\n        if run and num <= run[-1]:\n            run.clear()\n        run.append(num)\n        if len(run) > len(best):\n            best = run\n    return best",
+"bug": [
+9,
+9
+],
+"fix": "            best = run[:]",
+"tests": [
+[
+"longest_run([1, 2, 3, 1, 2])",
+[
+1,
+2,
+3
+]
+],
+[
+"longest_run([3, 4, 1])",
+[
+3,
+4
+]
+],
+[
+"longest_run([5])",
+[
+5
+]
+]
+],
+"why": "`best = run` makes `best` a second name for the same list, not a copy. When 1 arrived, `run.clear()` emptied that one list, so `best` lost [3, 4] and ended as [1]. Save a copy with `best = run[:]`. When you save a list that keeps changing, ask whether you saved the list or a copy.",
+"domain": "Arrays",
+"jobs": [
+[
+5,
+"a drop starts a new run"
+],
+[
+8,
+"keep the longest run"
+]
+],
+"bugText": "            best = run"
+},
+{
+"id": "v10",
+"habit": "V",
+"kind": "fix",
+"fn": "transpose",
+"task": "`grid` is a list of rows of equal length. Return its transpose, where the number at row r, column c moves to row c, column r, so rows become columns. For example, `transpose([[1, 2], [3, 4]])` gives `[[1, 3], [2, 4]]`. The first row 1, 2 becomes the first column, and the second row 3, 4 becomes the second column.",
+"code": "def transpose(grid):\n    rows = len(grid)\n    cols = len(grid[0])\n    out = [[0] * rows] * cols\n    for r in range(rows):\n        for c in range(cols):\n            out[c][r] = grid[r][c]\n    return out",
+"bug": [
+4,
+4
+],
+"fix": "    out = []\n    for _ in range(cols):\n        out.append([0] * rows)",
+"tests": [
+[
+"transpose([[1, 2], [3, 4]])",
+[
+[
+1,
+3
+],
+[
+2,
+4
+]
+]
+],
+[
+"transpose([[1, 2, 3]])",
+[
+[
+1
+],
+[
+2
+],
+[
+3
+]
+]
+],
+[
+"transpose([[5]])",
+[
+[
+5
+]
+]
+]
+],
+"why": "`[[0] * rows] * cols` makes one row and lists it `cols` times, so every row is the same list. A write into out[0] also changed out[1], and [[1, 2], [3, 4]] came out as [[2, 4], [2, 4]]. Build each row on its own with a loop and `out.append([0] * rows)`. The `*` copies the row's name, not the row.",
+"domain": "Grids",
+"bugText": "    out = [[0] * rows] * cols"
+},
+{
+"id": "v11",
+"habit": "V",
+"kind": "fix",
+"fn": "next_day",
+"task": "`cells` is a row of lights, where 1 means on and 0 means off. Return the row for the next day. A light turns on if exactly one of its two neighbors is on today, and turns off otherwise. The two end lights keep their state. Every light reads today's row, not the new one. For example, `next_day([0, 1, 0, 0])` gives `[0, 0, 1, 0]`. Light 1 has neighbors 0 and 0, so it turns off. Light 2 has neighbors 1 and 0, so it turns on.",
+"code": "def next_day(cells):\n    new = cells\n    last = len(cells) - 1\n    for i in range(1, last):\n        left = cells[i - 1]\n        right = cells[i + 1]\n        if left + right == 1:\n            new[i] = 1\n        else:\n            new[i] = 0\n    return new",
+"bug": [
+2,
+2
+],
+"fix": "    new = cells[:]",
+"tests": [
+[
+"next_day([0, 1, 0, 0])",
+[
+0,
+0,
+1,
+0
+]
+],
+[
+"next_day([1, 0, 1, 0, 1])",
+[
+1,
+0,
+0,
+0,
+1
+]
+],
+[
+"next_day([1, 1, 1])",
+[
+1,
+0,
+1
+]
+]
+],
+"why": "`new = cells` gives the same list a second name. Turning light 1 off in `new` also turned it off in `cells`, so light 2 read 0 and 0 and stayed off. Copy the row with `new = cells[:]`. Before you write into a list, ask whether anyone still reads its old values.",
+"domain": "Arrays",
+"jobs": [
+[
+4,
+"the ends stay the same"
+],
+[
+5,
+"read both neighbors"
+],
+[
+7,
+"exactly one is on"
+]
+],
+"bugText": "    new = cells"
+},
+{
+"id": "v12",
+"habit": "V",
+"kind": "fix",
+"fn": "by_length",
+"task": "`words` is a list of words. Group the words by length, shortest length first, and keep each group's words in their old order. Skip lengths that no word has. For example, `by_length(['cat', 'a', 'to', 'dog'])` gives `[['a'], ['to'], ['cat', 'dog']]`. The code makes one group for each length from 0 to the longest, here 0 to 3. 'a' goes to group 1, 'to' to group 2, and 'cat' and 'dog' to group 3. Group 0 stays empty, so it is skipped.",
+"code": "def by_length(words):\n    sizes = [len(w) for w in words]\n    groups = [[]] * (max(sizes) + 1)\n    for word in words:\n        groups[len(word)].append(word)\n    out = []\n    for group in groups:\n        if group:\n            out.append(group)\n    return out",
+"bug": [
+3,
+3
+],
+"fix": "    groups = []\n    for _ in range(max(sizes) + 1):\n        groups.append([])",
+"tests": [
+[
+"by_length(['cat', 'a', 'to', 'dog'])",
+[
+[
+"a"
+],
+[
+"to"
+],
+[
+"cat",
+"dog"
+]
+]
+],
+[
+"by_length(['hi', 'yo'])",
+[
+[
+"hi",
+"yo"
+]
+]
+],
+[
+"by_length(['x'])",
+[
+[
+"x"
+]
+]
+]
+],
+"why": "`[[]] * (max(sizes) + 1)` lists one empty list several times, so every group was the same list. Each word went into that one list, and every group came out holding all the words. Build each group as its own list with a loop and `groups.append([])`.",
+"domain": "Hashing",
+"jobs": [
+[
+2,
+"length of each word"
+],
+[
+4,
+"put each word in its group"
+],
+[
+6,
+"skip empty lengths"
+]
+],
+"bugText": "    groups = [[]] * (max(sizes) + 1)"
+},
+{
+"id": "v13",
+"habit": "V",
+"kind": "fix",
+"fn": "leaf_paths",
+"task": "`tree` maps each node to the list of its children, and `root` is the top node. A leaf is a node with no children. Return every path from `root` down to a leaf, as lists of nodes, left to right. The code walks down with one list, `path`: it adds a node on the way down and removes it on the way back up. For example, `leaf_paths({'a': ['b', 'c'], 'b': [], 'c': []}, 'a')` gives `[['a', 'b'], ['a', 'c']]`. Down to b: path ['a', 'b'], a leaf. Back up, then down to c: path ['a', 'c'], another leaf.",
+"code": "def leaf_paths(tree, root):\n    out = []\n    path = []\n    def walk(node):\n        path.append(node)\n        kids = tree[node]\n        if not kids:\n            out.append(path)\n        for kid in kids:\n            walk(kid)\n        path.pop()\n    walk(root)\n    return out",
+"bug": [
+8,
+8
+],
+"fix": "            out.append(path[:])",
+"tests": [
+[
+"leaf_paths({'a': ['b', 'c'], 'b': [], 'c': []}, 'a')",
+[
+[
+"a",
+"b"
+],
+[
+"a",
+"c"
+]
+]
+],
+[
+"leaf_paths({'m': ['n'], 'n': ['o', 'p'], 'o': [], 'p': []}, 'm')",
+[
+[
+"m",
+"n",
+"o"
+],
+[
+"m",
+"n",
+"p"
+]
+]
+],
+[
+"leaf_paths({'r': []}, 'r')",
+[
+[
+"r"
+]
+]
+]
+],
+"why": "`out.append(path)` saved the one `path` list, which keeps changing. Every saved path was that same list, and it was empty at the end, so the result was [[], []]. Save a copy with `out.append(path[:])`.",
+"domain": "Trees",
+"jobs": [
+[
+4,
+"visit node and below"
+],
+[
+7,
+"a leaf ends a path"
+],
+[
+11,
+"step back up"
+]
+],
+"bugText": "            out.append(path)"
+},
+{
+"id": "w1",
+"habit": "W",
+"kind": "fix",
+"fn": "longest_same",
+"task": "`s` is a string. Return the length of the longest stretch of one letter repeated in a row. For example, `longest_same('aabbb')` gives `3`. 'aa' has length 2. Then 'bbb' has length 3, the longest.",
+"code": "def longest_same(s):\n    run = 0\n    best = 0\n    for i in range(len(s)):\n        if i > 0 and s[i] != s[i - 1]:\n            run = 0\n        best = max(best, run)\n        run += 1\n    return best",
+"bug": [
+7,
+8
+],
+"fix": "        run += 1\n        best = max(best, run)",
+"tests": [
+[
+"longest_same('aabbb')",
+3
+],
+[
+"longest_same('a')",
+1
+],
+[
+"longest_same('abc')",
+1
+]
+],
+"why": "`best = max(best, run)` ran before `run += 1`, so `best` always saw the run one letter short, and 'bbb' was recorded as 2. Grow the run first, then compare. Ask whether a line needs the value from before or after this item.",
+"domain": "Strings",
+"bugText": "        best = max(best, run)\n        run += 1"
+},
+{
+"id": "w2",
+"habit": "W",
+"kind": "fix",
+"fn": "good_pairs",
+"task": "`nums` is a list of numbers. A good pair is two positions i < j that hold the same number. Return how many good pairs there are. The Counter `seen` counts how many times each number appeared earlier. For example, `good_pairs([1, 1, 1, 1])` gives `6`. The second 1 pairs with 1 earlier 1, the third with 2, and the fourth with 3. 1 + 2 + 3 = 6.",
+"code": "def good_pairs(nums):\n    seen = Counter()\n    pairs = 0\n    for num in nums:\n        seen[num] += 1\n        pairs += seen[num]\n    return pairs",
+"bug": [
+5,
+6
+],
+"fix": "        pairs += seen[num]\n        seen[num] += 1",
+"tests": [
+[
+"good_pairs([1, 2, 3, 1, 1, 3])",
+4
+],
+[
+"good_pairs([1, 1, 1, 1])",
+6
+],
+[
+"good_pairs([7, 8])",
+0
+]
+],
+"why": "The count went up before it was added to `pairs`, so each number also paired with itself, and [1, 1, 1, 1] gave 1 + 2 + 3 + 4 = 10. Add `seen[num]` to `pairs` first, then count the number. Ask whether a count should include the item you are looking at.",
+"domain": "Hashing",
+"bugText": "        seen[num] += 1\n        pairs += seen[num]"
+},
+{
+"id": "w3",
+"habit": "W",
+"kind": "fix",
+"fn": "new_highs",
+"task": "`prices` is a list of daily prices. A day is a new high if its price beats every earlier day, and the first day always counts. Return how many new highs there are. `high` holds the biggest price so far. It starts at `float('-inf')`, a value smaller than every number. For example, `new_highs([3, 1, 4, 4, 5])` gives `3`. 3 has nothing before it, so it counts. 1 does not beat 3. 4 beats 3. The second 4 only ties. 5 beats 4. So 3, 4 and 5 count.",
+"code": "def new_highs(prices):\n    high = float('-inf')\n    count = 0\n    for price in prices:\n        high = max(high, price)\n        if price > high:\n            count += 1\n    return count",
+"bug": [
+5,
+7
+],
+"fix": "        if price > high:\n            count += 1\n        high = max(high, price)",
+"tests": [
+[
+"new_highs([3, 1, 4, 4, 5])",
+3
+],
+[
+"new_highs([2])",
+1
+],
+[
+"new_highs([9, 8, 7])",
+1
+]
+],
+"why": "`high` took today's price before the comparison, so `price > high` compared the price with itself and never passed, and the answer was always 0. Compare first, then update `high`. A comparison with the record must use the record from before today.",
+"domain": "Arrays",
+"bugText": "        high = max(high, price)\n        if price > high:\n            count += 1"
+},
+{
+"id": "w4",
+"habit": "W",
+"kind": "fix",
+"fn": "finish_times",
+"task": "Each item `[arrive, length]` in `jobs` is a job for one machine: it arrives at time `arrive` and takes `length` minutes. Jobs come sorted by arrival, and the machine runs one job at a time in that order. A job starts when it arrives or when the machine is free, whichever is later. Return the finish time of each job. For example, `finish_times([[1, 2], [2, 5], [4, 3]])` gives `[3, 8, 11]`. Job 1 starts at 1 and ends at 3. Job 2 arrives at 2 but waits until 3, so it ends at 8. Job 3 starts at 8 and ends at 11.",
+"code": "def finish_times(jobs):\n    clock = 0\n    out = []\n    for arrive, length in jobs:\n        clock = max(clock, arrive)\n        out.append(clock)\n        clock += length\n    return out",
+"bug": [
+6,
+7
+],
+"fix": "        clock += length\n        out.append(clock)",
+"tests": [
+[
+"finish_times([[1, 2], [2, 5], [4, 3]])",
+[
+3,
+8,
+11
+]
+],
+[
+"finish_times([[0, 4]])",
+[
+4
+]
+],
+[
+"finish_times([[5, 1], [10, 2]])",
+[
+6,
+12
+]
+]
+],
+"why": "`out.append(clock)` ran before `clock += length`, so the code saved the start times [1, 3, 8]. Add the length first, then save `clock`. Ask what `clock` means on each line: the start or the finish.",
+"domain": "Practical",
+"bugText": "        out.append(clock)\n        clock += length"
+},
+{
+"id": "w5",
+"habit": "W",
+"kind": "fix",
+"fn": "rate_limit",
+"task": "Each item `[user, time]` in `requests` is one request, sorted by time. A user's request is allowed if it is their first, or if at least `gap` seconds passed since their last allowed request. Return the allowed requests in order. The dict `last` holds each user's last allowed time. For example, `rate_limit([['amy', 1], ['amy', 3], ['amy', 8]], 5)` gives `[['amy', 1], ['amy', 8]]`. Time 1 is her first request. Time 3 comes 2 seconds after 1, so it is blocked. Time 8 comes 7 seconds after 1, so it is allowed.",
+"code": "def rate_limit(requests, gap):\n    last = {}\n    out = []\n    for user, time in requests:\n        if user in last:\n            last[user] = time\n            wait = time - last[user]\n            if wait < gap:\n                continue\n        last[user] = time\n        out.append([user, time])\n    return out",
+"bug": [
+6,
+7
+],
+"fix": "            wait = time - last[user]",
+"tests": [
+[
+"rate_limit([['amy', 1], ['amy', 3], ['amy', 8]], 5)",
+[
+[
+"amy",
+1
+],
+[
+"amy",
+8
+]
+]
+],
+[
+"rate_limit([['bob', 0], ['cy', 1], ['bob', 2]], 2)",
+[
+[
+"bob",
+0
+],
+[
+"cy",
+1
+],
+[
+"bob",
+2
+]
+]
+],
+[
+"rate_limit([['al', 4]], 3)",
+[
+[
+"al",
+4
+]
+]
+]
+],
+"why": "`last[user] = time` ran before the wait was measured, so `wait` was always 0 and every later request was blocked. Measure the wait against the old `last[user]`. The line after the `if` already updates `last` for allowed requests.",
+"domain": "Practical",
+"jobs": [
+[
+5,
+"a user seen before"
+],
+[
+10,
+"allow this request"
+]
+],
+"bugText": "            last[user] = time\n            wait = time - last[user]"
+},
+{
+"id": "x1",
+"habit": "X",
+"kind": "fix",
+"fn": "average_score",
+"task": "Each item in `lines` is a string like 'amy:90': a name and a score joined by a colon. Return the average score rounded down, or 0 if `lines` is empty. `line.split(':')` cuts the string at the colon, so 'amy:90' becomes ['amy', '90']. For example, `average_score(['amy:90', 'bob:71'])` gives `80`. 90 + 71 = 161, and 161 // 2 = 80, where `//` divides and drops the remainder.",
+"code": "def average_score(lines):\n    total = 0\n    for line in lines:\n        parts = line.split(':')\n        total += int(parts[1])\n    return total // len(lines)",
+"bug": [
+6,
+6
+],
+"fix": "    if not lines:\n        return 0\n    return total // len(lines)",
+"tests": [
+[
+"average_score(['amy:90', 'bob:71'])",
+80
+],
+[
+"average_score(['cy:5'])",
+5
+],
+[
+"average_score([])",
+0
+]
+],
+"why": "An empty list made `len(lines)` 0, and dividing by 0 raised ZeroDivisionError. Return 0 when `lines` is empty. For any division, ask whether the bottom number can be 0.",
+"domain": "Practical",
+"bugText": "    return total // len(lines)"
+},
+{
+"id": "x2",
+"habit": "X",
+"kind": "fix",
+"fn": "remove_pairs",
+"task": "`s` is a string. Remove two equal letters that sit next to each other, and repeat until no such pair is left. Return what remains. The code uses a stack, a list where you add and remove only at the end, called the top. Each letter either removes an equal letter from the top or goes on top. For example, `remove_pairs('abbaca')` gives `'ca'`. a: [a]. b: [a, b]. b matches the top: [a]. a matches the top: []. c: [c]. a: [c, a].",
+"code": "def remove_pairs(s):\n    stack = []\n    for ch in s:\n        if stack[-1] == ch:\n            stack.pop()\n        else:\n            stack.append(ch)\n    return ''.join(stack)",
+"bug": [
+4,
+4
+],
+"fix": "        if stack and stack[-1] == ch:",
+"tests": [
+[
+"remove_pairs('abbaca')",
+"ca"
+],
+[
+"remove_pairs('azxxzy')",
+"ay"
+],
+[
+"remove_pairs('aa')",
+""
+]
+],
+"why": "`stack[-1]` on an empty stack raised IndexError, and the stack is empty at the first letter and after a match empties it. Check `stack and stack[-1] == ch`. Before you read the top of a stack, ask whether it can be empty.",
+"domain": "Stacks",
+"bugText": "        if stack[-1] == ch:"
+},
+{
+"id": "x3",
+"habit": "X",
+"kind": "fix",
+"fn": "top_two_sum",
+"task": "`nums` is a list of numbers, and it may be empty or hold one number. Return the sum of the two biggest numbers. With one number, return it. With none, return 0. The code keeps a min-heap, a list that always has its smallest number at position 0, and pops the smallest whenever the heap holds more than 2. For example, `top_two_sum([5, 1, 9, 3])` gives `14`. The heap ends with 5 and 9, and 5 + 9 = 14.",
+"code": "def top_two_sum(nums):\n    heap = []\n    for num in nums:\n        heapq.heappush(heap, num)\n        if len(heap) > 2:\n            heapq.heappop(heap)\n    return heap[0] + heap[1]",
+"bug": [
+7,
+7
+],
+"fix": "    return sum(heap)",
+"tests": [
+[
+"top_two_sum([5, 1, 9, 3])",
+14
+],
+[
+"top_two_sum([4])",
+4
+],
+[
+"top_two_sum([])",
+0
+]
+],
+"why": "`heap[0] + heap[1]` needs two numbers, so [4] raised IndexError. `sum(heap)` adds whatever is there: two numbers, one, or none. Run your code in your head on an empty list and on a one-item list.",
+"domain": "Heaps",
+"bugText": "    return heap[0] + heap[1]"
+},
+{
+"id": "x4",
+"habit": "X",
+"kind": "fix",
+"fn": "tree_height",
+"task": "A tree node is a dict with a number `'val'` and a list `'kids'` of child nodes. An empty tree is `None`. Return the height: the number of nodes on the longest path from the top down to a leaf, or 0 for an empty tree. For example, take a top node 2 with kids 4 and 6, where 4 has one kid, 1. The longest path is 2, 4, 1, so the height is 3.",
+"code": "def tree_height(node):\n    best = 0\n    for kid in node['kids']:\n        kid_height = tree_height(kid)\n        best = max(best, kid_height)\n    return best + 1",
+"bug": [
+2,
+2
+],
+"fix": "    if node is None:\n        return 0\n    best = 0",
+"tests": [
+[
+"tree_height({'val': 2, 'kids': [{'val': 4, 'kids': [{'val': 1, 'kids': []}]}, {'val': 6, 'kids': []}]})",
+3
+],
+[
+"tree_height({'val': 7, 'kids': []})",
+1
+],
+[
+"tree_height(None)",
+0
+]
+],
+"why": "`tree_height(None)` tried `node['kids']` and raised TypeError, because None has no keys. Add `if node is None: return 0` at the start. A recursive function handles its smallest input first, and here that is the empty tree.",
+"domain": "Trees",
+"bugText": "    best = 0"
+},
+{
+"id": "x5",
+"habit": "X",
+"kind": "fix",
+"fn": "drop_last",
+"task": "A linked list is a dict like {'a': 'b', 'b': None} that maps each node to the next one, and None marks the end. `head` is the first node. Remove the last node and return the nodes that are left, in order. A one-node list becomes []. For example, `drop_last({'a': 'b', 'b': 'c', 'c': None}, 'a')` gives `['a', 'b']`. The code walks until `after` is the last node, c, and `node` is the node before it, b. Then it sets b's next to None.",
+"code": "def drop_last(links, head):\n    node = head\n    after = links[node]\n    while links[after] is not None:\n        node = after\n        after = links[node]\n    links[node] = None\n    out = []\n    node = head\n    while node is not None:\n        out.append(node)\n        node = links[node]\n    return out",
+"bug": [
+2,
+2
+],
+"fix": "    if links[head] is None:\n        return []\n    node = head",
+"tests": [
+[
+"drop_last({'a': 'b', 'b': 'c', 'c': None}, 'a')",
+[
+"a",
+"b"
+]
+],
+[
+"drop_last({'x': 'y', 'y': None}, 'x')",
+[
+"x"
+]
+],
+[
+"drop_last({'z': None}, 'z')",
+[]
+]
+],
+"why": "With one node, `after` was None, and `links[None]` raised KeyError. A one-node list has no node before the last one. Return [] when `links[head]` is None. Ask what happens when the list holds one item.",
+"domain": "Linked lists",
+"jobs": [
+[
+4,
+"walk to the last two"
+],
+[
+7,
+"cut off the last node"
+],
+[
+8,
+"list what is left"
+]
+],
+"bugText": "    node = head"
+},
+{
+"id": "y1",
+"habit": "Y",
+"kind": "fix",
+"fn": "in_stock",
+"task": "Each item in `items` is a pair `[name, count]`. Remove the items with a count of 0, and return the list. For example, `in_stock([['pen', 0], ['ink', 0], ['cap', 3]])` gives `[['cap', 3]]`. pen and ink are sold out, and cap has 3 left.",
+"code": "def in_stock(items):\n    for item in items:\n        if item[1] == 0:\n            items.remove(item)\n    return items",
+"bug": [
+2,
+2
+],
+"fix": "    for item in items[:]:",
+"tests": [
+[
+"in_stock([['pen', 0], ['ink', 0], ['cap', 3]])",
+[
+[
+"cap",
+3
+]
+]
+],
+[
+"in_stock([['mug', 2], ['jar', 0]])",
+[
+[
+"mug",
+2
+]
+]
+],
+[
+"in_stock([['box', 0], ['bag', 0]])",
+[]
+]
+],
+"why": "Removing an item while a `for` loop walks the list moves the next item into its spot, and the loop skips it. After pen left, ink moved to position 0, the loop went on to position 1, and ink stayed. Loop over a copy with `items[:]` and remove from the real list.",
+"domain": "Practical",
+"bugText": "    for item in items:"
+},
+{
+"id": "y2",
+"habit": "Y",
+"kind": "fix",
+"fn": "common_letters",
+"task": "`words` is a list of words. Return, sorted, the letters that appear in every word, with each letter repeated as many times as it appears in every word. The code uses a Counter, a dict that counts letters. `common` starts with the letters of the first word, and each later word lowers or removes counts. `elements()` lists each letter as many times as its count. For example, `common_letters(['bella', 'label', 'roller'])` gives `['e', 'l', 'l']`. Every word has one e and at least two l's. 'roller' has no b and no a, so they go.",
+"code": "def common_letters(words):\n    common = Counter(words[0])\n    for word in words[1:]:\n        here = Counter(word)\n        for ch in common:\n            if here[ch] == 0:\n                del common[ch]\n            elif here[ch] < common[ch]:\n                common[ch] = here[ch]\n    return sorted(common.elements())",
+"bug": [
+5,
+5
+],
+"fix": "        for ch in list(common):",
+"tests": [
+[
+"common_letters(['bella', 'label', 'roller'])",
+[
+"e",
+"l",
+"l"
+]
+],
+[
+"common_letters(['cool', 'lock', 'cook'])",
+[
+"c",
+"o"
+]
+],
+[
+"common_letters(['abc'])",
+[
+"a",
+"b",
+"c"
+]
+]
+],
+"why": "Deleting a key while a `for` loop walks the dict raised RuntimeError: dictionary changed size during iteration. Loop over a copy of the keys with `list(common)`.",
+"domain": "Hashing",
+"jobs": [
+[
+2,
+"start with the first word"
+],
+[
+4,
+"count this word"
+],
+[
+10,
+"letters in every word"
+]
+],
+"bugText": "        for ch in common:"
+},
+{
+"id": "y3",
+"habit": "Y",
+"kind": "fix",
+"fn": "semesters",
+"task": "`needs` maps each course to the list of courses you must pass first, and no courses need each other in a circle. Each semester you take every course whose needs you passed in earlier semesters. Return how many semesters you need. The set `left` holds the courses not taken yet, and `done` holds the courses passed. `need <= done` checks that every course in `need` is in `done`. For example, `semesters({'math': [], 'stats': ['math'], 'ml': ['stats', 'math']})` gives `3`. Semester 1: math. Semester 2: stats. Semester 3: ml.",
+"code": "def semesters(needs):\n    left = set(needs)\n    done = set()\n    count = 0\n    while left:\n        ready = []\n        for course in left:\n            need = set(needs[course])\n            if need <= done:\n                ready.append(course)\n                left.remove(course)\n        for course in ready:\n            done.add(course)\n        count += 1\n    return count",
+"bug": [
+11,
+13
+],
+"fix": "        for course in ready:\n            left.remove(course)\n            done.add(course)",
+"tests": [
+[
+"semesters({'math': [], 'stats': ['math'], 'ml': ['stats', 'math']})",
+3
+],
+[
+"semesters({'art': [], 'gym': []})",
+1
+],
+[
+"semesters({'x': [], 'y': ['x']})",
+2
+]
+],
+"why": "`left.remove(course)` changed the set while the `for` loop walked it, and Python raised RuntimeError: Set changed size during iteration. Collect the ready courses in `ready` first, then remove them in the second loop.",
+"domain": "Topological sort",
+"jobs": [
+[
+6,
+"find the courses ready now"
+],
+[
+14,
+"one semester passed"
+],
+[
+15,
+"semesters needed"
+]
+],
+"bugText": "                left.remove(course)\n        for course in ready:\n            done.add(course)"
+},
+{
+"id": "y4",
+"habit": "Y",
+"kind": "fix",
+"fn": "dedupe_sorted",
+"task": "`nums` is a sorted list. Remove repeated numbers so each number appears once, change the list in place, and return it. For example, `dedupe_sorted([3, 3, 3])` gives `[3]`. Walking from the back: position 2 equals position 1, so it goes, leaving [3, 3]. Position 1 equals position 0, so it goes, leaving [3].",
+"code": "def dedupe_sorted(nums):\n    n = len(nums)\n    for i in range(1, n):\n        if nums[i] == nums[i - 1]:\n            nums.pop(i)\n    return nums",
+"bug": [
+3,
+3
+],
+"fix": "    for i in range(n - 1, 0, -1):",
+"tests": [
+[
+"dedupe_sorted([1, 1, 2])",
+[
+1,
+2
+]
+],
+[
+"dedupe_sorted([3, 3, 3])",
+[
+3
+]
+],
+[
+"dedupe_sorted([1, 2, 4])",
+[
+1,
+2,
+4
+]
+]
+],
+"why": "Each pop shortens the list, but `range(1, n)` still runs to the old length, so the loop reached a position that no longer existed and raised IndexError. Walk backwards with `range(n - 1, 0, -1)`. Removing from the back never moves the items the loop has not reached yet.",
+"domain": "Arrays",
+"bugText": "    for i in range(1, n):"
+},
+{
+"id": "y5",
+"habit": "Y",
+"kind": "fix",
+"fn": "still_open",
+"task": "Each number in `ends` is the time a session ends. Remove every session that ended at or before `now`, and return the end times left, sorted. The code keeps a min-heap, a list with its smallest number at position 0, and `heappop` removes that smallest number. For example, `still_open([9, 1, 3, 2], 3)` gives `[9]`. 1, 2 and 3 are at or before 3, so they go, and 9 stays.",
+"code": "def still_open(ends, now):\n    heap = list(ends)\n    heapq.heapify(heap)\n    for first in heap:\n        if first <= now:\n            heapq.heappop(heap)\n    return sorted(heap)",
+"bug": [
+4,
+6
+],
+"fix": "    while heap and heap[0] <= now:\n        heapq.heappop(heap)",
+"tests": [
+[
+"still_open([9, 1, 3, 2], 3)",
+[
+9
+]
+],
+[
+"still_open([5, 6], 4)",
+[
+5,
+6
+]
+],
+[
+"still_open([1, 2], 5)",
+[]
+]
+],
+"why": "`heappop` reshuffles the list while the `for` loop walks it, so the loop skipped items and popped the wrong ones: [9, 1, 3, 2] kept [3, 9]. Use `while heap and heap[0] <= now:`, which always looks at the current smallest.",
+"domain": "Heaps",
+"bugText": "    for first in heap:\n        if first <= now:\n            heapq.heappop(heap)"
+},
+{
+"id": "z1",
+"habit": "Z",
+"kind": "fix",
+"fn": "ranking",
+"task": "Each item in `laps` is a pair `[name, time]`. Return the names from the fastest time to the slowest, where a smaller time is faster, and put equal times in name order. The code sorts with `key=by_time`, so Python sorts by the tuple that `by_time` returns and compares its first part first. For example, `ranking([['cy', 62], ['ann', 70], ['bob', 62]])` gives `['bob', 'cy', 'ann']`. bob and cy tie at 62, and b comes before c. ann is slowest at 70.",
+"code": "def ranking(laps):\n    def by_time(lap):\n        name = lap[0]\n        time = lap[1]\n        return (name, time)\n    laps.sort(key=by_time)\n    out = []\n    for lap in laps:\n        out.append(lap[0])\n    return out",
+"bug": [
+5,
+5
+],
+"fix": "        return (time, name)",
+"tests": [
+[
+"ranking([['cy', 62], ['ann', 70], ['bob', 62]])",
+[
+"bob",
+"cy",
+"ann"
+]
+],
+[
+"ranking([['zed', 50], ['amy', 55]])",
+[
+"zed",
+"amy"
+]
+],
+[
+"ranking([['kim', 40]])",
+[
+"kim"
+]
+]
+],
+"why": "`(name, time)` put the name first, so the laps were sorted by name: ann, bob, cy. The part that decides the order goes first: `(time, name)`.",
+"domain": "Sorting",
+"jobs": [
+[
+2,
+"fastest first, ties by name"
+],
+[
+7,
+"collect the names"
+]
+],
+"bugText": "        return (name, time)"
+},
+{
+"id": "z2",
+"habit": "Z",
+"kind": "fix",
+"fn": "min_arrows",
+"task": "Each item `[start, end]` in `spans` is a balloon that covers every point from start to end. An arrow shot at point x bursts every balloon whose span contains x. Return the fewest arrows that burst all the balloons. The code sorts the balloons by where they end, then shoots each arrow at the end of the first balloon not yet burst. For example, `min_arrows([[1, 10], [2, 3], [4, 5]])` gives `2`. Sorted by end: [2, 3], [4, 5], [1, 10]. An arrow at 3 bursts [2, 3] and [1, 10]. [4, 5] starts after 3, so a second arrow at 5 bursts it.",
+"code": "def min_arrows(spans):\n    def end_of(span):\n        return span[0]\n    spans.sort(key=end_of)\n    arrows = 0\n    reach = float('-inf')\n    for span in spans:\n        if span[0] > reach:\n            arrows += 1\n            reach = span[1]\n    return arrows",
+"bug": [
+3,
+3
+],
+"fix": "        return span[1]",
+"tests": [
+[
+"min_arrows([[10, 16], [2, 8], [1, 6], [7, 12]])",
+2
+],
+[
+"min_arrows([[1, 10], [2, 3], [4, 5]])",
+2
+],
+[
+"min_arrows([[1, 2], [3, 4]])",
+2
+]
+],
+"why": "`end_of` returned `span[0]`, the start, so the balloons were sorted by start. [1, 10] came first, its arrow went to 10, and the code counted [2, 3] and [4, 5] as burst by that arrow. Sort by `span[1]`, the end.",
+"domain": "Intervals",
+"jobs": [
+[
+4,
+"sort the balloons"
+],
+[
+8,
+"it needs a new arrow"
+]
+],
+"bugText": "        return span[0]"
+},
+{
+"id": "z3",
+"habit": "Z",
+"kind": "fix",
+"fn": "treat_order",
+"task": "`patients` maps each name to an urgency number, and a bigger number is more urgent. Return the names in the order to treat them: most urgent first, and equal urgency in name order. The code uses a min-heap, which always pops its smallest item first and compares tuples part by part. A minus sign turns the biggest urgency into the smallest number. For example, `treat_order({'ann': 2, 'bob': 5, 'cy': 5})` gives `['bob', 'cy', 'ann']`. bob and cy both have 5, and b comes first. ann has only 2.",
+"code": "def treat_order(patients):\n    heap = []\n    for name in patients:\n        item = (name, -patients[name])\n        heapq.heappush(heap, item)\n    out = []\n    while heap:\n        item = heapq.heappop(heap)\n        out.append(item[1])\n    return out",
+"bug": [
+4,
+4
+],
+"fix": "        item = (-patients[name], name)",
+"tests": [
+[
+"treat_order({'ann': 2, 'bob': 5, 'cy': 5})",
+[
+"bob",
+"cy",
+"ann"
+]
+],
+[
+"treat_order({'zoe': 1, 'al': 3})",
+[
+"al",
+"zoe"
+]
+],
+[
+"treat_order({'max': 4})",
+[
+"max"
+]
+]
+],
+"why": "`(name, -urgency)` made the heap pop by name, so the order came out ann, bob, cy, and `item[1]` gave numbers instead of names. Put the urgency first: `(-patients[name], name)`.",
+"domain": "Heaps",
+"jobs": [
+[
+3,
+"most urgent comes out first"
+],
+[
+7,
+"treat in heap order"
+]
+],
+"bugText": "        item = (name, -patients[name])"
+},
+{
+"id": "z4",
+"habit": "Z",
+"kind": "fix",
+"fn": "max_units",
+"task": "Each item `[count, units]` in `boxes` means `count` boxes that each hold `units` items. A truck has room for `room` boxes. Return the most items the truck can carry. The code sorts the box types from most units per box to fewest, then takes as many as fit. For example, `max_units([[1, 3], [2, 2], [3, 1]], 4)` gives `8`. Take the 1 box of 3: 3 items. Take both boxes of 2: 4 items. One spot is left, so take one box of 1: 1 item. 3 + 4 + 1 = 8.",
+"code": "def max_units(boxes, room):\n    def per_box(box):\n        return -box[0]\n    boxes.sort(key=per_box)\n    total = 0\n    for box in boxes:\n        take = min(room, box[0])\n        total += take * box[1]\n        room -= take\n    return total",
+"bug": [
+3,
+3
+],
+"fix": "        return -box[1]",
+"tests": [
+[
+"max_units([[1, 3], [2, 2], [3, 1]], 4)",
+8
+],
+[
+"max_units([[5, 10], [2, 5], [4, 7], [3, 9]], 10)",
+91
+],
+[
+"max_units([[2, 4]], 1)",
+4
+]
+],
+"why": "`per_box` returned `-box[0]`, the number of boxes, so the code loaded the most common boxes first, not the fullest. It took 3 boxes of 1 item before the box of 3 and got 5. Sort by `-box[1]`, the items in each box.",
+"domain": "Greedy",
+"jobs": [
+[
+4,
+"best boxes first"
+],
+[
+7,
+"take as many as fit"
+]
+],
+"bugText": "        return -box[0]"
+},
+{
+"id": "z5",
+"habit": "Z",
+"kind": "fix",
+"fn": "sort_logs",
+"task": "Each item in `lines` is a log line like '09:15 bob out': a time, a user and an action, split by spaces. Return the lines sorted by time. Times use 24-hour HH:MM with two digits each, so sorting them as strings puts them in time order. `line.split(' ')` cuts '09:15 bob out' into ['09:15', 'bob', 'out']. For example, `sort_logs(['09:15 bob out', '08:30 amy in', '09:00 cy in'])` gives `['08:30 amy in', '09:00 cy in', '09:15 bob out']`.",
+"code": "def sort_logs(lines):\n    def stamp(line):\n        parts = line.split(' ')\n        return parts[1]\n    return sorted(lines, key=stamp)",
+"bug": [
+4,
+4
+],
+"fix": "        return parts[0]",
+"tests": [
+[
+"sort_logs(['09:15 bob out', '08:30 amy in', '09:00 cy in'])",
+[
+"08:30 amy in",
+"09:00 cy in",
+"09:15 bob out"
+]
+],
+[
+"sort_logs(['23:59 zed in', '00:01 al out'])",
+[
+"00:01 al out",
+"23:59 zed in"
+]
+],
+[
+"sort_logs(['12:00 kim in'])",
+[
+"12:00 kim in"
+]
+]
+],
+"why": "`parts[1]` is the user name, so the lines came out in name order: amy, bob, cy. The time is `parts[0]`. When you split a line, write down what each part holds before you pick one.",
+"domain": "Practical",
+"bugText": "        return parts[1]"
 }
 ];

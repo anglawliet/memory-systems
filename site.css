@@ -1708,10 +1708,9 @@ a.card::before{display:none!important}
 .wi-q p{font-size:16px;line-height:1.6;color:var(--ink)}
 .wi-q .wi-exn{font-size:15px;color:var(--ink-2)}
 .lsn .wi pre.wi-pre{margin:0!important;padding:0!important;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;
-  color:#d4d4d4!important;font-size:15px!important;line-height:24px!important;white-space:normal!important;overflow:visible!important;max-width:100%;
-  font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0;tab-size:4}
-.lsn .wi pre.wi-ex{background:#1e1e1e!important;border-radius:10px!important;padding:10px 12px!important;margin:4px 0 12px!important}
-.wi-exl{white-space:pre-wrap;overflow-wrap:anywhere}
+  color:var(--ink)!important;font-size:14px!important;line-height:1.5!important;white-space:normal!important;overflow:visible!important;max-width:100%;
+  font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.wi-nb{white-space:pre}
 .wi-card{padding:16px 18px 18px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.04)}
 .wi-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .wi-stepn{font:650 12px/1 Inter,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap}
@@ -1721,73 +1720,62 @@ a.card::before{display:none!important}
 .wi-dots i.cur{background:var(--gold-fill)}
 .lsn .wi-card .wi-ask{margin:12px 0 0;font:650 18px/1.4 Inter,system-ui,sans-serif;color:var(--ink);text-align:left}
 .lsn .wi-card .wi-do{margin:6px 0 14px;font-size:16px;line-height:1.6;color:var(--ink-2)}
-/* the editor window */
-.wi-ed{position:relative;border:1px solid #2b2b2b;border-radius:12px;overflow:hidden;padding-bottom:10px;
+/* the editor window: every code box in it is a real editor (codekeys.js colors it and numbers its lines) */
+.wi{--wi-g:44px}
+.wi-ed{position:relative;border:1px solid #2b2b2b;border-radius:12px;overflow:hidden;padding:8px 0 10px;
   background:linear-gradient(90deg,#181818 0,#181818 36px,#1e1e1e 36px)}
-.wi-bar{display:flex;align-items:center;gap:10px;padding:9px 12px 9px 14px;background:#252526;color:#cccccc;font:600 13.5px Inter,system-ui,sans-serif;border-bottom:1px solid #2b2b2b}
+.wi-bar{display:flex;align-items:center;gap:10px;margin:-8px 0 8px;padding:9px 12px 9px 14px;background:#252526;color:#cccccc;font:600 13.5px Inter,system-ui,sans-serif;border-bottom:1px solid #2b2b2b}
 .wi-dots3{display:flex;gap:6px}
 .wi-dots3 i{width:10px;height:10px;border-radius:50%;background:#ff5f57}
 .wi-dots3 i:nth-child(2){background:#febc2e}
 .wi-dots3 i:nth-child(3){background:#28c840}
-.lsn .wi pre.wi-code{padding-top:10px!important}
-.wi-l{display:grid;grid-template-columns:var(--wi-g) minmax(0,1fr)}
-.wi-l.kept{background:rgba(215,186,125,.08)}
-.wi-n{padding-right:14px;text-align:right;color:#6e7681;font-size:13px;-webkit-user-select:none;user-select:none}
-.wi-c{white-space:pre-wrap;overflow-wrap:anywhere;padding-right:10px;min-width:0}
-.wi-nb{white-space:pre}
-/* VS Code Dark+ colors, in the read-only code and behind the typing box */
-.wi .py-k,.hl-back .py-k{color:#c586c0}
-.wi .py-c,.hl-back .py-c{color:#569cd6}
-.wi .py-b,.hl-back .py-b{color:#4ec9b0}
-.wi .py-f,.hl-back .py-f{color:#dcdcaa}
-.wi .py-v,.hl-back .py-v{color:#9cdcfe}
-.wi .py-n,.hl-back .py-n{color:#b5cea8}
-.wi .py-s,.hl-back .py-s{color:#ce9178}
-.wi .py-m,.hl-back .py-m{color:#6a9955;font-style:italic}
-/* the box where the learner types this step, at its indent in the function */
-.wi-slot{position:relative;display:flow-root;margin:2px 0 0;--wi-off:0px}
-.wi-slot[hidden]{display:none}
+/* VS Code Dark+ colors behind every typing box */
+.hl-back .py-k{color:#c586c0}
+.hl-back .py-c{color:#569cd6}
+.hl-back .py-b{color:#4ec9b0}
+.hl-back .py-f{color:#dcdcaa}
+.hl-back .py-v{color:#9cdcfe}
+.hl-back .py-n{color:#b5cea8}
+.hl-back .py-s{color:#ce9178}
+.hl-back .py-m{color:#6a9955;font-style:italic}
+.wi-box{position:relative;display:flow-root;--wi-off:0px}
+.wi-box[hidden]{display:none}
+.wi-slot{margin-top:4px}
+/* the step's own box: a dashed gold frame, solid while typing */
 .wi-slot::after{content:"";position:absolute;top:0;bottom:0;left:calc(var(--wi-g) + var(--wi-off) - 6px);right:6px;border:1.5px dashed #d7ba7d;border-radius:7px;pointer-events:none;z-index:3}
 .wi-slot:focus-within::after{border-style:solid}
 .lsn textarea.wi-ta{display:block;width:100%;box-sizing:border-box;margin:0;border:0;border-radius:0;outline:none;resize:none;background:transparent;
-  font:16px/24px 'JetBrains Mono',ui-monospace,monospace;color:#d4d4d4;padding:6px 14px 6px calc(var(--wi-g) + var(--wi-off));
-  white-space:pre-wrap;overflow-wrap:anywhere;tab-size:4;font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0;min-height:60px}
+  font:16px/24px 'JetBrains Mono',ui-monospace,monospace;color:#d4d4d4;padding:4px 14px 4px calc(var(--wi-g) + var(--wi-off));
+  white-space:pre-wrap;overflow-wrap:anywhere;tab-size:4;font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0;min-height:0}
+.lsn .wi-slot textarea.wi-ta{padding-top:6px;padding-bottom:6px}
+/* the example and the answer: editors without line numbers, on their own dark panel */
+.wi-plain{--wi-g:12px;background:#1e1e1e;border-radius:10px;padding:6px 0}
+.wi-exbox{margin:4px 0 12px}
 .wi .hl-back,.wi .hl-back.nums,.wi .hl-back.nums.zf{background:transparent!important;color:#d4d4d4}
 .wi .hl-back.nums .hl-ln::before{left:calc(-1 * (var(--wi-g) + var(--wi-off)));width:30px;color:#6e7681;font-size:13px}
 .wi textarea.hl-on::placeholder{color:#d7ba7d;-webkit-text-fill-color:#d7ba7d;font-style:italic;opacity:1}
 @media (pointer:coarse){
-  /* phones: 18px text drawn at 75%, so it reads like the code above it and the phone never zooms */
-  .lsn .wi-slot textarea.wi-ta.zf{font-size:18px!important;line-height:32px!important;width:133.333%!important;
-    padding:8px 18.667px 8px calc((var(--wi-g) + var(--wi-off)) * 1.33333)!important;min-height:0}
-  .wi .hl-back.nums.zf .hl-ln::before{left:calc(-1.33333 * (var(--wi-g) + var(--wi-off)));width:40px;font-size:17.333px}
+  /* phones: 16px text drawn at 75%, so more code fits and the phone never zooms */
+  .lsn .wi-box textarea.wi-ta.zf{font-size:16px!important;line-height:25.6px!important;width:133.333%!important;
+    padding:5.333px 18.667px 5.333px calc((var(--wi-g) + var(--wi-off)) * 1.33333)!important}
+  .wi .hl-back.nums.zf .hl-ln::before{left:calc(-1.33333 * (var(--wi-g) + var(--wi-off)));width:40px;font-size:16px}
 }
 @media (max-width:759px){
   /* on a phone the step card has no frame of its own, so the code gets the full width of the lesson box */
-  .lsn .wi pre.wi-pre{font-size:13px!important;line-height:22px!important}
   .wi{--wi-g:38px}
+  .wi-plain{--wi-g:10px}
   .wi-ed{background:linear-gradient(90deg,#181818 0,#181818 30px,#1e1e1e 30px)}
-  .wi-n{font-size:12px;padding-right:10px}
-  .wi .hl-back.nums .hl-ln::before{width:26px}
+  .wi .hl-back.nums .hl-ln::before{width:26px;font-size:12px}
   .wi .hl-back.nums.zf .hl-ln::before{width:34.667px}
   .wi-card{padding:4px 0 8px;border:0;border-radius:0;background:none;box-shadow:none}
   .wi-q{padding:12px 12px 2px}
 }
 @media (max-width:375px){
-  .lsn .wi pre.wi-pre{font-size:12px!important;line-height:20px!important}
   .wi{--wi-g:34px}
+  .wi-plain{--wi-g:10px}
   .wi-ed{background:linear-gradient(90deg,#181818 0,#181818 27px,#1e1e1e 27px)}
-  .wi-n{font-size:11px;padding-right:9px}
   .wi .hl-back.nums .hl-ln::before{width:24px;font-size:11px}
   .wi .hl-back.nums.zf .hl-ln::before{width:32px;font-size:14.667px}
-}
-@media (pointer:coarse) and (max-width:759px){
-  /* the typing box matches the 13px code above it: 17.333px drawn at 75% */
-  .lsn .wi-slot textarea.wi-ta.zf{font-size:17.333px!important;line-height:29.333px!important}
-  .wi .hl-back.nums.zf .hl-ln::before{font-size:16px}
-}
-@media (pointer:coarse) and (max-width:375px){
-  .lsn .wi-slot textarea.wi-ta.zf{font-size:16px!important;line-height:26.667px!important}
-  .wi .hl-back.nums.zf .hl-ln::before{font-size:14.667px}
 }
 /* feedback, buttons and test results */
 .wi-fb{margin-top:12px}
@@ -1805,9 +1793,8 @@ a.card::before{display:none!important}
 .lsn .wi .lbtn.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line-strong)}
 .lsn .wi .wi-again .wi-over{white-space:normal}
 .wi-ans{margin:0 0 10px}
+.wi-ans[hidden]{display:none}
 .lsn .wi-fb .wi-ans-h{font-size:15px;color:var(--ink-2)}
-.lsn .wi pre.wi-anscode{background:#1e1e1e!important;border-radius:10px!important;padding:10px 0!important}
-.wi-anscode .wi-l{grid-template-columns:14px minmax(0,1fr)}
 .lsn .wi-tests{list-style:none;margin:4px 0 12px;padding:0}
 .lsn .wi-tests li{margin:0 0 8px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
 .lsn .wi-tests li.fail{border-color:color-mix(in srgb,var(--no) 45%,var(--line))}

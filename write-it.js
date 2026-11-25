@@ -26,7 +26,6 @@
   function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
   function rich(s) { return esc(s).replace(/`([^`]+)`/g, "<code>$1</code>"); }
   function btn(cls, text) { var b = el("button", cls, text); b.type = "button"; return b; }
-  function color(line) { return window.CodeKeys && window.CodeKeys.colorLine ? window.CodeKeys.colorLine(line) : esc(line); }
   var TOUCH = window.matchMedia && matchMedia("(pointer: coarse)").matches;
 
   /* ---------- The loose check ---------- */
@@ -86,23 +85,55 @@
     }
     return null;
   }
+  /* Indent levels, the way Python reads them, but forgiving about odd space counts.
+     A tab counts as 4 spaces. A line indented deeper than a line that ends with a colon is one
+     level inside it, whether the learner typed 2, 3, 4 or 5 spaces. A deeper line after a line
+     without a colon stays at that line's level. A line that moves back left lines up with the
+     nearest line above it that is not deeper. */
+  function setLevels(ls) {
+    ls.forEach(function (l, i) {
+      var p = null;
+      for (var k = i - 1; k >= 0; k--) if (ls[k].ind <= l.ind) { p = ls[k]; break; }
+      var prev = i ? ls[i - 1] : null;
+      if (!prev) l.lv = 0;
+      else if (l.ind > prev.ind) l.lv = /:$/.test(prev.n) ? prev.lv + 1 : prev.lv;
+      else if (!p) l.lv = 0;
+      else l.lv = p.ind === l.ind || !/:$/.test(p.n) ? p.lv : p.lv + 1;
+    });
+    return ls;
+  }
+  function rawLines(text) {
+    return String(text).replace(/\t/g, "    ").split("\n").map(function (raw, i) {
+      var t = raw.trim();
+      return { raw: t, no: i + 1, ind: raw.match(/^ */)[0].length, n: norm(raw), code: !!t && t.charAt(0) !== "#" };
+    });
+  }
   // my code: the lines that hold code, each with its indent level inside the step
   function parse(text) {
-    var out = [];
-    String(text).replace(/\t/g, "    ").split("\n").forEach(function (raw, i) {
-      var t = raw.trim();
-      if (!t || t.charAt(0) === "#") return;
-      out.push({ raw: t, no: i + 1, ind: raw.match(/^ */)[0].length, n: norm(raw) });
-    });
-    var stack = [];
-    out.forEach(function (l) {
-      if (!stack.length) stack.push(l.ind);
-      if (l.ind > stack[stack.length - 1]) stack.push(l.ind);
-      else while (stack.length > 1 && l.ind < stack[stack.length - 1]) stack.pop();
-      l.lv = stack.length - 1;
-    });
-    return out;
+    return setLevels(rawLines(text).filter(function (l) { return l.code; }));
   }
+  /* The step rebuilt with clean indents: 4 spaces for each level, counted from the step's own
+     first level. Notes (# lines) take the level of the code line under them. This is what goes
+     into the function, so a step typed with 2 or 5 spaces still runs. */
+  function tidy(text) {
+    var all = rawLines(text);
+    setLevels(all.filter(function (l) { return l.code; }));
+    for (var i = all.length - 1, nextLv = null; i >= 0; i--) {
+      if (all[i].code) nextLv = all[i].lv;
+      else if (all[i].raw) all[i].lv = nextLv;
+    }
+    var last = 0;
+    var out = all.map(function (l) {
+      if (!l.raw) return "";
+      if (l.lv == null) l.lv = last;
+      last = l.lv;
+      return pad(4 * l.lv) + l.raw;
+    });
+    while (out.length && !out[0]) out.shift();
+    while (out.length && !out[out.length - 1]) out.pop();
+    return out.join("\n");
+  }
+  function pad(n) { return new Array(n + 1).join(" "); }
   function accepts(mine, form) {
     if (mine.length !== form.length) return false;
     var binds = {};
@@ -150,8 +181,20 @@
     if (a.n === f.length && a.n === mine.length) {
       // every line matches, so the indents or the loop names are off
       for (var i = 0; i < f.length; i++) {
-        if (mine[i].lv < f[i][0]) return "Line " + mine[i].no + " belongs inside the line above it, so indent it one more step. Put the cursor at the start of the line and press Tab, or the \u21e5 key on a phone.";
-        if (mine[i].lv > f[i][0]) return "Line " + mine[i].no + " is indented too far. Move it one step to the left, so it lines up with the line it belongs next to.";
+        if (mine[i].lv === f[i][0]) continue;
+        // the line this one belongs inside, or the line it should line up with
+        var par = -1, sib = -1;
+        for (var q = i - 1; q >= 0; q--) {
+          if (par < 0 && f[q][0] === f[i][0] - 1) par = q;
+          if (sib < 0 && f[q][0] === f[i][0]) sib = q;
+        }
+        if (mine[i].lv < f[i][0]) {
+          var kw = par >= 0 ? (mine[par].raw.match(/^[A-Za-z_]+/) || [""])[0] : "";
+          return "Line " + mine[i].no + " should be inside " + (par >= 0 ? (kw ? "the `" + kw + "` on line " : "line ") + mine[par].no : "the line above it") +
+            ", one level deeper. Put the cursor at the start of line " + mine[i].no + " and press Tab, or the \u21e5 key on a phone.";
+        }
+        return "Line " + mine[i].no + " should " + (sib >= 0 ? "line up with line " + mine[sib].no : "start at the left edge of the box") +
+          ", one level less deep. Put the cursor on line " + mine[i].no + " and press Shift and Tab, or the \u21e4 key on a phone.";
       }
       return "Each line is right on its own, but a loop name changes between lines. Use the same name on every line.";
     }
@@ -182,23 +225,50 @@
     return "Line " + mine[k].no + " is not part of this step. Remove it, or check whether it belongs to a later step.";
   }
 
-  /* ---------- Putting the function together ---------- */
-  function dedent(text) {
-    var ls = String(text).replace(/\t/g, "    ").replace(/\s+$/, "").split("\n");
-    while (ls.length && !ls[0].trim()) ls.shift();
-    var min = Infinity;
-    ls.forEach(function (l) { if (l.trim()) min = Math.min(min, l.match(/^ */)[0].length); });
-    if (min === Infinity) min = 0;
-    return ls.map(function (l) { return l.trim() ? l.slice(min).replace(/\s+$/, "") : ""; });
+  /* ---------- Editor keys, like CoderPad ----------
+     Copy, paste, cut, undo and select all are the text box's own. Tab and Shift+Tab indent or
+     un-indent every selected line, Enter keeps the indent and goes one level deeper after a colon.
+     Changes go through insertText, so undo (Ctrl or Cmd + Z) still works after them. */
+  function insert(ta, text) {
+    var ok = false;
+    try { ok = document.execCommand("insertText", false, text); } catch (e) { ok = false; }
+    if (!ok) { ta.setRangeText(text, ta.selectionStart, ta.selectionEnd, "end"); ta.dispatchEvent(new Event("input", { bubbles: true })); }
   }
-  function pad(n) { return new Array(n + 1).join(" "); }
+  function editorKeys(ta, onRun) {
+    ta.addEventListener("keydown", function (e) {
+      if (ta.readOnly) return;
+      var v = ta.value, s = ta.selectionStart, en = ta.selectionEnd;
+      if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); if (onRun) onRun(); return; }
+      if (e.key === "Tab") {
+        e.preventDefault();
+        var ls = v.lastIndexOf("\n", s - 1) + 1, le = v.indexOf("\n", Math.max(s, en - (en > s && v.charAt(en - 1) === "\n" ? 1 : 0)));
+        if (le < 0) le = v.length;
+        var multi = v.slice(s, en).indexOf("\n") >= 0;
+        if (!e.shiftKey && !multi) { insert(ta, "    "); return; }
+        var block = v.slice(ls, le), lines = block.split("\n");
+        var out = lines.map(function (l) {
+          if (!e.shiftKey) return l.trim() ? "    " + l : l;
+          return l.replace(/^( {1,4}|\t)/, "");
+        }).join("\n");
+        if (out === block) return;
+        ta.setSelectionRange(ls, le);
+        insert(ta, out);
+        ta.setSelectionRange(ls, ls + out.length);
+      } else if (e.key === "Enter" && !e.shiftKey && !e.altKey) {
+        var line = v.slice(v.lastIndexOf("\n", s - 1) + 1, s), ind = line.match(/^[ \t]*/)[0];
+        if (/:\s*(#.*)?$/.test(line)) ind += "    ";
+        e.preventDefault();
+        insert(ta, "\n" + ind);
+      }
+    });
+  }
 
   /* ---------- One lesson's Write it card ---------- */
   function setup(lesson, data) {
     var cfgEl = $("script.lsn-cfg", lesson), cfg = cfgEl ? JSON.parse(cfgEl.textContent) : null;
     var steps = data.steps, N = steps.length;
     var KEY = "wi-" + lesson.dataset.lesson + "-v1";
-    var given = data.given.replace(/\n+$/, "").split("\n");
+    var given = data.given.replace(/\n+$/, "");
     // every name the answer creates, so a hint can say "use the name counts"
     var allNames = [];
     steps.forEach(function (s) { (s.names || []).forEach(function (n) { if (allNames.indexOf(n) < 0) allNames.push(n); }); });
@@ -210,34 +280,58 @@
     });
     "if for while in not and or return del else elif True False None".split(" ").forEach(function (w) { vocab[w] = 1; });
 
-    // saved progress: one entry per step, and the step on screen
+    /* Saved progress. Each step keeps what was typed (text) and the accepted, tidied version (acc).
+       "head" holds code the learner edited by hand in the code-so-far editor: its text covers the
+       given lines and every step before head.upto. */
+    function fresh() { return { at: 0, head: null, s: steps.map(function () { return { text: "", done: "", acc: "", tries: 0, shown: false }; }) }; }
     var st = null;
     try { st = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { st = null; }
-    if (!st || !st.s || st.s.length !== N) st = { at: 0, s: steps.map(function () { return { text: "", done: "", acc: "", tries: 0, shown: false }; }) };
+    if (!st || !st.s || st.s.length !== N) st = fresh();
+    // progress saved before steps were tidied may hold odd indents, so tidy it once now
+    if (!st.tidy) {
+      st.s.forEach(function (s) { if (s.done) { var t = tidy(s.acc); if (s.text === s.acc) s.text = t; s.acc = t; } });
+      st.tidy = 1; st.head = null;
+    }
     function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { /* storage may be blocked or full */ } }
     function firstOpen() { for (var i = 0; i < N; i++) if (!st.s[i].done) return i; return N; }
     st.at = Math.min(Math.max(0, st.at | 0), firstOpen());
+    save();
 
-    function assemble(upto) {
-      var out = given.slice(), ranges = [];
-      for (var i = 0; i < upto; i++) {
-        var ls = dedent(st.s[i].acc).map(function (l) { return l ? pad(steps[i].indent) + l : ""; });
-        ranges.push([out.length + 1, out.length + ls.length]);
-        out = out.concat(ls);
+    // the code before step "upto": the hand-edited head if it covers this far, then each accepted step
+    function build(upto) {
+      var useHead = st.head && st.head.upto <= upto;
+      var lines = (useHead ? st.head.text : given).replace(/\s+$/, "").split("\n"), ranges = [];
+      for (var i = useHead ? st.head.upto : 0; i < upto; i++) {
+        var ls = st.s[i].acc.split("\n").map(function (l) { return l ? pad(steps[i].indent) + l : ""; });
+        ranges[i] = [lines.length + 1, lines.length + ls.length];
+        lines = lines.concat(ls);
       }
-      return { lines: out, ranges: ranges };
+      return { text: lines.join("\n"), lines: lines, ranges: ranges };
+    }
+
+    function editor(cls, label, numbered) {
+      var wrap = el("div", "wi-box " + cls), ta = el("textarea", "wi-ta syn");
+      ta.setAttribute("spellcheck", "false"); ta.setAttribute("autocapitalize", "off");
+      ta.setAttribute("autocomplete", "off"); ta.setAttribute("autocorrect", "off");
+      ta.setAttribute("aria-label", label);
+      ta.dataset.title = label;
+      if (numbered) ta.dataset.ln = "1";
+      wrap.appendChild(ta);
+      return { wrap: wrap, ta: ta };
     }
 
     /* the card */
     var box = el("div", "wi");
-    var intro = el("p", "wi-intro", "Each step tells you one job in plain words. You write the code for that job, and the check tells you whether it does the job. When every step is done, your whole function runs on the real tests.");
+    var intro = el("p", "wi-intro", "Each step tells you one job in plain words. You write the code for that job, and the check tells you whether it does the job. Every code box is an editor, so you can change any line. When every step is done, your whole function runs on the real tests.");
     var q = el("div", "wi-q");
     q.appendChild(el("h5", "wi-qh", "The question"));
     var qp = el("p"); qp.innerHTML = rich(data.question); q.appendChild(qp);
+    var ex = null;
     if (data.example) {
-      var ex = el("pre", "wi-ex wi-pre");
-      data.example.forEach(function (l) { var r = el("div", "wi-exl"); r.innerHTML = color(l); ex.appendChild(r); });
-      q.appendChild(ex);
+      ex = editor("wi-plain wi-exbox", "The example", false);
+      ex.ta.value = data.example.join("\n");
+      ex.ta.rows = data.example.length;
+      q.appendChild(ex.wrap);
     }
     if (data.example_note) q.appendChild(el("p", "wi-exn", data.example_note));
     var card = el("div", "wi-card");
@@ -247,92 +341,71 @@
     var ed = el("div", "wi-ed");
     var bar = el("div", "wi-bar");
     bar.innerHTML = '<span class="wi-dots3"><i></i><i></i><i></i></span><span>Python code</span>';
-    var code = el("pre", "wi-code wi-pre"), slot = el("div", "wi-slot");
-    var ta = el("textarea", "wi-ta syn");
-    ta.setAttribute("spellcheck", "false"); ta.setAttribute("autocapitalize", "off");
-    ta.setAttribute("autocomplete", "off"); ta.setAttribute("autocorrect", "off");
-    ta.setAttribute("aria-label", "Your code for this step");
-    slot.appendChild(ta);
-    ed.appendChild(bar); ed.appendChild(code); ed.appendChild(slot);
+    var sofar = editor("wi-sofar", "Your code so far", true), slot = editor("wi-slot", "Your code for this step", true);
+    var ta = slot.ta;
+    ed.appendChild(bar); ed.appendChild(sofar.wrap); ed.appendChild(slot.wrap);
     var fb = el("div", "wi-fb"); fb.setAttribute("aria-live", "polite");
+    var ans = el("div", "wi-ans");
+    ans.appendChild(el("p", "wi-ans-h", "One answer is below. Type it into your box yourself, then press Check. Typing it helps you remember it."));
+    var ansEd = editor("wi-plain wi-ansbox", "One answer", false);
+    ans.appendChild(ansEd.wrap);
+    ans.hidden = true;
     var nav = el("div", "wi-nav"), back = btn("lbtn ghost wi-back", "Back"), go = btn("lbtn wi-go", "Check");
     nav.appendChild(back); nav.appendChild(go);
-    card.appendChild(top); card.appendChild(ask); card.appendChild(doP); card.appendChild(ed); card.appendChild(fb); card.appendChild(nav);
+    card.appendChild(top); card.appendChild(ask); card.appendChild(doP); card.appendChild(ed); card.appendChild(fb); card.appendChild(ans); card.appendChild(nav);
     box.appendChild(intro); box.appendChild(q); box.appendChild(card);
 
-    // a measuring line, so the step's box can start where its indent puts it
-    var chPx = 9;
-    function measure() {
-      var probe = el("span", "wi-probe", "0000000000");
-      code.appendChild(probe);
-      chPx = probe.getBoundingClientRect().width / 10 || chPx;
+    function paint(t) { if (window.CodeKeys && window.CodeKeys.paint) window.CodeKeys.paint(t); }
+    function lineCount(t) { return t.replace(/\s+$/, "").split("\n").length; }
+    // the step's box starts at the step's indent, so the learner types from the right place
+    function place() {
+      if (st.at >= N) return;
+      var cs = getComputedStyle(ta), probe = el("span", null, "0000000000");
+      probe.style.cssText = "position:absolute;visibility:hidden;white-space:pre;font-family:" + cs.fontFamily + ";font-size:" + cs.fontSize;
+      ed.appendChild(probe);
+      var ch = probe.getBoundingClientRect().width / 10 * (ta.classList.contains("zf") ? 0.75 : 1);
       probe.remove();
+      slot.wrap.style.setProperty("--wi-off", Math.round(steps[st.at].indent * ch) + "px");
     }
 
-    // read-only code rows: line number, then the code with half-width indents and clean wrapping
-    function row(text, n, cls) {
-      var r = el("div", "wi-l" + (cls ? " " + cls : ""));
-      r.appendChild(el("span", "wi-n", n == null ? "" : String(n)));
-      var c = el("span", "wi-c");
-      var ind = text.match(/^ */)[0].length, half = Math.floor(ind / 2), body = text.slice(ind);
-      // a long line may break only after "(" or ", ", or before a keyword such as and, or, for, in
-      // and import, and the rest hangs 2 places further in. A comment line wraps between its words.
-      var parts = body.charAt(0) === "#" ? [body]
-        : body.replace(/(\(|, )/g, "$1\u0000").replace(/ (?=(?:and|or|if|else|for|in|import) )/g, " \u0000").split("\u0000");
-      c.innerHTML = pad(half) + (body.charAt(0) === "#" ? color(body) : parts.map(function (p) { return '<span class="wi-nb">' + color(p) + "</span>"; }).join("<wbr>"));
-      c.style.paddingLeft = (half + 2) + "ch";
-      c.style.textIndent = -(half + 2) + "ch";
-      r.appendChild(c);
-      return r;
-    }
-    function codeRows(target, lines, kept, from) {
-      target.textContent = "";
-      lines.forEach(function (l, i) { target.appendChild(row(l, (from || 1) + i, kept && kept[i] ? "kept" : "")); });
-    }
-
-    function keptMap(asm) {
-      var k = {};
-      asm.ranges.forEach(function (r, i) { if (st.s[i].done === "kept") for (var n = r[0]; n <= r[1]; n++) k[n - 1] = 1; });
-      return k;
-    }
-
-    var phase = "", runRes = null, clearArm = false;
+    var runRes = null, clearArm = false;
     function show(scroll) {
       var at = st.at, final = at >= N;
       stepN.textContent = final ? "Last step: run the tests" : "Step " + (at + 1) + " of " + N;
       var d = "";
       for (var i = 0; i <= N; i++) d += '<i class="' + (i === at ? "cur" : i < N && st.s[i].done ? "done" : "") + '"></i>';
       dots.innerHTML = d;
-      var asm = assemble(final ? N : at);
-      codeRows(code, asm.lines, keptMap(asm));
-      fb.textContent = "";
-      fb.className = "wi-fb";
+      var b = build(final ? N : at);
+      if (sofar.ta.value !== b.text) sofar.ta.value = b.text;
+      sofar.ta.rows = b.lines.length;
+      sofar.ta.dataset.title = final ? "Your whole function" : "Your code so far";
+      fb.textContent = ""; fb.className = "wi-fb"; ans.hidden = true;
       back.disabled = at === 0;
       clearArm = false;
       if (final) {
         ask.textContent = "Run your whole function";
-        doP.textContent = "The code above is your function, built from your own steps. Run it on the real tests to see whether every piece works together.";
-        slot.hidden = true;
+        doP.textContent = "This is your function, built from your own steps. You can still change any line in it. Run it on the real tests to see whether every piece works together.";
+        slot.wrap.hidden = true;
         go.textContent = "Run the tests";
         if (runRes) results(runRes);
       } else {
         var s = steps[at], ss = st.s[at];
         ask.textContent = s.ask;
         doP.innerHTML = rich(s.do);
-        slot.hidden = false;
+        slot.wrap.hidden = false;
         if (ta.value !== ss.text) ta.value = ss.text;
         ta.rows = Math.max(2, (s.forms[0] || []).length + 1);
-        ta.dataset.ln = String(asm.lines.length + 1);
+        ta.dataset.ln = String(lineCount(b.text) + 1);
         ta.dataset.title = "Step " + (at + 1) + " of " + N + ". " + s.ask;
         ta.placeholder = "# write step " + (at + 1) + " here";
-        measure();
-        var off = Math.floor(s.indent / 2) * chPx;
-        slot.style.setProperty("--wi-off", off + "px");
+        ansEd.ta.value = s.answer;
+        ansEd.ta.rows = lineCount(s.answer);
+        place();
         if (ss.done && ss.text === ss.acc) say(ss.done === "ok" ? "ok" : "kept");
         else if (ss.tries && ss.hint) say("no", ss.hint);
         updateGo();
       }
-      if (window.CodeKeys && window.CodeKeys.paint) window.CodeKeys.paint(ta);
+      paint(sofar.ta); paint(ta);
       if (scroll) {
         var r = card.getBoundingClientRect();
         if (r.top < 70 || r.top > window.innerHeight * 0.5) window.scrollTo({ top: window.scrollY + r.top - 80, behavior: "smooth" });
@@ -347,7 +420,8 @@
     function say(kind, msg) {
       fb.textContent = "";
       fb.className = "wi-fb " + kind;
-      var ss = st.s[st.at], s = steps[st.at];
+      var ss = st.s[st.at];
+      ans.hidden = true;
       if (kind === "ok") { fb.appendChild(el("p", "wi-ok", "Correct. This step does its job, so you can go on.")); return; }
       if (kind === "kept") { fb.appendChild(el("p", "wi-kept", "You kept your own version of this step. The tests at the end will show whether it works.")); return; }
       var p = el("p", "wi-no");
@@ -358,38 +432,33 @@
       var row2 = el("div", "wi-more"), showB = btn("lbtn ghost wi-show", ss.shown ? "Hide answer" : "Show answer"), keep = btn("lbtn ghost wi-keep", "Keep mine");
       row2.appendChild(showB); row2.appendChild(keep);
       fb.appendChild(row2);
-      if (ss.shown) answerBox();
-      showB.addEventListener("click", function () {
-        ss.shown = !ss.shown; save();
-        say("no", msg);
-      });
-      keep.addEventListener("click", function () {
-        ss.done = "kept"; ss.acc = ss.text; save();
-        next();
-      });
-      function answerBox() {
-        var a = el("div", "wi-ans");
-        a.appendChild(el("p", "wi-ans-h", "One answer is below. Type it into the box yourself, then press Check. Typing it helps you remember it."));
-        var c = el("pre", "wi-code wi-pre wi-anscode");
-        dedent(s.answer).forEach(function (l) { c.appendChild(row(l, null)); });
-        a.appendChild(c);
-        fb.appendChild(a);
-      }
+      ans.hidden = !ss.shown;
+      if (ss.shown) paint(ansEd.ta);
+      showB.addEventListener("click", function () { ss.shown = !ss.shown; save(); say("no", msg); });
+      keep.addEventListener("click", function () { accept("kept"); next(); });
+    }
+    // an accepted step goes into the function with clean 4-space indents, and the box shows them too
+    function accept(kind) {
+      var ss = st.s[st.at];
+      ss.acc = tidy(ta.value); ss.text = ss.acc; ss.done = kind; ss.hint = "";
+      if (ta.value !== ss.text) ta.value = ss.text;
+      // a hand-edited head that already holds this step is out of date now
+      if (st.head && st.head.upto > st.at) st.head = null;
+      runRes = null;
+      save();
     }
     function check() {
       var ss = st.s[st.at], s = steps[st.at];
       ss.text = ta.value;
       var mine = parse(ss.text);
-      var ok = mine.length && s.forms.some(function (f) { return accepts(mine, f); });
-      if (ok) {
-        ss.done = "ok"; ss.acc = ss.text; ss.hint = ""; save();
-        say("ok"); updateGo();
-        runRes = null;
+      if (mine.length && s.forms.some(function (f) { return accepts(mine, f); })) {
+        accept("ok");
+        say("ok"); updateGo(); paint(ta);
         return;
       }
       if (!mine.length) { say("no", hint(s, ss.text, vocab)); return; }
       ss.tries++; ss.hint = hint(s, ss.text, vocab);
-      if (ss.done) { ss.done = ""; }
+      ss.done = "";
       save();
       say("no", ss.hint);
       updateGo();
@@ -416,32 +485,22 @@
       if (ss.done && ss.text !== ss.acc && /ok|kept/.test(fb.className)) { fb.textContent = ""; fb.className = "wi-fb"; }
       updateGo();
     });
-    // laptop keys like an editor: Tab indents, Enter keeps the indent and goes one step deeper after a colon,
-    // and Ctrl or Cmd with Enter runs the check
-    ta.addEventListener("keydown", function (e) {
-      var s = ta.selectionStart, v = ta.value;
-      if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); go.click(); return; }
-      if (e.key === "Tab") {
-        e.preventDefault();
-        var ls = v.lastIndexOf("\n", s - 1) + 1;
-        if (e.shiftKey) {
-          var n = Math.min(4, v.slice(ls).match(/^ */)[0].length);
-          if (n) { ta.setRangeText("", ls, ls + n); ta.setSelectionRange(Math.max(ls, s - n), Math.max(ls, s - n)); }
-        } else ta.setRangeText("    ", s, ta.selectionEnd, "end");
-        ta.dispatchEvent(new Event("input", { bubbles: true }));
-      } else if (e.key === "Enter") {
-        var line = v.slice(v.lastIndexOf("\n", s - 1) + 1, s), ind = line.match(/^ */)[0];
-        if (/:\s*$/.test(line)) ind += "    ";
-        e.preventDefault();
-        ta.setRangeText("\n" + ind, s, ta.selectionEnd, "end");
-        ta.dispatchEvent(new Event("input", { bubbles: true }));
-      }
+    // editing the code so far (or the whole function on the last stage) is saved as the head
+    sofar.ta.addEventListener("input", function () {
+      st.head = { upto: Math.min(st.at, N), text: sofar.ta.value };
+      runRes = null;
+      save();
+      if (st.at < N) { ta.dataset.ln = String(lineCount(sofar.ta.value) + 1); paint(ta); }
     });
+    editorKeys(ta, function () { go.click(); });
+    editorKeys(sofar.ta, function () { if (st.at >= N) go.click(); });
+    editorKeys(ansEd.ta, null);
+    if (ex) editorKeys(ex.ta, null);
 
-    /* the final run: the learner's own function on the real tests */
+    /* the final run: exactly the code in the editor, on the real tests */
     function run() {
       if (!cfg || !window.MSPractice) { fb.textContent = ""; fb.appendChild(el("p", "wi-no", "The tests could not load on this page.")); return; }
-      var asm = assemble(N), src = asm.lines.join("\n") + "\n";
+      var src = sofar.ta.value.replace(/\s+$/, "") + "\n";
       go.disabled = true;
       fb.textContent = ""; fb.className = "wi-fb";
       var status = el("p", "wi-status", "Python is loading. The first time takes a few seconds.");
@@ -450,34 +509,40 @@
         runRes = { res: res, src: src };
         results(runRes);
       }, function (err) {
-        if (err.message === "slow") { runRes = { slow: true }; results(runRes); return; }
+        if (err.message === "slow") { runRes = { slow: true, src: src }; results(runRes); return; }
         fb.textContent = "";
         fb.appendChild(el("p", "wi-no", "Python could not start. Check your internet connection and try again."));
       }).then(function () { go.disabled = false; });
     }
-    function stepOf(line, asm) {
-      for (var i = 0; i < asm.ranges.length; i++) if (line >= asm.ranges[i][0] && line <= asm.ranges[i][1]) return i;
+    function stepOf(line, b) {
+      for (var i = 0; i < b.ranges.length; i++) if (b.ranges[i] && line >= b.ranges[i][0] && line <= b.ranges[i][1]) return i;
       return -1;
     }
     function py(v) { return window.MSPractice && window.MSPractice.py ? window.MSPractice.py(v) : JSON.stringify(v); }
     // a test call breaks only after ", ", never inside a value
     function callHtml(call) { return call.replace(/, /g, ", \u0000").split("\u0000").map(function (p) { return '<span class="wi-nb">' + esc(p) + "</span>"; }).join("<wbr>"); }
+    function where(line, b) {
+      var si = stepOf(line, b), text = (sofar.ta.value.split("\n")[line - 1] || "").trim();
+      return "line " + line + (text ? " (" + text + ")" : "") + (si >= 0 ? ", in step " + (si + 1) : "");
+    }
     function results(rr) {
-      var res = rr.res, asm = assemble(N);
+      var res = rr.res, b = build(N);
       fb.textContent = "";
       fb.className = "wi-fb";
       var kept = [], target = 0;
       st.s.forEach(function (s, i) { if (s.done === "kept") kept.push(i + 1); });
       if (kept.length) target = kept[0];
       var keptTxt = kept.length ? (kept.length === 1 ? "step " + kept[0] : "steps " + kept.slice(0, -1).join(", ") + " and " + kept[kept.length - 1]) : "";
+      var keptTip = kept.length ? "You kept your own version of " + keptTxt + ", so check " + (kept.length === 1 ? "that step" : "those steps") + " first." : "";
       if (rr.slow) {
         fb.appendChild(el("p", "wi-no", "Your function ran for more than 8 seconds, so I stopped it. A loop may never end. Check that each pass of the while loop moves a task out of heap or waiting, and that a waiting task comes back at a time the loop still reaches."));
-        if (kept.length) fb.appendChild(el("p", "wi-tip", "You kept your own version of " + keptTxt + ", so check " + (kept.length === 1 ? "that step" : "those steps") + " first."));
+        if (keptTip) fb.appendChild(el("p", "wi-tip", keptTip));
       } else if (res.load) {
-        var where = res.line ? " on line " + res.line + (stepOf(res.line, asm) >= 0 ? ", in step " + (stepOf(res.line, asm) + 1) : "") : "";
-        fb.appendChild(el("p", "wi-no", "Your function did not run. Python stopped" + where + " with " + res.load + "."));
-        if (kept.length) fb.appendChild(el("p", "wi-tip", "You kept your own version of " + keptTxt + ", so check " + (kept.length === 1 ? "that step" : "those steps") + " first."));
-        var ls = res.line ? stepOf(res.line, asm) : -1;
+        fb.appendChild(el("p", "wi-no", "Your function did not run. Python stopped on " + (res.line ? where(res.line, b) : "a line it could not read") + " with " + res.load + "."));
+        if (/IndentationError|TabError/.test(res.kind || res.load)) fb.appendChild(el("p", "wi-tip", "Fix the indent of that line right here in the editor above: each level inside an if, for or while is 4 spaces more than the line it belongs to. Then press Run the tests again."));
+        else fb.appendChild(el("p", "wi-tip", "You can fix that line right here in the editor above, then press Run the tests again."));
+        if (keptTip) fb.appendChild(el("p", "wi-tip", keptTip));
+        var ls = res.line ? stepOf(res.line, b) : -1;
         if (ls >= 0) target = ls + 1;
       } else {
         var pass = res.tests.filter(function (r) { return r.ok; }).length, all = res.tests.length;
@@ -485,13 +550,13 @@
         if (pass < all) {
           var crash = res.tests.filter(function (r) { return r.err && r.line; })[0];
           var tip = "";
-          if (crash && stepOf(crash.line, asm) >= 0) {
-            var si = stepOf(crash.line, asm) + 1;
-            tip = "A test crashed on line " + crash.line + ", which is in step " + si + "." + (kept.indexOf(si) >= 0 ? " You kept your own version of that step, so start there." : "");
-            target = si;
+          if (crash) {
+            var si = stepOf(crash.line, b) + 1;
+            tip = "A test crashed on " + where(crash.line, b) + "." + (si && kept.indexOf(si) >= 0 ? " You kept your own version of that step, so start there." : "");
+            if (si) target = si;
           } else if (kept.length) tip = "You kept your own version of " + keptTxt + ". A kept step is the first place to look.";
           else tip = "Pick the first failing test and trace it by hand, one slot at a time.";
-          fb.appendChild(el("p", "wi-tip", tip));
+          fb.appendChild(el("p", "wi-tip", tip + " You can change the code in the editor above and run the tests again."));
         }
         var ul = el("ul", "wi-tests");
         res.tests.forEach(function (r) {
@@ -501,7 +566,7 @@
           var g = el("div", "wi-got");
           g.appendChild(el("span", "wi-badge", r.ok ? "Pass" : "Fail"));
           var txt = r.ok ? "gives " + py(want)
-            : r.err ? "crashed with " + r.err + (r.line ? " on line " + r.line + (stepOf(r.line, asm) >= 0 ? " (step " + (stepOf(r.line, asm) + 1) + ")" : "") : "")
+            : r.err ? "crashed with " + r.err + (r.line ? " on " + where(r.line, b) : "")
             : "gave " + r.got + ", expected " + py(want);
           g.appendChild(el("span", "wi-gt", txt));
           li.appendChild(c); li.appendChild(g);
@@ -521,15 +586,13 @@
       over.addEventListener("click", function () {
         // one tap could wipe every step, so the first tap asks
         if (!clearArm) { clearArm = true; over.textContent = "Tap again to clear every step"; return; }
-        st = { at: 0, s: steps.map(function () { return { text: "", done: "", acc: "", tries: 0, shown: false }; }) };
+        st = fresh(); st.tidy = 1;
         runRes = null; save(); ta.value = ""; show(true);
       });
     }
 
-    // a phone redraws the step box when the screen turns or the font loads
-    function redraw() { if (st.at < N) { measure(); slot.style.setProperty("--wi-off", Math.floor(steps[st.at].indent / 2) * chPx + "px"); } }
-    window.addEventListener("resize", redraw);
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(redraw);
+    window.addEventListener("resize", place);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(place);
 
     return { box: box, show: show, ta: ta };
   }

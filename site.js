@@ -177,7 +177,7 @@
       label.appendChild(iconBtn(function () { return box.dataset.src || box.innerText; }));
     });
     document.querySelectorAll("pre").forEach(function (pre) {
-      if (pre.querySelector(".cp-btn") || pre.closest(".code-text") || pre.closest(".rc") || pre.closest(".vz-code") || pre.closest(".wk") || pre.classList.contains("l3-code") || pre.classList.contains("hl-back")) return;
+      if (pre.querySelector(".cp-btn") || pre.closest(".code-text") || pre.closest(".rc") || pre.closest(".vz-code") || pre.closest(".wk") || pre.classList.contains("l3-code") || pre.classList.contains("hl-back") || pre.classList.contains("wi-pre")) return;
       if (!pre.textContent.trim()) return;
       pre.insertBefore(iconBtn(function () { return preText(pre); }), pre.firstChild);
       pre.classList.add("has-cp");

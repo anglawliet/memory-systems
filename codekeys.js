@@ -372,6 +372,7 @@
     }
     // the top row says which gap this is, and the code line right above it
     function titleFor(ta) {
+      if (ta.dataset.title) return ta.dataset.title;
       if (ta.classList.contains("ed")) return "Write the whole solution";
       var b = ta.closest(".blank");
       if (!b) return "Fill the gap";
@@ -503,7 +504,33 @@
   var COPY = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "tabSize", "whiteSpace", "overflowWrap", "wordBreak",
     "paddingTop", "paddingRight", "paddingBottom", "paddingLeft", "borderTopWidth", "borderRightWidth", "borderBottomWidth", "borderLeftWidth",
     "borderRadius", "transform", "transformOrigin", "fontVariantLigatures", "textIndent"];
-  function shade(text) {
+  /* VS Code Dark+ colors for one line of Python, used by editors marked "syn" and by Write it.
+     Keywords, names, functions, built-ins, numbers, strings and comments each get their own class. */
+  var PY_KW = " and as assert break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with yield ";
+  var PY_CONST = " True False None ";
+  var PY_BI = " len range print min max sum sorted list dict set tuple int str float abs enumerate zip map filter any all reversed isinstance object heapq Counter deque defaultdict collections ";
+  function colorLine(line) {
+    var re = /(#.*$)|("(?:\\.|[^"\\])*"?|'(?:\\.|[^'\\])*'?)|(\b\d+(?:\.\d+)?\b)|([A-Za-z_]\w*)|(\s+)|([^\sA-Za-z_\d#"']+)/g;
+    var out = "", m, prev = "";
+    while ((m = re.exec(line)) && m[0]) {
+      var t = m[0], cls = "";
+      if (m[1]) cls = "py-m";
+      else if (m[2]) cls = "py-s";
+      else if (m[3]) cls = "py-n";
+      else if (m[4]) {
+        if (PY_KW.indexOf(" " + t + " ") >= 0) cls = "py-k";
+        else if (PY_CONST.indexOf(" " + t + " ") >= 0) cls = "py-c";
+        else if (prev === "def" || /^\s*\(/.test(line.slice(re.lastIndex))) cls = "py-f";
+        else if (PY_BI.indexOf(" " + t + " ") >= 0) cls = "py-b";
+        else cls = "py-v";
+        prev = t;
+      }
+      out += cls ? '<span class="' + cls + '">' + esc(t) + "</span>" : esc(t);
+    }
+    return out;
+  }
+  function shade(text, syn) {
+    if (syn) return text.split("\n").map(function (line) { return '<span class="hl-ln">' + (colorLine(line) || "\u200b") + "</span>"; }).join("");
     // each line: the code part as it is, and the part from a # outside a string, faded
     return text.split("\n").map(function (line) {
       var q = null, i;
@@ -529,7 +556,10 @@
       ta.classList.add("hl-on");
     }
     // the full-function editor gets line numbers; a small gap box does not, because its lines are part of a bigger program
-    back.classList.toggle("nums", ta.classList.contains("ed"));
+    back.classList.toggle("nums", ta.classList.contains("ed") || !!ta.dataset.ln);
+    // an editor that holds one piece of a longer program numbers its lines from where the piece starts
+    back.style.counterReset = ta.dataset.ln ? "ln " + (ta.dataset.ln - 1) : "";
+    var syn = ta.classList.contains("syn");
     back.classList.toggle("zf", ta.classList.contains("zf"));
     var parent = ta.parentNode;
     if (!parent) return;
@@ -544,7 +574,7 @@
     back.style.width = ta.offsetWidth + "px";
     back.style.height = ta.offsetHeight + "px";
     back.style.display = ta.offsetParent === null && !ta.offsetWidth ? "none" : "";
-    if (back._v !== ta.value) { back._v = ta.value; back.innerHTML = shade(ta.value); }
+    if (back._v !== ta.value || back._s !== syn) { back._v = ta.value; back._s = syn; back.innerHTML = shade(ta.value, syn); }
     back.scrollTop = ta.scrollTop;
     back.scrollLeft = ta.scrollLeft;
   }
@@ -565,5 +595,5 @@
   } else setInterval(paintAll, 500);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(paintAll);
 
-  window.CodeKeys = { attach: keyBar, grow: grow, caretY: caretY, suggest: suggest, buildCorpus: buildCorpus };
+  window.CodeKeys = { attach: keyBar, grow: grow, caretY: caretY, suggest: suggest, buildCorpus: buildCorpus, colorLine: colorLine, paint: paint };
 })();

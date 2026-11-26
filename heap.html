@@ -89,22 +89,31 @@ td{padding:10px 12px;border:1px solid var(--border)}
 <script type="application/json" class="lsn-cfg">{"need": ["KthLargest"], "tests": [{"steps": [["obj = KthLargest(3, [4, 5, 8, 2])", null], ["obj.add(3)", 4], ["obj.add(5)", 5], ["obj.add(10)", 5], ["obj.add(9)", 8], ["obj.add(4)", 8]]}, {"steps": [["obj = KthLargest(4, [7, 7, 7, 7, 8, 3])", null], ["obj.add(2)", 7], ["obj.add(10)", 7], ["obj.add(9)", 7], ["obj.add(9)", 8]]}, {"steps": [["obj = KthLargest(1, [])", null], ["obj.add(-3)", -3], ["obj.add(-2)", -2], ["obj.add(-4)", -2], ["obj.add(0)", 0], ["obj.add(4)", 4]], "hint": "The list nums can be empty. Begin with an empty heap and let add fill it."}, {"steps": [["obj = KthLargest(2, [1, 2, 3, 4, 5])", null], ["obj.add(0)", 4], ["obj.add(6)", 5]], "hint": "The heap must also be trimmed in __init__. Think about using the same method that handles each new number."}, {"steps": [["obj = KthLargest(1, [5])", null], ["obj.add(3)", 5], ["obj.add(10)", 10]], "hint": "Check whether you pop when the heap is full or only when it is too large."}, {"steps": [["obj = KthLargest(3, [5, -1])", null], ["obj.add(2)", -1], ["obj.add(1)", 1], ["obj.add(-1)", 1], ["obj.add(3)", 2], ["obj.add(4)", 3]]}, {"steps": [["obj = KthLargest(2, [3, 3])", null], ["obj.add(3)", 3], ["obj.add(1)", 3]]}], "start": "import heapq\n\nclass KthLargest:\n    def __init__(self, k, nums):\n        # 1. Save k and make an empty heap.\n\n        # 2. Call self.add for every number.\n\n    def add(self, val):\n        # 3. Push val into the heap.\n\n        # 4. If the heap has more than k,\n        #    pop the smallest.\n\n        # 5. Return the top, heap[0].\n", "before": ["import heapq\n\nclass KthLargest:\n    def __init__(self, k, nums):\n        self.k = k\n        self.heap = []\n", "\n    def add(self, val):\n"], "after": "        return self.heap[0]\n", "keys": [["self.heap"], ["self.k"], ["self.add(", "self.add("], ["heap[0]"], ["val"], ["heapq.heappush(", "heapq.heappush("], ["heapq.heappop(", "heapq.heappop("], ["len(", "len("], ["while", "while "]]}</script>
 
 <section class="lsn-part lsn-easy">
-<span class="lsn-tag">Part 1 of 3</span>
+<span class="lsn-tag">Part 1 of 4</span>
 <h4>What are we trying to build?</h4>
 <img class="lsn-pic" src="heap/images/panels/p703_kth_largest_stream_v_q.webp" alt="What is the question? We have k = 3 and nums = [4, 5, 8, 2]. Balls 3, 5, 10, 9 and 4 arrive on a conveyor belt through add(3), add(5), add(10), add(9) and add(4). Under each ball a small heap stand with 3 spots holds the 3 biggest numbers so far, with the smallest of them on top: 4 over 5 and 8, then 5 over 5 and 8, then 5 over 8 and 10, then 8 over 9 and 10, and again 8 over 9 and 10. The top is the 3rd largest, so the calls return 4, 5, 5, 8 and 8." width="1400" height="933" loading="lazy">
 <p>We build a class that keeps the <code>k</code>-th largest number as new numbers arrive. The class starts with <code>k</code> and a list <code>nums</code>. Each call to <code>add(val)</code> adds one number and returns the <code>k</code>-th largest number so far.</p>
 <p>In the picture, <code>k</code> is 3 and the starting numbers are 4, 5, 8 and 2. The call add(3) returns 4, because the three largest are still 8, 5 and 4. The call add(5) returns 5, because the three largest become 8, 5 and 5.</p>
 </section>
 
+<section class="lsn-part lsn-easy">
+<span class="lsn-tag">Part 2 of 4</span>
+<h4>What is the simple way, and what does it cost?</h4>
+<p>The simple way keeps every number in one sorted list. Each call to <code>add</code> puts the new number in its place, and the <code>k</code>-th largest sits <code>k</code> places from the end. After add(3), the list is [2, 3, 4, 5, 8], and 3 places from the end we find 4.</p>
+<p>Putting a number in its place shifts every bigger number one spot to the right. With 5 numbers, that is cheap. After 100,000 calls to <code>add</code>, the list holds 100,000 numbers, and one call can shift almost all of them.</p>
+<p>The list also keeps numbers that can never be the answer again. With <code>k</code> = 3, the 2 sits below 8, 5 and 4, and new numbers only push it further down. So we only need the <code>k</code> biggest numbers, and we need the smallest of them fast, because that smallest one is the answer.</p>
+</section>
+
 <section class="lsn-part lsn-hard">
-<span class="lsn-tag">Part 2 of 3</span>
+<span class="lsn-tag">Part 3 of 4</span>
 <h4>How does the heap help?</h4>
 <p>A heap is a list that keeps its smallest number on top. Python's <code>heapq</code> module gives us three tools for a heap.</p>
 
 <img class="lsn-pic" src="heap/images/panels/p703_kth_largest_stream_v_1.webp" alt="What does heapq do? A heap stand holds 4 on its top tier and 5 and 8 below, so heap[0] = 4. The call heappush(heap, 2) drops ball 2 onto the stand, and 2 takes the top tier. The call heappop(heap) lifts ball 2 off the top, so 4 is on top again. The smallest number always sits on top." width="1400" height="933" loading="lazy">
-<p>A push and a pop each take O(log n) time. Reading heap[0] takes O(1) time. We call a heap with the smallest number on top a min-heap.</p>
+<p>A push and a pop each take O(log n) time, which is about 17 steps for a heap of 100,000 numbers. Reading heap[0] takes O(1) time, just one step. We call a heap with the smallest number on top a min-heap.</p>
+<p>Now we join the two ideas. The answer is the smallest of the <code>k</code> biggest numbers, and a min-heap keeps its smallest number on top. So we keep only the <code>k</code> biggest numbers in a min-heap.</p>
 <img class="lsn-pic" src="heap/images/panels/p703_kth_largest_stream_v_2.webp" alt="Keep only the 3 biggest. The heap stand self.heap has 3 spots, with the smallest ball on top. After nums, the stand holds 4 on top of 5 and 8, so heap[0] = 4. The call add(3) drops 3 in, and 3 leaves straight away, so the call returns 4. The call add(5) drops 5 in, and 4 leaves from the top, so the stand holds 5 on top of 5 and 8 and the call returns 5. A 4th ball pushes the smallest out, and the top is the answer." width="1400" height="933" loading="lazy">
-<p>We keep only the k biggest numbers in the heap. When the heap has more than k numbers, we pop the smallest one. Then the top is the k-th largest.</p>
+<p>When the heap has more than k numbers, we pop the smallest one, because it can never be the answer again. Then the top is the k-th largest.</p>
 
 <p>The method <code>__init__</code> calls <code>add</code> for every number in <code>nums</code>. So the heap keeps only k numbers from the start.</p>
 
@@ -114,7 +123,7 @@ td{padding:10px 12px;border:1px solid var(--border)}
 </section>
 
 <section class="lsn-part">
-<span class="lsn-tag">Part 3 of 3</span>
+<span class="lsn-tag">Part 4 of 4</span>
 <h4>Can you write it without looking?</h4>
 <div class="lv-tabs" role="tablist">
 <button type="button" class="on" data-lv="3">From blank</button><button type="button" data-lv="2">Fill the gaps</button>
@@ -155,16 +164,26 @@ if len(self.heap) &gt; self.k:
 <script type="application/json" class="lsn-cfg">{"need": ["lastStoneWeight"], "tests": [{"steps": [["lastStoneWeight([2, 7, 4, 1, 8, 1])", 1]], "hint": "Check the signs after each pop and before each push."}, {"steps": [["lastStoneWeight([1])", 1]]}, {"steps": [["lastStoneWeight([2, 2])", 0]], "hint": "Think about what remains when both stones have the same weight. Also check what to return when the heap is empty."}, {"steps": [["lastStoneWeight([3, 7, 2])", 2]], "hint": "Check the signs after each pop and before each push."}, {"steps": [["lastStoneWeight([10, 4, 2, 10])", 2]]}, {"steps": [["lastStoneWeight([9, 3, 2, 10])", 0]], "hint": "Think about what remains when both stones have the same weight. Also check what to return when the heap is empty."}, {"steps": [["lastStoneWeight([1, 3])", 2]]}], "start": "import heapq\n\ndef lastStoneWeight(stones):\n    # 1. Push every stone as a\n    #    negative number.\n\n    # 2. While 2 or more stones are left,\n    #    pop TWO stones, first and then\n    #    second. A peek is not a pop.\n\n        # 3. If they differ, push the\n        #    difference back.\n\n    # 4. Return the last stone or 0.\n", "before": ["import heapq\n\ndef lastStoneWeight(stones):\n    heap = []\n    for stone in stones:\n        heapq.heappush(heap, -stone)\n\n"], "after": "\n    if heap:\n        return -heap[0]\n    return 0\n", "keys": [["first"], ["second"], ["rest"], ["-heapq.heappop(", "-heapq.heappop("], ["!=", " != "], ["heap"], ["heapq.heappush(", "heapq.heappush("], ["heapq.heappop(", "heapq.heappop("], ["len(", "len("], ["while", "while "]]}</script>
 
 <section class="lsn-part lsn-easy">
-<span class="lsn-tag">Part 1 of 3</span>
+<span class="lsn-tag">Part 1 of 4</span>
 <h4>What are we trying to find?</h4>
 <img class="lsn-pic" src="heap/images/panels/p1046_last_stone_weight_question.webp" alt="What is the question? We have stones = [2, 7, 4, 1, 8, 1]. Smash the two heaviest stones. When 8 and 7 crash, their weights are different, so a stone of 8 - 7 = 1 is left. When 1 and 1 crash, their weights are the same, so both break. Keep smashing until at most one stone is left. The output is 1, the weight of the last stone." width="1400" height="933" loading="lazy">
 <p>Each number in <code>stones</code> is the weight of one stone. Each turn, smash the two heaviest stones together. Equal stones both break. Otherwise, the lighter stone breaks, and the heavier stone loses that much weight. Return the weight of the last stone.</p>
 <p>If no stone is left, we return 0.</p>
 </section>
 
+<section class="lsn-part lsn-easy">
+<span class="lsn-tag">Part 2 of 4</span>
+<h4>What is the simple way, and what does it cost?</h4>
+<p>The simple way sorts the stones before every smash and takes the two heaviest from the end. Sorting [2, 7, 4, 1, 8, 1] gives [1, 1, 2, 4, 7, 8], so 8 and 7 smash, and a stone of 1 goes back in. Then we sort again for the next smash.</p>
+<p>With 6 stones, that is quick. With 1,000 stones, we may smash almost 1,000 times, and each smash sorts up to 1,000 stones again. Most of that sorting is wasted, because each smash only needs the two heaviest stones.</p>
+<p>So we want a structure that always hands us the heaviest stone fast, even after a new stone goes back in.</p>
+</section>
+
 <section class="lsn-part lsn-hard">
-<span class="lsn-tag">Part 2 of 3</span>
+<span class="lsn-tag">Part 3 of 4</span>
 <h4>How do we always find the two heaviest?</h4>
+<p>A heap does that job. A heap is a list that Python keeps in a special order, so the smallest item always sits at <code>heap[0]</code>, the top. The call <code>heapq.heappush</code> adds an item, and <code>heapq.heappop</code> removes the top. Each call takes about log n steps, which is about 10 steps for 1,000 stones.</p>
+<p>Python's <code>heapq</code> only keeps the smallest item on top, but we need the heaviest stone. So we store each weight with a minus sign. The weights 8, 7 and 4 become -8, -7 and -4. Now -8 is the smallest, so the stone of weight 8 sits on top. When we pop -8, we flip the sign back to get 8.</p>
 <img class="lsn-pic" src="heap/images/panels/p1046_last_stone_weight_v_1.webp" alt="Heaviest stone on top. Six stones weigh 2, 7, 4, 1, 8 and 1. Each stone gets a minus sign and goes onto the light-blue glass heap stand. The stone -8 sits alone on the glowing top tier, -7 and -4 sit on the middle tier, and -2, -1 and -1 sit on the bottom tier. A heappop takes -8 off the top, and flipping its sign gives 8. The minus sign puts the heaviest stone on top." width="1400" height="933" loading="lazy">
 <p>Later lessons use the same negative number trick.</p>
 <p class="lsn-watch"><b>Watch out.</b> One smash uses two stones, so pop twice. The first pop gives the heaviest stone, <code>first</code>. The second pop gives the next one, <code>second</code>. A peek at <code>heap[0]</code> leaves the stone in the heap. With one pop and one peek, the heap never shrinks, so the loop never ends.</p>
@@ -175,7 +194,7 @@ if len(self.heap) &gt; self.k:
 </section>
 
 <section class="lsn-part">
-<span class="lsn-tag">Part 3 of 3</span>
+<span class="lsn-tag">Part 4 of 4</span>
 <h4>Can you write it without looking?</h4>
 <div class="lv-tabs" role="tablist">
 <button type="button" class="on" data-lv="3">From blank</button><button type="button" data-lv="2">Fill the gaps</button>
@@ -216,18 +235,27 @@ if len(self.heap) &gt; self.k:
 <script type="application/json" class="lsn-cfg">{"need": ["kClosest"], "tests": [{"steps": [["kClosest([[1, 3], [-2, 2]], 1)", [[-2, 2]]]], "cmp": "sorted"}, {"steps": [["kClosest([[3, 3], [5, -1], [-2, 4]], 2)", [[3, 3], [-2, 4]]]], "cmp": "sorted", "hint": "Check which point should leave when the heap is too large. Think about which sign puts that point on top."}, {"steps": [["kClosest([[0, 1], [1, 0]], 2)", [[0, 1], [1, 0]]]], "cmp": "sorted", "hint": "Check whether you pop when the heap is full or only when it is too large."}, {"steps": [["kClosest([[1, 1]], 1)", [[1, 1]]]], "cmp": "sorted"}, {"steps": [["kClosest([[2, 2], [1, 1], [3, 3]], 1)", [[1, 1]]]], "cmp": "sorted", "hint": "Check which point should leave when the heap is too large. Think about which sign puts that point on top."}, {"steps": [["kClosest([[-5, 4], [-6, -5], [4, 6]], 2)", [[-5, 4], [4, 6]]]], "cmp": "sorted"}, {"steps": [["kClosest([[1, 0], [0, 1], [5, 5], [2, 2]], 3)", [[1, 0], [0, 1], [2, 2]]]], "cmp": "sorted"}], "start": "import heapq\n\ndef kClosest(points, k):\n    # 1. Make an empty heap.\n\n    # 2. For each x, y in points,\n    #    find dist = x * x + y * y.\n\n        # 3. Push (-dist, x, y). If the heap\n        #    has more than k, pop once.\n\n    # 4. Put each [x, y] in closest\n    #    and return it.\n", "before": ["import heapq\n\ndef kClosest(points, k):\n    heap = []\n    for x, y in points:\n", "\n    closest = []\n"], "after": "    return closest\n", "keys": [["dist"], ["-dist"], ["item"], ["closest"], ["append(", "append("], ["x * x + y * y"], ["heapq.heappush(", "heapq.heappush("], ["heapq.heappop(", "heapq.heappop("], ["len(", "len("], ["while", "while "]]}</script>
 
 <section class="lsn-part lsn-easy">
-<span class="lsn-tag">Part 1 of 3</span>
+<span class="lsn-tag">Part 1 of 4</span>
 <h4>What are we trying to find?</h4>
 <img class="lsn-pic" src="heap/images/panels/p973_k_closest_question.webp" alt="What is the question? We have points = [[3, 3], [5, -1], [-2, 4]] and k = 2. A map shows a house at (0, 0) and three flags. The flags [3, 3] and [-2, 4] are the two closest to the house, and [5, -1] is farther. Find the k points closest to (0, 0). The output is [[3, 3], [-2, 4]]." width="1400" height="933" loading="lazy">
 <p>Each point is [x, y]. Its distance to (0, 0) is the square root of x * x + y * y. Return the <code>k</code> points with the smallest distance.</p>
 <p>The points can come in any order.</p>
 </section>
 
+<section class="lsn-part lsn-easy">
+<span class="lsn-tag">Part 2 of 4</span>
+<h4>What is the simple way, and what does it cost?</h4>
+<p>The simple way finds the distance of every point, sorts all the points by distance and keeps the first <code>k</code>. For our 3 points, that sorts 3 points to keep 2, which is fine.</p>
+<p>With 10,000 points and <code>k</code> = 2, we would sort all 10,000 points just to keep 2. Most of that order is wasted, because we never look past the first <code>k</code>. We only need to remember the <code>k</code> closest points seen so far, and to throw out the farthest of them fast when a closer point arrives.</p>
+</section>
+
 <section class="lsn-part lsn-hard">
-<span class="lsn-tag">Part 2 of 3</span>
+<span class="lsn-tag">Part 3 of 4</span>
 <h4>How do we keep the k closest?</h4>
 <img class="lsn-pic" src="heap/images/panels/p973_k_closest_v_1.webp" alt="How far is each point? A house sits at (0, 0), and a dashed rope runs to each flag. We use dist = x * x + y * y. The rope to [3, 3] gives 9 + 9 = 18. The rope to [5, -1] gives 25 + 1 = 26, the farthest. The rope to [-2, 4] gives 4 + 16 = 20. A smaller dist means a closer point, and we do not need the square root." width="1400" height="933" loading="lazy">
 <p>Skipping the square root does not change which point is closer.</p>
+<p>Now we need a place to keep the <code>k</code> closest points. A heap is a list that Python keeps in a special order, so the smallest item always sits at <code>heap[0]</code>, the top. A push with <code>heapq.heappush</code> or a pop with <code>heapq.heappop</code> takes about log k steps when the heap holds <code>k</code> items.</p>
+<p>We want the farthest point on top, because the farthest point leaves first when the heap holds too many points. Python's <code>heapq</code> only puts the smallest item on top, so we store each distance with a minus sign. The distances 18, 26 and 20 become -18, -26 and -20. Now -26 is the smallest, so [5, -1], the farthest point, sits on top.</p>
 <img class="lsn-pic" src="heap/images/panels/p973_k_closest_v_2.webp" alt="Keep the 2 closest, with k = 2. The heap stand holds cards for the points, and the farthest point sits on top. Push -18 for [3, 3] and -26 for [5, -1]. Push -20 for [-2, 4], and now the stand has 3 cards, which is too many. Pop -26, so [5, -1] leaves from the top. The stand keeps -20 for [-2, 4] on top and -18 for [3, 3] below, so the answer is [[-2, 4], [3, 3]]. We store -dist, so the farthest point sits on top and leaves first." width="1400" height="933" loading="lazy">
 <p>We used the same negative trick in Last Stone Weight.</p>
 <p>Each heap item is a tuple <code>(-dist, x, y)</code>. Python compares the first values first. So <code>-dist</code> decides the order.</p>
@@ -238,7 +266,7 @@ if len(self.heap) &gt; self.k:
 </section>
 
 <section class="lsn-part">
-<span class="lsn-tag">Part 3 of 3</span>
+<span class="lsn-tag">Part 4 of 4</span>
 <h4>Can you write it without looking?</h4>
 <div class="lv-tabs" role="tablist">
 <button type="button" class="on" data-lv="3">From blank</button><button type="button" data-lv="2">Fill the gaps</button>
@@ -281,7 +309,7 @@ if len(heap) &gt; k:
 <script type="application/json" class="lsn-cfg">{"need": ["findKthLargest"], "tests": [{"steps": [["findKthLargest([3, 2, 1, 5, 6, 4], 2)", 5]]}, {"steps": [["findKthLargest([3, 2, 3, 1, 2, 4, 5, 5, 6], 4)", 4]], "hint": "Repeated numbers still count. Check whether your code wrongly skips a number it has seen before."}, {"steps": [["findKthLargest([1], 1)", 1]]}, {"steps": [["findKthLargest([2, 1], 2)", 1]], "hint": "Check whether you pop when the heap is full or only when it is too large."}, {"steps": [["findKthLargest([7, 6, 5, 4, 3, 2, 1], 5)", 3]], "hint": "Check whether you pop when the heap is full or only when it is too large."}, {"steps": [["findKthLargest([-1, -1], 2)", -1]], "hint": "Repeated numbers still count. Check whether your code wrongly skips a number it has seen before."}, {"steps": [["findKthLargest([5, 5, 5], 1)", 5]]}], "start": "import heapq\n\ndef findKthLargest(nums, k):\n    # 1. Make an empty heap.\n\n    # 2. For each num, push it.\n\n        # 3. If the heap has more than k,\n        #    pop the smallest.\n\n    # 4. Return the top, heap[0].\n", "before": ["import heapq\n\ndef findKthLargest(nums, k):\n    heap = []\n    for num in nums:\n"], "after": "    return heap[0]\n", "keys": [["heap[0]"], ["num"], ["heapq.heappush(", "heapq.heappush("], ["heapq.heappop(", "heapq.heappop("], ["len(", "len("], ["while", "while "]]}</script>
 
 <section class="lsn-part lsn-easy">
-<span class="lsn-tag">Part 1 of 3</span>
+<span class="lsn-tag">Part 1 of 4</span>
 <h4>What are we trying to find?</h4>
 <img class="lsn-pic" src="heap/images/panels/p215_kth_largest_array_question.webp" alt="What is the question? We have nums = [3, 2, 1, 5, 6, 4] and k = 2. Lined up from biggest to smallest, the numbers are 6, 5, 4, 3, 2, 1. The 1st largest is 6 and the 2nd largest is 5. Find the k-th largest number. Here k = 2, so the output is 5." width="1400" height="933" loading="lazy">
 <p>Return the <code>k</code>-th largest number in <code>nums</code>. The largest number is the 1st largest, the next one is the 2nd largest, and so on. In the picture, 6 is the 1st largest and 5 is the 2nd, so the answer is 5.</p>
@@ -289,8 +317,17 @@ if len(heap) &gt; k:
 </section>
 
 <section class="lsn-part lsn-easy">
-<span class="lsn-tag">Part 2 of 3</span>
+<span class="lsn-tag">Part 2 of 4</span>
+<h4>What is the simple way, and what does it cost?</h4>
+<p>The simple way sorts <code>nums</code> from biggest to smallest and returns the number at place <code>k</code>. Sorting [3, 2, 1, 5, 6, 4] gives [6, 5, 4, 3, 2, 1], and the 2nd number is 5. Sorting is a fine first answer.</p>
+<p>But sorting puts all 6 numbers in order when we only need the top 2. With a million numbers and <code>k</code> = 2, we still order the whole million. Interviewers often ask for a way that does less work, so we keep only the <code>k</code> biggest numbers seen so far.</p>
+</section>
+
+<section class="lsn-part lsn-easy">
+<span class="lsn-tag">Part 3 of 4</span>
 <h4>How do we find it without sorting?</h4>
+<p>A heap is a list that Python keeps in a special order, so the smallest item always sits at <code>heap[0]</code>, the top. Python's <code>heapq</code> gives us <code>heappush</code> to add an item and <code>heappop</code> to remove the top. Each call takes about log k steps when the heap holds <code>k</code> items.</p>
+<p>The <code>k</code>-th largest is the smallest of the <code>k</code> biggest numbers. In our example, the 2 biggest are 6 and 5, and the smaller one, 5, is the answer. So we keep the <code>k</code> biggest numbers in a heap, with the smallest of them on top. When a push makes the heap hold more than <code>k</code> numbers, we pop the top, because that number is too small to be the answer.</p>
 <img class="lsn-pic" src="heap/images/panels/p215_kth_largest_array_v_1.webp" alt="A stand that keeps the 2 biggest. We have nums = [3, 2, 1, 5, 6, 4] and k = 2. The heap stand has 2 spots, and the smaller ball sits on top. Push 3 and 2, so the stand holds 2 on top of 3. Push 1 and pop 1, so 2 and 3 stay. Push 5 and pop 2, so 3 and 5 stay. Push 6 and pop 3, so 5 and 6 stay. Push 4 and pop 4, so 5 and 6 stay. The top ball is heap[0] = 5, the 2nd largest. When the stand has too many balls, the smallest leaves." width="1400" height="933" loading="lazy">
 <p>We used the same idea in Kth Largest Element in a Stream.</p>
 <p>Tap Build it to see how I would write and explain this in an interview.</p>
@@ -299,7 +336,7 @@ if len(heap) &gt; k:
 </section>
 
 <section class="lsn-part">
-<span class="lsn-tag">Part 3 of 3</span>
+<span class="lsn-tag">Part 4 of 4</span>
 <h4>Can you write it without looking?</h4>
 <div class="lv-tabs" role="tablist">
 <button type="button" class="on" data-lv="3">From blank</button><button type="button" data-lv="2">Fill the gaps</button>
@@ -347,12 +384,15 @@ if len(heap) &gt; k:
 <section class="lsn-part lsn-hard">
 <span class="lsn-tag">Part 2 of 3</span>
 <h4>Which task should run next?</h4>
+<p>At each slot, we pick one task that is allowed to run. The best pick is the task with the most copies left, because that task is the hardest to fit in later. If we ran B and C first, all four A copies would be left for the end, and the schedule would take 12 slots instead of 10.</p>
+<img class="lsn-pic" src="heap/images/panels/p621_task_scheduler_v_order.webp" alt="Which task goes first? Two rows of slots for tasks A, A, A, A, B, B, C with n = 2. The top row runs B and C first: B, C, A, B, idle, A, idle, idle, A, idle, idle, A, which takes 12 slots. The bottom row runs the task with the most copies first: A, B, C, A, B, idle, A, idle, idle, A, which takes 10 slots, the answer. Run the task with the most copies first." width="1400" height="933" loading="lazy">
+<p>The simple way looks through every letter at each slot to find the biggest count that is allowed to run. A heap does that pick for us. A heap is a list that Python keeps in a special order, so the smallest item always sits at <code>heap[0]</code>, the top. The call <code>heapq.heappop</code> removes the top in about log n steps. Python's <code>heapq</code> only puts the smallest item on top, so we push each count with a minus sign. The counts 4, 2 and 1 become -4, -2 and -1, and -4 is the smallest, so A comes out first. The heap holds only counts, because the letters do not matter.</p>
 <img class="lsn-pic" src="heap/images/panels/p621_task_scheduler_v_1.webp" alt="What do we store? Seven task cards A, A, A, A, B, B, C are sorted into three stacks: 4 A cards, 2 B cards and 1 C card, so counts = {A: 4, B: 2, C: 1}. The stacks go onto the light-blue glass heap stand. The A stack sits alone on the glowing top tier with the tag -4. B with -2 and C with -1 sit on the tier below. Python stores -4, so the tallest stack comes out first." width="1400" height="933" loading="lazy">
+<p>We count the slots with a variable named <code>time</code>, which goes up by 1 at the start of every slot. After A runs at time 1, A still has 3 copies, the most of any task. If we pushed -3 straight back into the heap, A would come out on top again at time 2, but A must wait 2 slots first. So a task that just ran leaves the heap and sits in a dictionary called <code>waiting</code> until it is allowed again.</p>
+<p>The key is <code>ready</code>, the first time the task can run again, and the value is <code>left</code>, the number of copies left. We compute <code>ready</code> as <code>time + n + 1</code>. When A runs at time 1, slots 2 and 3 are its 2 waiting slots, so A is ready at 1 + 2 + 1 = 4.</p>
 <img class="lsn-pic" src="heap/images/panels/p621_task_scheduler_v_2.webp" alt="One slot. At time = 1 the pup puts an A card into slot 1, so A runs. B with -2 now sits on the top tier of the heap stand, and C with -1 sits below it. A has 3 cards left, and its stack sits on the lavender waiting bench under an alarm clock showing 4, because 1 + 2 + 1 = 4. So waiting = {4: 3}. A runs, then sits on the bench until time 4." width="1400" height="933" loading="lazy">
 <img class="lsn-pic" src="heap/images/panels/p621_task_scheduler_v_3.webp" alt="The clock rings. At time = 4 the clock above A shows 4 and rings. The A stack with 3 cards hops off the waiting bench and goes back onto the top tier of the heap stand as -3, ready to run in slot 4. B, with 1 card, still waits on the bench under its clock showing 5. Slots 1, 2 and 3 already hold A, B and C. Ready again means back on the heap." width="1400" height="933" loading="lazy">
 <img class="lsn-pic" src="heap/images/panels/p621_task_scheduler_v_4.webp" alt="Nothing is ready. At time = 6 the heap stand is empty, so heap = []. The A stack with 2 cards sits on the waiting bench under a clock showing 7, so waiting = {7: 2}. Slots 1 to 5 hold A, B, C, A, B, and slot 6 stays idle. An empty heap means the slot is idle, and the idle slot still counts." width="1400" height="933" loading="lazy">
-<p>We run the task with the most copies left, because that task is the hardest to fit in later. The heap holds only counts, because the letters do not matter.</p>
-<p>After a task runs, we put it in a dictionary called <code>waiting</code>. The key is <code>ready</code>, the first time the task can run again. We compute <code>ready</code> as <code>time + n + 1</code>. The value is <code>left</code>, the number of copies left.</p>
 
 <p>Pick an example. Then open the three tabs in order.</p>
 
@@ -420,7 +460,7 @@ if heap:
 <script type="application/json" class="lsn-cfg">{"need": ["Twitter"], "tests": [{"steps": [["t = Twitter()", null], ["t.postTweet(1, 5)", null], ["t.getNewsFeed(1)", [5]], ["t.follow(1, 2)", null], ["t.postTweet(2, 6)", null], ["t.getNewsFeed(1)", [6, 5]], ["t.unfollow(1, 2)", null], ["t.getNewsFeed(1)", [5]]]}, {"steps": [["t = Twitter()", null], ["for i in range(1, 12):\n    t.postTweet(1, i)", null], ["t.getNewsFeed(1)", [11, 10, 9, 8, 7, 6, 5, 4, 3, 2]]], "hint": "Check the maximum feed size and the order of the tweets."}, {"steps": [["t = Twitter()", null], ["t.getNewsFeed(1)", []]]}, {"steps": [["t = Twitter()", null], ["t.postTweet(1, 7)", null], ["t.unfollow(1, 2)", null], ["t.getNewsFeed(1)", [7]]], "hint": "Think about what should happen when the user does not follow that person."}, {"steps": [["t = Twitter()", null], ["t.postTweet(1, 7)", null], ["t.follow(1, 1)", null], ["t.getNewsFeed(1)", [7]]], "hint": "Check whether a tweet can appear twice when a user follows themselves."}, {"steps": [["t = Twitter()", null], ["t.follow(1, 2)", null], ["t.postTweet(1, 5)", null], ["t.getNewsFeed(2)", []], ["t.postTweet(2, 6)", null], ["t.getNewsFeed(1)", [6, 5]]], "hint": "Check whose following set should change. A follow should not change both users."}, {"steps": [["t = Twitter()", null], ["t.postTweet(1, 1)", null], ["t.postTweet(2, 2)", null], ["t.postTweet(3, 3)", null], ["t.follow(1, 2)", null], ["t.follow(1, 3)", null], ["t.postTweet(1, 4)", null], ["t.getNewsFeed(1)", [4, 3, 2, 1]], ["t.unfollow(1, 3)", null], ["t.getNewsFeed(1)", [4, 2, 1]]]}, {"steps": [["t = Twitter()", null], ["t.postTweet(1, 5)", null], ["t.postTweet(2, 3)", null], ["t.postTweet(1, 101)", null], ["t.postTweet(2, 13)", null], ["t.postTweet(2, 10)", null], ["t.postTweet(1, 2)", null], ["t.postTweet(1, 94)", null], ["t.postTweet(2, 505)", null], ["t.postTweet(1, 333)", null], ["t.postTweet(2, 22)", null], ["t.postTweet(1, 11)", null], ["t.postTweet(1, 205)", null], ["t.postTweet(2, 203)", null], ["t.postTweet(1, 201)", null], ["t.postTweet(1, 213)", null], ["t.postTweet(1, 200)", null], ["t.postTweet(2, 202)", null], ["t.postTweet(1, 204)", null], ["t.postTweet(2, 208)", null], ["t.postTweet(2, 233)", null], ["t.postTweet(1, 222)", null], ["t.postTweet(2, 211)", null], ["t.getNewsFeed(1)", [222, 204, 200, 213, 201, 205, 11, 333, 94, 2]], ["t.follow(1, 2)", null], ["t.getNewsFeed(1)", [211, 222, 233, 208, 204, 202, 200, 213, 201, 203]]], "hint": "Check the maximum feed size and the order of the tweets."}], "start": "import heapq\n\nclass Twitter:\n    def __init__(self):\n        # 1. A time counter, and two empty\n        #    dicts, tweets and follows.\n\n    def postTweet(self, user, post):\n        # 2. Save (time, post) in the\n        #    user's list. Add 1 to time.\n\n    def getNewsFeed(self, user):\n        # 3. people = user plus followed.\n\n        # 4. Push (-time, post) for the\n        #    last 10 tweets of each person.\n\n        # 5. Pop up to 10 tweet ids.\n\n    def follow(self, user, other):\n        # 6. Add other to the user's set.\n\n    def unfollow(self, user, other):\n        # 7. Discard other from the set.\n", "before": ["import heapq\n\nclass Twitter:\n    def __init__(self):\n        self.time = 0\n        self.tweets = {}\n        self.follows = {}\n\n    def postTweet(self, user, post):\n        if user not in self.tweets:\n            self.tweets[user] = []\n        pair = (self.time, post)\n        self.tweets[user].append(pair)\n        self.time += 1\n\n    def getNewsFeed(self, user):\n        people = {user}\n        if user in self.follows:\n            people |= self.follows[user]\n        heap = []\n", "\n"], "after": "        return feed\n\n    def follow(self, user, other):\n        if user not in self.follows:\n            self.follows[user] = set()\n        followed = self.follows[user]\n        followed.add(other)\n\n    def unfollow(self, user, other):\n        if user not in self.follows:\n            return\n        followed = self.follows[user]\n        followed.discard(other)\n", "keys": [["self.tweets"], ["self.follows"], ["self.time"], ["people"], ["followed"], ["feed"], ["post"], ["discard(", "discard("], ["[-10:]"], ["continue"], ["heapq.heappush(", "heapq.heappush("], ["heapq.heappop(", "heapq.heappop("], ["len(", "len("], ["while", "while "]]}</script>
 
 <section class="lsn-part lsn-easy">
-<span class="lsn-tag">Part 1 of 4</span>
+<span class="lsn-tag">Part 1 of 5</span>
 <h4>What are we trying to build?</h4>
 <img class="lsn-pic" src="heap/images/panels/p355_design_twitter_v_q.webp" alt="What are we building? User 1 posts tweet 5 with postTweet(1, 5), and getNewsFeed(1) shows [5]. Then a rope ties user 1 to user 2 with follow(1, 2), and user 2 posts tweet 6 with postTweet(2, 6). Now getNewsFeed(1) shows [6, 5], newest first. Then the pup cuts the rope with unfollow(1, 2), and getNewsFeed(1) shows [5] again. The calls postTweet, follow and unfollow return null. The feed shows the 10 newest tweets from me and the people I follow." width="1400" height="933" loading="lazy">
 <p>We build a small version of Twitter with four actions. Each user and each tweet has a number as its id.</p>
@@ -430,19 +470,29 @@ if heap:
 </section>
 
 <section class="lsn-part lsn-easy">
-<span class="lsn-tag">Part 2 of 4</span>
+<span class="lsn-tag">Part 2 of 5</span>
 <h4>How do we save tweets and follows?</h4>
+<p>The feed must show the newest tweets first, so we need to know which tweet is newer. The tweet id cannot tell us, because a user can post tweet 9 first and tweet 2 later. So we keep our own counter, <code>self.time</code>. Each new tweet gets the current count, and then the count goes up by 1. A bigger time means a newer tweet.</p>
+<p>We also need two dictionaries. The dictionary <code>self.tweets</code> maps each user to a list of that user's tweets, oldest first. The dictionary <code>self.follows</code> maps each user to the set of people that user follows.</p>
 <img class="lsn-pic" src="heap/images/panels/p355_design_twitter_v_1.webp" alt="How do we save tweets? A stamping machine labelled self.time counts 0, 1, 2 and stamps each tweet with the next number. Mailbox user 1 holds the card (0, 5), and mailbox user 2 holds the card (1, 6). Each card is (time, tweet id), so self.tweets = {1: [(0, 5)], 2: [(1, 6)]}. A rope from user 1 to user 2 shows self.follows = {1: {2}}, the set of people user 1 follows. A bigger time means a newer tweet." width="1400" height="933" loading="lazy">
 <p>Each value in <code>self.follows</code> is a set, so follow and unfollow take O(1) time.</p>
 <p>A user may not be in a dictionary yet. So we check before we use the user's list or set. If the list or set is missing, we make an empty one.</p>
 
 </section>
 
+<section class="lsn-part lsn-easy">
+<span class="lsn-tag">Part 3 of 5</span>
+<h4>What is the simple way to build the feed, and what does it cost?</h4>
+<p>The simple way gathers every tweet from the user and from each person the user follows into one list. Then it sorts the list by time, newest first, and keeps the first 10.</p>
+<p>That works, but it sorts far more tweets than it shows. If user 1 follows 2 people and each of the 3 has posted 1,000 tweets, we sort 3,000 tweets to show 10.</p>
+<p>We can cut this work in two ways. First, each person's list is oldest first, so only the last 10 tweets of each person can make the feed. With 3 people, that is at most 30 tweets. Second, we never need those 30 tweets in full order. We only need the newest one, then the next newest, until we have 10.</p>
+</section>
+
 <section class="lsn-part lsn-hard">
-<span class="lsn-tag">Part 3 of 4</span>
+<span class="lsn-tag">Part 4 of 5</span>
 <h4>How do we build the feed?</h4>
+<p>A heap hands us the next newest tweet each time. A heap is a list that Python keeps in a special order, so the smallest item always sits at <code>heap[0]</code>, the top. The call <code>heapq.heappop</code> removes the top. Python's <code>heapq</code> only puts the smallest item on top, but we want the biggest time on top. So we push <code>(-time, tweet)</code>. Python compares tuples by their first value, so -time decides the order. Tweet 6 has time 1 and becomes (-1, 6). Tweet 5 has time 0 and becomes (0, 5). The value -1 is smaller than 0, so tweet 6 comes out first.</p>
 <img class="lsn-pic" src="heap/images/panels/p355_design_twitter_v_2.webp" alt="How do we build the feed? We gather user 1 and everyone user 1 follows, so people = {1, 2}. The cards from both mailboxes go onto the heap stand as (-time, tweet). The newest card, (-1, 6), sits on the top tier, and (0, 5) sits below it, because -time puts the newest on top. The pup pops up to 10 cards from the top, so the phone shows feed = [6, 5]. Push (-time, tweet) and pop the newest first." width="1400" height="933" loading="lazy">
-<p>Each person's tweets are stored oldest first, so only the last 10 can appear in the feed.</p>
 <p>The line <code>people |= self.follows[user]</code> adds everyone the user follows to the set <code>people</code>. The set <code>people</code> is a new set, so the line does not change <code>self.follows</code>.</p>
 
 <div class="mcq">
@@ -466,7 +516,7 @@ if heap:
 </section>
 
 <section class="lsn-part">
-<span class="lsn-tag">Part 4 of 4</span>
+<span class="lsn-tag">Part 5 of 5</span>
 <h4>Can you write it without looking?</h4>
 <div class="lv-tabs" role="tablist">
 <button type="button" class="on" data-lv="3">From blank</button><button type="button" data-lv="2">Fill the gaps</button>
@@ -514,7 +564,7 @@ while heap and len(feed) &lt; 10:
 <script type="application/json" class="lsn-cfg">{"need": ["MedianFinder"], "tests": [{"steps": [["m = MedianFinder()", null], ["m.addNum(1)", null], ["m.addNum(2)", null], ["m.findMedian()", 1.5], ["m.addNum(3)", null], ["m.findMedian()", 2]], "cmp": "float", "hint": "Check what happens when the heaps have the same size. Remember how values are stored in small."}, {"steps": [["m = MedianFinder()", null], ["m.addNum(5)", null], ["m.findMedian()", 5]], "cmp": "float", "hint": "After adding one number, check which heap holds it."}, {"steps": [["m = MedianFinder()", null], ["m.addNum(5)", null], ["m.findMedian()", 5], ["m.addNum(4)", null], ["m.findMedian()", 4.5], ["m.addNum(3)", null], ["m.findMedian()", 4], ["m.addNum(2)", null], ["m.findMedian()", 3.5], ["m.addNum(1)", null], ["m.findMedian()", 3]], "cmp": "float", "hint": "Check where every new number goes first. The order of the two halves depends on that step."}, {"steps": [["m = MedianFinder()", null], ["m.addNum(-1)", null], ["m.addNum(-2)", null], ["m.findMedian()", -1.5], ["m.addNum(-3)", null], ["m.findMedian()", -2]], "cmp": "float", "hint": "Check what happens when the heaps have the same size. Remember how values are stored in small."}, {"steps": [["m = MedianFinder()", null], ["m.addNum(2)", null], ["m.addNum(2)", null], ["m.addNum(2)", null], ["m.findMedian()", 2]], "cmp": "float"}, {"steps": [["m = MedianFinder()", null], ["m.addNum(6)", null], ["m.findMedian()", 6], ["m.addNum(10)", null], ["m.findMedian()", 8], ["m.addNum(2)", null], ["m.findMedian()", 6], ["m.addNum(6)", null], ["m.findMedian()", 6], ["m.addNum(5)", null], ["m.findMedian()", 6], ["m.addNum(0)", null], ["m.findMedian()", 5.5]], "cmp": "float", "hint": "Check where every new number goes first. The order of the two halves depends on that step."}, {"steps": [["m = MedianFinder()", null], ["m.addNum(1)", null], ["m.addNum(6)", null], ["m.addNum(2)", null], ["m.addNum(5)", null], ["m.findMedian()", 3.5], ["m.addNum(3)", null], ["m.findMedian()", 3], ["m.addNum(4)", null], ["m.findMedian()", 3.5]], "cmp": "float", "hint": "Check where every new number goes first. The order of the two halves depends on that step."}], "start": "import heapq\n\nclass MedianFinder:\n    def __init__(self):\n        # 1. Make two empty heaps, small\n        #    (stores negatives) and large.\n\n    def addNum(self, num):\n        # 2. Push -num into small. Move the\n        #    biggest of small into large.\n\n        # 3. If large has more, move its\n        #    smallest back to small.\n\n    def findMedian(self):\n        # 4. If small has more, return its top.\n        #    Else average the two tops.\n", "before": ["import heapq\n\nclass MedianFinder:\n    def __init__(self):\n        # small is a max-heap\n        self.small = []\n        self.large = []\n\n    def addNum(self, num):\n", "\n    def findMedian(self):\n"], "after": "", "keys": [["self.small"], ["self.large"], ["small"], ["large"], ["top"], ["-small[0]"], ["large[0]"], ["/ 2", " / 2"], ["heapq.heappush(", "heapq.heappush("], ["heapq.heappop(", "heapq.heappop("], ["len(", "len("], ["while", "while "]]}</script>
 
 <section class="lsn-part lsn-easy">
-<span class="lsn-tag">Part 1 of 4</span>
+<span class="lsn-tag">Part 1 of 5</span>
 <h4>What are we trying to build?</h4>
 <img class="lsn-pic" src="heap/images/panels/p295_median_stream_v_q.webp" alt="What is the question? The pup drops balls onto a shelf. After addNum(1) and addNum(2), the shelf holds 1 and 2, and findMedian() returns 1.5, because (1 + 2) / 2 = 1.5. After addNum(3), the shelf holds 1, 2 and 3, and findMedian() returns 2, the middle ball. With an even count, average the two middle numbers. With an odd count, use the middle number." width="1400" height="933" loading="lazy">
 <p>We build a class with two actions. The action <code>addNum(num)</code> adds one number. The action <code>findMedian()</code> returns the middle value of all the numbers added so far.</p>
@@ -522,15 +572,26 @@ while heap and len(feed) &lt; 10:
 </section>
 
 <section class="lsn-part lsn-easy">
-<span class="lsn-tag">Part 2 of 4</span>
+<span class="lsn-tag">Part 2 of 5</span>
+<h4>What is the simple way, and why is it slow?</h4>
+<p>The simple way keeps all the numbers in one sorted list. Each <code>addNum</code> puts the new number in its place, and <code>findMedian</code> reads the middle of the list. After adding 1, 2 and 3, the list is [1, 2, 3], and the middle is 2.</p>
+<img class="lsn-pic" src="heap/images/panels/p295_median_stream_v_simple.webp" alt="The simple way. The shelf holds the sorted balls 1, 2, 4 and 5. A call to addNum(3) drops ball 3 into the gap between 2 and 4, and the pup pushes 4 and 5 one spot to the right to make room. Now the shelf holds 1, 2, 3, 4 and 5, with the new 3 in the middle. Every add in the middle shifts the bigger numbers." width="1400" height="933" loading="lazy">
+<p>Reading the middle is fast, but adding is slow. Suppose the list is [1, 2, 4, 5] and we add 3. The 3 goes in the middle, so 4 and 5 each shift one spot to the right. With 100,000 numbers, one add in the middle shifts about 50,000 numbers, and we may add 100,000 times.</p>
+<p>So we want both actions to be fast, and the median gives us a clue. With 1, 2, 3, 4 and 5, the median 3 is the biggest number of the smaller half, 1, 2 and 3. With 1, 2, 3 and 4, the median uses 2, the biggest of the smaller half, and 3, the smallest of the bigger half. So we never need the full order. We only need the biggest number of the smaller half and the smallest number of the bigger half.</p>
+</section>
+
+<section class="lsn-part lsn-easy">
+<span class="lsn-tag">Part 3 of 5</span>
 <h4>Why do we use two heaps?</h4>
+<p>A heap gives us exactly that kind of number fast. A heap is a list that Python keeps in a special order, so the smallest item always sits at <code>heap[0]</code>, the top. Reading the top takes one step. Adding with <code>heapq.heappush</code> or removing the top with <code>heapq.heappop</code> takes about log n steps, which is about 17 steps for 100,000 numbers.</p>
+<p>So we keep the two halves in two heaps. The heap <code>large</code> holds the bigger half, with its smallest number on top. The heap <code>small</code> holds the smaller half, and we want its biggest number on top.</p>
 <img class="lsn-pic" src="heap/images/panels/p295_median_stream_v_a.webp" alt="Why two heaps? The numbers 1 to 5 sit on two heap stands with the pup between them. The stand small holds 3, 2 and 1 with the biggest, 3, on its top tier. The code stores them as -3, -2 and -1. The stand large holds 4 and 5 with the smallest, 4, on its top tier. The two tops, 3 and 4, are the middle numbers." width="1400" height="933" loading="lazy">
-<p>Reading a top takes O(1) time.</p>
-<p>Python only has a min-heap, so <code>small</code> stores negative numbers. We used the same trick in Last Stone Weight.</p>
+<p>Python's <code>heapq</code> only puts the smallest number on top. So <code>small</code> stores each number with a minus sign. The numbers 3, 2 and 1 become -3, -2 and -1, and -3 is the smallest, so 3 sits on top. We used the same trick in Last Stone Weight.</p>
+<p>We keep two rules. First, every number in <code>small</code> is at most every number in <code>large</code>. Second, <code>small</code> holds the same count as <code>large</code>, or one more. With an odd count, the median is the top of <code>small</code>. With an even count, the median is the average of the two tops.</p>
 </section>
 
 <section class="lsn-part lsn-hard">
-<span class="lsn-tag">Part 3 of 4</span>
+<span class="lsn-tag">Part 4 of 5</span>
 <h4>Can we write the class one part at a time?</h4>
 <div class="stages" data-label="Stage">
 <p class="idea-sub">We will add 1, 2 and 3 and watch both heaps. Each stage adds one part of the code.</p>
@@ -549,6 +610,7 @@ while heap and len(feed) &lt; 10:
 </div>
 </div>
 <div class="stage" data-title="Pass each number through small">
+<p>Where should a new number go? Say <code>small</code> holds 1, <code>large</code> holds 2, and we add 3. If we pushed 3 into <code>small</code> and stopped, <code>small</code> would hold 3, which is bigger than the 2 in <code>large</code>, and the first rule would break. So we push the new number into <code>small</code> first, and then move the biggest number of <code>small</code> to <code>large</code>. That biggest number is the only one that can be too big for <code>small</code>.</p>
 <img class="lsn-pic" src="heap/images/panels/p295_median_stream_v_b.webp" alt="Every number passes through small. Call addNum(3). Before the call, the stand small holds 1 and the stand large holds 2. Ball 3 drops onto small, so small has 3 on top of 1. Then 3, the biggest in small, crosses the bridge to large. Now small holds 1, and large holds 2 on top of 3. The biggest of small always crosses to large." width="1400" height="933" loading="lazy">
 <p>The names <code>small</code> and <code>large</code> point to the same lists as <code>self.small</code> and <code>self.large</code>. So a push changes the real heaps. The shorter names just make the code easier to read.</p>
 
@@ -562,6 +624,7 @@ while heap and len(feed) &lt; 10:
 </div>
 </div>
 <div class="stage" data-title="Keep the sizes balanced">
+<p>Every new number now lands in <code>large</code> for a moment, so <code>large</code> can get too big. In the last stage, addNum(3) left <code>small</code> holding 1 and <code>large</code> holding 2 and 3. The second rule says <code>small</code> must hold the same count or one more, so we move the top of <code>large</code> back to <code>small</code>.</p>
 <img class="lsn-pic" src="heap/images/panels/p295_median_stream_v_c.webp" alt="Keep the stands even. Now small holds 1, and large holds 2 and 3, so len(large) > len(small). Ball 2, the top of large, moves back across the bridge to small. Now small holds 2 on top of 1, and large holds 3. Only small may hold one extra ball." width="1400" height="933" loading="lazy">
 <div class="grow" data-new="16-19"><pre class="snip"><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">import</span> heapq</span><span class="snl" style="padding-left:2ch;text-indent:-2ch"></span><span class="snl" style="padding-left:2ch;text-indent:-2ch"><span class="k-kw">class</span> <span class="k-def">MedianFinder</span>:</span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">def</span> <span class="k-def">__init__</span>(<wbr><span class="k-self">self</span>):</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-com"># small is a max-heap</span></span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-self">self</span>.small = []</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-self">self</span>.large = []</span><span class="snl" style="padding-left:2ch;text-indent:-2ch"></span><span class="snl" style="padding-left:4ch;text-indent:-4ch">  <span class="k-kw">def</span> <span class="k-def">addNum</span>(<wbr><span class="k-self">self</span>, num):</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    small = <span class="k-self">self</span>.small</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    large = <span class="k-self">self</span>.large</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-com"># pass num through small</span></span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    heapq.heappush(<wbr>small, -num)</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    top = -heapq.heappop(<wbr>small)</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    heapq.heappush(<wbr>large, top)</span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-com"># large may not be bigger</span></span><span class="snl" style="padding-left:6ch;text-indent:-6ch">    <span class="k-kw">if</span> <span class="k-bi">len</span>(<wbr>large) &gt; <span class="k-bi">len</span>(<wbr>small):</span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      top = heapq.heappop(<wbr>large)</span><span class="snl" style="padding-left:8ch;text-indent:-8ch">      heapq.heappush(<wbr>small, -top)</span></pre></div>
 <div class="mcq">
@@ -590,7 +653,7 @@ while heap and len(feed) &lt; 10:
 </section>
 
 <section class="lsn-part">
-<span class="lsn-tag">Part 4 of 4</span>
+<span class="lsn-tag">Part 5 of 5</span>
 <h4>Can you write it without looking?</h4>
 <div class="lv-tabs" role="tablist">
 <button type="button" class="on" data-lv="3">From blank</button><button type="button" data-lv="2">Fill the gaps</button>

@@ -2431,9 +2431,18 @@ false
 ]
 ],
 "code": "def window_max(nums, k):\n    queue = deque()\n    out = []\n    for right in range(len(nums)):\n        new = nums[right]\n        while queue:\n            back = nums[queue[-1]]\n            if back >= new:\n                break\n            queue.pop()\n        queue.append(right)\n        if queue[0] <= right - k:\n            queue.popleft()\n        if right >= k - 1:\n            out.append(nums[queue[0]])\n    return out",
-"task": "`window_max(nums, k)` slides a window of `k` numbers that sit next to each other along `nums`, and returns the biggest number in each window. For example, `window_max([5, 1, 3], 2)` gives `[5, 3]`, because window [5, 1] has 5 as its biggest and window [1, 3] has 3. Dry-run `window_max([3, 1, 2], 2)` by hand. Each chip in the `# right =` row under the loop line is one pass of the loop. Pick a pass, then type in each gold box the value of its name right after the line above the box runs.",
+"task": "`window_max(nums, k)` slides a window of `k` numbers that sit next to each other along `nums`, and returns the biggest number in each window. For example, `window_max([5, 1, 3], 2)` gives `[5, 3]`, because window [5, 1] has 5 as its biggest and window [1, 3] has 3. Dry-run `window_max([3, 1, 2], 2)` by hand. Under the call is a trace table, written as comment lines. Each row is one pass of the loop, and its first column already shows `right` for that pass. Replace each `_` in a row with the value of `queue` at the end of that pass, after every line inside the loop has run. In the example, `right` is `0` in the first pass, and at its end `queue` is `[0]`, so the first row would read `# 0  [0]`. The last line, `# out = _`, asks for the whole `out` list once the loop has finished, so `out` gets no column. Write each value the way Python prints it, like `[0, 1]`. Spaces and quotes do not matter.",
 "why": "`queue` holds positions, not numbers. At `right = 2`, the 2 pushes out position 1 from the back, and position 0 drops off the front because it left the window, so `queue` ends as `[2]`.",
 "domain": "Algorithms",
+"cols": [
+"queue"
+],
+"final": [
+"out"
+],
+"finalValues": {
+"out": "[3, 2]"
+},
 "passes": [
 {
 "loop": "0",
@@ -2441,6 +2450,9 @@ false
 "11": [
 "[0]"
 ]
+},
+"end": {
+"queue": "[0]"
 }
 },
 {
@@ -2452,6 +2464,9 @@ false
 "15": [
 "[3]"
 ]
+},
+"end": {
+"queue": "[0, 1]"
 }
 },
 {
@@ -2469,9 +2484,44 @@ false
 "15": [
 "[3, 2]"
 ]
+},
+"end": {
+"queue": "[2]"
 }
 }
+],
+"table": {
+"text": "# right  queue\n# 0      _\n# 1      _\n# 2      _\n# out = _",
+"answer": "# right  queue\n# 0      [0]\n# 1      [0, 1]\n# 2      [2]\n# out = [3, 2]",
+"cols": [
+"right",
+"queue"
+],
+"heads": [
+"right",
+"queue"
+],
+"rows": [
+[
+"0",
+"[0]"
+],
+[
+"1",
+"[0, 1]"
+],
+[
+"2",
+"[2]"
 ]
+],
+"final": [
+[
+"out",
+"[3, 2]"
+]
+]
+}
 },
 {
 "id": "t2",
@@ -2505,9 +2555,16 @@ false
 ]
 ],
 "code": "def longest_unique(s):\n    seen = set()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        while s[right] in seen:\n            seen.remove(s[left])\n            left += 1\n        seen.add(s[right])\n        size = right - left + 1\n        best = max(best, size)\n    return best",
-"task": "`longest_unique(s)` returns the length of the longest stretch of letters that sit next to each other in `s` with no letter twice. For example, `longest_unique('aab')` gives `2`, because \"ab\" has no repeat and \"aab\" repeats a. Dry-run `longest_unique('abcb')` by hand. Each chip in the `# right =` row under the loop line is one pass of the loop. Pick a pass, then type in each gold box the value of its name right after the line above the box runs.",
+"task": "`longest_unique(s)` returns the length of the longest stretch of letters that sit next to each other in `s` with no letter twice. For example, `longest_unique('aab')` gives `2`, because \"ab\" has no repeat and \"aab\" repeats a. Dry-run `longest_unique('abcb')` by hand. Under the call is a trace table, written as comment lines. Each row is one pass of the loop, and its first column already shows `right` for that pass. Replace each `_` in a row with the value of `left`, `seen` and `best` at the end of that pass, after every line inside the loop has run. In the example, `right` is `0` in the first pass, and at its end `left` is `0`, `seen` is `{'a'}` and `best` is `1`, so the first row would read `# 0  0  {'a'}  1`. Some headers are short so the table fits on a phone. The top comment lines say what each one means, so `r` is `right` and `l` is `left`. Write each value the way Python prints it, like `[0, 1]`. Spaces and quotes do not matter.",
 "why": "At the second \"b\", the loop removes \"a\" and then the first \"b\", so `left` jumps from 0 to 2. One removal is not enough, which is why the code uses `while`.",
 "domain": "Algorithms",
+"cols": [
+"left",
+"seen",
+"best"
+],
+"final": [],
+"finalValues": {},
 "passes": [
 {
 "loop": "0",
@@ -2518,6 +2575,11 @@ false
 "11": [
 "1"
 ]
+},
+"end": {
+"left": "0",
+"seen": "{'a'}",
+"best": "1"
 }
 },
 {
@@ -2529,6 +2591,11 @@ false
 "11": [
 "2"
 ]
+},
+"end": {
+"left": "0",
+"seen": "{'a', 'b'}",
+"best": "2"
 }
 },
 {
@@ -2540,6 +2607,11 @@ false
 "11": [
 "3"
 ]
+},
+"end": {
+"left": "0",
+"seen": "{'a', 'b', 'c'}",
+"best": "3"
 }
 },
 {
@@ -2559,9 +2631,57 @@ false
 "11": [
 "3"
 ]
+},
+"end": {
+"left": "2",
+"seen": "{'b', 'c'}",
+"best": "3"
 }
 }
+],
+"table": {
+"text": "# r = right, l = left\n# r l seen          best\n# 0 _ _             _\n# 1 _ _             _\n# 2 _ _             _\n# 3 _ _             _",
+"answer": "# r = right, l = left\n# r l seen          best\n# 0 0 {'a'}         1\n# 1 0 {'a','b'}     2\n# 2 0 {'a','b','c'} 3\n# 3 2 {'b','c'}     3",
+"cols": [
+"right",
+"left",
+"seen",
+"best"
+],
+"heads": [
+"r",
+"l",
+"seen",
+"best"
+],
+"rows": [
+[
+"0",
+"0",
+"{'a'}",
+"1"
+],
+[
+"1",
+"0",
+"{'a','b'}",
+"2"
+],
+[
+"2",
+"0",
+"{'a','b','c'}",
+"3"
+],
+[
+"3",
+"2",
+"{'b','c'}",
+"3"
 ]
+],
+"final": []
+}
 },
 {
 "id": "t3",
@@ -2595,9 +2715,17 @@ false
 ]
 ],
 "code": "def longest_replace(s, k):\n    count = Counter()\n    left = 0\n    best = 0\n    for right in range(len(s)):\n        count[s[right]] += 1\n        size = right - left + 1\n        most = max(count.values())\n        while size - most > k:\n            count[s[left]] -= 1\n            left += 1\n            size = right - left + 1\n            most = max(count.values())\n        best = max(best, size)\n    return best",
-"task": "`longest_replace(s, k)` returns the length of the longest stretch of letters that sit next to each other in `s` and can become one letter repeated with `k` changes or fewer. For example, `longest_replace('AAB', 1)` gives `3`, because changing the B to A makes \"AAA\". Dry-run `longest_replace('ABAB', 1)` by hand. Each chip in the `# right =` row under the loop line is one pass of the loop. Pick a pass, then type in each gold box the value of its name right after the line above the box runs.",
+"task": "`longest_replace(s, k)` returns the length of the longest stretch of letters that sit next to each other in `s` and can become one letter repeated with `k` changes or fewer. For example, `longest_replace('AAB', 1)` gives `3`, because changing the B to A makes \"AAA\". Dry-run `longest_replace('ABAB', 1)` by hand. Under the call is a trace table, written as comment lines. Each row is one pass of the loop, and its first column already shows `right` for that pass. Replace each `_` in a row with the value of `count`, `most`, `left` and `best` at the end of that pass, after every line inside the loop has run. In the example, `right` is `0` in the first pass, and at its end `count` is `{'A': 1}`, `most` is `1`, `left` is `0` and `best` is `1`, so the first row would read `# 0  {'A': 1}  1  0  1`. Some headers are short so the table fits on a phone. The top comment lines say what each one means, so `r` is `right`, `m` is `most` and `l` is `left`. Write each value the way Python prints it, like `[0, 1]`. Spaces and quotes do not matter.",
 "why": "At `right = 3`, \"ABAB\" needs 2 changes, so the first \"A\" leaves: its count drops to 1 before `left` moves to 1. `best` stays 3.",
 "domain": "Algorithms",
+"cols": [
+"count",
+"most",
+"left",
+"best"
+],
+"final": [],
+"finalValues": {},
 "passes": [
 {
 "loop": "0",
@@ -2608,6 +2736,12 @@ false
 "14": [
 "1"
 ]
+},
+"end": {
+"count": "{'A': 1}",
+"most": "1",
+"left": "0",
+"best": "1"
 }
 },
 {
@@ -2619,6 +2753,12 @@ false
 "14": [
 "2"
 ]
+},
+"end": {
+"count": "{'A': 1, 'B': 1}",
+"most": "1",
+"left": "0",
+"best": "2"
 }
 },
 {
@@ -2630,6 +2770,12 @@ false
 "14": [
 "3"
 ]
+},
+"end": {
+"count": "{'A': 2, 'B': 1}",
+"most": "2",
+"left": "0",
+"best": "3"
 }
 },
 {
@@ -2647,9 +2793,64 @@ false
 "14": [
 "3"
 ]
+},
+"end": {
+"count": "{'A': 1, 'B': 2}",
+"most": "2",
+"left": "1",
+"best": "3"
 }
 }
+],
+"table": {
+"text": "# r = right, m = most,\n# l = left\n# r count         m l best\n# 0 _             _ _ _\n# 1 _             _ _ _\n# 2 _             _ _ _\n# 3 _             _ _ _",
+"answer": "# r = right, m = most,\n# l = left\n# r count         m l best\n# 0 {'A':1}       1 0 1\n# 1 {'A':1,'B':1} 1 0 2\n# 2 {'A':2,'B':1} 2 0 3\n# 3 {'A':1,'B':2} 2 1 3",
+"cols": [
+"right",
+"count",
+"most",
+"left",
+"best"
+],
+"heads": [
+"r",
+"count",
+"m",
+"l",
+"best"
+],
+"rows": [
+[
+"0",
+"{'A':1}",
+"1",
+"0",
+"1"
+],
+[
+"1",
+"{'A':1,'B':1}",
+"1",
+"0",
+"2"
+],
+[
+"2",
+"{'A':2,'B':1}",
+"2",
+"0",
+"3"
+],
+[
+"3",
+"{'A':1,'B':2}",
+"2",
+"1",
+"3"
 ]
+],
+"final": []
+}
 },
 {
 "id": "t4",
@@ -2678,9 +2879,15 @@ false
 ]
 ],
 "code": "def has_anagram(s1, s2):\n    need = Counter(s1)\n    window = Counter()\n    left = 0\n    for right in range(len(s2)):\n        window[s2[right]] += 1\n        if right - left + 1 > len(s1):\n            window[s2[left]] -= 1\n            left += 1\n        if window == need:\n            return True\n    return False",
-"task": "`has_anagram(s1, s2)` returns True when `s2` holds a stretch of letters that sit next to each other and use exactly the letters of `s1`, in any order. For example, `has_anagram('ab', 'cba')` gives `True`, because \"ba\" holds one b and one a. Dry-run `has_anagram('ab', 'aab')` by hand. Each chip in the `# right =` row under the loop line is one pass of the loop. Pick a pass, then type in each gold box the value of its name right after the line above the box runs.",
+"task": "`has_anagram(s1, s2)` returns True when `s2` holds a stretch of letters that sit next to each other and use exactly the letters of `s1`, in any order. For example, `has_anagram('ab', 'cba')` gives `True`, because \"ba\" holds one b and one a. Dry-run `has_anagram('ab', 'aab')` by hand. Under the call is a trace table, written as comment lines. Each row is one pass of the loop, and its first column already shows `right` for that pass. Replace each `_` in a row with the value of `window` and `left` at the end of that pass, after every line inside the loop has run. In the example, `right` is `0` in the first pass, and at its end `window` is `{'c': 1}` and `left` is `0`, so the first row would read `# 0  {'c': 1}  0`. Write each value the way Python prints it, like `[0, 1]`. Spaces and quotes do not matter.",
 "why": "At `right = 2`, the window \"aab\" is one letter too long, so the first \"a\" leaves and `left` moves to 1. Only then does `window` match `need`, and the function returns True inside that pass.",
 "domain": "Algorithms",
+"cols": [
+"window",
+"left"
+],
+"final": [],
+"finalValues": {},
 "passes": [
 {
 "loop": "0",
@@ -2688,6 +2895,10 @@ false
 "6": [
 "{'a': 1}"
 ]
+},
+"end": {
+"window": "{'a': 1}",
+"left": "0"
 }
 },
 {
@@ -2696,6 +2907,10 @@ false
 "6": [
 "{'a': 2}"
 ]
+},
+"end": {
+"window": "{'a': 2}",
+"left": "0"
 }
 },
 {
@@ -2710,9 +2925,45 @@ false
 "9": [
 "1"
 ]
+},
+"end": {
+"window": "{'a': 1, 'b': 1}",
+"left": "1"
 }
 }
+],
+"table": {
+"text": "# right window        left\n# 0     _             _\n# 1     _             _\n# 2     _             _",
+"answer": "# right window        left\n# 0     {'a':1}       0\n# 1     {'a':2}       0\n# 2     {'a':1,'b':1} 1",
+"cols": [
+"right",
+"window",
+"left"
+],
+"heads": [
+"right",
+"window",
+"left"
+],
+"rows": [
+[
+"0",
+"{'a':1}",
+"0"
+],
+[
+"1",
+"{'a':2}",
+"0"
+],
+[
+"2",
+"{'a':1,'b':1}",
+"1"
 ]
+],
+"final": []
+}
 },
 {
 "id": "t5",
@@ -2746,9 +2997,16 @@ false
 ]
 ],
 "code": "def shortest_len(nums, target):\n    total = 0\n    left = 0\n    best = float('inf')\n    for right in range(len(nums)):\n        total += nums[right]\n        while total >= target:\n            size = right - left + 1\n            best = min(best, size)\n            total -= nums[left]\n            left += 1\n    if best == float('inf'):\n        return 0\n    return best",
-"task": "`shortest_len(nums, target)` returns the length of the shortest stretch of numbers that sit next to each other in `nums` whose sum is `target` or more, or 0 if none reaches it. For example, `shortest_len([2, 5], 5)` gives `1`, because the single number 5 reaches 5. Dry-run `shortest_len([1, 1, 4], 4)` by hand. Each chip in the `# right =` row under the loop line is one pass of the loop. Pick a pass, then type in each gold box the value of its name right after the line above the box runs.",
+"task": "`shortest_len(nums, target)` returns the length of the shortest stretch of numbers that sit next to each other in `nums` whose sum is `target` or more, or 0 if none reaches it. For example, `shortest_len([2, 5], 5)` gives `1`, because the single number 5 reaches 5. Dry-run `shortest_len([1, 1, 4], 4)` by hand. Under the call is a trace table, written as comment lines. Each row is one pass of the loop, and its first column already shows `right` for that pass. Replace each `_` in a row with the value of `total`, `left` and `best` at the end of that pass, after every line inside the loop has run. In the example, `right` is `0` in the first pass, and at its end `total` is `2`, `left` is `0` and `best` is `inf`, so the first row would read `# 0  2  0  inf`. Write each value the way Python prints it, like `[0, 1]`. Spaces and quotes do not matter. Python prints `float('inf')` as `inf`.",
 "why": "At `right = 2`, the sum reaches 6, and the inner loop shrinks three times: sizes 3, 2 and 1 all reach 4. `best` saves each size before the shrink, so it ends at 1.",
 "domain": "Algorithms",
+"cols": [
+"total",
+"left",
+"best"
+],
+"final": [],
+"finalValues": {},
 "passes": [
 {
 "loop": "0",
@@ -2756,6 +3014,11 @@ false
 "6": [
 "1"
 ]
+},
+"end": {
+"total": "1",
+"left": "0",
+"best": "inf"
 }
 },
 {
@@ -2764,6 +3027,11 @@ false
 "6": [
 "2"
 ]
+},
+"end": {
+"total": "2",
+"left": "0",
+"best": "inf"
 }
 },
 {
@@ -2787,9 +3055,51 @@ false
 "2",
 "3"
 ]
+},
+"end": {
+"total": "0",
+"left": "3",
+"best": "1"
 }
 }
+],
+"table": {
+"text": "# right  total  left  best\n# 0      _      _     _\n# 1      _      _     _\n# 2      _      _     _",
+"answer": "# right  total  left  best\n# 0      1      0     inf\n# 1      2      0     inf\n# 2      0      3     1",
+"cols": [
+"right",
+"total",
+"left",
+"best"
+],
+"heads": [
+"right",
+"total",
+"left",
+"best"
+],
+"rows": [
+[
+"0",
+"1",
+"0",
+"inf"
+],
+[
+"1",
+"2",
+"0",
+"inf"
+],
+[
+"2",
+"0",
+"3",
+"1"
 ]
+],
+"final": []
+}
 },
 {
 "id": "t6",
@@ -2818,9 +3128,18 @@ false
 ]
 ],
 "code": "def window_sums(nums, k):\n    total = 0\n    sums = []\n    for right in range(len(nums)):\n        total += nums[right]\n        if right >= k:\n            total -= nums[right - k]\n        if right >= k - 1:\n            sums.append(total)\n    return sums",
-"task": "`window_sums(nums, k)` returns the sum of each window of `k` numbers that sit next to each other in `nums`, from left to right. For example, `window_sums([1, 2, 3], 2)` gives `[3, 5]`, because 1 + 2 = 3 and 2 + 3 = 5. Dry-run `window_sums([4, 1, 2], 2)` by hand. Each chip in the `# right =` row under the loop line is one pass of the loop. Pick a pass, then type in each gold box the value of its name right after the line above the box runs.",
+"task": "`window_sums(nums, k)` returns the sum of each window of `k` numbers that sit next to each other in `nums`, from left to right. For example, `window_sums([1, 2, 3], 2)` gives `[3, 5]`, because 1 + 2 = 3 and 2 + 3 = 5. Dry-run `window_sums([4, 1, 2], 2)` by hand. Under the call is a trace table, written as comment lines. Each row is one pass of the loop, and its first column already shows `right` for that pass. Replace each `_` in a row with the value of `total` at the end of that pass, after every line inside the loop has run. In the example, `right` is `0` in the first pass, and at its end `total` is `1`, so the first row would read `# 0  1`. The last line, `# sums = _`, asks for the whole `sums` list once the loop has finished, so `sums` gets no column. Write each value the way Python prints it, like `[0, 1]`. Spaces and quotes do not matter.",
 "why": "The first number leaves at `right = 2`, when `right` reaches `k`. The 4 leaves, so `total` drops from 7 to 3.",
 "domain": "Algorithms",
+"cols": [
+"total"
+],
+"final": [
+"sums"
+],
+"finalValues": {
+"sums": "[5, 3]"
+},
 "passes": [
 {
 "loop": "0",
@@ -2828,6 +3147,9 @@ false
 "5": [
 "4"
 ]
+},
+"end": {
+"total": "4"
 }
 },
 {
@@ -2839,6 +3161,9 @@ false
 "9": [
 "[5]"
 ]
+},
+"end": {
+"total": "5"
 }
 },
 {
@@ -2853,9 +3178,44 @@ false
 "9": [
 "[5, 3]"
 ]
+},
+"end": {
+"total": "3"
 }
 }
+],
+"table": {
+"text": "# right  total\n# 0      _\n# 1      _\n# 2      _\n# sums = _",
+"answer": "# right  total\n# 0      4\n# 1      5\n# 2      3\n# sums = [5, 3]",
+"cols": [
+"right",
+"total"
+],
+"heads": [
+"right",
+"total"
+],
+"rows": [
+[
+"0",
+"4"
+],
+[
+"1",
+"5"
+],
+[
+"2",
+"3"
 ]
+],
+"final": [
+[
+"sums",
+"[5, 3]"
+]
+]
+}
 },
 {
 "id": "t7",
@@ -2888,9 +3248,18 @@ false
 ]
 ],
 "code": "def distinct_counts(s, k):\n    window = Counter()\n    out = []\n    for right in range(len(s)):\n        letter = s[right]\n        window[letter] += 1\n        if right >= k:\n            gone = s[right - k]\n            window[gone] -= 1\n            if window[gone] == 0:\n                del window[gone]\n        if right >= k - 1:\n            out.append(len(window))\n    return out",
-"task": "`distinct_counts(s, k)` returns how many different letters each window of `k` letters that sit next to each other in `s` holds, from left to right. For example, `distinct_counts('aab', 2)` gives `[1, 2]`, because \"aa\" holds only a and \"ab\" holds a and b. Dry-run `distinct_counts('abb', 2)` by hand. Each chip in the `# right =` row under the loop line is one pass of the loop. Pick a pass, then type in each gold box the value of its name right after the line above the box runs.",
+"task": "`distinct_counts(s, k)` returns how many different letters each window of `k` letters that sit next to each other in `s` holds, from left to right. For example, `distinct_counts('aab', 2)` gives `[1, 2]`, because \"aa\" holds only a and \"ab\" holds a and b. Dry-run `distinct_counts('abb', 2)` by hand. Under the call is a trace table, written as comment lines. Each row is one pass of the loop, and its first column already shows `right` for that pass. Replace each `_` in a row with the value of `window` at the end of that pass, after every line inside the loop has run. In the example, `right` is `0` in the first pass, and at its end `window` is `{'a': 1}`, so the first row would read `# 0  {'a': 1}`. The last line, `# out = _`, asks for the whole `out` list once the loop has finished, so `out` gets no column. Write each value the way Python prints it, like `[0, 1]`. Spaces and quotes do not matter.",
 "why": "At `right = 2`, \"a\" leaves and its count reaches 0, so the code deletes it. `len(window)` then counts only \"b\", which gives 1.",
 "domain": "Algorithms",
+"cols": [
+"window"
+],
+"final": [
+"out"
+],
+"finalValues": {
+"out": "[2, 1]"
+},
 "passes": [
 {
 "loop": "0",
@@ -2898,6 +3267,9 @@ false
 "6": [
 "{'a': 1}"
 ]
+},
+"end": {
+"window": "{'a': 1}"
 }
 },
 {
@@ -2909,6 +3281,9 @@ false
 "13": [
 "[2]"
 ]
+},
+"end": {
+"window": "{'a': 1, 'b': 1}"
 }
 },
 {
@@ -2926,9 +3301,44 @@ false
 "13": [
 "[2, 1]"
 ]
+},
+"end": {
+"window": "{'b': 2}"
 }
 }
+],
+"table": {
+"text": "# right  window\n# 0      _\n# 1      _\n# 2      _\n# out = _",
+"answer": "# right  window\n# 0      {'a': 1}\n# 1      {'a': 1, 'b': 1}\n# 2      {'b': 2}\n# out = [2, 1]",
+"cols": [
+"right",
+"window"
+],
+"heads": [
+"right",
+"window"
+],
+"rows": [
+[
+"0",
+"{'a': 1}"
+],
+[
+"1",
+"{'a': 1, 'b': 1}"
+],
+[
+"2",
+"{'b': 2}"
 ]
+],
+"final": [
+[
+"out",
+"[2, 1]"
+]
+]
+}
 },
 {
 "id": "t8",
@@ -2953,9 +3363,16 @@ false
 ]
 ],
 "code": "def max_profit(prices):\n    lowest = prices[0]\n    best = 0\n    for price in prices:\n        lowest = min(lowest, price)\n        profit = price - lowest\n        best = max(best, profit)\n    return best",
-"task": "`max_profit(prices)` returns the biggest profit from buying on one day and selling on a later day, or 0 if no sale makes money. Each number in `prices` is one day's price. For example, `max_profit([2, 5])` gives `3`, because buying at 2 and selling at 5 makes 3. Dry-run `max_profit([3, 8, 1, 4])` by hand. Each chip in the `# price =` row under the loop line is one pass of the loop. Pick a pass, then type in each gold box the value of its name right after the line above the box runs.",
+"task": "`max_profit(prices)` returns the biggest profit from buying on one day and selling on a later day, or 0 if no sale makes money. Each number in `prices` is one day's price. For example, `max_profit([2, 5])` gives `3`, because buying at 2 and selling at 5 makes 3. Dry-run `max_profit([3, 8, 1, 4])` by hand. Under the call is a trace table, written as comment lines. Each row is one pass of the loop, and its first column already shows `price` for that pass. Replace each `_` in a row with the value of `lowest`, `profit` and `best` at the end of that pass, after every line inside the loop has run. In the example, `price` is `2` in the first pass, and at its end `lowest` is `2`, `profit` is `0` and `best` is `0`, so the first row would read `# 2  2  0  0`. Write each value the way Python prints it, like `[0, 1]`. Spaces and quotes do not matter.",
 "why": "At the price 1, `lowest` drops to 1, but `best` keeps the 5 from buying at 3 and selling at 8. The later profit 4 - 1 = 3 does not beat it.",
 "domain": "Algorithms",
+"cols": [
+"lowest",
+"profit",
+"best"
+],
+"final": [],
+"finalValues": {},
 "passes": [
 {
 "loop": "3",
@@ -2966,6 +3383,11 @@ false
 "7": [
 "0"
 ]
+},
+"end": {
+"lowest": "3",
+"profit": "0",
+"best": "0"
 }
 },
 {
@@ -2977,6 +3399,11 @@ false
 "7": [
 "5"
 ]
+},
+"end": {
+"lowest": "3",
+"profit": "5",
+"best": "5"
 }
 },
 {
@@ -2988,6 +3415,11 @@ false
 "7": [
 "5"
 ]
+},
+"end": {
+"lowest": "1",
+"profit": "0",
+"best": "5"
 }
 },
 {
@@ -2999,9 +3431,57 @@ false
 "7": [
 "5"
 ]
+},
+"end": {
+"lowest": "1",
+"profit": "3",
+"best": "5"
 }
 }
+],
+"table": {
+"text": "# price lowest profit best\n# 3     _      _      _\n# 8     _      _      _\n# 1     _      _      _\n# 4     _      _      _",
+"answer": "# price lowest profit best\n# 3     3      0      0\n# 8     3      5      5\n# 1     1      0      5\n# 4     1      3      5",
+"cols": [
+"price",
+"lowest",
+"profit",
+"best"
+],
+"heads": [
+"price",
+"lowest",
+"profit",
+"best"
+],
+"rows": [
+[
+"3",
+"3",
+"0",
+"0"
+],
+[
+"8",
+"3",
+"5",
+"5"
+],
+[
+"1",
+"1",
+"0",
+"5"
+],
+[
+"4",
+"1",
+"3",
+"5"
 ]
+],
+"final": []
+}
 },
 {
 "id": "t9",
@@ -3035,9 +3515,16 @@ false
 ]
 ],
 "code": "def longest_ones(nums, k):\n    zeros = 0\n    left = 0\n    best = 0\n    for right in range(len(nums)):\n        if nums[right] == 0:\n            zeros += 1\n        while zeros > k:\n            if nums[left] == 0:\n                zeros -= 1\n            left += 1\n        size = right - left + 1\n        best = max(best, size)\n    return best",
-"task": "Each number in `nums` is 0 or 1. `longest_ones(nums, k)` returns the length of the longest stretch of numbers that sit next to each other and hold `k` zeros or fewer. For example, `longest_ones([0, 1, 0], 1)` gives `2`, because [0, 1] and [1, 0] each hold one zero. Dry-run `longest_ones([1, 0, 0, 1], 1)` by hand. Each chip in the `# right =` row under the loop line is one pass of the loop. Pick a pass, then type in each gold box the value of its name right after the line above the box runs.",
+"task": "Each number in `nums` is 0 or 1. `longest_ones(nums, k)` returns the length of the longest stretch of numbers that sit next to each other and hold `k` zeros or fewer. For example, `longest_ones([0, 1, 0], 1)` gives `2`, because [0, 1] and [1, 0] each hold one zero. Dry-run `longest_ones([1, 0, 0, 1], 1)` by hand. Under the call is a trace table, written as comment lines. Each row is one pass of the loop, and its first column already shows `right` for that pass. Replace each `_` in a row with the value of `zeros`, `left` and `best` at the end of that pass, after every line inside the loop has run. In the example, `right` is `0` in the first pass, and at its end `zeros` is `1`, `left` is `0` and `best` is `1`, so the first row would read `# 0  1  0  1`. Write each value the way Python prints it, like `[0, 1]`. Spaces and quotes do not matter.",
 "why": "At the second zero, `zeros` becomes 2, so the loop drops the 1 and then the first 0. `left` moves twice, to 2, and `zeros` is back to 1.",
 "domain": "Algorithms",
+"cols": [
+"zeros",
+"left",
+"best"
+],
+"final": [],
+"finalValues": {},
 "passes": [
 {
 "loop": "0",
@@ -3045,6 +3532,11 @@ false
 "13": [
 "1"
 ]
+},
+"end": {
+"zeros": "0",
+"left": "0",
+"best": "1"
 }
 },
 {
@@ -3056,6 +3548,11 @@ false
 "13": [
 "2"
 ]
+},
+"end": {
+"zeros": "1",
+"left": "0",
+"best": "2"
 }
 },
 {
@@ -3074,6 +3571,11 @@ false
 "13": [
 "2"
 ]
+},
+"end": {
+"zeros": "1",
+"left": "2",
+"best": "2"
 }
 },
 {
@@ -3082,9 +3584,57 @@ false
 "13": [
 "2"
 ]
+},
+"end": {
+"zeros": "1",
+"left": "2",
+"best": "2"
 }
 }
+],
+"table": {
+"text": "# right  zeros  left  best\n# 0      _      _     _\n# 1      _      _     _\n# 2      _      _     _\n# 3      _      _     _",
+"answer": "# right  zeros  left  best\n# 0      0      0     1\n# 1      1      0     2\n# 2      1      2     2\n# 3      1      2     2",
+"cols": [
+"right",
+"zeros",
+"left",
+"best"
+],
+"heads": [
+"right",
+"zeros",
+"left",
+"best"
+],
+"rows": [
+[
+"0",
+"0",
+"0",
+"1"
+],
+[
+"1",
+"1",
+"0",
+"2"
+],
+[
+"2",
+"1",
+"2",
+"2"
+],
+[
+"3",
+"1",
+"2",
+"2"
 ]
+],
+"final": []
+}
 },
 {
 "id": "t10",
@@ -3113,9 +3663,18 @@ false
 ]
 ],
 "code": "def rolling_brightness(frames, k):\n    total = 0\n    out = []\n    for right in range(len(frames)):\n        total += frames[right]\n        if right >= k:\n            leaving = frames[right - k]\n            total -= leaving\n        if right >= k - 1:\n            out.append(total / k)\n    return out",
-"task": "`rolling_brightness(frames, k)` returns the average of each window of `k` frames that sit next to each other, from left to right. The average is the window's sum divided by `k`. For example, `rolling_brightness([2, 4], 2)` gives `[3.0]`. Dry-run `rolling_brightness([2, 4, 6], 2)` by hand. Each chip in the `# right =` row under the loop line is one pass of the loop. Pick a pass, then type in each gold box the value of its name right after the line above the box runs.",
+"task": "`rolling_brightness(frames, k)` returns the average of each window of `k` frames that sit next to each other, from left to right. The average is the window's sum divided by `k`. For example, `rolling_brightness([2, 4], 2)` gives `[3.0]`. Dry-run `rolling_brightness([2, 4, 6], 2)` by hand. Under the call is a trace table, written as comment lines. Each row is one pass of the loop, and its first column already shows `right` for that pass. Replace each `_` in a row with the value of `total` at the end of that pass, after every line inside the loop has run. In the example, `right` is `0` in the first pass, and at its end `total` is `2`, so the first row would read `# 0  2`. The last line, `# out = _`, asks for the whole `out` list once the loop has finished, so `out` gets no column. Write each value the way Python prints it, like `[0, 1]`. Spaces and quotes do not matter.",
 "why": "At `right = 2`, the frame 2 leaves, so `total` goes from 12 to 10. Each average divides by `k`, so the values are floats like `3.0`.",
 "domain": "Computer vision",
+"cols": [
+"total"
+],
+"final": [
+"out"
+],
+"finalValues": {
+"out": "[3.0, 5.0]"
+},
 "passes": [
 {
 "loop": "0",
@@ -3123,6 +3682,9 @@ false
 "5": [
 "2"
 ]
+},
+"end": {
+"total": "2"
 }
 },
 {
@@ -3134,6 +3696,9 @@ false
 "10": [
 "[3.0]"
 ]
+},
+"end": {
+"total": "6"
 }
 },
 {
@@ -3148,9 +3713,44 @@ false
 "10": [
 "[3.0, 5.0]"
 ]
+},
+"end": {
+"total": "10"
 }
 }
+],
+"table": {
+"text": "# right  total\n# 0      _\n# 1      _\n# 2      _\n# out = _",
+"answer": "# right  total\n# 0      2\n# 1      6\n# 2      10\n# out = [3.0, 5.0]",
+"cols": [
+"right",
+"total"
+],
+"heads": [
+"right",
+"total"
+],
+"rows": [
+[
+"0",
+"2"
+],
+[
+"1",
+"6"
+],
+[
+"2",
+"10"
 ]
+],
+"final": [
+[
+"out",
+"[3.0, 5.0]"
+]
+]
+}
 },
 {
 "id": "t11",
@@ -3158,7 +3758,7 @@ false
 "kind": "trace",
 "fn": "allow",
 "src": "s1",
-"call": "allow([1, 2, 3, 12], 2, 10)",
+"call": "allow([1, 2, 3, 7], 2, 5)",
 "loop": "t",
 "watch": [
 "recent",
@@ -3179,9 +3779,20 @@ false
 ]
 ],
 "code": "def allow(times, limit, window):\n    recent = deque()\n    out = []\n    for t in times:\n        cutoff = t - window\n        while recent:\n            if recent[0] > cutoff:\n                break\n            recent.popleft()\n        ok = len(recent) < limit\n        out.append(ok)\n        if ok:\n            recent.append(t)\n    return out",
-"task": "`allow(times, limit, window)` is a rate limiter. Each number in `times` is the second a request arrived. A request at second t is allowed if fewer than `limit` allowed requests arrived after second t - `window`, and blocked requests never count. It returns True or False for each request. For example, `allow([1, 1], 1, 5)` gives `[True, False]`. Dry-run `allow([1, 2, 3, 12], 2, 10)` by hand. Each chip in the `# t =` row under the loop line is one pass of the loop. Pick a pass, then type in each gold box the value of its name right after the line above the box runs.",
-"why": "At time 3, two requests are still recent, so the request is refused and never joins `recent`. At time 12, the cutoff is 2, so both 1 and 2 leave before the check.",
+"task": "`allow(times, limit, window)` is a rate limiter. Each number in `times` is the second a request arrived. A request at second t is allowed if fewer than `limit` allowed requests arrived after second t - `window`, and blocked requests never count. It returns True or False for each request. For example, `allow([1, 1], 1, 5)` gives `[True, False]`. Dry-run `allow([1, 2, 3, 7], 2, 5)` by hand. Under the call is a trace table, written as comment lines. Each row is one pass of the loop, and its first column already shows `t` for that pass. Replace each `_` in a row with the value of `cutoff`, `recent` and `ok` at the end of that pass, after every line inside the loop has run. In the example, `t` is `1` in the first pass, and at its end `cutoff` is `-4`, `recent` is `[1]` and `ok` is `T`, so the first row would read `# 1  -4  [1]  T`. The last line, `# out = _`, asks for the whole `out` list once the loop has finished, so `out` gets no column. Write each value the way Python prints it, like `[0, 1]`, but write True as `T` and False as `F`, as you would on a whiteboard. `True` and `true` count too, and spaces and quotes do not matter.",
+"why": "At time 3, two requests are still recent, so the request is refused and never joins `recent`. At time 7, the cutoff is 7 - 5 = 2, so both 1 and 2 leave before the check.",
 "domain": "Backend",
+"cols": [
+"cutoff",
+"recent",
+"ok"
+],
+"final": [
+"out"
+],
+"finalValues": {
+"out": "[True, True, False, True]"
+},
 "passes": [
 {
 "loop": "1",
@@ -3192,6 +3803,11 @@ false
 "13": [
 "[1]"
 ]
+},
+"end": {
+"cutoff": "-4",
+"recent": "[1]",
+"ok": "True"
 }
 },
 {
@@ -3203,6 +3819,11 @@ false
 "13": [
 "[1, 2]"
 ]
+},
+"end": {
+"cutoff": "-3",
+"recent": "[1, 2]",
+"ok": "True"
 }
 },
 {
@@ -3211,10 +3832,15 @@ false
 "11": [
 "[True, True, False]"
 ]
+},
+"end": {
+"cutoff": "-2",
+"recent": "[1, 2]",
+"ok": "False"
 }
 },
 {
-"loop": "12",
+"loop": "7",
 "lines": {
 "9": [
 "[2]",
@@ -3224,11 +3850,64 @@ false
 "[True, True, False, True]"
 ],
 "13": [
-"[12]"
+"[7]"
 ]
+},
+"end": {
+"cutoff": "2",
+"recent": "[7]",
+"ok": "True"
 }
 }
+],
+"table": {
+"text": "# t  cutoff  recent  ok\n# 1  _       _       _\n# 2  _       _       _\n# 3  _       _       _\n# 7  _       _       _\n# out = _",
+"answer": "# t  cutoff  recent  ok\n# 1  -4      [1]     T\n# 2  -3      [1, 2]  T\n# 3  -2      [1, 2]  F\n# 7  2       [7]     T\n# out = [T, T, F, T]",
+"cols": [
+"t",
+"cutoff",
+"recent",
+"ok"
+],
+"heads": [
+"t",
+"cutoff",
+"recent",
+"ok"
+],
+"rows": [
+[
+"1",
+"-4",
+"[1]",
+"T"
+],
+[
+"2",
+"-3",
+"[1, 2]",
+"T"
+],
+[
+"3",
+"-2",
+"[1, 2]",
+"F"
+],
+[
+"7",
+"2",
+"[7]",
+"T"
 ]
+],
+"final": [
+[
+"out",
+"[T, T, F, T]"
+]
+]
+}
 },
 {
 "id": "t12",
@@ -3257,9 +3936,18 @@ false
 ]
 ],
 "code": "def unique_in_window(ids, k):\n    recent = Counter()\n    out = []\n    for right in range(len(ids)):\n        if right > k:\n            old = ids[right - k - 1]\n            recent[old] -= 1\n        new = ids[right]\n        out.append(recent[new] == 0)\n        recent[new] += 1\n    return out",
-"task": "`unique_in_window(ids, k)` returns, for each id, True if it matches none of the `k` ids just before it, and False if it matches one. Here `ids` is a string, so each letter is one id. For example, `unique_in_window('aa', 1)` gives `[True, False]`. Dry-run `unique_in_window('abaa', 1)` by hand. Each chip in the `# right =` row under the loop line is one pass of the loop. Pick a pass, then type in each gold box the value of its name right after the line above the box runs.",
+"task": "`unique_in_window(ids, k)` returns, for each id, True if it matches none of the `k` ids just before it, and False if it matches one. Here `ids` is a string, so each letter is one id. For example, `unique_in_window('aa', 1)` gives `[True, False]`. Dry-run `unique_in_window('abaa', 1)` by hand. Under the call is a trace table, written as comment lines. Each row is one pass of the loop, and its first column already shows `right` for that pass. Replace each `_` in a row with the value of `recent` at the end of that pass, after every line inside the loop has run. In the example, `right` is `0` in the first pass, and at its end `recent` is `{'a': 1}`, so the first row would read `# 0  {'a': 1}`. The last line, `# out = _`, asks for the whole `out` list once the loop has finished, so `out` gets no column. Write each value the way Python prints it, like `[0, 1]`, but write True as `T` and False as `F`, as you would on a whiteboard. `True` and `true` count too, and spaces and quotes do not matter.",
 "why": "At `right = 2`, the first \"a\" leaves, so its count drops to 0 and the new \"a\" counts as new. A count can sit at 0 in the Counter, like `'b': 0` at the end.",
 "domain": "Backend",
+"cols": [
+"recent"
+],
+"final": [
+"out"
+],
+"finalValues": {
+"out": "[True, True, True, False]"
+},
 "passes": [
 {
 "loop": "0",
@@ -3270,6 +3958,9 @@ false
 "10": [
 "{'a': 1}"
 ]
+},
+"end": {
+"recent": "{'a': 1}"
 }
 },
 {
@@ -3281,6 +3972,9 @@ false
 "10": [
 "{'a': 1, 'b': 1}"
 ]
+},
+"end": {
+"recent": "{'a': 1, 'b': 1}"
 }
 },
 {
@@ -3295,6 +3989,9 @@ false
 "10": [
 "{'a': 1, 'b': 1}"
 ]
+},
+"end": {
+"recent": "{'a': 1, 'b': 1}"
 }
 },
 {
@@ -3309,9 +4006,48 @@ false
 "10": [
 "{'a': 2, 'b': 0}"
 ]
+},
+"end": {
+"recent": "{'a': 2, 'b': 0}"
 }
 }
+],
+"table": {
+"text": "# right  recent\n# 0      _\n# 1      _\n# 2      _\n# 3      _\n# out = _",
+"answer": "# right  recent\n# 0      {'a': 1}\n# 1      {'a': 1, 'b': 1}\n# 2      {'a': 1, 'b': 1}\n# 3      {'a': 2, 'b': 0}\n# out = [T, T, T, F]",
+"cols": [
+"right",
+"recent"
+],
+"heads": [
+"right",
+"recent"
+],
+"rows": [
+[
+"0",
+"{'a': 1}"
+],
+[
+"1",
+"{'a': 1, 'b': 1}"
+],
+[
+"2",
+"{'a': 1, 'b': 1}"
+],
+[
+"3",
+"{'a': 2, 'b': 0}"
 ]
+],
+"final": [
+[
+"out",
+"[T, T, T, F]"
+]
+]
+}
 },
 {
 "id": "t13",
@@ -3336,9 +4072,15 @@ false
 ]
 ],
 "code": "def running_max_drop(values):\n    peak = values[0]\n    worst = 0\n    for v in values:\n        peak = max(peak, v)\n        worst = max(worst, peak - v)\n    return worst",
-"task": "`running_max_drop(values)` returns the biggest drop from an earlier value to a later, lower value, or 0 if the values never go down. For example, `running_max_drop([5, 1, 3])` gives `4`, because 5 - 1 = 4. Dry-run `running_max_drop([3, 8, 2, 5])` by hand. Each chip in the `# v =` row under the loop line is one pass of the loop. Pick a pass, then type in each gold box the value of its name right after the line above the box runs.",
+"task": "`running_max_drop(values)` returns the biggest drop from an earlier value to a later, lower value, or 0 if the values never go down. For example, `running_max_drop([5, 1, 3])` gives `4`, because 5 - 1 = 4. Dry-run `running_max_drop([3, 8, 2, 5])` by hand. Under the call is a trace table, written as comment lines. Each row is one pass of the loop, and its first column already shows `v` for that pass. Replace each `_` in a row with the value of `peak` and `worst` at the end of that pass, after every line inside the loop has run. In the example, `v` is `5` in the first pass, and at its end `peak` is `5` and `worst` is `0`, so the first row would read `# 5  5  0`. Write each value the way Python prints it, like `[0, 1]`. Spaces and quotes do not matter.",
 "why": "`peak` learns about the 8 before the drop is measured, so the 2 gives a drop of 8 - 2 = 6. The 5 gives only 3, so `worst` stays 6.",
 "domain": "Finance",
+"cols": [
+"peak",
+"worst"
+],
+"final": [],
+"finalValues": {},
 "passes": [
 {
 "loop": "3",
@@ -3349,6 +4091,10 @@ false
 "6": [
 "0"
 ]
+},
+"end": {
+"peak": "3",
+"worst": "0"
 }
 },
 {
@@ -3360,6 +4106,10 @@ false
 "6": [
 "0"
 ]
+},
+"end": {
+"peak": "8",
+"worst": "0"
 }
 },
 {
@@ -3371,6 +4121,10 @@ false
 "6": [
 "6"
 ]
+},
+"end": {
+"peak": "8",
+"worst": "6"
 }
 },
 {
@@ -3382,9 +4136,50 @@ false
 "6": [
 "6"
 ]
+},
+"end": {
+"peak": "8",
+"worst": "6"
 }
 }
+],
+"table": {
+"text": "# v  peak  worst\n# 3  _     _\n# 8  _     _\n# 2  _     _\n# 5  _     _",
+"answer": "# v  peak  worst\n# 3  3     0\n# 8  8     0\n# 2  8     6\n# 5  8     6",
+"cols": [
+"v",
+"peak",
+"worst"
+],
+"heads": [
+"v",
+"peak",
+"worst"
+],
+"rows": [
+[
+"3",
+"3",
+"0"
+],
+[
+"8",
+"8",
+"0"
+],
+[
+"2",
+"8",
+"6"
+],
+[
+"5",
+"8",
+"6"
 ]
+],
+"final": []
+}
 },
 {
 "id": "t14",
@@ -3413,9 +4208,15 @@ false
 ]
 ],
 "code": "def longest_goal_streak(\n    steps, goal\n):\n    current = 0\n    best = 0\n    for s in steps:\n        if s >= goal:\n            current += 1\n            best = max(best, current)\n        else:\n            current = 0\n    return best",
-"task": "`longest_goal_streak(steps, goal)` returns the most days in a row whose step count is `goal` or more. For example, `longest_goal_streak([6, 1, 6, 6], 5)` gives `2`, because the last two days both reach 5. Dry-run `longest_goal_streak([9, 9, 1], 5)` by hand. Each chip in the `# s =` row under the loop line is one pass of the loop. Pick a pass, then type in each gold box the value of its name right after the line above the box runs.",
+"task": "`longest_goal_streak(steps, goal)` returns the most days in a row whose step count is `goal` or more. For example, `longest_goal_streak([6, 1, 6, 6], 5)` gives `2`, because the last two days both reach 5. Dry-run `longest_goal_streak([9, 9, 1], 5)` by hand. Under the call is a trace table, written as comment lines. Each row is one pass of the loop, and its first column already shows `s` for that pass. Replace each `_` in a row with the value of `current` and `best` at the end of that pass, after every line inside the loop has run. In the example, `s` is `6` in the first pass, and at its end `current` is `1` and `best` is `1`, so the first row would read `# 6  1  1`. Write each value the way Python prints it, like `[0, 1]`. Spaces and quotes do not matter.",
 "why": "The day with 1 step resets `current` to 0. `best` keeps the record of 2.",
 "domain": "Data analytics",
+"cols": [
+"current",
+"best"
+],
+"final": [],
+"finalValues": {},
 "passes": [
 {
 "loop": "9",
@@ -3426,6 +4227,10 @@ false
 "9": [
 "1"
 ]
+},
+"end": {
+"current": "1",
+"best": "1"
 }
 },
 {
@@ -3437,6 +4242,10 @@ false
 "9": [
 "2"
 ]
+},
+"end": {
+"current": "2",
+"best": "2"
 }
 },
 {
@@ -3445,9 +4254,45 @@ false
 "11": [
 "0"
 ]
+},
+"end": {
+"current": "0",
+"best": "2"
 }
 }
+],
+"table": {
+"text": "# s  current  best\n# 9  _        _\n# 9  _        _\n# 1  _        _",
+"answer": "# s  current  best\n# 9  1        1\n# 9  2        2\n# 1  0        2",
+"cols": [
+"s",
+"current",
+"best"
+],
+"heads": [
+"s",
+"current",
+"best"
+],
+"rows": [
+[
+"9",
+"1",
+"1"
+],
+[
+"9",
+"2",
+"2"
+],
+[
+"1",
+"0",
+"2"
 ]
+],
+"final": []
+}
 },
 {
 "id": "t15",
@@ -3476,9 +4321,15 @@ false
 ]
 ],
 "code": "def count_small(nums, k, limit):\n    total = 0\n    found = 0\n    for right in range(len(nums)):\n        total += nums[right]\n        if right >= k:\n            total -= nums[right - k]\n        if right >= k - 1:\n            if total <= limit:\n                found += 1\n    return found",
-"task": "`count_small(nums, k, limit)` counts the windows of `k` numbers that sit next to each other in `nums` whose sum is `limit` or less. For example, `count_small([3, 1, 5], 2, 4)` gives `1`, because 3 + 1 = 4 counts and 1 + 5 = 6 does not. Dry-run `count_small([1, 2, 3, 1], 2, 4)` by hand. Each chip in the `# right =` row under the loop line is one pass of the loop. Pick a pass, then type in each gold box the value of its name right after the line above the box runs.",
+"task": "`count_small(nums, k, limit)` counts the windows of `k` numbers that sit next to each other in `nums` whose sum is `limit` or less. For example, `count_small([3, 1, 5], 2, 4)` gives `1`, because 3 + 1 = 4 counts and 1 + 5 = 6 does not. Dry-run `count_small([1, 2, 3, 1], 2, 4)` by hand. Under the call is a trace table, written as comment lines. Each row is one pass of the loop, and its first column already shows `right` for that pass. Replace each `_` in a row with the value of `total` and `found` at the end of that pass, after every line inside the loop has run. In the example, `right` is `0` in the first pass, and at its end `total` is `3` and `found` is `0`, so the first row would read `# 0  3  0`. Write each value the way Python prints it, like `[0, 1]`. Spaces and quotes do not matter.",
 "why": "At `right = 2`, the window 2 + 3 = 5 is over the limit, so `found` stays 1. At `right = 3`, the window 3 + 1 = 4 equals the limit, and \"at most\" counts it.",
 "domain": "Algorithms",
+"cols": [
+"total",
+"found"
+],
+"final": [],
+"finalValues": {},
 "passes": [
 {
 "loop": "0",
@@ -3486,6 +4337,10 @@ false
 "5": [
 "1"
 ]
+},
+"end": {
+"total": "1",
+"found": "0"
 }
 },
 {
@@ -3497,6 +4352,10 @@ false
 "10": [
 "1"
 ]
+},
+"end": {
+"total": "3",
+"found": "1"
 }
 },
 {
@@ -3508,6 +4367,10 @@ false
 "7": [
 "5"
 ]
+},
+"end": {
+"total": "5",
+"found": "1"
 }
 },
 {
@@ -3522,9 +4385,50 @@ false
 "10": [
 "2"
 ]
+},
+"end": {
+"total": "4",
+"found": "2"
 }
 }
+],
+"table": {
+"text": "# right  total  found\n# 0      _      _\n# 1      _      _\n# 2      _      _\n# 3      _      _",
+"answer": "# right  total  found\n# 0      1      0\n# 1      3      1\n# 2      5      1\n# 3      4      2",
+"cols": [
+"right",
+"total",
+"found"
+],
+"heads": [
+"right",
+"total",
+"found"
+],
+"rows": [
+[
+"0",
+"1",
+"0"
+],
+[
+"1",
+"3",
+"1"
+],
+[
+"2",
+"5",
+"1"
+],
+[
+"3",
+"4",
+"2"
 ]
+],
+"final": []
+}
 },
 {
 "id": "a4",
